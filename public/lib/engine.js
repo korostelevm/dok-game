@@ -51,17 +51,13 @@ class Engine {
 		this.atlas = { still, run, background };
 
 		/* Buffer renderer */
-		this.bufferRenderer = new BufferRenderer(gl);
+		this.bufferRenderer = new BufferRenderer(gl, this.config);
 
 		/* Setup constants */
 		this.numInstances = 2;	//	Note: This shouldn't be constants. This is the number of instances.
 		this.numVerticesPerInstance = 6;
 
-		this.state = {
-			scene: "base",
-			x: 0,
-			gameOver: false,
-		};
+		this.state = Engine.resetState();
 		this.addKeyListeners(document, this.state);
 
 		this.sceneMap = {
@@ -81,11 +77,41 @@ class Engine {
 		this.resize(canvas, gl, config);
 
 		this.lastTime = 0;
+
+		this.initialize();
+
 		Engine.start(this);
+	}
+
+	static resetState(state) {
+		state = state || {};
+		for (let prop in state) {
+			delete state[prop];
+		}
+		state.scene = "base";
+		state.x = 0;
+
+		document.getElementById("eva").style.display = "";
+		document.getElementById("sexy").style.display = "none";
+		document.getElementById("elon").style.display = "none";
+		document.getElementById("police").style.display = "none";
+		document.getElementById("drug").style.display = "none";
+		document.getElementById("annie").style.display = "none";
+		document.getElementById("message-box").innerText = "";
+
+
+		return state;
+	}
+
+	initialize() {
+		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 	}
 
 	addKeyListeners(document, state) {
 		document.addEventListener("keydown", e => {
+			if (e.key === "Escape") {
+				return;
+			}
 			if (!state.sceneChangeStarting) {
 				state.movement = "running";
 				if (e.key === "ArrowLeft" || e.key === "a") {
@@ -97,6 +123,11 @@ class Engine {
 		});
 		document.addEventListener("keyup", e => {
 			state.movement = null;
+			if (e.key === "Escape") {
+				state.sceneChangeStarting = state.time;
+				state.nextScene = "reset";
+				console.log(state.scene, "=>", state.nextScene);
+			}
 		});
 	}
 
@@ -122,30 +153,6 @@ class Engine {
 			engine.refresh(time);
 		}
 		loop(0);
-	}
-
-	makeFullScreenCoordinates() {
-		return new Float32Array(Utils.makeVertexArray(
-			    [ -1, -1 ],
-			    [  1, -1 ],
-			    [ -1,  1 ],
-			    [  1,  1 ],
-		));
-	}
-
-	makeSpriteCoordinatesAtCenter(x, y, width, height) {
-		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = this.config;
-		const x0 = (x - width / 2) / viewportWidth / pixelScale;
-		const x1 = (x + width / 2) / viewportWidth / pixelScale;
-		const y0 = (y - height / 2) / viewportHeight / pixelScale;
-		const y1 = (y + height / 2) / viewportHeight / pixelScale;
-
-		return new Float32Array(Utils.makeVertexArray(
-			    [ x0, y0 ],
-			    [ x1, y0 ],
-			    [ x0, y1 ],
-			    [ x1, y1 ],
-		));
 	}
 
 	getNextScene(scene, direction, state) {
@@ -196,6 +203,9 @@ class Engine {
 			case "inter-phase3-":
 			case "inter+phase3+":
 				state.gameOver = true;
+				break;
+			case "reset":
+				Engine.resetState(state);
 				break;
 			default:
 				break;
@@ -268,6 +278,7 @@ class Engine {
 		gl.uniform1f(this.shader.uniforms.time.location, time);
 
 		const { state } = this;
+		state.time = time;
 		const colorMultiplier = state.gameOver ? .2 : 1;
 		const color = .8 * colorMultiplier;
 		if (state.sceneChangeStarting) {
@@ -321,16 +332,11 @@ class Engine {
 			}
 		}
 
-		this.bufferRenderer.setAttribute(this.shader.attributes.position, 0,
-			this.makeSpriteCoordinatesAtCenter(this.state.x, -50, 128, 128)
-		);
-
-		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, this.makeFullScreenCoordinates());
+		this.bufferRenderer.setAttributeSprite(this.shader.attributes.position, 0, this.state.x, -50, 128, 128);
 
 		const anim = this.state.movement ? this.atlas.run : this.atlas.still;
-		this.bufferRenderer.setAttribute(this.shader.attributes.textureIndex, 0, new Uint8Array([anim.index]));
-		this.bufferRenderer.setAttribute(this.shader.attributes.textureCoordinates, 0,
-			anim.getTextureCoordinatesAtTime(time, this.state.direction));
+		this.bufferRenderer.setAttributeByte(this.shader.attributes.textureIndex, 0, anim.index);
+		this.bufferRenderer.setAttribute(this.shader.attributes.textureCoordinates, 0, anim.getTextureCoordinatesAtTime(time, this.state.direction));
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);

@@ -15,6 +15,13 @@ class TextureAtlas {
 			image: null,
 			animationData: null,
 		};
+
+		this.tempUnit16Array = new Uint16Array([
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+		]);		
 	}
 
 	async setImage(url, animationData) {
@@ -52,12 +59,12 @@ class TextureAtlas {
 			x1 = x;
 		}
 
-		return new Uint16Array([
-			x0, y + height, index, 0,
-			x1, y + height, index, 0,
-			x0, y, index, 0,
-			x1, y, index, 0,
-		]);		
+		let i = 0;
+		this.tempUnit16Array[0] = x0; this.tempUnit16Array[1] = y + height;
+		this.tempUnit16Array[4] = x1; this.tempUnit16Array[5] = y + height;
+		this.tempUnit16Array[8] = x0; this.tempUnit16Array[9] = y;
+		this.tempUnit16Array[12] = x1; this.tempUnit16Array[13] = y;
+		return this.tempUnit16Array;
 	}
 
 	getTextureCoordinatesAtTime(time, direction) {
