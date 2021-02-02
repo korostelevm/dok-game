@@ -1,0 +1,38 @@
+{
+	"vertexPosition": {
+		"location": 0,
+		"type": "FLOAT",
+		"usage": "STATIC_DRAW"
+	},
+	"position": {
+		"type": "FLOAT",
+		"usage": "DYNAMIC_DRAW"
+	},
+	"isPerspective": {
+		"instances": 1,
+		"type": "UNSIGNED_BYTE",
+		"normalize": true,
+		"usage": "STATIC_DRAW"
+	},
+	"colors": {
+		"instances": 1,
+		"type": "UNSIGNED_BYTE",
+		"normalize": true,
+		"usage": "DYNAMIC_DRAW"
+	},
+	"textureIndex": {
+		"instances": 1,
+		"type": "UNSIGNED_BYTE",
+		"usage": "DYNAMIC_DRAW"
+	},
+	"textureCoordinates": {
+		"instances": 1,
+		"type": "UNSIGNED_SHORT",
+		"usage": "DYNAMIC_DRAW"
+	},
+	"matrix": {
+		"instances": 1,
+		"type": "FLOAT",
+		"usage": "DYNAMIC_DRAW"
+	}
+}
