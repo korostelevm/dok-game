@@ -58,7 +58,14 @@ class Engine {
 		this.numVerticesPerInstance = 6;
 
 		this.state = Engine.resetState();
-		this.addKeyListeners(document, this.state);
+
+		this.keyboardHandler = new KeyboardHandler(document);
+		this.keyboardHandler.addKeyUpListener("Escape", e => {
+			const { state } = this;
+			state.sceneChangeStarting = state.time;
+			state.nextScene = "reset";
+			console.log(state.scene, "=>", state.nextScene);
+		});
 
 		this.sceneMap = {
 			"base-+": "base",
@@ -107,28 +114,72 @@ class Engine {
 		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 	}
 
-	addKeyListeners(document, state) {
-		document.addEventListener("keydown", e => {
-			if (e.key === "Escape") {
-				return;
+	applyKeyboard(state, keyboardHandler) {
+		if (!state.sceneChangeStarting) {
+			const dx = (keyboardHandler.keys["ArrowLeft"] || keyboardHandler.keys["a"] ? -1 : 0)
+				+ (keyboardHandler.keys["ArrowRight"] || keyboardHandler.keys["d"] ? 1 : 0);
+			state.movement = dx !== 0 ? "running" : null;
+			if (dx !== 0) {
+				state.direction = dx;
 			}
-			if (!state.sceneChangeStarting) {
-				state.movement = "running";
-				if (e.key === "ArrowLeft" || e.key === "a") {
-					state.direction = -1;
-				} else if (e.key === "ArrowRight" || e.key === "d") {
-					state.direction = 1;
+		}
+	}
+
+	applyMovement(state, dt, time, size) {
+		const [viewportWidth] = size;
+		if (!state.sceneChangeStarting) {
+			if (state.movement) {
+				state.x += dt * state.direction / 2;
+				if (state.x < -viewportWidth / 2) {
+					state.sceneChangeStarting = time;
+					state.nextScene = this.getNextScene(state.scene, state.x, state);
+					console.log(state.scene, "=>", state.nextScene);
+				} else if (state.x > viewportWidth / 2) {
+					state.sceneChangeStarting = time;
+					state.nextScene = this.getNextScene(state.scene, state.x, state);
+					console.log(state.scene, "=>", state.nextScene);
+				}
+
+				if (Math.random() < .05) {
+					document.getElementById("eva").style.transform = `scaleX(${state.x < 0 ? -1 : 1})`;
 				}
 			}
-		});
-		document.addEventListener("keyup", e => {
-			state.movement = null;
-			if (e.key === "Escape") {
-				state.sceneChangeStarting = state.time;
-				state.nextScene = "reset";
-				console.log(state.scene, "=>", state.nextScene);
+		}		
+	}
+
+	applySceneChange(gl, state, time) {
+		state.time = time;
+		const colorMultiplier = state.gameOver ? .2 : 1;
+		const color = .8 * colorMultiplier;
+		if (state.sceneChangeStarting) {
+			const progress = (time - state.sceneChangeStarting) / 2000;
+			if (progress < .3) {
+				const fadeProgress = Math.max(0, (.3 - progress) / .3) * colorMultiplier;
+				gl.clearColor(.8 * fadeProgress, .8 * fadeProgress, .8 * fadeProgress, 1);
+			} else if (progress >= .8) {
+				state.sceneChangeStarting = 0;
+				gl.clearColor(color, color, color, 1);		
+			} else if (progress > .7) {
+				const fadeProgress = Math.min(1, (progress - .7) / .3) * colorMultiplier;
+				gl.clearColor(.8 * fadeProgress, .8 * fadeProgress, .8 * fadeProgress, 1);				
+			} else if (progress >= .5 && state.nextScene) {
+				state.scene = state.nextScene;
+				if (this.sceneMap[state.scene]) {
+					state.scene = this.sceneMap[state.scene];
+				}
+				console.log("scene: ", state.scene);
+
+				state.nextScene = null;
+				state.x = state.x < 0 ? 300 : -300;
+				if (!state.win) {
+					document.getElementById("eva").style.display = "none";
+				}
+				document.getElementById("message-box").innerText = this.getMessage(state.scene, state);
+				this.onScene(state.scene, state);
 			}
-		});
+		} else {
+			gl.clearColor(color, color, color, 1);
+		}
 	}
 
 	configShader(gl) {
@@ -273,64 +324,16 @@ class Engine {
 
 		const { gl, ext } = this;
 		const {viewport} = this.config;
-		const [viewportWidth, viewportHeight] = viewport.size;
 
 		gl.uniform1f(this.shader.uniforms.time.location, time);
 
 		const { state } = this;
-		state.time = time;
-		const colorMultiplier = state.gameOver ? .2 : 1;
-		const color = .8 * colorMultiplier;
-		if (state.sceneChangeStarting) {
-			const progress = (time - state.sceneChangeStarting) / 2000;
-			if (progress < .3) {
-				const fadeProgress = Math.max(0, (.3 - progress) / .3) * colorMultiplier;
-				gl.clearColor(.8 * fadeProgress, .8 * fadeProgress, .8 * fadeProgress, 1);
-			} else if (progress >= .8) {
-				state.sceneChangeStarting = 0;
-				gl.clearColor(color, color, color, 1);		
-			} else if (progress > .7) {
-				const fadeProgress = Math.min(1, (progress - .7) / .3) * colorMultiplier;
-				gl.clearColor(.8 * fadeProgress, .8 * fadeProgress, .8 * fadeProgress, 1);				
-			} else if (progress >= .5 && state.nextScene) {
-				state.scene = state.nextScene;
-				if (this.sceneMap[state.scene]) {
-					state.scene = this.sceneMap[state.scene];
-				}
-				console.log("scene: ", state.scene);
-
-				state.nextScene = null;
-				state.x = state.x < 0 ? 300 : -300;
-				if (!state.win) {
-					document.getElementById("eva").style.display = "none";
-				}
-				document.getElementById("message-box").innerText = this.getMessage(state.scene, state);
-				this.onScene(state.scene, state);
-			}
-		} else {
-			gl.clearColor(color, color, color, 1);
-		}
+		this.applySceneChange(gl, state, time);
 
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-		if (!state.sceneChangeStarting) {
-			if (state.movement) {
-				state.x += dt * state.direction / 2;
-				if (state.x < -viewportWidth / 2) {
-					state.sceneChangeStarting = time;
-					state.nextScene = this.getNextScene(state.scene, state.x, state);
-					console.log(state.scene, "=>", state.nextScene);
-				} else if (state.x > viewportWidth / 2) {
-					state.sceneChangeStarting = time;
-					state.nextScene = this.getNextScene(state.scene, state.x, state);
-					console.log(state.scene, "=>", state.nextScene);
-				}
-
-				if (Math.random() < .05) {
-					document.getElementById("eva").style.transform = `scaleX(${state.x < 0 ? -1 : 1})`;
-				}
-			}
-		}
+		this.applyKeyboard(this.state, this.keyboardHandler);
+		this.applyMovement(this.state, dt, time, viewport.size);
 
 		this.bufferRenderer.setAttributeSprite(this.shader.attributes.position, 0, this.state.x, -50, 128, 128);
 
@@ -340,8 +343,6 @@ class Engine {
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
-
-//		console.log(time);
 	}
 }
 

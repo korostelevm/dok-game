@@ -1,9 +1,9 @@
 /**
-	Dok-gamelib engine
+	Dok-game engine
 
 	Description: Game engine for producing web games easily using JavaScript and WebGL
 	Author: jacklehamster
-	Sourcode: https://github.com/jacklehamster/dok-gamelib
+	Sourcode: https://github.com/jacklehamster/dok-game
 	Year: 2020
  */
 
