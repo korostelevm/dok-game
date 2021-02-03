@@ -1,0 +1,196 @@
+canvas {  
+    cursor: none;
+}
+
+.canvas-overlay {
+    pointer-events:none;
+}
+
+.crisp {
+    image-rendering: optimizeSpeed;
+	image-rendering: -moz-crisp-edges;
+	image-rendering: -webkit-crisp-edges;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;				
+}
+
+.scanline {
+    filter: alpha(opacity=20);
+    -moz-opacity: 0.2;
+    -khtml-opacity: 0.2;
+    opacity: 0.2;				
+    background: url(assets/scanline.png);
+    background-size: 8px;
+    pointer-events:none;
+}
+
+.noise {
+    pointer-events:none;
+}
+
+html, body {
+    height: 100%;
+    background-color: black;
+    color: silver;
+    touch-action: none;
+    overflow: hidden;
+}
+
+
+/*@media screen and (min-width: 320px) and (max-width: 767px) and (orientation: landscape) {
+  html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+}
+*/
+body {
+    margin: 0;
+}
+.game-container {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: col;
+}
+.game-container.full {
+    height: auto;
+    margin-top: 10px;
+}
+
+.row {
+    width: auto;
+}
+.flex-item {
+    text-align: center;
+}
+button {
+	min-height: 10px;
+}
+
+pre {outline: 1px solid #ccc; padding: 2px; margin: 2px; }
+.string { color: darkgreen; }
+.number { color: blue; }
+.boolean { color: darkblue; }
+.null { color: gray; }
+.key { font-weight: bold; color: black; }
+
+@keyframes expand {
+    from { height: 0; }
+    to   { height: 40%; }
+}
+
+.touch {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: col;
+    -webkit-animation: expand .5s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: expand .5s; /* Firefox < 16 */
+        -ms-animation: expand .5s; /* Internet Explorer */
+         -o-animation: expand .5s; /* Opera < 12.1 */
+            animation: expand .5s;    
+}
+
+.touch-container {
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 40px solid black;
+    background-color: black;
+}
+
+.game-size {
+    max-width: calc(100vw - 5%);
+    width: 512px;
+    height: 512px;
+    z-index: 2;
+}
+
+.game-size.touched {
+    max-width: calc(100vw - 80px);
+    max-height: calc(100vh - 80px);
+    width: calc(100vw - 80px);
+    height: calc(100vw - 80px);
+}
+
+.game-size.full {
+    max-width: calc(100vw - 5%);
+    max-height: calc(100vh - 5%);
+    width: calc(100vw - 5%);
+    height: calc(100vw - 5%);
+    margin: 0 0 0 0;
+}
+
+.touch-size {
+    width: calc(100vw - 80px);
+    height: calc(100vh - 100vw - 80px);
+    z-index: 1;
+}
+
+.touch-size.full {
+    width: calc(100vw - 5%);
+    height: calc(100vh - 100vw - 5%);
+    margin: 0;
+}
+
+.touch-container.full {
+    border: 5% solid black;
+}
+
+#touch-canvas {
+    background-color: #001122;     
+}
+
+#touch-canvas2 {
+    background-color: #001122; 
+}
+
+.rounded-screen {	
+	border-radius: 70px;
+	border: 40px solid #000000;
+}
+
+.rounded-screen.touched {   
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border: 40px solid #000000;
+}
+
+.rounded-screen.full {
+    border-width: 20px;
+}
+
+.rounded-screen.touch-size {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+

@@ -1,0 +1,26 @@
+{
+  "short_name": "Baby Hitler 2",
+  "name": "Where in Space is Baby Hitler",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "64x64"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "index.html",
+  "background_color": "#ac3f36",
+  "display": "fullscreen",
+  "theme_color": "#ac3f36",
+  "orientation": "portrait"
+}

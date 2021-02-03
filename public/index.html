@@ -1,143 +1,137 @@
-
 <!DOCTYPE html>
-<!--
-	Dok-gamelib engine
-
-	Description: Dobuki game
-	Author: jacklehamster
-	Sourcode: https://github.com/jacklehamster/dok-game
-	Year: 2021
- -->
 <html lang="en">
 	<head>
-        <title>Dobuki Game</title>
+        <title>Where in Space is Baby Hitler?</title>
 		<meta charset="utf-8"/>
-		<meta name="description" content="Dobuki Game Description">
+		<meta name="description" content="JavaScript point-and-click game, sequel of Kill Baby Hitler. Travel accross the galaxy and look for Baby Hitler in Space.">
 
-		<style type="text/css">
-			canvas {  
-			  image-rendering: -moz-crisp-edges;
-			  image-rendering: -webkit-crisp-edges;
-			  image-rendering: pixelated;
-			  image-rendering: crisp-edges;
-			  border: 1px solid #666666;
+		<link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="icons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+		<link rel="manifest" href="manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ac3f36">
+
+		<link rel="stylesheet" type="text/css" href="game.css" media="print" onload="this.media='all'">
+
+		<meta name="mobile-web-app-capable" content="yes">
+		<meta name="viewport" content="minimal-ui, user-scalable=no, initial-scale=1">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="Where in Space is Baby Hitler?">
+
+		<script type="text/javascript">
+			// Register service worker.
+			if ('serviceWorker' in navigator) {
+			  window.addEventListener('load', () => {
+			    navigator.serviceWorker.register('service-worker.js')
+			        .then((reg) => {
+			        })
+			  });
 			}
-
-			html, body {
-			    margin: 0;
-			    height: 100%;
-				background:
-				  linear-gradient(27deg, rgba(0,155,0,.8), rgba(0,155,0,0) 70.71%),
-				  linear-gradient(117deg, rgba(55,55,0,.8), rgba(55,55,0) 70.71%),
-				  linear-gradient(236deg, rgba(0,55,55,.8), rgba(0,55,55,0) 70.71%);
-
-			    color: #aaaaaa;
-			    touch-action: none;
-			    overflow: hidden;
-			    user-select: none;
-			}
-
-			#canvas {
-				width: 512px;
-				height: 512px;
-				background-color: #000000;
-				opacity: 0;
-  				transition-property: opacity, background-color, width, height;
-  				transition-duration: .3s;
-  			}
-
-			.container {
-			  display: flex;
-			  flex-direction: row;
-			  justify-content: center;
-			  align-items: center;
-			  width: 100%;
-			  height: 100%;
-			  will-change: transform;
-			}
-
-			.loader {
-				border: 16px solid #f3f3f3;
-				border-radius: 50%;
-				border-top: 16px solid #3498db;
-				border-left: 16px solid #54a8eb;
-				border-right: 16px solid #84b8fb;
-				border-bottom: 16px solid #a4d8fb;
-				-webkit-animation: spin 2s linear infinite; /* Safari */
-				animation: spin .3s linear infinite;
-				width: 100px;
-				height: 100px;
-				margin-top: -50px;
-				margin-left: -50px;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				position: fixed;
-			}
-
-			.loader.loaded {
-				display: none;
-			}
-
-			.fps {
-				position: absolute;
-				color: white;
-				z-index: 1
-			}
-
-			.code-editor {
-			}
-
-			@-webkit-keyframes spin {
-			  0% { -webkit-transform: rotate(0deg); }
-			  100% { -webkit-transform: rotate(360deg); }
-			}
-
-			@keyframes spin {
-			  0% { transform: rotate(0deg); }
-			  100% { transform: rotate(360deg); }
-			}			
-
-		</style>
+		</script>
 
 	</head>
-	<body>
-		<div class="container">
-			<div style="position: absolute; margin-top: -200px; width: 800px; height: 300px">
-				<div id="message-box" style="font-size: 30pt; color: yellow"></div>
-			</div>
-			<div style="position: absolute; margin-top: 105px;">
-				<img id="eva" src="assets/eva.gif">
-			</div>
-			<div style="position: absolute; margin-top: 105px; margin-left: -700px;">
-				<img id="annie" src="assets/annie.png" style="display: none">
-			</div>
-			<div style="position: absolute; margin-top: 105px; margin-left: -700px;">
-				<img id="sexy" src="assets/sexy.png" style="display: none">
-			</div>
-			<div style="position: absolute; margin-top: 105px; margin-left: 700px;">
-				<img id="elon" src="assets/elon.png" style="display: none">
-			</div>
-			<div style="position: absolute; margin-top: 105px; margin-left: -700px;">
-				<img id="police" src="assets/police.gif" style="display: none">
-			</div>
-			<div style="position: absolute; margin-top: 105px; margin-left: 650px;">
-				<img id="drug" src="assets/drug.gif" style="display: none">
-			</div>
 
-			<canvas id="canvas" width=64 height=64></canvas>	
+	<body style="margin: 0; background-color: black">
+	<audio src="assets/beebop.mp3" controls autoplay loop style="position:absolute; z-index: 100">
+	</audio>
+		<img id="alphabet" src="assets/alphabet.png" style="width: 1px; height: 1px; position: absolute;"></img>
+		<div id="viewport" style="display: flex; flex-direction: column; height: 100%">
+			<div class="game-container">
+				<canvas class="screen-view game-size flex-item crisp" id="canvas" width=64 height=64 style="background-color: black; display:none"></canvas>
+				<canvas class="screen-view game-size flex-item canvas-overlay rounded-screen screen-copy" id="canvas2" width=128 height=128 style="background-color: black; position: absolute;"></canvas>
+				<div id="scanline" class="screen-view game-size scanline" style="position: absolute;"></div>
+				<canvas class="screen-view game-size noise" id="noise" width=640 height=640
+					style="position: absolute;"></canvas>
+				<script>
+					document.getElementById("canvas").style.display = "";
+				</script>
+			</div>
+			<div class="touch" style="display: none; height: 40%; border-top: 1px solid #222;">
+				<div class="touch-container touch-size rounded-screen">
+					<canvas class="screen-view touch-size flex-item crisp" id="touch-canvas" width=64 height=32 style="display:none"></canvas>
+					<canvas class="screen-view touch-size flex-item canvas-overlay rounded-screen screen-copy" id="touch-canvas2" width=128 height=64 style="position: absolute;"></canvas>
+					<div id="touch-scanline" class="screen-view touch-size scanline" style="position: absolute;"></div>
+					<canvas class="screen-view touch-size noise" id="touch-noise" width=640 height=320 style="position: absolute;"></canvas>	
+				</div>
+				<script>
+					document.getElementById("touch-canvas").style.display = "";					
+					window.addEventListener('touchstart', function touchStart(event) {
+						document.querySelector(".touch").style.display = "";
+						document.querySelectorAll(".game-size").forEach(div => {
+							div.classList.add("touched");
+						});
+						event.preventDefault();
+						window.removeEventListener('touchstart', touchStart);
+					});
+				</script>
+			</div>		
 		</div>
-		<script type="text/javascript" src="gen/data.js" defer></script>
-		<script type="text/javascript" src="lib/math/gl-matrix.js" defer></script>
-		<script type="text/javascript" src="lib/opengl/buffer-renderer.js" defer></script>
-		<script type="text/javascript" src="lib/opengl/shader.js" defer></script>
-		<script type="text/javascript" src="lib/opengl/utils.js" defer></script>
-		<script type="text/javascript" src="lib/texture/image-loader.js" defer></script>
-		<script type="text/javascript" src="lib/texture/texture-atlas.js" defer></script>
-		<script type="text/javascript" src="lib/texture/texture-manager.js" defer></script>
-		<script type="text/javascript" src="lib/config.js" defer></script>
-		<script type="text/javascript" src="lib/engine.js" defer></script>
-		<script type="text/javascript" src="lib/ui/keyboard-handler.js" defer></script>
-		<script type="text/javascript" src="lib/ui/focus-fixer.js" defer></script>
+		<div class="debug">
+			<div>
+				<input checked id="scanlines" type="checkbox"
+					onChange="toggleScanlines()">
+				<label for="scanlines">scanline</label>
+				<input checked id="pauseexit" type="checkbox">
+				<label for="pauseexit">pause on exit</label>
+				<input id="speeduptext" type="checkbox" onChange="Game.setTextSpeeder(event.currentTarget.checked?.1:1)"><label for="speeduptext">speed up text</label>
+			</div>
+			<div id="saves">
+				<button onClick="clearSaves()">CLEAR</button>
+				<button onClick="save()">SAVE</button>
+				<div id="savebox">
+				</div>
+			</div>
+			<script>
+				document.querySelector(".debug").style.display = window.debugMode ? "" : "none";
+			</script>
+		</div>
+		<div id="error-div" style="display:none; background-color: #FF0000bb; color: #FFFFDDcc; position: absolute; z-index: 20; width: 100%; top: 0; left: 0; padding: 15px">
+		</div>
+		<div id="load-error-div" style="display:none; background-color: #EEEE0033; color: #FFFFDD99; position: absolute; z-index: 10; width: 100%; top: 0; left: 0; padding: 15px">
+		</div>
 	</body>
+
+	<script src="generated/idx.js"></script>
+	
+	<script>		
+		const scripts = Array.prototype.slice.apply(document.scripts).filter(({src}) => src && src.length);
+		scripts.forEach(script => {
+			script.addEventListener("error", function err(e) {
+				game.addLoadError(script.src);
+				document.body.removeChild(script);
+				const newScript = document.createElement("script");
+				newScript.src = script.src;
+				newScript.addEventListener("error", err);
+				if (game.countLoadError > 800) {
+					game.tooManyErrors();
+					return;
+				}
+
+				setTimeout(() => {
+					game.removeLoadError(script.src);
+					document.body.appendChild(newScript);
+				}, 5000);
+			});
+		});
+
+		const alphabet = document.getElementById("alphabet");
+		if (!alphabet.naturalWidth) {
+			alphabet.addEventListener("load", startGame);
+		} else {
+			startGame();
+		}
+	</script>
 </html>
