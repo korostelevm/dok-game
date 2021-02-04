@@ -14,6 +14,7 @@ app.get('/', (req, res, next) => {
 	res.writeHead(200, {'Content-Type': 'text/html'});
 
 	const queryObject = url.parse(req.url,true).query;
+	const isRelease = "release" in queryObject;
 
 	Promise.all([
 		fs.promises.readFile(`${__dirname}/public/index.html`),
@@ -21,7 +22,25 @@ app.get('/', (req, res, next) => {
 	]).then(([html]) => {
 		res.write(html);
 		res.end();
-	}).then(() => zipPublic("public", "game.zip"));
+	}).then(() => zipPublic("public", "game.zip"))
+	.then(() => {
+		const NwBuilder = require('nw-builder');
+		const nw = new NwBuilder({
+		    files: './public/**/**', // use the glob format
+		    platforms: isRelease ? ['win', 'osx64', 'linux'] : [ 'osx64' ],
+		    flavor: "normal",
+//			    macIcns: "",
+		});
+
+		nw.on('log',  console.log);
+
+		nw.build().then(function () {
+		   console.log('all done!');
+		}).catch(function (error) {
+		    console.error(error);
+		});
+//			echo `sudo codesign --force --deep --verbose --sign "Vincent Le Quang" Eva.app`;
+	});
 });
 
 app.use(serve(`${__dirname}/public`));

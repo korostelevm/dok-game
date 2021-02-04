@@ -2,7 +2,6 @@
   "name": "dok-game",
   "version": "1.0.0",
   "description": "Dok game",
-  "main": "public/index.html",
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -26,18 +25,5 @@
     "node-zip": "^1.1.1",
     "nw-builder": "^3.5.7",
     "uglify-js": "^3.12.5"
-  },
-  "window": {
-    "title": "Dok Game",
-    "width": 1000,
-    "height": 600,
-    "fullscreen": false,
-    "kiosk": false,
-    "resizable": true,
-    "always_on_top": false,
-    "show_in_taskbar": true,
-    "frame": true,
-    "transparent": false
-  },
-  "nodejs": false
+  }
 }
