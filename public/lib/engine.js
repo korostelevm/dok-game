@@ -246,7 +246,12 @@ class Engine {
 						this.timeout2 = setTimeout(() => {
 							if (dirDist * state.direction < 0) {
 								state.foundEva = true;
-								document.getElementById("eva").src = "assets/hug.gif";
+								const img = new Image();
+								img.addEventListener("load", () => {
+									state.hideSelf = true;
+									document.getElementById("eva").src = img.src;
+								});
+								img.src = "assets/hug.gif";
 								document.getElementById("message-box").innerText = "";
 								localStorage.removeItem("with-eva");
 								this.winEva(state);
@@ -526,12 +531,12 @@ class Engine {
 			this.adam.updated.sprite = time;
 		}
 		const anim = this.shouldMove(state, viewportWidth) ? this.atlas.run : this.atlas.still;
-		if (state.anim != anim || state.animDirection != state.direction || (state.foundEva && this.adam.opacity >= 1)) {
+		if (state.anim != anim || state.animDirection != state.direction || (state.hideSelf && this.adam.opacity >= 1)) {
 			state.anim = anim;
 			state.animDirection = state.direction;
 			this.adam.direction = state.direction;
 			this.adam.anim = anim;
-			this.adam.opacity = state.foundEva ? 0 : 1;
+			this.adam.opacity = state.hideSelf ? 0 : 1;
 			this.adam.updated.animation = time;
 		}
 
