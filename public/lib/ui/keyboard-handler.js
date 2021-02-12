@@ -16,14 +16,14 @@ class KeyboardHandler {
 		const keys = {};
 		document.addEventListener("keydown", e => {
 			keys[e.key] = true;
-			const listener = listeners[e.key];
+			const listener = listeners[e.key] || listeners[null];
 			if (listener && listener["down"]) {
 				listener["down"](e);
 			}
 		});
 		document.addEventListener("keyup", e => {
 			this.keys[e.key] = false;
-			const listener = listeners[e.key];
+			const listener = listeners[e.key] || listeners[null];
 			if (listener && listener["up"]) {
 				listener["up"](e);
 			}
@@ -43,5 +43,16 @@ class KeyboardHandler {
 
 	addKeyUpListener(key, onKey) {
 		this.addKeyListener(key, "up", onKey);
+	}
+
+	removeListener(listener) {
+		for (let i in this.listeners) {
+			if (this.listeners[i]["up"] === listener) {
+				delete this.listeners[i]["up"];
+			}
+			if (this.listeners[i]["down"] === listener) {
+				delete this.listeners[i]["down"];
+			}
+		}
 	}
 }

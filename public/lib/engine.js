@@ -33,6 +33,9 @@ class Engine {
 		}
 		this.ext = ext;
 
+		/* Init times. */
+		this.time = 0;
+
 		/* Config shader */
 		this.configShader(gl);
 
@@ -45,26 +48,68 @@ class Engine {
 		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.imageLoader);
 
 		/* Load image */
-		const still = await this.textureManager.createAtlas(0).setImage("assets/dude-still.png", {cols:2,rows:2,frameRate:8});
-		const run = await this.textureManager.createAtlas(1).setImage("assets/dude-run.png", {cols:2,rows:2,frameRate:15});
-		const background = await this.textureManager.createAtlas(2).setImage("assets/background.png");
+		const still = await this.textureManager.createAtlas(0)
+			.setImage("assets/dude-still.png", this.time, {cols:2,rows:2,frameRate:8});
+		const run = await this.textureManager.createAtlas(1)
+			.setImage("assets/dude-run.png", this.time, {cols:3,rows:3,frameRate:24});
+		const background = await this.textureManager.createAtlas(2)
+			.setImage("assets/background.png", this.time);
 		this.atlas = { still, run, background };
+
+		/* Load sprite */
+		this.spriteCollection = new SpriteCollection();
+		const [viewportWidth, viewportHeight] = this.config.viewport.size;
+		this.spriteCollection.create({
+			size: [viewportWidth, viewportHeight],
+			anim: this.atlas.background,
+			opacity: .04,
+		});
+		this.adam = this.spriteCollection.create({
+			size: [128, 128],
+			hotspot: [64, 128],
+			rotation: 0,
+		});
+
+
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, this.config);
+		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shader, this.config.viewport.size);
 
 		/* Setup constants */
 		this.numInstances = 2;	//	Note: This shouldn't be constants. This is the number of instances.
 		this.numVerticesPerInstance = 6;
 
-		this.state = Engine.resetState();
+		this.state = this.resetState();
 
-		this.keyboardHandler = new KeyboardHandler(document);
-		this.keyboardHandler.addKeyUpListener("Escape", e => {
+		const keyboardHandler = new KeyboardHandler(document); 
+		keyboardHandler.addKeyUpListener("Escape", e => {
 			const { state } = this;
 			state.sceneChangeStarting = state.time;
 			state.nextScene = "reset";
 			console.log(state.scene, "=>", state.nextScene);
+		});
+		this.keyboardHandler = keyboardHandler;
+
+		/* Addd audio listener */
+		keyboardHandler.addKeyUpListener("m", e => {
+			const audio = document.getElementById("audio");
+			if (audio.paused) {
+				document.getElementById("controls").innerText = "⬅️➡️: move. ESC: Restart game. M: 🔊";
+				audio.play();
+			} else {
+				document.getElementById("controls").innerText = "⬅️➡️: move. ESC: Restart game. M: 🔇";
+				audio.pause();					
+			}
+		});
+
+		//	Allow audio
+		let f;
+		keyboardHandler.addKeyDownListener(null, f = e => {
+			const audio = document.getElementById("audio");
+			audio.volume = 0;
+			audio.play();
+			keyboardHandler.removeListener(f);
 		});
 
 		this.sceneMap = {
@@ -79,45 +124,68 @@ class Engine {
 			"phase4-": "phase4",
 			"phase4+-": "phase4+",
 			"phase4++-": "phase4++",
+			"phase4+++": "with-eva",
 		};
 
 		this.resize(canvas, gl, config);
 
 		this.lastTime = 0;
 
-		this.initialize();
+		this.initialize(gl, this.shader.uniforms, config);
 
 		Engine.start(this);
 	}
 
-	static resetState(state) {
+	resetState(state) {
+		const [viewportWidth, viewportHeight] = this.config.viewport.size;
 		state = state || {};
 		for (let prop in state) {
 			delete state[prop];
 		}
 		state.scene = "base";
-		state.x = 0;
+		state.x = viewportWidth / 2;
+		state.y = viewportHeight / 2 + 114;
+		state.direction = 1;
+		state.evaDirection = 1;
+		document.getElementById("eva").style.transform = "";
 
-		document.getElementById("eva").style.display = "";
+		if (localStorage.getItem("with-eva")) {
+			state.win = true;
+			state.scene = "with-eva";
+			state.x = 200;
+			setTimeout(() => {
+				document.getElementById("message-box").innerText = "Eva!";
+			}, 500);
+		}
+
 		document.getElementById("sexy").style.display = "none";
 		document.getElementById("elon").style.display = "none";
 		document.getElementById("police").style.display = "none";
 		document.getElementById("drug").style.display = "none";
 		document.getElementById("annie").style.display = "none";
-		document.getElementById("message-box").innerText = "";
-
+		document.getElementById("message-box").innerText = localStorage.getItem("lost-eva") ? "I lost Eva." : "";
 
 		return state;
 	}
 
-	initialize() {
+	initialize(gl, uniforms, {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}}) {
 		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
+		gl.clearColor(.8, .8, .8, 1);
+
+		const viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+		gl.uniformMatrix4fv(uniforms.view.location, false, viewMatrix);
+
+		const zNear = -1;
+		const zFar = 2000;
+		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
+		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 	}
 
 	applyKeyboard(state, keyboardHandler) {
-		if (!state.sceneChangeStarting) {
+		if (!state.sceneChangeStarting && !state.foundEva) {
 			const dx = (keyboardHandler.keys["ArrowLeft"] || keyboardHandler.keys["a"] ? -1 : 0)
 				+ (keyboardHandler.keys["ArrowRight"] || keyboardHandler.keys["d"] ? 1 : 0);
+
 			state.movement = dx !== 0 ? "running" : null;
 			if (dx !== 0) {
 				state.direction = dx;
@@ -125,29 +193,87 @@ class Engine {
 		}
 	}
 
-	applyMovement(state, dt, time, size) {
-		const [viewportWidth] = size;
-		if (!state.sceneChangeStarting) {
-			if (state.movement) {
-				state.x += dt * state.direction / 2;
-				if (state.x < -viewportWidth / 2) {
-					state.sceneChangeStarting = time;
-					state.nextScene = this.getNextScene(state.scene, state.x, state);
-					console.log(state.scene, "=>", state.nextScene);
-				} else if (state.x > viewportWidth / 2) {
-					state.sceneChangeStarting = time;
-					state.nextScene = this.getNextScene(state.scene, state.x, state);
-					console.log(state.scene, "=>", state.nextScene);
-				}
+	changeScene(time, state, nextScene) {
+		state.sceneChangeStarting = time;
+		state.nextScene = this.getNextScene(state.scene, state.x, state);
+		state.movement = 0;
+		console.log(state.scene, "=>", state.nextScene);
 
-				if (Math.random() < .05) {
-					document.getElementById("eva").style.transform = `scaleX(${state.x < 0 ? -1 : 1})`;
+		if (!state.audioTriggered) {
+			state.audioTriggered = true;
+
+			console.log("Starting audio.");
+			document.getElementById("audio").currentTime = null;
+			document.getElementById("audio").volume = .3;
+			document.getElementById("audio").play();
+		}
+	}
+
+	shouldMove(state, viewportWidth) {
+		const dist = Math.abs(state.x - viewportWidth / 2);
+		return state.movement || dist <= 30 || (dist >= 40 && dist < 100);
+	}
+
+	applyMovement(state, dt, time, viewportWidth) {
+		if (!state.sceneChangeStarting) {
+			const dirDist = state.x - viewportWidth / 2;
+			if (this.shouldMove(state, viewportWidth)) {
+				dt = Math.min(dt, 20);
+				state.x += dt * state.direction / 2;
+				if (state.x < 0) {
+					this.changeScene(time, state, this.getNextScene(state.scene, state.x, state));
+				} else if (state.x > viewportWidth) {
+					this.changeScene(time, state, this.getNextScene(state.scene, state.x, state));
+				}
+				if (this.timeout) {
+					clearTimeout(this.timeout);
+					clearTimeout(this.timeout2)
+					this.timeout = 0;
+					this.timeout2 = 0;
+					document.getElementById("eva").src = "assets/eva.gif";
+				}
+			} else if(!this.timeout) {
+				const dist = Math.abs(dirDist);
+				if (dist > 30 && dist < 50 && !this.timeout) {
+					console.log(dist);
+					this.timeout = setTimeout(() => {
+						if (dirDist * state.direction < 0) {
+							document.getElementById("eva").src = "assets/eva-2.gif";
+						}
+					}, 500);
+
+					if (state.win) {
+						this.timeout2 = setTimeout(() => {
+							if (dirDist * state.direction < 0) {
+								state.foundEva = true;
+								document.getElementById("eva").src = "assets/hug.gif";
+								document.getElementById("message-box").innerText = "";
+								localStorage.removeItem("with-eva");
+								this.winEva(state);
+							}
+						}, 3000);
+					}
+				}
+			}
+			if (Math.random() < .05 && !state.evaTurning) {
+				if (state.evaDirection * dirDist < 0) {
+					state.evaDirection = dirDist;
+					state.evaTurning = true;
+					document.getElementById("eva").src = "assets/eva-turn.gif";
+					const finalDir = dirDist;
+					setTimeout(() => {
+						document.getElementById("eva").src = "assets/eva.gif";
+						document.getElementById("eva").style.transform = `scaleX(${finalDir < 0 ? -1 : 1})`;
+						state.evaTurning = false;
+					}, 450);
 				}
 			}
 		}		
 	}
 
-	applySceneChange(gl, state, time) {
+	applySceneChange(state, time) {
+		const { gl } = this;
+		const [viewportWidth, viewportHeight] = this.config.viewport.size;
 		state.time = time;
 		const colorMultiplier = state.gameOver ? .2 : 1;
 		const color = .8 * colorMultiplier;
@@ -168,17 +294,28 @@ class Engine {
 					state.scene = this.sceneMap[state.scene];
 				}
 				console.log("scene: ", state.scene);
+				if (state.win) {
+					state.win = false;
+					state.gameOver = state.scene !== "reset";			
+				}
 
 				state.nextScene = null;
-				state.x = state.x < 0 ? 300 : -300;
+				state.x = state.x < viewportWidth / 2 ? 700 : 100;
 				if (!state.win) {
-					document.getElementById("eva").style.display = "none";
+					if (state.scene !== "reset") {
+						document.getElementById("eva").style.display = "none";
+						localStorage.setItem("lost-eva", true);
+					}
+					localStorage.removeItem("with-eva");
 				}
-				document.getElementById("message-box").innerText = this.getMessage(state.scene, state);
+				document.getElementById("controls").style.display = "none";
+				if (state.scene !== "reset") {
+					setTimeout(() => {
+						document.getElementById("message-box").innerText = this.getMessage(state.scene, state);
+					}, 500);
+				}
 				this.onScene(state.scene, state);
 			}
-		} else {
-			gl.clearColor(color, color, color, 1);
 		}
 	}
 
@@ -199,15 +336,18 @@ class Engine {
 	}
 
 	static start(engine) {
-		function loop(time) {
-		  	requestAnimationFrame(loop);
+		const loop = (time) => {
 			engine.refresh(time);
-		}
+		  	requestAnimationFrame(loop);
+		};
 		loop(0);
 	}
 
 	getNextScene(scene, direction, state) {
-		if (state.gameOver || state.win) {
+		if (state.gameOver) {
+			return scene;
+		}
+		if (state.win) {
 			return scene;
 		}
 		if (scene.startsWith("inter-")) {
@@ -222,11 +362,15 @@ class Engine {
 	}
 
 	onScene(scene, state) {
+		const { gl } = this;
 		document.getElementById("sexy").style.display = "none";
 		document.getElementById("elon").style.display = "none";
 		document.getElementById("police").style.display = "none";
 		document.getElementById("drug").style.display = "none";
 		document.getElementById("annie").style.display = "none";
+		if (state.gameOver) {
+			document.getElementById("eva").style.display = "none";
+		}
 		switch(scene) {
 			case "phase3-":
 				document.getElementById("annie").style.display = "";
@@ -243,72 +387,106 @@ class Engine {
 			case "base++":
 				document.getElementById("elon").style.display = "";
 				break;
-			case "phase4+++":
-				document.getElementById("eva").style.display = "";
-				state.win = true;
-				break;
-			case "inter-base--":
-			case "inter+base++":
-			case "inter-phase2-":
-			case "inter+phase2+":
-			case "inter-phase3-":
-			case "inter+phase3+":
-				state.gameOver = true;
+			case "phase3+":
+				const audio = document.getElementById("audio");
+				document.getElementById("audio-god").volume = audio.paused ? .2 : .4;
+				document.getElementById("audio-god").play();
+				break;	
+			case "with-eva":
+				if (!state.gameOver) {
+					this.findEva(state);
+				}
 				break;
 			case "reset":
-				Engine.resetState(state);
+				document.getElementById("audio").pause();
+				document.getElementById("controls").style.display = "";
+				this.resetState(state);
+				gl.clearColor(.8, .8, .8, 1);
 				break;
 			default:
 				break;
 		}
 	}
 
+	findEva(state) {
+		document.getElementById("eva").style.display = "";
+		localStorage.removeItem("lost-eva");
+		localStorage.setItem("with-eva", true);
+		state.win = true;
+	}
+
+	winEva(state) {
+		getMedal("Eva");
+	}
+
+	gameOver(medal, state) {
+		state.gameOver = true;
+		getMedal(medal);
+		document.getElementById("audio").pause();
+	}
+
 	getMessage(scene, state) {
 		if (state.gameOver) {
-			return "You lost Eva.";			
+			return "I lost Eva.";			
 		}
 		switch(scene) {
 			case "base":
 				return "I lost Eva. I must find her...";
+			case "inter-base":
+			case "inter+base":
+				return "...";
+			case "inter-phase2":
+			case "inter+phase2":
+				return "...!";
+			case "inter-phase3":
+			case "inter+phase3":
+				return "...!?!";
 			case "base+":
 				return "Where did Eva go? Right direction?...";
 			case "base-":
 				return "Where did Eva go? Left direction?...";
 			case "base--":
-				return "Hello handsome man! care to join me for some fun?";
+				return "“Hello handsome man! care to join me for some fun?”";
 			case "inter-base--":
-				return "You spent some time with Tina, before looking for Eva. You never found her ever again.";
+				this.gameOver("Sexy", state);
+				return "I spent some time with Tina, before looking for Eva. I never found her ever again.";
 			case "base++":
-				return "Hi. I'm Elon Musk. Would you like to work for me? Come in and fill out an application.";
+				return "“Hi. I'm Elon Musk. Would you like to work for me? Come in and fill out an application.”";
 			case "inter+base++":
-				return "You applied for a job at Tesla, then pursued your research. But Eva was never found.";
+				this.gameOver("Elon", state);
+				return "I applied for a job at Tesla, then pursued your research. But Eva was never found.";
 			case "phase2":
 				return "I'm lost... Where could have she gone?";
 			case "phase2-":
-				return "Lost someone? Sure, come to the police station. You can file a report.";
+				return "“Lost someone? Sure, come to the police station. You can file a report.”";
 			case "inter-phase2-":
-				return "After filing a report, you waited and waited... Still no sign of Eva.";
+				this.gameOver("Police", state);
+				return "After filing a report, I waited and waited... Still no sign of Eva.";
 			case "phase2+":
-				return "Don't worry buddy, your little lady is gonna come around. Come join us, how'bout some drugs?...";
+				return "“Don't worry buddy, your little lady is gonna come around. Come join us, how'bout some drugs?...”";
 			case "inter+phase2+":
-				return "You lost yourself in drugs and drown your memories of Eva in alcohol.";
+				this.gameOver("Drugs", state);
+				return "I lost myself in drugs and drown your memories of Eva in alcohol.";
 			case "phase3":
 				return "I won't let anyone distract me. I must find Eva!";
 			case "phase3-":
-				return "Oh Adam! It's me, Annie! Wow, you haven't changed a bit since high school...";
+				return "“Oh Adam! It's me, Annie! Wow, you haven't changed a bit since high school...”";
 			case "inter-phase3-":
-				return "You reconnected with Annie, remembering the good times. Then continued your search.";
+				this.gameOver("Annie", state);
+				return "I reconnected with Annie, remembering the good times. Then continued my search.";
 			case "phase3+":
-				return "Adam... This is the voice of God. Go forth and you shall find what you are looking for.";
+				return "“Adam... This is the voice of God. Go forth and you shall find what you are looking for.”";
 			case "inter+phase3+":
-				return "You moved forward towards your faith... and found God!";
+				this.gameOver("God", state);
+				return "I moved forward towards my faith... and found God!";
 			case "phase4":
 				return "Where can she possibly be?";
 			case "phase4+":
 				return "Oh Eva, will I ever see you again?";
 			case "phase4++":
 				return "I will never stop until I find you.";
-			case "phase4+++":
+			case "with-eva":
+				document.getElementById("audio").pause();
 				return "Eva!";
 			default:
 		}
@@ -317,33 +495,63 @@ class Engine {
 
 	refresh(time) {
 		const dt = time - this.lastTime;
+		this.time = time;
 		this.lastTime = time;
 		if (!this.focusFixer.focused) {
 			return;
 		}
 
 		const { gl, ext } = this;
-		const {viewport} = this.config;
-
-		gl.uniform1f(this.shader.uniforms.time.location, time);
-
-		const { state } = this;
-		this.applySceneChange(gl, state, time);
+		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
+		const {attributes, uniforms} = this.shader;
 
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.uniform1f(uniforms.time.location, time);
 
-		this.applyKeyboard(this.state, this.keyboardHandler);
-		this.applyMovement(this.state, dt, time, viewport.size);
+		const { state } = this;
+		this.applySceneChange(state, time);
+		this.applyKeyboard(state, this.keyboardHandler);
+		this.applyMovement(state, dt, time, viewportWidth);
 
-		this.bufferRenderer.setAttributeSprite(this.shader.attributes.position, 0, this.state.x, -50, 128, 128);
+		//	sprite
+		//	- x, y, width, height
+		//	- hotspot
+		//	- rotation
+		//	- direction
+		//	- anim.src
+		//	- anim (cols, rows, frameRate)
+		if (this.adam.x !== state.x || this.adam.y !== state.y) {
+			this.adam.x = state.x;
+			this.adam.y = state.y;
+			this.adam.updated.sprite = time;
+		}
+		const anim = this.shouldMove(state, viewportWidth) ? this.atlas.run : this.atlas.still;
+		if (state.anim != anim || state.animDirection != state.direction || (state.foundEva && this.adam.opacity >= 1)) {
+			state.anim = anim;
+			state.animDirection = state.direction;
+			this.adam.direction = state.direction;
+			this.adam.anim = anim;
+			this.adam.opacity = state.foundEva ? 0 : 1;
+			this.adam.updated.animation = time;
+		}
 
-		const anim = this.state.movement ? this.atlas.run : this.atlas.still;
-		this.bufferRenderer.setAttributeByte(this.shader.attributes.textureIndex, 0, anim.index);
-		this.bufferRenderer.setAttribute(this.shader.attributes.textureCoordinates, 0, anim.getTextureCoordinatesAtTime(time, this.state.direction));
+		for (let i = 0; i < this.spriteCollection.size(); i++) {
+			const sprite = this.spriteCollection.get(i);
+			if (sprite.updated.sprite == time || sprite.updated.sprite < 0) {
+				const {x, y, rotation} = sprite;
+				const [width,height] = sprite.size;
+				const [hotX,hotY] = sprite.hotspot;
+				this.spriteRenderer.setAttributeSprite(i, x, y, width, height, hotX, hotY, rotation);
+			}
+			if (sprite.updated.animation == time || sprite.updated.animation < 0) {
+				const {anim, direction, opacity} = sprite;
+				this.spriteRenderer.setAnimation(i, anim, direction, opacity, sprite.updated.animation);
+			}
+		}
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 	}
 }
 
-const engine = new Engine(config);
+const engine = new Engine(globalData.config);

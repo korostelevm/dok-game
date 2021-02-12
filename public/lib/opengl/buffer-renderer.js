@@ -9,17 +9,20 @@ class BufferRenderer {
 		    [ 0, 0 ],
 		    [ 0, 0 ],
 		));
-		this.tempSingleByte = new Uint8Array([0]);
+		this.size = config.viewport.size;
+		this.tempSingleByte = new Uint8Array(1);
+		this.tempVec2 = new Float32Array(2);
+	}
+
+	setAttributeVec2(attribute, index, x, y) {
+		this.tempVec2[0] = x;
+		this.tempVec2[1] = y;
+		this.setAttribute(attribute, index, this.tempVec2);
 	}
 
 	setAttributeByte(attribute, index, byte) {
 		this.tempSingleByte[0] = byte;
 		this.setAttribute(attribute, index, this.tempSingleByte);
-	}
-
-	setAttributeSprite(attribute, index, x, y, width, height) {
-		const typeArray = Utils.makeSpriteCoordinatesAtCenter(this.config, x, y, width, height, this.tempVertices);
-		this.setAttribute(attribute, index, typeArray);
 	}
 
 	setAttribute(attribute, index, typeArray) {
@@ -31,7 +34,6 @@ class BufferRenderer {
 		if (this.lastBoundBuffer !== attribute.buffer) {
 			gl.bindBuffer(gl.ARRAY_BUFFER, attribute.buffer);
 			this.lastBoundBuffer = attribute.buffer;
-//			console.log(`Bound ${attribute.name}`, attribute);
 		}
 		gl.bufferSubData(gl.ARRAY_BUFFER, index * attribute.bytesPerInstance, typeArray);
 	}

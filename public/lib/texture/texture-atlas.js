@@ -10,21 +10,21 @@ class TextureAtlas {
 		this.textureSize = textureSize;
 		this.canvas = document.createElement("canvas");
 		this.imageLoader = imageLoader;
+		this.startTime = 0;
+		this.spriteWidth = 0;
+		this.spriteHeight = 0;
 
-		this.info = {
-			image: null,
-			animationData: null,
-		};
-
-		this.tempUnit16Array = new Uint16Array([
+		this.tempMatrix = new Uint16Array([
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 			0, 0, 0, 0,
-		]);		
+		]);
+		this.tempVec4 = new Float32Array(4);
+		this.tempObj = {};
 	}
 
-	async setImage(url, animationData) {
+	async setImage(url, time, animationData) {
 		const image = await this.imageLoader.loadImage(url);
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
@@ -46,12 +46,24 @@ class TextureAtlas {
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 		gl.generateMipmap(gl.TEXTURE_2D);
-		this.info.image = image;
-		this.info.animationData = animationData;
+		this.onUpdateImage(image, time, animationData || this.tempObj);
 		return this;
 	}
 
-	getTextureCoordinates(x, y, width, height, index, direction) {
+	onUpdateImage(image, time, animationData) {
+		this.startTime = time;
+		this.spriteSheetWidth = this.width || (image ? image.naturalWidth : 0);
+		this.spriteSheetHeight = this.width || (image ? image.naturalHeight : 0);
+		const { cols, rows, frameRate, totalFrames } = animationData;
+		this.frameRate = frameRate || 0;
+		this.cols = cols || 1;
+		this.rows = rows || 1;
+		this.totalFrames = totalFrames || (this.cols * this.rows);
+		this.spriteWidth = this.spriteSheetWidth / this.cols;
+		this.spriteHeight = this.spriteSheetHeight / this.rows;
+	}
+
+	getTextureCoordinatesFromRect(x, y, width, height, index, direction, opacity) {
 		let x0 = x;
 		let x1 = x + width;
 		if (direction < 0) {
@@ -59,29 +71,29 @@ class TextureAtlas {
 			x1 = x;
 		}
 
-		let i = 0;
-		this.tempUnit16Array[0] = x0; this.tempUnit16Array[1] = y + height;
-		this.tempUnit16Array[4] = x1; this.tempUnit16Array[5] = y + height;
-		this.tempUnit16Array[8] = x0; this.tempUnit16Array[9] = y;
-		this.tempUnit16Array[12] = x1; this.tempUnit16Array[13] = y;
-		return this.tempUnit16Array;
+		const { tempMatrix } = this;
+		tempMatrix[0]  = x0; tempMatrix[1]  = y + height;
+		tempMatrix[4]  = x1; tempMatrix[5]  = y + height;
+		tempMatrix[8]  = x0; tempMatrix[9]  = y;
+		tempMatrix[12] = x1; tempMatrix[13] = y;
+
+		tempMatrix[2] = tempMatrix[6] = tempMatrix[10] = tempMatrix[14] = opacity * 100;
+		return this.tempMatrix;
 	}
 
-	getTextureCoordinatesAtTime(time, direction) {
-		const { x, y, info: {image, animationData}, index } = this;
-		const width = this.width || (image ? image.naturalWidth : 0);
-		const height = this.height || (image ? image.naturalHeight : 0);
+	getTextureCoordinates(direction, opacity) {
+		const { x, y, index } = this;
+		const { spriteWidth, spriteHeight } = this;
 
-		if (animationData) {
-			const { cols, rows, frameRate, totalFrames } = animationData;
-			const framePeriod = 1000 / (frameRate || 1);
-			const frame = Math.floor(time / framePeriod) % (totalFrames || (cols * rows));
-			const col = frame % (cols || 1);
-			const row = Math.floor(frame / (cols || 1));
-			const spriteWidth = width / (cols || 1);
-			const spriteHeight = height / (rows || 1);
-			return this.getTextureCoordinates(x + col * spriteWidth, y + row * spriteHeight, spriteWidth, spriteHeight, index, direction);
-		}
-		return this.getTextureCoordinates(x, y, width, height, index, direction);
+		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, index, direction, opacity);
+	}
+
+	getAnimationInfo(time) {
+		const { tempVec4 } = this;
+		tempVec4[0] = this.cols;
+		tempVec4[1] = this.totalFrames;
+		tempVec4[2] = this.frameRate;
+		tempVec4[3] = time;
+		return tempVec4;
 	}
 }

@@ -1,0 +1,19 @@
+{
+	"viewport": {
+		"pixelScale": 0.5,
+		"size": [800, 300]
+	},
+	"webgl": {
+		"antialias": true,
+		"preserveDrawingBuffer": false,
+		"alpha": false,
+		"depth": true,
+		"stencil": false,
+		"desynchronized": true,
+		"premultipliedAlpha": true
+	},
+	"newgrounds": {
+		"key": "51478:ez3wibF0",
+		"secret": "FhAW9kH3eELrMz51guQr/w=="
+	}
+}
