@@ -8,6 +8,7 @@ attribute vec2 position;
 attribute float textureIndex;
 attribute mat4 textureCoordinates;
 attribute vec4 animationInfo;
+attribute vec4 spriteSheet;
 
 uniform float time;
 // uniform mat4 perspective;
@@ -26,17 +27,24 @@ vec4 getCornerValue(mat4 value, vec2 position) {
 		position.y * .5 + .5);	
 }
 
-vec2 getTextureShift(vec4 animationInfo, mat4 textureCoordinates) {
+float modPlus(float a, float b) {
+	return mod(a + .4, b);
+}
+
+vec2 getTextureShift(vec4 spriteSheet, vec4 animationInfo, mat4 textureCoordinates) {
 	float animCols = animationInfo[0];
 	float animTotalFrames = animationInfo[1];
 	if (animCols == 0. || animTotalFrames == 0.) {
 		return vec2(0, 0);
 	}
 	float framePerSeconds = animationInfo[2];
-	float animTime = animationInfo[3];
-	float timeElapsed = time - animTime;
-	float frame = floor(mod(timeElapsed * framePerSeconds / 1000., animTotalFrames));
-	vec2 cell = vec2(mod(frame, animCols), floor(frame / animCols));
+	float animShift = animationInfo[3];
+	float globalFrame = floor((time + animShift) * framePerSeconds / 1000.);
+	float frame = modPlus(globalFrame, abs(animTotalFrames));
+	float row = floor(frame / animCols);
+	float col = floor(frame - row * animCols);
+
+	vec2 cell = vec2(col, row);
 	vec2 spriteRect = abs(textureCoordinates[0].xy - textureCoordinates[3].xy);
 	return cell * spriteRect;
 }
@@ -49,8 +57,7 @@ void main() {
 	// v_color = getCornerValue(colors, vertexPosition);
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
 	// vec4 animInfo = vec4(2., 4., 24., 0.);//animationInfo;
-	vec4 animInfo = animationInfo;
-	vec2 textureShift = getTextureShift(animInfo, textureCoordinates);
+	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex;
 	v_opacity = textureInfo.z / 100.;

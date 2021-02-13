@@ -25,6 +25,7 @@ class Sprite {
 
 		this.updated = {
 			sprite: 0,
+			spriteSheet: 0,
 			animation: 0,
 		};
 	}

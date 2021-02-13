@@ -27,9 +27,9 @@
 			    margin: 0;
 			    height: 100%;
 				background:
-				  linear-gradient(27deg, rgba(0,155,0,.8), rgba(0,155,0,0) 70.71%),
-				  linear-gradient(117deg, rgba(55,55,0,.8), rgba(55,55,0) 70.71%),
-				  linear-gradient(236deg, rgba(0,55,55,.8), rgba(0,55,55,0) 70.71%);
+				  linear-gradient(27deg, rgba(255,100,100,.8), rgba(255,100,100,0) 70.71%),
+				  linear-gradient(117deg, rgba(255,155,100,.8), rgba(255,155,100) 70.71%),
+				  linear-gradient(236deg, rgba(255,100,155,.8), rgba(255,100,155,0) 70.71%);
 
 			    color: #aaaaaa;
 			    touch-action: none;
@@ -124,46 +124,9 @@
 	</head>
 	<body>
 		<div id="overlay"></div>
-		<audio id="audio" src="audio/eva.mp3" style="position: absolute; display: none" controls loop></audio>
-		<audio id="audio-god" src="audio/om.mp3" style="position: absolute; display: none" controls></audio>
+		<audio id="audio" src="audio/cheoni-slow.mp3" style="position: absolute; display: none" controls loop></audio>
 		<div class="container">
-			<div style="position: absolute; top: 50px; width: 800px; height: 150px">
-				<div id="message-box" style="font-size: 26pt; font-family: Trebuchet MS, Helvetica, Sans-Serif; color: yellow"></div>
-			</div>
-			<div style="position: absolute; top: 290px; left: 440px">
-				<img id="eva" src="assets/eva.gif" style="display:none">
-			</div>
-			<div style="position: absolute; top: 290px; left: 110px;">
-				<img id="annie" src="assets/annie.png" style="display: none">
-			</div>
-			<div style="position: absolute; top: 290px; left: 110px;">
-				<img id="sexy" src="assets/sexy.png" style="display: none">
-			</div>
-			<div style="position: absolute; top: 290px; left: 780px;">
-				<img id="elon" src="assets/elon.png" style="display: none">
-			</div>
-			<div style="position: absolute; top: 290px; left: 110px;">
-				<img id="police" src="assets/police.gif" style="display: none">
-			</div>
-			<div style="position: absolute; top: 290px; left: 750px;">
-				<img id="drug" src="assets/drug.gif" style="display: none">
-			</div>
-
-			<canvas id="canvas" style="position: absolute; top: 153px; left: 100px" width=64 height=64></canvas>
-
-			<div id="controls" style="position: absolute; top: 460px">
-				⬅️➡️: move. ESC: Restart game. M: 🔇
-			</div>
-			<script>
-				if (localStorage.getItem("with-eva")) {
-					localStorage.removeItem("lost-eva");
-					document.getElementById("controls").style.display = "none";
-				}
-				if (!localStorage.getItem("lost-eva")) {
-					document.getElementById("eva").style.display = "";
-				}
-			</script>
-
+			<canvas id="canvas" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
 		</div>
 		<script type="text/javascript" src="gen/data.js" defer></script>
 		<script type="text/javascript" src="lib/math/gl-matrix.js" defer></script>

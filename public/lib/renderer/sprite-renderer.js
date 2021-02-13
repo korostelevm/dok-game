@@ -32,6 +32,7 @@ class SpriteRenderer {
 		const { attributes } = this;
 		this.bufferRenderer.setAttributeByte(attributes.textureIndex, index, anim.index);
 		this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, opacity));
-		this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo(time));		
+		this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo(time));
+		this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
 	}
 }

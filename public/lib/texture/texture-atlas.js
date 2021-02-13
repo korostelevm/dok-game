@@ -20,7 +20,8 @@ class TextureAtlas {
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 		]);
-		this.tempVec4 = new Float32Array(4);
+		this.shortVec4 = new Uint16Array(4);
+		this.floatVec4 = new Float32Array(4);
 		this.tempObj = {};
 	}
 
@@ -29,9 +30,27 @@ class TextureAtlas {
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
 		canvas.height = this.height || image.naturalHeight;
+
 		const context = canvas.getContext("2d");
 		context.imageSmoothingEnabled = false;
 		context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
+
+
+		// const cols = animationData.cols || 1;
+		// const rows = animationData.rows || 1;
+		// const totalFrames = animationData.totalFrames || cols * rows;
+		// context.font = "10px Arial";
+		// for (let i = 0; i < totalFrames; i++) {
+		// 	context.fillText("" + i,
+		// 		(i % cols) * canvas.width / cols + 10,
+		// 		Math.floor(i / cols) * canvas.height / rows + 20);
+		// }
+		// console.log(cols, rows, totalFrames);
+		// canvas.style.position = "absolute";
+		// canvas.style.left = "0px"
+		// canvas.style.top = "0px"
+//		document.body.appendChild(canvas);
+
 
 		const glTexture = glTextures[index];
 		gl.activeTexture(gl[`TEXTURE${index}`]);
@@ -88,12 +107,20 @@ class TextureAtlas {
 		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, index, direction, opacity);
 	}
 
+	getSpritesheetInfo() {
+		const { shortVec4 } = this;
+		shortVec4[0] = this.cols;
+		shortVec4[1] = this.rows;
+		shortVec4[2] = this.totalFrames;
+		return shortVec4;
+	}
+
 	getAnimationInfo(time) {
-		const { tempVec4 } = this;
-		tempVec4[0] = this.cols;
-		tempVec4[1] = this.totalFrames;
-		tempVec4[2] = this.frameRate;
-		tempVec4[3] = time;
-		return tempVec4;
+		const { floatVec4 } = this;
+		floatVec4[0] = this.cols;
+		floatVec4[1] = this.totalFrames;
+		floatVec4[2] = this.frameRate;
+		floatVec4[3] = -time;
+		return floatVec4;
 	}
 }

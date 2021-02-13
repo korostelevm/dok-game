@@ -2,6 +2,10 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("Content loaded.");
     const { config } = globalData;
     const { key, secret } = config.newgrounds;
+    if (!key || !secret) {
+        console.warn("No newgrounds key or secret configured.");
+        return;
+    }
     const ngio = new Newgrounds.io.core(key, secret);
 
 

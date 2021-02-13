@@ -1,7 +1,7 @@
 {
 	"viewport": {
-		"pixelScale": 0.5,
-		"size": [800, 300]
+		"pixelScale": 2,
+		"size": [800, 400]
 	},
 	"webgl": {
 		"antialias": true,
@@ -13,7 +13,7 @@
 		"premultipliedAlpha": true
 	},
 	"newgrounds": {
-		"key": "51478:ez3wibF0",
-		"secret": "FhAW9kH3eELrMz51guQr/w=="
+		"key": "",
+		"secret": ""
 	}
 }

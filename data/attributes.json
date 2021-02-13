@@ -19,6 +19,11 @@
 		"usage": "DYNAMIC_DRAW",
 		"instances": 1
 	},
+	"spriteSheet": {
+		"type": "UNSIGNED_SHORT",
+		"usage": "DYNAMIC_DRAW",
+		"instances": 1
+	},
 	"animationInfo": {
 		"type": "FLOAT",
 		"usage": "DYNAMIC_DRAW",
