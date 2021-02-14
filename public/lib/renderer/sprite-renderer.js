@@ -1,3 +1,5 @@
+const ANIM_INDEX = 0;
+
 class SpriteRenderer {
 	constructor(bufferRenderer, shader, size) {
 		this.attributes = shader.attributes;
@@ -9,6 +11,7 @@ class SpriteRenderer {
 		this.tempTranslation = vec3.create();
 		this.tempScale = vec3.create();
 		this.tempOrigin = vec3.create();
+		this.updateTimes = new Float32Array([0, 0, 0, 0]);
 	}
 
 	makeMatrix(x, y, width, height, hotX, hotY, degreeRotation) {
@@ -28,11 +31,19 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
-	setAnimation(index, anim, direction, opacity, time) {
+	setAnimation(index, anim, direction, opacity) {
 		const { attributes } = this;
-		this.bufferRenderer.setAttributeByte(attributes.textureIndex, index, anim.index);
-		this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, opacity));
-		this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo(time));
-		this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
+		if (anim) {
+			this.bufferRenderer.setAttributeByte(attributes.textureIndex, index, anim.index);
+			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, opacity));
+			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
+			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
+		}
+	}
+
+	setUpdateTime(index, {animation}) {
+		const { attributes } = this;
+		this.updateTimes[ANIM_INDEX] = animation;
+		this.bufferRenderer.setAttribute(attributes.updateTime, index, this.updateTimes);
 	}
 }

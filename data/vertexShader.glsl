@@ -1,14 +1,18 @@
 precision mediump float;
 
+const int FRAME_RATE_INDEX = 0;
+const int ANIMATION_UPDATE_INDEX = 0;
+
 attribute vec2 vertexPosition;
 // attribute mat4 colors;
 attribute mat4 matrix;
 // attribute float isPerspective;
-attribute vec2 position;
+// attribute vec2 position;
 attribute float textureIndex;
 attribute mat4 textureCoordinates;
 attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
+attribute vec4 updateTime;
 
 uniform float time;
 // uniform mat4 perspective;
@@ -32,14 +36,14 @@ float modPlus(float a, float b) {
 }
 
 vec2 getTextureShift(vec4 spriteSheet, vec4 animationInfo, mat4 textureCoordinates) {
-	float animCols = animationInfo[0];
-	float animTotalFrames = animationInfo[1];
+	float animCols = spriteSheet[0];
+	float animTotalFrames = spriteSheet[2];
 	if (animCols == 0. || animTotalFrames == 0.) {
 		return vec2(0, 0);
 	}
-	float framePerSeconds = animationInfo[2];
-	float animShift = animationInfo[3];
-	float globalFrame = floor((time + animShift) * framePerSeconds / 1000.);
+	float animTime = updateTime[ANIMATION_UPDATE_INDEX];
+	float framePerSeconds = animationInfo[FRAME_RATE_INDEX];
+	float globalFrame = floor((time - animTime) * framePerSeconds / 1000.);
 	float frame = modPlus(globalFrame, abs(animTotalFrames));
 	float row = floor(frame / animCols);
 	float col = floor(frame - row * animCols);
@@ -60,7 +64,7 @@ void main() {
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex;
-	v_opacity = textureInfo.z / 100.;
+	v_opacity = textureInfo.z / 1000.;
 
 	gl_Position = ortho * view * matrix * vec4(vertexPosition.xy, 0, 1.);
 }

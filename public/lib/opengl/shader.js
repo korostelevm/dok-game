@@ -201,8 +201,8 @@ class Shader {
 	getShaderVariables(...shaders) {
 		const variables = [];
 		shaders.forEach(shader => {
-			const groups = shader.match(/(attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/g)
-				.map(line => line.match(/(attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/));
+			const groups = shader.match(/\n(attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/g)
+				.map(line => line.match(/\n(attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/));
 			variables.push(... groups.map(([line, attributeType, dataType, name]) => {
 				return { line, attributeType, dataType, name };
 			}));

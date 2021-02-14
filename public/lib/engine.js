@@ -48,24 +48,15 @@ class Engine {
 		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.imageLoader);
 
 		/* Load image */
-		const cheoniAtlas = await this.textureManager.createAtlas(0)
-			.setImage("assets/cheoni.png", this.time, {cols:7,rows:4,frameRate:8});
+		const cheoniAtlas = await this.textureManager.createAtlas(0).setImage("assets/cheoni.png", {cols:7,rows:4,totalFrames:28,frameRate:8});
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection();
 		const [viewportWidth, viewportHeight] = this.config.viewport.size;
 		this.cheoni = this.spriteCollection.create({
 			size: [64, 128],
-			// hotspot: [32, 128],
 			anim: cheoniAtlas,
 		});
-
-		// this.spriteCollection.create({
-		// 	size: [viewportWidth, viewportHeight],
-		// 	anim: cheoniAtlas,
-		// });
-
-
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, this.config);
@@ -78,13 +69,13 @@ class Engine {
 //		this.state = this.resetState();
 
 		const keyboardHandler = new KeyboardHandler(document); 
+		this.keyboardHandler = keyboardHandler;
 		keyboardHandler.addKeyUpListener("Escape", e => {
 			// const { state } = this;
 			// state.sceneChangeStarting = state.time;
 			// state.nextScene = "reset";
 			// console.log(state.scene, "=>", state.nextScene);
 		});
-		this.keyboardHandler = keyboardHandler;
 
 		/* Addd audio listener */
 		keyboardHandler.addKeyUpListener("m", e => {
@@ -105,6 +96,12 @@ class Engine {
 			// audio.volume = 0;
 			// audio.play();
 			// keyboardHandler.removeListener(f);
+		});
+
+		keyboardHandler.addKeyDownListener(" ", e => {
+			console.log("SPACE ", this.time);
+//			this.cheoni.resetAnimation(this.time);
+//			this.cheoni.changeOpacity(1 - this.cheoni.opacity, this.lastTime);
 		});
 
 		// this.sceneMap = {
@@ -178,11 +175,14 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 	}
 
-	applyKeyboard(state, keyboardHandler) {
+	applyKeyboard(cheoni, keyboardHandler) {
+		const { keys } = keyboardHandler;
 		// if (!state.sceneChangeStarting && !state.foundEva) {
-		// 	const dx = (keyboardHandler.keys["ArrowLeft"] || keyboardHandler.keys["a"] ? -1 : 0)
-		// 		+ (keyboardHandler.keys["ArrowRight"] || keyboardHandler.keys["d"] ? 1 : 0);
+		const dx = (keys["ArrowLeft"] || keys["a"] ? -1 : 0) + (keys["ArrowRight"] || keys["d"] ? 1 : 0);
 
+		if (dx !== 0) {
+			cheoni.changeDirection(dx, this.lastTime);
+		}
 		// 	state.movement = dx !== 0 ? "running" : null;
 		// 	if (dx !== 0) {
 		// 		state.direction = dx;
@@ -498,8 +498,8 @@ class Engine {
 	refresh(time) {
 		const dt = time - this.lastTime;
 		this.time = time;
-		this.lastTime = time;
 		if (!this.focusFixer.focused) {
+			this.lastTime = time;
 			return;
 		}
 
@@ -512,7 +512,7 @@ class Engine {
 
 		const { state } = this;
 		// this.applySceneChange(state, time);
-		this.applyKeyboard(state, this.keyboardHandler);
+		this.applyKeyboard(this.cheoni, this.keyboardHandler);
 		this.applyMovement(state, dt, time, viewportWidth);
 
 		//	sprite
@@ -539,21 +539,24 @@ class Engine {
 
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
-			if (sprite.updated.sprite === time || sprite.updated.sprite < 0) {
-				const {x, y, rotation} = sprite;
-				const [width,height] = sprite.size;
-				const [hotX,hotY] = sprite.hotspot;
+			if (sprite.updated.sprite >= this.lastTime) {
+				const {x, y, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
 				this.spriteRenderer.setAttributeSprite(i, x, y, width, height, hotX, hotY, rotation);
-				console.log(">>>", sprite);
 			}
-			if (sprite.updated.animation === time || sprite.updated.animation < 0) {
+			if (sprite.updated.animation >= this.lastTime
+				|| sprite.updated.direction >= this.lastTime
+				|| sprite.updated.opacity >= this.lastTime) {
 				const {anim, direction, opacity} = sprite;
-				this.spriteRenderer.setAnimation(i, anim, direction, opacity, sprite.updated.animation);
+				this.spriteRenderer.setAnimation(i, anim, direction, opacity);
+			}
+			if (sprite.updated.updateTime >= this.lastTime) {
+				this.spriteRenderer.setUpdateTime(i, sprite.updated);
 			}
 		}
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
+		this.lastTime = time;
 	}
 }
 

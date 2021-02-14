@@ -17,16 +17,42 @@ class Sprite {
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 
 		this.direction = data.direction || 1;
-		this.anim = data.anim || {
-			cols: 1,
-			rows: 1,
-			frameRate: 60,
-		};
+		this.anim = data.anim;
 
 		this.updated = {
 			sprite: 0,
 			spriteSheet: 0,
 			animation: 0,
+			updateTime: 0,
+			direction: 0,
+			opacity: 0,
 		};
+	}
+
+	changeOpacity(opacity, time) {
+		if (this.opacity !== opacity) {
+			this.opacity = opacity;
+			this.updated.opacity = time;
+		}
+	}
+
+	changeDirection(direction, time) {
+		if (this.direction !== direction) {
+			this.direction = direction;
+			this.updated.direction = time;
+		}
+	}
+
+	changeAnimation(anim, time) {
+		if (this.anim !== anim) {
+			this.anim = anim;
+			this.updated.animation = time;
+			this.updated.updateTime = time;
+		}
+	}
+
+	resetAnimation(time) {
+		this.updated.animation = time;
+		this.updated.updateTime = time;
 	}
 }

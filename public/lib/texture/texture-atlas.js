@@ -10,7 +10,6 @@ class TextureAtlas {
 		this.textureSize = textureSize;
 		this.canvas = document.createElement("canvas");
 		this.imageLoader = imageLoader;
-		this.startTime = 0;
 		this.spriteWidth = 0;
 		this.spriteHeight = 0;
 
@@ -25,7 +24,7 @@ class TextureAtlas {
 		this.tempObj = {};
 	}
 
-	async setImage(url, time, animationData) {
+	async setImage(url, animationData) {
 		const image = await this.imageLoader.loadImage(url);
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
@@ -65,12 +64,11 @@ class TextureAtlas {
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 		gl.generateMipmap(gl.TEXTURE_2D);
-		this.onUpdateImage(image, time, animationData || this.tempObj);
+		this.onUpdateImage(image, animationData || this.tempObj);
 		return this;
 	}
 
-	onUpdateImage(image, time, animationData) {
-		this.startTime = time;
+	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = this.width || (image ? image.naturalWidth : 0);
 		this.spriteSheetHeight = this.width || (image ? image.naturalHeight : 0);
 		const { cols, rows, frameRate, totalFrames } = animationData;
@@ -96,14 +94,12 @@ class TextureAtlas {
 		tempMatrix[8]  = x0; tempMatrix[9]  = y;
 		tempMatrix[12] = x1; tempMatrix[13] = y;
 
-		tempMatrix[2] = tempMatrix[6] = tempMatrix[10] = tempMatrix[14] = opacity * 100;
+		tempMatrix[2] = tempMatrix[6] = tempMatrix[10] = tempMatrix[14] = opacity * 1000;
 		return this.tempMatrix;
 	}
 
 	getTextureCoordinates(direction, opacity) {
-		const { x, y, index } = this;
-		const { spriteWidth, spriteHeight } = this;
-
+		const { x, y, index, spriteWidth, spriteHeight } = this;
 		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, index, direction, opacity);
 	}
 
@@ -112,15 +108,16 @@ class TextureAtlas {
 		shortVec4[0] = this.cols;
 		shortVec4[1] = this.rows;
 		shortVec4[2] = this.totalFrames;
+		shortVec4[3] = 0;
 		return shortVec4;
 	}
 
-	getAnimationInfo(time) {
+	getAnimationInfo() {
 		const { floatVec4 } = this;
-		floatVec4[0] = this.cols;
-		floatVec4[1] = this.totalFrames;
-		floatVec4[2] = this.frameRate;
-		floatVec4[3] = -time;
+		floatVec4[0] = this.frameRate;
+		floatVec4[1] = 0;
+		floatVec4[2] = 0;
+		floatVec4[3] = 0;
 		return floatVec4;
 	}
 }
