@@ -211,7 +211,7 @@ class Engine {
 
 	shouldMove(state, viewportWidth) {
 		const dist = Math.abs(state.x - viewportWidth / 2);
-		return state.movement || dist <= 30 || (dist >= 40 && dist < 100);
+		return state.movement || dist <= 30 || (dist >= 50 && dist < 120);
 	}
 
 	applyMovement(state, dt, time, viewportWidth) {
@@ -234,7 +234,7 @@ class Engine {
 				}
 			} else if(!this.timeout) {
 				const dist = Math.abs(dirDist);
-				if (dist > 30 && dist < 50 && !this.timeout) {
+				if (dist > 20 && dist < 60 && !this.timeout) {
 					console.log(dist);
 					this.timeout = setTimeout(() => {
 						if (dirDist * state.direction < 0) {
@@ -418,6 +418,7 @@ class Engine {
 		localStorage.removeItem("lost-eva");
 		localStorage.setItem("with-eva", true);
 		state.win = true;
+		getMedal("Saw Eva");
 	}
 
 	winEva(state) {
