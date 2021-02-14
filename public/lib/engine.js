@@ -48,14 +48,97 @@ class Engine {
 		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.imageLoader);
 
 		/* Load image */
-		const cheoniAtlas = await this.textureManager.createAtlas(0).setImage("assets/cheoni.png", {cols:7,rows:4,totalFrames:28,frameRate:8});
+		this.atlas = {
+			gamemap: await this.textureManager.createAtlas(2).setImage(
+				"assets/game-map.png"
+				),
+			background: await this.textureManager.createAtlas(1).setImage(
+				"assets/grass.png"
+				),
+			still: await this.textureManager.createAtlas(0).setImage(
+				"assets/cheoni.png",
+				{
+					cols:7,rows:4,
+					totalFrames:28,
+					frameRate:1,
+					range:[0, 1],
+				}),
+			walk: await this.textureManager.createAtlas(0).setImage(
+				"assets/cheoni.png",
+				{
+					cols:7,rows:4,
+					totalFrames:28,
+					frameRate:15,
+					firstFrame: 3,
+					range:[1, 6],
+				}),
+			down: await this.textureManager.createAtlas(0).setImage(
+				"assets/cheoni.png",
+				{
+					cols:7,rows:4,
+					totalFrames:28,
+					range:[10],
+				}),
+			jump: await this.textureManager.createAtlas(0).setImage(
+				"assets/cheoni.png",
+				{
+					cols:7,rows:4,
+					totalFrames:28,
+					frameRate:15,
+					range:[12,24],
+				}),
+		};
+
+		this.frameInfo = {
+			airborn: {
+				3:true,
+				6:true,
+				14:true,
+				15:true,
+				16:true,
+				17:true,
+				18:true,
+				19:true,
+				20:true,
+				21:true,
+			},
+			jumping: {
+				13:true,
+				14:true,
+				15:true,
+				16:true,
+				17:true,
+				18:true,
+				19:true,
+				20:true,
+				21:true,
+				22:true,
+				23:true,
+				24:true,
+			},
+		};
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection();
 		const [viewportWidth, viewportHeight] = this.config.viewport.size;
+
+		this.background = this.spriteCollection.create({
+			anim: this.atlas.background,
+			size: [800, 400],
+		});
+
 		this.cheoni = this.spriteCollection.create({
-			size: [64, 128],
-			anim: cheoniAtlas,
+			x: 50, y: 282,
+			size: [128, 256],
+			hotspot: [64,256],
+			anim: this.atlas.walk,
+		});
+		this.cheoni.dx = 0;
+
+		this.gamemap = this.spriteCollection.create({
+			anim: this.atlas.gamemap,
+			size: [800, 400],
+			opacity: .2,
 		});
 
 		/* Buffer renderer */
@@ -63,10 +146,8 @@ class Engine {
 		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shader, this.config.viewport.size);
 
 		/* Setup constants */
-		this.numInstances = 2;	//	Note: This shouldn't be constants. This is the number of instances.
+		this.numInstances = 3;	//	Note: This shouldn't be constants. This is the number of instances.
 		this.numVerticesPerInstance = 6;
-
-//		this.state = this.resetState();
 
 		const keyboardHandler = new KeyboardHandler(document); 
 		this.keyboardHandler = keyboardHandler;
@@ -92,17 +173,18 @@ class Engine {
 		//	Allow audio
 		let f;
 		keyboardHandler.addKeyDownListener(null, f = e => {
-			// const audio = document.getElementById("audio");
-			// audio.volume = 0;
-			// audio.play();
-			// keyboardHandler.removeListener(f);
+			//console.log(e.key);
+			const audio = document.getElementById("audio");
+			audio.volume = 0.5;
+			audio.play();
+			keyboardHandler.removeListener(f);
 		});
 
-		keyboardHandler.addKeyDownListener(" ", e => {
-			console.log("SPACE ", this.time);
-//			this.cheoni.resetAnimation(this.time);
-//			this.cheoni.changeOpacity(1 - this.cheoni.opacity, this.lastTime);
-		});
+// 		keyboardHandler.addKeyDownListener(" ", e => {
+// 			console.log("SPACE ", this.time);
+// 			// this.cheoni.resetAnimation(this.time);
+// //			this.cheoni.changeOpacity(1 - this.cheoni.opacity, this.lastTime);
+// 		});
 
 		// this.sceneMap = {
 		// 	"base-+": "base",
@@ -175,14 +257,27 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 	}
 
-	applyKeyboard(cheoni, keyboardHandler) {
+	applyKeyboard(cheoni, keyboardHandler, time) {
 		const { keys } = keyboardHandler;
 		// if (!state.sceneChangeStarting && !state.foundEva) {
-		const dx = (keys["ArrowLeft"] || keys["a"] ? -1 : 0) + (keys["ArrowRight"] || keys["d"] ? 1 : 0);
+		const frame = cheoni.getAnimationFrame(time);
+		const jumping = keys[" "] || keys["Shift"] || this.frameInfo.jumping[frame];
+		const crouching = keys["ArrowDown"] || keys["s"];
+		cheoni.dx = (keys["ArrowLeft"] || keys["a"] ? -1 : 0) + (keys["ArrowRight"] || keys["d"] ? 1 : 0);
 
-		if (dx !== 0) {
-			cheoni.changeDirection(dx, this.lastTime);
+		const anim = jumping ? this.atlas.jump : crouching ? this.atlas.down : cheoni.dx !== 0 ? this.atlas.walk : this.atlas.still;
+		if (cheoni.changeAnimation(anim, time)) {
+			// const frameOffset = anim.firstFrame - anim.startFrame;
+			// const frameDuration = 1000 / anim.frameRate;
+			// console.log(time,- frameDuration * frameOffset, frameOffset);
+			// cheoni.resetAnimation(time - frameDuration * frameOffset, time);
+			cheoni.resetAnimation(time);
 		}
+
+		if (cheoni.dx !== 0) {
+			cheoni.changeDirection(cheoni.dx, time);
+		}
+
 		// 	state.movement = dx !== 0 ? "running" : null;
 		// 	if (dx !== 0) {
 		// 		state.direction = dx;
@@ -211,12 +306,20 @@ class Engine {
 	// 	return state.movement || dist <= 30 || (dist >= 40 && dist < 100);
 	// }
 
-	applyMovement(state, dt, time, viewportWidth) {
+	applyMovement(cheoni, dt, time) {
 		// if (!state.sceneChangeStarting) {
 		// 	const dirDist = state.x - viewportWidth / 2;
 		// 	if (this.shouldMove(state, viewportWidth)) {
-		// 		dt = Math.min(dt, 20);
-		// 		state.x += dt * state.direction / 2;
+		const mul = 2;
+		const frame = cheoni.getAnimationFrame(time);
+		const airborn = this.frameInfo.airborn[frame];
+		dt = Math.min(dt, 20);
+		if (cheoni.anim === this.atlas.walk) {
+			cheoni.changePosition(cheoni.x + dt * cheoni.dx / 6 * mul, cheoni.y, time);
+		}
+		else if (airborn) {
+			cheoni.changePosition(cheoni.x + dt * cheoni.dx / 4 * mul, cheoni.y, time);
+		}
 		// 		if (state.x < 0) {
 		// 			this.changeScene(time, state, this.getNextScene(state.scene, state.x, state));
 		// 		} else if (state.x > viewportWidth) {
@@ -512,8 +615,8 @@ class Engine {
 
 		const { state } = this;
 		// this.applySceneChange(state, time);
-		this.applyKeyboard(this.cheoni, this.keyboardHandler);
-		this.applyMovement(state, dt, time, viewportWidth);
+		this.applyKeyboard(this.cheoni, this.keyboardHandler, time);
+		this.applyMovement(this.cheoni, dt, time);
 
 		//	sprite
 		//	- x, y, width, height
@@ -546,13 +649,15 @@ class Engine {
 			if (sprite.updated.animation >= this.lastTime
 				|| sprite.updated.direction >= this.lastTime
 				|| sprite.updated.opacity >= this.lastTime) {
-				const {anim, direction, opacity} = sprite;
-				this.spriteRenderer.setAnimation(i, anim, direction, opacity);
+				const {direction, opacity} = sprite;
+				this.spriteRenderer.setAnimation(i, sprite.anim, direction, opacity);
 			}
 			if (sprite.updated.updateTime >= this.lastTime) {
-				this.spriteRenderer.setUpdateTime(i, sprite.updated);
+				this.spriteRenderer.setUpdateTime(i, sprite);
 			}
 		}
+
+		document.getElementById("info-box").innerText = this.cheoni.getAnimationFrame(time);
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);

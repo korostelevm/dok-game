@@ -12,6 +12,8 @@ class TextureAtlas {
 		this.imageLoader = imageLoader;
 		this.spriteWidth = 0;
 		this.spriteHeight = 0;
+		this.startIndex = 0;
+		this.endIndex = 0;
 
 		this.tempMatrix = new Uint16Array([
 			0, 0, 0, 0,
@@ -21,7 +23,6 @@ class TextureAtlas {
 		]);
 		this.shortVec4 = new Uint16Array(4);
 		this.floatVec4 = new Float32Array(4);
-		this.tempObj = {};
 	}
 
 	async setImage(url, animationData) {
@@ -64,20 +65,23 @@ class TextureAtlas {
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 		gl.generateMipmap(gl.TEXTURE_2D);
-		this.onUpdateImage(image, animationData || this.tempObj);
+		this.onUpdateImage(image, animationData || {});
 		return this;
 	}
 
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = this.width || (image ? image.naturalWidth : 0);
 		this.spriteSheetHeight = this.width || (image ? image.naturalHeight : 0);
-		const { cols, rows, frameRate, totalFrames } = animationData;
-		this.frameRate = frameRate || 0;
+		const { cols, rows, frameRate, totalFrames, range, firstFrame } = animationData;
+		this.frameRate = frameRate || 1;
 		this.cols = cols || 1;
 		this.rows = rows || 1;
 		this.totalFrames = totalFrames || (this.cols * this.rows);
 		this.spriteWidth = this.spriteSheetWidth / this.cols;
 		this.spriteHeight = this.spriteSheetHeight / this.rows;
+		this.startFrame = (range ? range[0] : 0) || 0;
+		this.endFrame = (range ? range[1] : 0) || this.startFrame;
+		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 	}
 
 	getTextureCoordinatesFromRect(x, y, width, height, index, direction, opacity) {
@@ -114,9 +118,9 @@ class TextureAtlas {
 
 	getAnimationInfo() {
 		const { floatVec4 } = this;
-		floatVec4[0] = this.frameRate;
-		floatVec4[1] = 0;
-		floatVec4[2] = 0;
+		floatVec4[0] = this.startFrame;
+		floatVec4[1] = this.endFrame;
+		floatVec4[2] = this.frameRate;
 		floatVec4[3] = 0;
 		return floatVec4;
 	}

@@ -41,9 +41,10 @@ class SpriteRenderer {
 		}
 	}
 
-	setUpdateTime(index, {animation}) {
+	setUpdateTime(index, sprite) {
 		const { attributes } = this;
-		this.updateTimes[ANIM_INDEX] = animation;
+		this.updateTimes[ANIM_INDEX] = sprite.getAnimationTime();
+
 		this.bufferRenderer.setAttribute(attributes.updateTime, index, this.updateTimes);
 	}
 }

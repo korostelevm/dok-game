@@ -15,10 +15,12 @@ class KeyboardHandler {
 		const listeners = {};
 		const keys = {};
 		document.addEventListener("keydown", e => {
-			keys[e.key] = true;
-			const listener = listeners[e.key] || listeners[null];
-			if (listener && listener["down"]) {
-				listener["down"](e);
+			if (!keys[e.key]) {
+				keys[e.key] = true;
+				const listener = listeners[e.key] || listeners[null];
+				if (listener && listener["down"]) {
+					listener["down"](e);
+				}
 			}
 		});
 		document.addEventListener("keyup", e => {

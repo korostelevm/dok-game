@@ -1,6 +1,8 @@
 precision mediump float;
 
-const int FRAME_RATE_INDEX = 0;
+const int START_FRAME_INDEX = 0;
+const int END_FRAME_INDEX = 1;
+const int FRAME_RATE_INDEX = 2;
 const int ANIMATION_UPDATE_INDEX = 0;
 
 attribute vec2 vertexPosition;
@@ -35,16 +37,19 @@ float modPlus(float a, float b) {
 	return mod(a + .4, b);
 }
 
-vec2 getTextureShift(vec4 spriteSheet, vec4 animationInfo, mat4 textureCoordinates) {
+vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 	float animCols = spriteSheet[0];
 	float animTotalFrames = spriteSheet[2];
 	if (animCols == 0. || animTotalFrames == 0.) {
 		return vec2(0, 0);
 	}
 	float animTime = updateTime[ANIMATION_UPDATE_INDEX];
-	float framePerSeconds = animationInfo[FRAME_RATE_INDEX];
+	vec2 frameRange = vec2(animInfo[START_FRAME_INDEX], animInfo[END_FRAME_INDEX]);
+	float frameCount = max(0., frameRange[1] - frameRange[0]) + 1.;
+
+	float framePerSeconds = animInfo[FRAME_RATE_INDEX];
 	float globalFrame = floor((time - animTime) * framePerSeconds / 1000.);
-	float frame = modPlus(globalFrame, abs(animTotalFrames));
+	float frame = frameRange[0] + modPlus(globalFrame, frameCount);
 	float row = floor(frame / animCols);
 	float col = floor(frame - row * animCols);
 

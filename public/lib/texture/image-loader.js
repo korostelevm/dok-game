@@ -7,13 +7,13 @@ class ImageLoader {
 	async loadImage(url) {
 		return new Promise((resolve, reject) => {
 			if (this.imageStock[url]) {
-				const { loaded, img } = this.imageStock[url];
-				if (!loaded) {
+				const { img } = this.imageStock[url];
+				if (!img.complete) {
 					img.addEventListener("load", () => {
 						resolve(img);
 					});
 				} else {
-					return img;
+					resolve(img);
 				}
 			} else {
 			    const req = new XMLHttpRequest();
