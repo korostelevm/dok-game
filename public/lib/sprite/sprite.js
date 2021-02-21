@@ -18,6 +18,12 @@ class Sprite {
 
 		this.direction = data.direction || 1;
 		this.anim = data.anim;
+		this.collisionBox = {
+			top:0,
+			left:0,
+			bottom:0,
+			right:0,
+		};
 
 		this.updated = {
 			sprite: 0,
@@ -51,6 +57,15 @@ class Sprite {
 		if (this.x !== x || this.y !== y) {
 			this.x = x;
 			this.y = y;
+			this.updated.sprite = time;
+			return true;
+		}
+		return false;
+	}
+
+	changeRotation(rotation, time) {
+		if (this.rotation !== rotation) {
+			this.rotation = rotation;
 			this.updated.sprite = time;
 			return true;
 		}
@@ -92,5 +107,22 @@ class Sprite {
 	resetAnimation(time) {
 		this.updated.animation = time;
 		this.updated.updateTime = time;
+	}
+
+	getCollisionBox(time) {
+		const rect = this.anim.getCollisionBox(this.getAnimationFrame(time));
+		if (!rect) {
+			return null;
+		}
+		const cellLeft = this.direction < 0 ? this.anim.spriteWidth - rect.right : rect.left 
+		const left = (this.x - this.hotspot[0]) / 2 + cellLeft * 2;
+		const top = (this.y - this.hotspot[1]) / 2 + rect.top * 2;
+		const width = (rect.right - rect.left + 1) * 2;
+		const height = (rect.bottom - rect.top + 1) * 2;
+		this.collisionBox.left = left;
+		this.collisionBox.top = top;
+		this.collisionBox.right = left + width - 1;
+		this.collisionBox.bottom = top + height - 1;;
+		return this.collisionBox;
 	}
 }

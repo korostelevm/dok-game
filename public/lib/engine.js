@@ -21,6 +21,13 @@ class Engine {
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
 
+		this.debugCanvas = document.createElement("canvas");
+		this.debugCanvas.style.position = "absolute";
+		this.debugCanvas.zIndex = 1;
+		document.body.appendChild(this.debugCanvas);
+		this.debugCtx = this.debugCanvas.getContext("2d");
+		this.debugCanvas.style.display = "none";
+
 		/* Focus Fixer */
 		this.focusFixer = new FocusFixer(canvas);	
 
@@ -32,9 +39,6 @@ class Engine {
 			throw new Error('need ANGLE_instanced_arrays.');
 		}
 		this.ext = ext;
-
-		/* Init times. */
-		this.time = 0;
 
 		/* Config shader */
 		this.configShader(gl);
@@ -49,72 +53,201 @@ class Engine {
 
 		/* Load image */
 		this.atlas = {
-			gamemap: await this.textureManager.createAtlas(2).setImage(
-				"assets/game-map.png"
-				),
-			background: await this.textureManager.createAtlas(1).setImage(
-				"assets/grass.png"
-				),
+			background: await this.textureManager.createAtlas(1).setImage({
+				url: "assets/grass.png",
+			}),
+			dino: await this.textureManager.createAtlas(5).setImage({
+				url: "assets/dino-stupid.png",
+				cols: 1, rows: 2,
+				frameRate: 2,
+				range: [0, 1],
+			}),
+			sparkle: await this.textureManager.createAtlas(6).setImage({
+				url: "assets/sparkle.png",
+			}),
+			pipe_out: await this.textureManager.createAtlas(7).setImage({
+				url: "assets/pipe.png",
+				cols: 4, rows: 5,
+				frameRate: 10,
+				range: [0, 10]
+			}),
+			pipe: await this.textureManager.createAtlas(7).setImage({
+				url: "assets/pipe.png",
+				collision_url: "assets/pipe-collision.png",
+				cols: 4, rows: 5,
+				frameRate: 10,
+				range: [10]
+			}),
+			pipe_in: await this.textureManager.createAtlas(7).setImage({
+				url: "assets/pipe.png",
+				cols: 4, rows: 5,
+				frameRate: 10,
+				range: [11, 19]
+			}),
+			balloon0: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [0],
+			}),
+			balloon1: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [1],
+			}),
+			balloon2: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [2],
+			}),
+			balloon3: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [3],
+			}),
+			balloon4: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [4],
+			}),
+			balloon5: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [5],
+			}),
+			balloon6: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [6],
+			}),
+			balloon7: await this.textureManager.createAtlas(2).setImage({
+				url: "assets/balloon.png",
+				collision_url: "assets/balloon-collision.png",
+				cols: 3, rows: 3,
+				range: [7],
+			}),
+			candy: await this.textureManager.createAtlas(3).setImage({
+				url: "assets/candy.png",
+				cols:3,rows:3,
+				range:[0],
+			}),
+			chocolate: await this.textureManager.createAtlas(4).setImage({
+				url: "assets/chocolate.png",
+			}),
 			still: await this.textureManager.createAtlas(0).setImage(
-				"assets/cheoni.png",
 				{
-					cols:7,rows:4,
-					totalFrames:28,
-					frameRate:1,
-					range:[0, 1],
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
+					range:[0],
 				}),
 			walk: await this.textureManager.createAtlas(0).setImage(
-				"assets/cheoni.png",
 				{
-					cols:7,rows:4,
-					totalFrames:28,
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
 					frameRate:15,
 					firstFrame: 3,
 					range:[1, 6],
 				}),
 			down: await this.textureManager.createAtlas(0).setImage(
-				"assets/cheoni.png",
 				{
-					cols:7,rows:4,
-					totalFrames:28,
-					range:[10],
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
+					frameRate: 15,
+					range:[8, 11],
+				}),
+			backup: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
+					frameRate: 15,
+					range:[16, 18],
+				}),
+			crawling: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
+					frameRate: 12,
+					range:[11, 14],
+				}),
+			crawled: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
+					range:[11],
 				}),
 			jump: await this.textureManager.createAtlas(0).setImage(
-				"assets/cheoni.png",
 				{
-					cols:7,rows:4,
-					totalFrames:28,
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
 					frameRate:15,
-					range:[12,24],
+					range:[19,32],
+				}),
+			pickup: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/cheoni.png",
+					collision_url: "assets/cheoni-collision.png",
+					cols:8,rows:5,
+					frameRate:5,
+					range:[33, 34],
 				}),
 		};
 
+		this.extra = 0;
+
 		this.frameInfo = {
 			airborn: {
-				3:true,
-				6:true,
-				14:true,
-				15:true,
-				16:true,
-				17:true,
-				18:true,
-				19:true,
 				20:true,
 				21:true,
+				22:true,
+				23:true,
+				24:true,
+				25:true,
+				26:true,
+				27:true,
+				28:true,
+				29:true,
 			},
 			jumping: {
-				13:true,
-				14:true,
-				15:true,
-				16:true,
-				17:true,
-				18:true,
 				19:true,
 				20:true,
 				21:true,
 				22:true,
 				23:true,
 				24:true,
+				25:true,
+				26:true,
+				27:true,
+				28:true,
+				29:true,
+				30:true,
+				31:true,
+			},
+			crawling: {
+				11:true,
+				12:true,
+				13:true,
+				14:true,
+			},
+			backup: {
+				16:true,
+				17:true,
+			},
+			landing: {
+				28:true,
+				29:true,
 			},
 		};
 
@@ -127,6 +260,27 @@ class Engine {
 			size: [800, 400],
 		});
 
+		this.balloons = [
+			this.spriteCollection.create({
+				anim: this.atlas.balloon0,
+				size: [128, 128],
+				hotspot: [64,64],
+				x: 100, y: 50,
+			}),
+			this.spriteCollection.create({
+				anim: this.atlas.balloon1,
+				size: [128, 128],
+				hotspot: [64,64],
+				x: 400, y: 50,
+			}),
+			this.spriteCollection.create({
+				anim: this.atlas.balloon2,
+				size: [128, 128],
+				hotspot: [64,64],
+				x: 700, y: 50,
+			}),
+		];
+
 		this.cheoni = this.spriteCollection.create({
 			x: 50, y: 282,
 			size: [128, 256],
@@ -135,18 +289,42 @@ class Engine {
 		});
 		this.cheoni.dx = 0;
 
-		this.gamemap = this.spriteCollection.create({
-			anim: this.atlas.gamemap,
-			size: [800, 400],
-			opacity: .2,
+		this.flyingCandies = [];
+		this.candies = [];
+		for (let i = 0; i < 50; i++) {
+			this.candies.push(this.spriteCollection.create({
+				anim: this.atlas.candy,
+				size: [64, 64],
+				hotspot: [32,32],
+				x: 100, y: 100,
+				opacity: 0,
+			}));
+		}
+
+		this.pipe = this.spriteCollection.create({
+			anim: this.atlas.pipe_out,
+			size: [128, 128],
+			hotspot: [64,128],
+			x: 100, y: 280,
+			opacity: 0,
 		});
+
+		this.candies.forEach(candy => {
+			candy.rotationSpeed = Math.random() -.5;
+		});
+
+		// this.gamemap = this.spriteCollection.create({
+		// 	anim: this.atlas.gamemap,
+		// 	size: [800, 400],
+		// 	opacity: .2,
+		// });
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, this.config);
 		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shader, this.config.viewport.size);
 
 		/* Setup constants */
-		this.numInstances = 3;	//	Note: This shouldn't be constants. This is the number of instances.
+		this.numInstances = 70;	//	Note: This shouldn't be constants. This is the number of instances.
 		this.numVerticesPerInstance = 6;
 
 		const keyboardHandler = new KeyboardHandler(document); 
@@ -160,14 +338,8 @@ class Engine {
 
 		/* Addd audio listener */
 		keyboardHandler.addKeyUpListener("m", e => {
-			// const audio = document.getElementById("audio");
-			// if (audio.paused) {
-			// 	document.getElementById("controls").innerText = "⬅️➡️: move. ESC: Restart game. M: 🔊";
-			// 	audio.play();
-			// } else {
-			// 	document.getElementById("controls").innerText = "⬅️➡️: move. ESC: Restart game. M: 🔇";
-			// 	audio.pause();					
-			// }
+			const audio = document.getElementById("audio");
+			this.setAudio(audio, audio.paused, .5);
 		});
 
 		//	Allow audio
@@ -175,16 +347,13 @@ class Engine {
 		keyboardHandler.addKeyDownListener(null, f = e => {
 			//console.log(e.key);
 			const audio = document.getElementById("audio");
-			audio.volume = 0.5;
-			audio.play();
+			this.setAudio(audio, audio.paused, .5);
 			keyboardHandler.removeListener(f);
 		});
 
-// 		keyboardHandler.addKeyDownListener(" ", e => {
-// 			console.log("SPACE ", this.time);
-// 			// this.cheoni.resetAnimation(this.time);
-// //			this.cheoni.changeOpacity(1 - this.cheoni.opacity, this.lastTime);
-// 		});
+		keyboardHandler.addKeyDownListener("t", e => {
+			this.test(this.lastTime);
+		});
 
 		// this.sceneMap = {
 		// 	"base-+": "base",
@@ -203,6 +372,10 @@ class Engine {
 
 		console.log(gl);
 
+		this.score = parseInt(localStorage.getItem("score") || 0);
+		this.chocolate = parseInt(localStorage.getItem("chocolate") || 0);
+		this.dinoCount = parseInt(localStorage.getItem("dino") || 0);
+
 		this.resize(canvas, gl, config);
 
 		this.lastTime = 0;
@@ -210,6 +383,16 @@ class Engine {
 		this.initialize(gl, this.shader.uniforms, config);
 
 		Engine.start(this);
+	}
+
+	setAudio(audio, value, volume) {
+		if (value) {
+			document.getElementById("speaker").innerText = "🔊";
+			audio.play();
+		} else {
+			document.getElementById("speaker").innerText = "🔇";
+			audio.pause();					
+		}
 	}
 
 	// resetState(state) {
@@ -261,11 +444,18 @@ class Engine {
 		const { keys } = keyboardHandler;
 		// if (!state.sceneChangeStarting && !state.foundEva) {
 		const frame = cheoni.getAnimationFrame(time);
-		const jumping = keys[" "] || keys["Shift"] || this.frameInfo.jumping[frame];
 		const crouching = keys["ArrowDown"] || keys["s"];
+		const crawling = crouching && this.frameInfo.crawling[frame];
+		const backup = (this.frameInfo.crawling[frame] || this.frameInfo.backup[frame]) && !crouching;
+		const jumping = keys[" "] || keys["Shift"] || keys["w"] || keys["ArrowUp"] || this.frameInfo.jumping[frame];
 		cheoni.dx = (keys["ArrowLeft"] || keys["a"] ? -1 : 0) + (keys["ArrowRight"] || keys["d"] ? 1 : 0);
 
-		const anim = jumping ? this.atlas.jump : crouching ? this.atlas.down : cheoni.dx !== 0 ? this.atlas.walk : this.atlas.still;
+		const anim = backup ? this.atlas.backup
+					: crawling ? (cheoni.dx !== 0 ? this.atlas.crawling : this.atlas.crawled)
+					: jumping ? this.atlas.jump
+					: crouching ? this.atlas.down
+					: cheoni.dx !== 0 ? this.atlas.walk
+					: this.atlas.still;
 		if (cheoni.changeAnimation(anim, time)) {
 			// const frameOffset = anim.firstFrame - anim.startFrame;
 			// const frameDuration = 1000 / anim.frameRate;
@@ -313,13 +503,18 @@ class Engine {
 		const mul = 2;
 		const frame = cheoni.getAnimationFrame(time);
 		const airborn = this.frameInfo.airborn[frame];
+		const crawling = this.frameInfo.crawling[frame];
 		dt = Math.min(dt, 20);
+		let px = cheoni.x;
 		if (cheoni.anim === this.atlas.walk) {
-			cheoni.changePosition(cheoni.x + dt * cheoni.dx / 6 * mul, cheoni.y, time);
+			px = cheoni.x + dt * cheoni.dx / 6 * mul;
+		} else if (crawling) {
+			px = cheoni.x + dt * cheoni.dx / 10 * mul;
+		} else if (airborn) {
+			px = cheoni.x + dt * cheoni.dx / 4 * mul;
 		}
-		else if (airborn) {
-			cheoni.changePosition(cheoni.x + dt * cheoni.dx / 4 * mul, cheoni.y, time);
-		}
+		px = Math.max(20, Math.min(px, 800 - 20));
+		cheoni.changePosition(px, cheoni.y, time);
 		// 		if (state.x < 0) {
 		// 			this.changeScene(time, state, this.getNextScene(state.scene, state.x, state));
 		// 		} else if (state.x > viewportWidth) {
@@ -374,6 +569,180 @@ class Engine {
 		// 		}
 		// 	}
 		// }		
+	}
+
+	moveBalloon(balloon, index, time, dt) {
+		const newBaloon = balloon.x < -64;
+		if (newBaloon) {
+			balloon.changeOpacity(1, time);
+			balloon.popped = 0;
+			const colorIndex = Math.floor(Math.random() * (this.extra ? 8 : 7));
+			if (this.extra && colorIndex === 7) {
+				this.extra --;
+			}
+			balloon.changeAnimation(this.atlas["balloon" + colorIndex], time);
+		}
+		const px = (newBaloon ? balloon.x + 1000 : balloon.x) - dt * .2;
+		balloon.changePosition(px, 20 + 40 * Math.sin((time + index * 3333) / 500), time);
+//		balloon.changePosition(balloon.x, 200, time)
+	}
+
+	doCollide(sprite1, sprite2, time) {
+		const box1 = sprite1.getCollisionBox(time);
+		const box2 = sprite2.getCollisionBox(time);
+		if (!box1 || !box2) {
+			return false;
+		}
+		return box1.right >= box2.left && box2.right >= box1.left && box1.bottom >= box2.top && box2.bottom >= box1.top;
+	}
+
+	checkBalloon(balloon, cheoni, time) {
+//		console.log(balloon.popped, this.doCollide(balloon, cheoni, time));
+		if (!balloon.popped && this.doCollide(balloon, cheoni, time)) {
+			balloon.popped = time;
+			balloon.changeOpacity(0, time);
+			document.getElementById("hit-audio").play();
+			// document.getElementById("info-box").innerText = "POP";//this.cheoni.getAnimationFrame(time);
+//			console.log("POP");
+			this.dropCandy(balloon.x, balloon.y, balloon.anim === this.atlas.balloon7, false, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+			this.dropCandy(balloon.x, balloon.y, false, true, time);
+		} else {
+			// document.getElementById("info-box").innerText = "NOPOP";//this.cheoni.getAnimationFrame(time);
+		}
+
+	}
+
+	dropCandy(x, y, dino, sparkle, time) {
+		const candy = this.candies.pop();
+		if (candy) {
+			candy.changePosition(x, y, time);
+			candy.x = x;
+			candy.y = y;
+			candy.changeOpacity(sparkle ? .3 : 1, time);
+			candy.dx = (Math.random() - .5) * 20;
+			candy.dy = -5 + 10 * Math.random();
+
+			candy.changeAnimation(sparkle ? this.atlas.sparkle : dino ? this.atlas.dino : Math.random() < .3 ? this.atlas.chocolate : this.atlas.candy, time);
+
+			//console.log(candy);
+			this.flyingCandies.push(candy);
+		}
+	}
+
+	processPipe(time) {
+		if (this.pipe.show) {
+			if (this.pipe.opacity === 0) {
+				this.pipe.changePosition(Math.random() * 600 + 100, this.pipe.y, time);
+				this.pipe.changeOpacity(1, time);
+				this.pipe.changeAnimation(this.atlas.pipe_out, time);
+			} else if (this.pipe.anim === this.atlas.pipe_out) {
+				const frame = this.pipe.getAnimationFrame(time);
+				if (frame === 10) {
+					this.pipe.changeAnimation(this.atlas.pipe, time);
+				}
+			} else if (this.pipe.anim === this.atlas.pipe) {
+				const cheoniFrame = this.cheoni.getAnimationFrame(time);
+				if (this.frameInfo.landing[cheoniFrame] && Math.abs(this.cheoni.x - this.pipe.x) < 50) {
+					this.pipe.changeAnimation(this.atlas.pipe_in, time);
+//					this.cheoni.changeAnimation(this.atlas.jump,)
+				}
+			} else if (this.pipe.anim === this.atlas.pipe_in) {
+				const frame = this.pipe.getAnimationFrame(time);
+				if (frame === 19) {
+					this.pipe.changeOpacity(0, time);
+					this.pipe.show = false;
+				}
+			}
+		}
+	}
+
+	processCandies(dt, time) {
+		const crawling = this.cheoni.anim === this.atlas.crawling;
+		for (let i = this.flyingCandies.length - 1; i >= 0; i--) {
+			const candy = this.flyingCandies[i];
+			if (candy.landed) {
+				const frame = this.cheoni.getAnimationFrame(time);
+				const crawling = this.frameInfo.crawling[frame];
+
+				if (crawling && Math.abs(this.cheoni.x - candy.x) < 50) {
+					candy.landed = false;
+					this.flyingCandies[i] = this.flyingCandies[this.flyingCandies.length - 1];
+					this.flyingCandies.pop();
+					this.candies.push(candy);
+					candy.changeOpacity(0, time);
+					const pickupAudio = document.getElementById("pickup-audio");
+//					this.cheoni.changeAnimation(this.atlas.pickup, time);
+					pickupAudio.currentTime = 0;
+					pickupAudio.play();
+					if (this.atlas.dino === candy.anim) {
+						this.dinoCount ++;
+					} else {
+						const count = this.score + this.chocolate;
+						if (this.atlas.chocolate === candy.anim) {
+							this.chocolate ++;						
+						} else {
+							this.score ++;
+						}
+						if (count % 10 === 0) {
+							this.extra++;
+						}
+					}
+
+
+					document.getElementById("score").innerText = this.score ? "🍬: " + this.score + " " : "";
+					localStorage.setItem("score", this.score);
+					document.getElementById("chocolate").innerText = this.chocolate ? "🍫: " + this.chocolate + " " : "";
+					localStorage.setItem("chocolate", this.chocolate);
+					document.getElementById("dino").innerText = this.dinoCount ? "🦖: " + this.dinoCount + " " : "";
+					localStorage.setItem("dino", this.dinoCount);
+
+				}
+
+				continue;
+			}
+			candy.changeRotation(candy.rotation + dt * 10 * candy.rotationSpeed, time);
+
+			const px = Math.max(50, Math.min(800-50, candy.x + candy.dx));
+			const py = candy.y + candy.dy;
+			candy.dy += .3;
+			if (px <= 50 || px >= 800 - 50) {
+				candy.dx = -candy.dx;
+			}
+			candy.changePosition(px, py, time);
+			if (candy.y >= 282) {
+				candy.landed = true;
+				if (candy.anim === this.atlas.dino) {
+					candy.changeRotation(0, time);
+				} else if (candy.anim === this.atlas.sparkle) {
+					this.flyingCandies[i] = this.flyingCandies[this.flyingCandies.length - 1];
+					this.flyingCandies.pop();
+					this.candies.push(candy);
+					candy.changeOpacity(0, time);
+					candy.landed = false;
+				}
+ 			}
+		}
+	}
+
+	checkCollisions(time) {
+		if (this.doCollide(this.pipe, this.cheoni, time)) {
+//			const dx = 
+		}
+	}
+
+	test(time) {
+		this.checkBalloon(this.balloons[0], this.cheoni, time);
+		// const cheoniRect = this.cheoni.anim.getCollisionBox(this.cheoni.getAnimationFrame(time));
+		// const balloonRect = this.balloons[0].anim.getCollisionBox(this.balloons[0].getAnimationFrame(time));
+		// console.log(cheoniRect, balloonRect);
 	}
 
 	// applySceneChange(state, time) {
@@ -598,9 +967,44 @@ class Engine {
 	// 	return "";
 	// }
 
+	showDebugCanvas(time) {
+		this.debugCanvas.width = this.canvas.width;
+		this.debugCanvas.height = this.canvas.height;
+		this.debugCanvas.style.width = `${this.canvas.offsetWidth}px`;
+		this.debugCanvas.style.height = `${this.canvas.offsetHeight}px`;
+		this.debugCanvas.style.left = `${this.canvas.offsetLeft}px`;
+		this.debugCanvas.style.top = `${this.canvas.offsetTop}px`;
+		this.debugCanvas.style.display = "";
+		const ctx = this.debugCtx;
+		ctx.clearRect(0, 0, this.debugCanvas.width, this.debugCanvas.height);
+		ctx.beginPath();
+		ctx.rect(5, 5, this.debugCanvas.width - 10, this.debugCanvas.height - 10);
+		ctx.stroke()
+
+		const { cheoni } = this;
+		ctx.strokeStyle = "#FF0000";
+		ctx.beginPath();
+
+
+		for (let i = 0; i < this.spriteCollection.size(); i++) {
+			const sprite = this.spriteCollection.get(i);
+			this.drawCollisionBox(ctx, sprite, time);
+		}
+
+		ctx.stroke();
+
+	}
+
+	drawCollisionBox(ctx, sprite, time) {
+		const rect = sprite.getCollisionBox(time);
+		if (!rect) {
+			return;
+		}
+		ctx.rect(rect.left, rect.top, rect.right - rect.left + 1, rect.bottom - rect.top + 1);
+	}
+
 	refresh(time) {
 		const dt = time - this.lastTime;
-		this.time = time;
 		if (!this.focusFixer.focused) {
 			this.lastTime = time;
 			return;
@@ -617,6 +1021,16 @@ class Engine {
 		// this.applySceneChange(state, time);
 		this.applyKeyboard(this.cheoni, this.keyboardHandler, time);
 		this.applyMovement(this.cheoni, dt, time);
+
+		for (let i = 0; i < this.balloons.length; i++) {
+			this.moveBalloon(this.balloons[i], i, time, dt);
+			this.checkBalloon(this.balloons[i], this.cheoni, time);
+		}
+
+		this.checkCollisions(time);
+
+		this.processCandies(dt, time);
+		this.processPipe(time);
 
 		//	sprite
 		//	- x, y, width, height
@@ -657,11 +1071,12 @@ class Engine {
 			}
 		}
 
-		document.getElementById("info-box").innerText = this.cheoni.getAnimationFrame(time);
+		// document.getElementById("info-box").innerText = this.cheoni.getAnimationFrame(time);
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 		this.lastTime = time;
+		this.showDebugCanvas(time);
 	}
 }
 

@@ -64,7 +64,7 @@
 				background-color: #000000;
 				opacity: 0;
   				transition-property: opacity, background-color, width;
-  				transition-duration: .3s;
+  				transition-duration: .2s;
   			}
 
 			.container {
@@ -124,10 +124,20 @@
 	</head>
 	<body>
 		<div id="overlay"></div>
-		<audio id="audio" src="audio/cheoni-slow.mp3" style="position: absolute; display: none" controls loop></audio>
+		<audio id="audio" src="audio/cheoni-slow.mp3" style="position: absolute; display: none" loop></audio>
+		<audio id="hit-audio" src="audio/hit-land.mp3" style="position: absolute; display: none"></audio>
+		<audio id="pickup-audio" src="audio/pickup.mp3" style="position: absolute; display: none"></audio>
 		<div id="info-box" style="position: absolute; z-index: 10"></div>
 		<div class="container">
+			<div style="position:absolute; top: 20px; left: 100px">
+				<span id="score"></span>
+				<span id="chocolate"></span>
+				<span id="dino"></span>
+			</div>
 			<canvas id="canvas" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
+			<div id="controls" style="position: absolute; top: 460px; left: 250px">
+				⬅️➡️: move. ⬆️:jump. ⬇️:pickup candies. M: <span id="speaker">🔇</span>
+			</div>
 		</div>
 		<script type="text/javascript" src="gen/data.js" defer></script>
 		<script type="text/javascript" src="lib/math/gl-matrix.js" defer></script>

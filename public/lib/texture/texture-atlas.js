@@ -25,7 +25,8 @@ class TextureAtlas {
 		this.floatVec4 = new Float32Array(4);
 	}
 
-	async setImage(url, animationData) {
+	async setImage(animationData) {
+		const { url, collision_url } = animationData;
 		const image = await this.imageLoader.loadImage(url);
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
@@ -38,7 +39,7 @@ class TextureAtlas {
 
 		// const cols = animationData.cols || 1;
 		// const rows = animationData.rows || 1;
-		// const totalFrames = animationData.totalFrames || cols * rows;
+		// const totalFrames = cols * rows;
 		// context.font = "10px Arial";
 		// for (let i = 0; i < totalFrames; i++) {
 		// 	context.fillText("" + i,
@@ -52,6 +53,95 @@ class TextureAtlas {
 //		document.body.appendChild(canvas);
 
 
+		this.saveTexture(gl, glTextures, index, textureSize, x, y, canvas);
+		this.onUpdateImage(image, animationData || {});
+
+		this.collisionBoxes = [];
+		if (collision_url) {
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			const collisionImage = await this.imageLoader.loadImage(collision_url);
+			context.drawImage(collisionImage, 0, 0, collisionImage.naturalWidth, collisionImage.naturalHeight, 0, 0, canvas.width, canvas.height);
+
+			for (let row = 0; row < this.rows; row++) {
+				for (let col = 0; col < this.cols; col++) {
+					const cellWidth = canvas.width / this.cols;
+					const cellHeight = canvas.height / this.rows;
+					const cellX = col * cellWidth;
+					const cellY = row * cellHeight;
+					const top = this.getTop(context, cellX, cellY, cellWidth, cellHeight);
+					const bottom = this.getBottom(context, cellX, cellY, cellWidth, cellHeight);
+					const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight);
+					const right = this.getRight(context, cellX, cellY, cellWidth, cellHeight);
+					if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
+						this.collisionBoxes[row * this.cols + col] = {
+							top, left, bottom, right,
+						};
+					}
+
+//					console.log(url, col, row, "=>", top, bottom, left, right);
+				}
+			}
+		}
+
+
+		return this;
+	}
+
+	getCollisionBox(frame) {
+		//console.log(frame, this.collisionBoxes);
+		return this.collisionBoxes[frame];
+	}
+
+	getTop(context, x, y, width, height) {
+		for (let top = 0; top < height; top ++) {
+			const pixels = context.getImageData(x, y + top, width, 1).data;
+			if (this.hasOpaquePixel(pixels)) {
+				return top;
+			}
+		}
+		return -1;
+	}
+
+	getBottom(context, x, y, width, height) {
+		for (let bottom = height-1; bottom >=0; bottom --) {
+			const pixels = context.getImageData(x, y + bottom, width, 1).data;
+			if (this.hasOpaquePixel(pixels)) {
+				return bottom;
+			}
+		}
+		return -1;
+	}
+
+	getLeft(context, x, y, width, height) {
+		for (let left = 0; left < width; left ++) {
+			const pixels = context.getImageData(x + left, y, 1, height).data;
+			if (this.hasOpaquePixel(pixels)) {
+				return left;
+			}
+		}
+		return -1;		
+	}
+
+	getRight(context, x, y, width, height) {
+		for (let right = width-1; right >=0; right--) {
+			const pixels = context.getImageData(x + right, y, 1, height).data;
+			if (this.hasOpaquePixel(pixels)) {
+				return right;
+			}
+		}
+		return -1;
+	}
+
+	hasOpaquePixel(pixels) {
+		for (let i = 0; i < pixels.length; i+= 4) {
+			if (pixels[i + 3]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	saveTexture(gl, glTextures, index, textureSize, x, y, canvas) {
 		const glTexture = glTextures[index];
 		gl.activeTexture(gl[`TEXTURE${index}`]);
 		gl.bindTexture(gl.TEXTURE_2D, glTexture.glTexture);
@@ -64,19 +154,16 @@ class TextureAtlas {
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
   		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
-		gl.generateMipmap(gl.TEXTURE_2D);
-		this.onUpdateImage(image, animationData || {});
-		return this;
+		gl.generateMipmap(gl.TEXTURE_2D);		
 	}
 
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = this.width || (image ? image.naturalWidth : 0);
 		this.spriteSheetHeight = this.width || (image ? image.naturalHeight : 0);
-		const { cols, rows, frameRate, totalFrames, range, firstFrame } = animationData;
+		const { cols, rows, frameRate, range, firstFrame } = animationData;
 		this.frameRate = frameRate || 1;
 		this.cols = cols || 1;
 		this.rows = rows || 1;
-		this.totalFrames = totalFrames || (this.cols * this.rows);
 		this.spriteWidth = this.spriteSheetWidth / this.cols;
 		this.spriteHeight = this.spriteSheetHeight / this.rows;
 		this.startFrame = (range ? range[0] : 0) || 0;
@@ -111,7 +198,7 @@ class TextureAtlas {
 		const { shortVec4 } = this;
 		shortVec4[0] = this.cols;
 		shortVec4[1] = this.rows;
-		shortVec4[2] = this.totalFrames;
+		shortVec4[2] = 0;
 		shortVec4[3] = 0;
 		return shortVec4;
 	}

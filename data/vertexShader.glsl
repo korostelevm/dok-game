@@ -39,8 +39,7 @@ float modPlus(float a, float b) {
 
 vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 	float animCols = spriteSheet[0];
-	float animTotalFrames = spriteSheet[2];
-	if (animCols == 0. || animTotalFrames == 0.) {
+	if (animCols == 0.) {
 		return vec2(0, 0);
 	}
 	float animTime = updateTime[ANIMATION_UPDATE_INDEX];
