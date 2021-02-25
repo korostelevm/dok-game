@@ -288,10 +288,12 @@ class Engine {
 					action: entrance => {
 						this.inventory.remove("key");
 						this.updateInventory();
-						this.playAudio("audio/dud.mp3", .3);
+						this.playAudio("audio/dud.mp3", 1);
 						entrance.unlocked = true;
-						this.showBubble(entrance.pendingMessage);
-						entrance.pendingMessage = null;
+						setTimeout(() => {
+							this.showBubble(entrance.pendingMessage);
+							entrance.pendingMessage = null;
+						}, 500);
 					},
 				},
 				{ name: "open", condition: entrance => entrance.unlocked && !entrance.opened,
@@ -305,8 +307,10 @@ class Engine {
 					action: entrance => {
 						this.monkor.paused = this.lastTime;
 						this.showBubble(entrance.pendingMessage, () => {
-							this.showBubble(null);
-							this.monkor.goingup = this.lastTime;
+							setTimeout(() => {
+								this.showBubble(null);
+								this.monkor.goingup = this.lastTime;
+							}, 1000);
 						});
 						entrance.pendingMessage = null;
 					},
@@ -338,7 +342,7 @@ class Engine {
 			size: [800, 400],
 		}, {
 			actions: [
-				{ name: "read", message: `It says: "Smoking will kill you". I don't believe so.` },
+				{ name: "read", message: `It says: "Smoking will kill you". Hum... I don't believe so.` },
 			],
 		});
 
@@ -412,8 +416,8 @@ class Engine {
 
 		this.mouse = this.spriteCollection.create({
 			name: "mouse",
-			size: [32, 32],
-			hotspot: [16, 16],
+			size: [24, 24],
+			hotspot: [12, 12],
 			anim: this.atlas.mouse,
 			opacity: 0,
 		}, {
