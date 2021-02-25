@@ -352,7 +352,7 @@ class Engine {
 			size: [800, 400],
 		}, {
 			actions: [
-				{ name: "look", message: `It's a half smoked cigarette butt on the ground."` },
+				{ name: "look", message: `It's a half smoked cigarette butt on the ground.` },
 				{ name: "pick up", message: "Sure, I'll pick up this cigarette butt on the ground, half smoked by a random person.",
 					action: item => {
 						item.changeOpacity(0, this.lastTime);
@@ -372,7 +372,7 @@ class Engine {
 			size: [800, 400],
 		}, {
 			actions: [
-				{ name: "look", condition: mat => !mat.opened, message: `It's a mat in front of the entrance.` },
+				{ name: "look", condition: mat => !mat.opened, message: `It's a mat in front of the entrance. It says: "You're welcome to try."` },
 				{ name: "look", condition: mat => mat.opened && !mat.pickedKey, message: `There's a key. Should I pick it up?` },
 				{ name: "look", condition: mat => mat.opened && mat.pickedKey, message: `Nothing left but dust under the mat.` },
 				{ name: "pull", condition: mat => !mat.opened, message: `How surprising, there's a key under the mat!`,
