@@ -7,8 +7,20 @@ class Engine {
 		return new Promise(resolve => document.addEventListener("DOMContentLoaded", () => resolve(document)));
 	}	
 
+	isRetinaDisplay() {
+        if (window.matchMedia) {
+            var mq = window.matchMedia("only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen  and (min-device-pixel-ratio: 1.3), only screen and (min-resolution: 1.3dppx)");
+            return (mq && mq.matches || (window.devicePixelRatio > 1)); 
+        }
+    }
+
 	async init(config) {
 		this.config = config;
+
+		if (config.viewport.pixelScale < 1 && !this.isRetinaDisplay()) {
+			config.viewport.pixelScale = 1;
+		}
+
 		console.log(config);
 		const maxInstancesCount = 1000;
 		await this.loadDomContent(document);
@@ -27,6 +39,8 @@ class Engine {
 		document.body.appendChild(this.debugCanvas);
 		this.debugCtx = this.debugCanvas.getContext("2d");
 		this.debugCanvas.style.display = "none";
+
+		this.overlay = document.getElementById("overlay");
 
 		/* Focus Fixer */
 		this.focusFixer = new FocusFixer(canvas);	
@@ -53,271 +67,369 @@ class Engine {
 
 		/* Load image */
 		this.atlas = {
-			background: await this.textureManager.createAtlas(1).setImage({
-				url: "assets/grass.png",
-			}),
-			dino: await this.textureManager.createAtlas(5).setImage({
-				url: "assets/dino-stupid.png",
-				cols: 1, rows: 2,
-				frameRate: 2,
-				range: [0, 1],
-			}),
-			sparkle: await this.textureManager.createAtlas(6).setImage({
-				url: "assets/sparkle.png",
-			}),
-			pipe_out: await this.textureManager.createAtlas(7).setImage({
-				url: "assets/pipe.png",
-				cols: 4, rows: 5,
-				frameRate: 10,
-				range: [0, 10]
-			}),
-			pipe: await this.textureManager.createAtlas(7).setImage({
-				url: "assets/pipe.png",
-				collision_url: "assets/pipe-collision.png",
-				cols: 4, rows: 5,
-				frameRate: 10,
-				range: [10]
-			}),
-			pipe_in: await this.textureManager.createAtlas(7).setImage({
-				url: "assets/pipe.png",
-				cols: 4, rows: 5,
-				frameRate: 10,
-				range: [11, 19]
-			}),
-			balloon0: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [0],
-			}),
-			balloon1: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [1],
-			}),
-			balloon2: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [2],
-			}),
-			balloon3: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [3],
-			}),
-			balloon4: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [4],
-			}),
-			balloon5: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [5],
-			}),
-			balloon6: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [6],
-			}),
-			balloon7: await this.textureManager.createAtlas(2).setImage({
-				url: "assets/balloon.png",
-				collision_url: "assets/balloon-collision.png",
-				cols: 3, rows: 3,
-				range: [7],
-			}),
-			candy: await this.textureManager.createAtlas(3).setImage({
-				url: "assets/candy.png",
-				cols:3,rows:3,
-				range:[0],
-			}),
-			chocolate: await this.textureManager.createAtlas(4).setImage({
-				url: "assets/chocolate.png",
-			}),
-			still: await this.textureManager.createAtlas(0).setImage(
+			entrance: await this.textureManager.createAtlas(1).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
+					url: "assets/background-door.png",
+					cols:2,rows:4,
+					collision_url: "assets/background-door-collision.png",
 					range:[0],
 				}),
-			walk: await this.textureManager.createAtlas(0).setImage(
+			entrance_open: await this.textureManager.createAtlas(1).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					frameRate:15,
-					firstFrame: 3,
-					range:[1, 6],
+					url: "assets/background-door.png",
+					cols:2,rows:4,
+					collision_url: "assets/background-door-collision.png",
+					frameRate: 10,
+					range:[4,6],
 				}),
-			down: await this.textureManager.createAtlas(0).setImage(
+			entrance_opened: await this.textureManager.createAtlas(1).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					frameRate: 15,
-					range:[8, 11],
+					url: "assets/background-door.png",
+					cols:2,rows:4,
+					collision_url: "assets/background-door-collision.png",
+					range:[6],
 				}),
-			backup: await this.textureManager.createAtlas(0).setImage(
+			sign: await this.textureManager.createAtlas(3).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					frameRate: 15,
-					range:[16, 18],
+					url: "assets/sign.png",
+					collision_url: "assets/sign.png",
 				}),
-			crawling: await this.textureManager.createAtlas(0).setImage(
+			smokingsign: await this.textureManager.createAtlas(4).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					frameRate: 12,
-					range:[11, 14],
+					url: "assets/smoking-sign.png",
+					collision_url: "assets/smoking-sign.png",
 				}),
-			crawled: await this.textureManager.createAtlas(0).setImage(
+			cigarette: await this.textureManager.createAtlas(5).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					range:[11],
+					url: "assets/cigarette.png",
+					collision_url: "assets/cigarette.png",
 				}),
-			jump: await this.textureManager.createAtlas(0).setImage(
+			piano: await this.textureManager.createAtlas(6).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					frameRate:15,
-					range:[19,32],
+					url: "assets/piano.png",
+					cols:1,rows:2,
+					range:[0],
 				}),
-			pickup: await this.textureManager.createAtlas(0).setImage(
+			piano_splash: await this.textureManager.createAtlas(6).setImage(
 				{
-					url: "assets/cheoni.png",
-					collision_url: "assets/cheoni-collision.png",
-					cols:8,rows:5,
-					frameRate:5,
-					range:[33, 34],
+					url: "assets/piano.png",
+					cols:1,rows:2,
+					range:[1],
 				}),
-		};
-
-		this.extra = 0;
-
-		this.frameInfo = {
-			airborn: {
-				20:true,
-				21:true,
-				22:true,
-				23:true,
-				24:true,
-				25:true,
-				26:true,
-				27:true,
-				28:true,
-				29:true,
-			},
-			jumping: {
-				19:true,
-				20:true,
-				21:true,
-				22:true,
-				23:true,
-				24:true,
-				25:true,
-				26:true,
-				27:true,
-				28:true,
-				29:true,
-				30:true,
-				31:true,
-			},
-			crawling: {
-				11:true,
-				12:true,
-				13:true,
-				14:true,
-			},
-			backup: {
-				16:true,
-				17:true,
-			},
-			landing: {
-				28:true,
-				29:true,
-			},
+			mouse: await this.textureManager.createAtlas(7).setImage(
+				{
+					url: "assets/mouse.png",
+					cols:2,rows:2,
+					range:[0],
+				}),
+			mouse_run: await this.textureManager.createAtlas(7).setImage(
+				{
+					url: "assets/mouse.png",
+					cols:2,rows:2,
+					frameRate: 20,
+					range:[1, 2],
+				}),
+			mat: await this.textureManager.createAtlas(2).setImage(
+				{
+					url: "assets/mat.png",
+					cols:2,rows:4,
+					collision_url: "assets/mat-collision.png",
+					range:[0],
+				}),
+			mat_pulling: await this.textureManager.createAtlas(2).setImage(
+				{
+					url: "assets/mat.png",
+					cols:2,rows:4,
+					collision_url: "assets/mat-collision.png",
+					frameRate: 4,
+					range:[1, 2],
+				}),
+			mat_pulled: await this.textureManager.createAtlas(2).setImage(
+				{
+					url: "assets/mat.png",
+					cols:2,rows:4,
+					collision_url: "assets/mat-collision.png",
+					range:[2],
+				}),
+			mat_picked_key: await this.textureManager.createAtlas(2).setImage(
+				{
+					url: "assets/mat.png",
+					cols:2,rows:4,
+					collision_url: "assets/mat-collision.png",
+					range:[3],
+				}),
+			monkor_still: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					collision_url: "assets/monkor-collision.png",
+					cols:5,rows:5,
+					range:[0],
+				}),
+			monkor_front: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					frameRate:10,
+					range:[1, 4],
+				}),
+			monkor_back: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					frameRate:10,
+					range:[5, 8],
+				}),
+			monkor_right: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					frameRate:10,
+					range:[9, 12],
+				}),
+			monkor_talk: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					frameRate:10,
+					range:[13, 16],
+				}),
+			monkor_smoke: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					frameRate:8,
+					range:[17, 19],
+				}),
+			monkor_puff: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					range:[20],
+				}),
+			monkor_scared: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					range:[21],
+				}),
+			monkor_run: await this.textureManager.createAtlas(0).setImage(
+				{
+					url: "assets/monkor.png",
+					cols:5,rows:5,
+					frameRate:10,
+					range:[21, 24],
+				}),
 		};
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection();
 		const [viewportWidth, viewportHeight] = this.config.viewport.size;
 
-		this.background = this.spriteCollection.create({
-			anim: this.atlas.background,
-			size: [800, 400],
-		});
 
-		this.balloons = [
-			this.spriteCollection.create({
-				anim: this.atlas.balloon0,
-				size: [128, 128],
-				hotspot: [64,64],
-				x: 100, y: 50,
-			}),
-			this.spriteCollection.create({
-				anim: this.atlas.balloon1,
-				size: [128, 128],
-				hotspot: [64,64],
-				x: 400, y: 50,
-			}),
-			this.spriteCollection.create({
-				anim: this.atlas.balloon2,
-				size: [128, 128],
-				hotspot: [64,64],
-				x: 700, y: 50,
-			}),
-		];
+		String.prototype.contains = Array.prototype.contains = function(str) {
+			return this.indexOf(str) >= 0;
+		};
+		Array.prototype.remove = function(str) {
+			this.splice(this.indexOf(str), 1);
+		};
 
-		this.cheoni = this.spriteCollection.create({
-			x: 50, y: 282,
-			size: [128, 256],
-			hotspot: [64,256],
-			anim: this.atlas.walk,
-		});
-		this.cheoni.dx = 0;
+		this.inventory = [];
 
-		this.flyingCandies = [];
-		this.candies = [];
-		for (let i = 0; i < 50; i++) {
-			this.candies.push(this.spriteCollection.create({
-				anim: this.atlas.candy,
-				size: [64, 64],
-				hotspot: [32,32],
-				x: 100, y: 100,
-				opacity: 0,
-			}));
+		this.inventoryDetails = {
+			key: {
+				actions: [
+					{ name: "look", message: () => "I picked up some keys that didn't belong to me from under a mat." },
+					{ name: "eat", message: () => "I swallowed the key. Now, this game is truly IMPOSSIBLE!.", 
+						action: key => {
+							this.inventory.remove("key");
+							this.updateInventory();
+							this.playAudio("audio/eat.mp3", .5);
+							this.showBubble(key.pendingMessage);
+							key.pendingMessage = null;
+							setTimeout(() => this.gameOver(), 6000);					
+						},
+					},
+				],
+			},
+			cigarette: {
+				actions: [
+					{ name: "look", message: () => "It's a cigarette butt. I'm not a regular smoker, but I don't think it will kill me." },
+					{ name: "smoke", message: () => "Let me take a puff of that cigarette.",
+						action: item => {
+							this.showBubble(item.pendingMessage, () => {
+								this.monkor.smoking = this.lastTime;
+								this.monkor.paused = this.lastTime;
+							});
+							item.pendingMessage = null;
+						},
+					},
+				],
+			},
+			title: {
+				actions: [
+					{ name: "look", message: () => `${document.getElementById("title").innerText}` },
+				],
+			},
+		};
+
+		for (let name in this.inventoryDetails) {
+			this.inventoryDetails[name].name = name;
 		}
 
-		this.pipe = this.spriteCollection.create({
-			anim: this.atlas.pipe_out,
+		this.spriteCollection.create({
+			name: "entrance",
+			anim: this.atlas.entrance,
+			size: [800, 400],
+		}, {
+			actions: [
+				{ name: "look", condition: entrance => !entrance.opened, message: () => `There's a door, that leads to ${this.title.innerText}` },
+				{ name: "open", condition: entrance => !entrance.unlocked, message: `It's locked.` },
+				{ name: "unlock", condition: entrance => this.inventory.contains("key"), message: `Yeah! I unlocked the door.`,
+					action: entrance => {
+						this.inventory.remove("key");
+						this.updateInventory();
+						this.playAudio("audio/dud.mp3", .3);
+						entrance.unlocked = true;
+						this.showBubble(entrance.pendingMessage);
+						entrance.pendingMessage = null;
+					},
+				},
+				{ name: "open", condition: entrance => entrance.unlocked && !entrance.opened,
+					action: entrance => {
+						this.playAudio("audio/door.mp3", .3);
+						entrance.changeAnimation(this.atlas.entrance_open, this.lastTime);
+					},
+				},
+				{ name: "enter", condition: entrance => entrance.opened && this.title.innerText.toLowerCase().contains("impossible"), message: () => `I don't want to go in, it's ${this.title.innerText}! I might never escape!` },
+				{ name: "enter", condition: entrance => entrance.opened && !this.title.innerText.toLowerCase().contains("impossible"), message: () => `I guess this is not the impossible room. This is ${this.title.innerText}. Okay, I shall go in.`,
+					action: entrance => {
+						this.monkor.paused = this.lastTime;
+						this.showBubble(entrance.pendingMessage, () => {
+							this.showBubble(null);
+							this.monkor.goingup = this.lastTime;
+						});
+						entrance.pendingMessage = null;
+					},
+				},
+			],
+			onFrame: {
+				6: entrance => {
+					if (!entrance.opened) {
+						entrance.changeAnimation(this.atlas.entrance_opened, this.lastTime);
+						entrance.opened = true;
+					}
+				},
+			},
+		});
+
+		this.spriteCollection.create({
+			name: "sign",
+			anim: this.atlas.sign,
+			size: [800, 400],
+		}, {
+			actions: [
+				{ name: "read", message: `I read: "This is the entrance of the impossible room. It's impossible to get in, and impossible to get out."` },
+			],
+		});
+
+		this.spriteCollection.create({
+			name: "graffiti",
+			anim: this.atlas.smokingsign,
+			size: [800, 400],
+		}, {
+			actions: [
+				{ name: "read", message: `It says: "Smoking will kill you". I don't believe so.` },
+			],
+		});
+
+		this.spriteCollection.create({
+			name: "cigarette",
+			anim: this.atlas.cigarette,
+			size: [800, 400],
+		}, {
+			actions: [
+				{ name: "look", message: `It's a half smoked cigarette butt on the ground."` },
+				{ name: "pick up", message: "Sure, I'll pick up this cigarette butt on the ground, half smoked by a random person.",
+					action: item => {
+						item.changeOpacity(0, this.lastTime);
+						this.inventory.push("cigarette");
+						this.updateInventory();
+						this.playAudio("audio/pickup.mp3", .3);
+						this.showBubble(item.pendingMessage);
+						item.pendingMessage = null;
+					}
+				}
+			],
+		});
+
+		this.mat = this.spriteCollection.create({
+			name: "mat",
+			anim: this.atlas.mat,
+			size: [800, 400],
+		}, {
+			actions: [
+				{ name: "look", condition: mat => !mat.opened, message: `It's a mat in front of the entrance.` },
+				{ name: "look", condition: mat => mat.opened && !mat.pickedKey, message: `There's a key. Should I pick it up?` },
+				{ name: "look", condition: mat => mat.opened && mat.pickedKey, message: `Nothing left but dust under the mat.` },
+				{ name: "pull", condition: mat => !mat.opened, message: `How surprising, there's a key under the mat!`,
+					action: mat => {
+						this.playAudio("audio/hit.mp3", .5);
+						mat.changeAnimation(this.atlas.mat_pulling, this.lastTime);
+					}
+				},
+				{ name: "pickup key", condition: mat => mat.opened && !mat.pickedKey, message: `I wonder where that key fits...`,
+					action: mat => {
+						mat.changeAnimation(this.atlas.mat_picked_key, this.lastTime);
+						this.inventory.push("key");
+						this.updateInventory();
+						this.playAudio("audio/pickup.mp3", .3);
+						this.showBubble(mat.pendingMessage);
+						mat.pendingMessage = null;
+					}
+				},
+			],
+			onFrame: {
+				2: mat => {
+					if (!mat.opened) {
+						mat.changeAnimation(this.atlas.mat_pulled, this.lastTime);
+						mat.opened = true;
+						if (mat.pendingMessage) {
+							this.showBubble(mat.pendingMessage);
+							mat.pendingMessage = null;
+						}
+					}
+				},
+			},
+		});
+
+		this.monkor = this.spriteCollection.create({
+			name: "monkor",
+			x: 50, y: 380,
 			size: [128, 128],
 			hotspot: [64,128],
-			x: 100, y: 280,
+			anim: this.atlas.monkor_still,
+		});
+
+		this.mouse = this.spriteCollection.create({
+			name: "mouse",
+			size: [32, 32],
+			hotspot: [16, 16],
+			anim: this.atlas.mouse,
 			opacity: 0,
+		}, {
+			goal: { x:0, y:0 },
 		});
 
-		this.candies.forEach(candy => {
-			candy.rotationSpeed = Math.random() -.5;
+		this.piano = this.spriteCollection.create({
+			name: "piano",
+			opacity: 0,
+			size: [300, 200],
+			hotspot: [150, 200],
+			anim: this.atlas.piano,
 		});
 
-		// this.gamemap = this.spriteCollection.create({
-		// 	anim: this.atlas.gamemap,
-		// 	size: [800, 400],
-		// 	opacity: .2,
-		// });
+		this.monkor.goal = {x:this.monkor.x, y:this.monkor.y};
+		this.monkor.speed = 1;
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, this.config);
@@ -330,10 +442,7 @@ class Engine {
 		const keyboardHandler = new KeyboardHandler(document); 
 		this.keyboardHandler = keyboardHandler;
 		keyboardHandler.addKeyUpListener("Escape", e => {
-			// const { state } = this;
-			// state.sceneChangeStarting = state.time;
-			// state.nextScene = "reset";
-			// console.log(state.scene, "=>", state.nextScene);
+			console.log("Escape");
 		});
 
 		/* Addd audio listener */
@@ -343,32 +452,63 @@ class Engine {
 		});
 
 		//	Allow audio
-		let f;
-		keyboardHandler.addKeyDownListener(null, f = e => {
-			//console.log(e.key);
-			const audio = document.getElementById("audio");
-			this.setAudio(audio, audio.paused, .5);
-			keyboardHandler.removeListener(f);
+		// let f;
+		// keyboardHandler.addKeyDownListener(null, f = e => {
+		// 	//console.log(e.key);
+		// 	const audio = document.getElementById("audio");
+		// 	this.setAudio(audio, false, 0, true);
+		// 	keyboardHandler.removeListener(f);
+		// 	document.removeListener("mousedown", f2);
+		// });
+
+		// let f2;
+		// document.addEventListener("mousedown", f2 = e => {
+		// 	//console.log(e.key);
+		// 	const audio = document.getElementById("audio");
+		// 	this.setAudio(audio, false, 0, true);
+		// 	keyboardHandler.removeListener(f);
+		// 	document.removeListener("mousedown", f2);
+		// });
+
+		// keyboardHandler.addKeyDownListener("t", e => {
+		// 	this.test(this.lastTime);
+		// });
+
+		keyboardHandler.addKeyDownListener("r", e => {
+			const msg = "Actually I lied. Pressing R does nothing.";
+			if (window.speechSynthesis) {
+				const utterance = this.getUterrance(msg, 39);
+				window.speechSynthesis.speak(utterance);			
+			}
+			document.getElementById("pressing-r").innerText = msg;
 		});
 
-		keyboardHandler.addKeyDownListener("t", e => {
-			this.test(this.lastTime);
+		document.getElementById("title").addEventListener("click", e => {
+			this.selectTarget(this.inventoryDetails.title);
+			this.showActions(this.inventoryDetails.title);
 		});
 
-		// this.sceneMap = {
-		// 	"base-+": "base",
-		// 	"base+-": "base",
-		// 	"base++-": "phase2",
-		// 	"base--+": "phase2",
-		// 	"phase2+-": "phase3",
-		// 	"phase2-+": "phase3",
-		// 	"phase3+-": "phase4",
-		// 	"phase3-+": "phase4",
-		// 	"phase4-": "phase4",
-		// 	"phase4+-": "phase4+",
-		// 	"phase4++-": "phase4++",
-		// 	"phase4+++": "with-eva",
-		// };
+		document.addEventListener("mousedown", e => {
+			if (e.target.id === "title") {
+				return;
+			}
+			if (e.target.id === "im") {
+				return;
+			}
+			this.handleMouse(e);
+		});
+		document.addEventListener("mousemove", e => {
+			if (e.target.id === "im" || e.target.id === "title") {
+				return;
+			}
+			this.handleMouse(e);
+		});
+		document.addEventListener("mouseup", e => {
+			if (e.target.id === "im" || e.target.id === "title") {
+				return;
+			}
+			this.handleMouse(e);
+		});
 
 		console.log(gl);
 
@@ -376,60 +516,327 @@ class Engine {
 		this.chocolate = parseInt(localStorage.getItem("chocolate") || 0);
 		this.dinoCount = parseInt(localStorage.getItem("dino") || 0);
 
+		this.title = document.getElementById("title");
+
 		this.resize(canvas, gl, config);
 
 		this.lastTime = 0;
+
+		const voices = window.speechSynthesis.getVoices();
+		console.log(voices);
 
 		this.initialize(gl, this.shader.uniforms, config);
 
 		Engine.start(this);
 	}
 
-	setAudio(audio, value, volume) {
-		if (value) {
-			document.getElementById("speaker").innerText = "🔊";
-			audio.play();
-		} else {
-			document.getElementById("speaker").innerText = "🔇";
-			audio.pause();					
+	// snapshot() {
+	// }
+
+	// retain(object) {
+	// }
+
+	// restore(object) {
+	// }
+
+	onDropMouse(e) {
+		const { pageX, pageY, buttons } = e;
+		const x = pageX - this.canvas.offsetLeft, y = pageY - this.canvas.offsetTop;
+		this.mouse.changePosition(x, y, this.lastTime);
+		this.mouse.changeOpacity(1, this.lastTime);
+		this.mouse.alive = this.lastTime;
+		const divMouse = document.getElementById("mouse");
+		divMouse.style.opacity = 0;
+		divMouse.setAttribute("draggable", "");
+	}
+
+	dropPiano(time) {
+		this.piano.dropping = time;
+		this.piano.changeOpacity(1, time);
+		this.piano.dy = 30;
+		this.piano.changePosition(this.monkor.x, this.monkor.y - 1000, time);
+	}
+
+	updatePiano(time) {
+		if (!this.piano.dropping) {
+			return;
+		}
+		if (this.piano.y < this.monkor.y) {
+			this.piano.changePosition(this.piano.x, this.piano.y + this.piano.dy, time);
+		} else if(this.piano.anim !== this.atlas.piano_splash) {
+			this.piano.changeAnimation(this.atlas.piano_splash, time);
+			this.monkor.changeOpacity(0, time);
+			this.monkor.dead = time;
+			this.playAudio("audio/piano.mp3", 1);
+			const audio = document.getElementById("audio");
+			this.setAudio(audio, audio.paused, 0);
+			setTimeout(() => this.gameOver(), 5000);
 		}
 	}
 
-	// resetState(state) {
-	// 	const [viewportWidth, viewportHeight] = this.config.viewport.size;
-	// 	state = state || {};
-	// 	for (let prop in state) {
-	// 		delete state[prop];
-	// 	}
-	// 	state.scene = "base";
-	// 	state.x = viewportWidth / 2;
-	// 	state.y = viewportHeight / 2 + 114;
-	// 	state.direction = 1;
-	// 	state.evaDirection = 1;
-	// 	document.getElementById("eva").style.transform = "";
+	updateMouse(time) {
+		if (this.mouse.alive) {
+			if (!this.mouse.lastAction || time - this.mouse.lastAction > 1300) {
+				this.mouse.goal.x = 40 + 720 * Math.random();
+				this.mouse.goal.y = 345 + 55 * Math.random();
+				this.mouse.lastAction = time + Math.random() * 500;
+			// this.monkor.goal.x = Math.max(40, Math.min(x, 760));
+			// this.monkor.goal.y = Math.max(345, Math.min(400, y));
+			}
+			const dx = this.mouse.goal.x - this.mouse.x;
+			const dy = this.mouse.goal.y - this.mouse.y;
+			const dist = Math.sqrt(dx * dx + dy * dy);
+			const speed = Math.min(dist, 5);
+			if (speed > .1) {
+				this.mouse.changeDirection(dx < 0 ? -1 : 1, time);
+				this.mouse.changeAnimation(this.atlas.mouse_run, time);
+				this.mouse.changePosition(this.mouse.x + speed * dx / dist, this.mouse.y + speed * dy / dist, time);
+			} else {
+				this.mouse.changeAnimation(this.atlas.mouse, time);
+			}
+		}
+	}
 
-	// 	if (localStorage.getItem("with-eva")) {
-	// 		state.win = true;
-	// 		state.scene = "with-eva";
-	// 		state.x = 200;
-	// 		setTimeout(() => {
-	// 			document.getElementById("message-box").innerText = "Eva!";
-	// 		}, 500);
-	// 	}
+	gameOver() {
+		document.getElementById("restart").style.display = "block";
+		document.getElementById("game-over").style.display = "block";
+		document.getElementById("restart").addEventListener("click", e => {
+			document.getElementById("restart").style.display = "none";
+			document.getElementById("game-over").style.opacity = 1;
+			location.reload();
+		});
+	}
 
-	// 	document.getElementById("sexy").style.display = "none";
-	// 	document.getElementById("elon").style.display = "none";
-	// 	document.getElementById("police").style.display = "none";
-	// 	document.getElementById("drug").style.display = "none";
-	// 	document.getElementById("annie").style.display = "none";
-	// 	document.getElementById("message-box").innerText = localStorage.getItem("lost-eva") ? "I lost Eva." : "";
+	getUterrance(msg, voiceId) {
+		if (!this.utterrances) {
+			this.utterrances = {};
+		}
+		if (this.utterrances[msg + voiceId]) {
+			return this.utterrances[msg + voiceId];
+		}
+		const utterance = new SpeechSynthesisUtterance();
+		utterance.text = msg;
+		if (!this.voices) {
+			this.voices = speechSynthesis.getVoices();
+		}
+		const voices = this.voices;
+		utterance.voice = voices[voiceId];
+		this.utterrances[msg + voiceId] = utterance;
+		return utterance;
 
-	// 	return state;
-	// }
+	}
+
+	updateInventory(selection) {
+		const div = document.getElementById("inventory");
+		div.innerText = "";
+		div.style.display = "flex";
+		div.style.flexDirection = "row";
+		this.selectedItem = null;
+		this.inventory.forEach(item => {
+			const k = div.appendChild(document.createElement("div"));
+			k.classList.add("inventory-item");
+			switch(item) {
+				case "key":
+					k.innerText = "🗝 key";
+					break;
+				case "cigarette":
+					k.innerText = "🚬 cigarette"
+					break;
+			}
+			k.addEventListener("click", e => {
+				this.updateInventory(item);
+				//inventoryDetails
+			});
+			if (selection === item) {
+				this.selectedItem = item;
+				k.classList.add("selected");				
+				const itemDetails = this.inventoryDetails[item];
+				this.selectTarget(itemDetails);
+				this.showActions(itemDetails);
+			}
+		});
+	}
+
+	handleMouse(e) {
+		if (this.monkor.paused || this.monkor.dead || this.mouse.alive || this.monkor.anim === this.atlas.monkor_talk) {
+			return;
+		}
+		const { pageX, pageY, buttons } = e;
+		const x = pageX - this.canvas.offsetLeft, y = pageY - this.canvas.offsetTop;
+		if (x < 0 || y < 0 || x > this.canvas.offsetWidth || y > this.canvas.offsetHeight) {
+			return;
+		}
+
+		if (buttons || e.type !== "mousemove") {
+			this.monkor.goal.x = Math.max(40, Math.min(x, 760));
+			this.monkor.goal.y = Math.max(345, Math.min(400, y));
+			this.monkor.speed = buttons ? 2 : 1;
+			if(!buttons) {
+				const diff = this.lastTime - this.lastMouseUp;
+				if (diff < 250) {
+					this.monkor.speed = 2;
+				}
+				this.lastMouseUp = this.lastTime;
+			}
+		}
+
+		let hovering = null;
+		for (let i = 0; i < this.spriteCollection.size(); i++) {
+			const sprite = this.spriteCollection.get(i);
+			if (sprite.actions) {
+				const collisionBox = sprite.getCollisionBox(this.lastTime);
+				if (collisionBox && this.pointContains(x, y, collisionBox)) {
+					hovering = sprite;
+				}
+			}
+		}
+		if (e.type === "mousedown") {
+			this.monkor.touched = hovering;
+			this.lastMouseDown = this.lastTime;
+			this.showActions(null);
+			this.showBubble(null);
+		} else if (e.type === "mouseup") {
+			let newTarget = null;
+			if (this.monkor.touched === hovering) {
+				const diff = this.lastTime - this.lastMouseDown;
+				if (diff < 250) {
+					newTarget = hovering;
+				}
+			}
+			this.selectTarget(newTarget);
+			this.monkor.touched = null;
+		}
+		const focused = this.monkor.target || hovering;
+		const subjectName = document.getElementById("subject-name");
+		subjectName.innerText = focused ? focused.name : "";
+		this.overlay.style.cursor = hovering ? "pointer" : "";
+
+		if (this.selectedItem && e.type === "mousedown") {
+			this.updateInventory(null);
+		}
+	}
+
+	selectTarget(target) {
+		const subject = document.getElementById("subject");
+		if (this.monkor.target !== target) {
+			this.monkor.target = target;
+			if (this.monkor.target) {
+				this.playAudio("audio/beep.mp3", .5);
+				const subjectName = document.getElementById("subject-name");
+				subjectName.innerText = target.name;
+				subject.classList.add("selected");
+			} else {
+				subject.classList.remove("selected");
+			}
+		}
+	}
+
+	showActions(target) {
+		if (this.showingTarget !== target) {
+			const subjecActions = document.getElementById("subject-actions");
+			this.showingTarget = target;
+			subjecActions.style.display = this.showingTarget && this.showingTarget.actions ? "" : "none";
+			if (this.showingTarget) {
+
+				subjecActions.innerText = "";
+				this.showingTarget.actions.forEach(({name, condition, message, action}) => {
+					if (!condition || condition(target)) {
+						const div = subjecActions.appendChild(document.createElement("div"));
+						div.classList.add("action");
+						div.innerText = name;
+						div.addEventListener("click", e => {
+							const msg = typeof(message) === "function" ? message(target) : message;
+							if (action) {
+								target.pendingMessage = msg;
+								action(target);
+							} else if (msg) {
+								this.showBubble(msg);
+							}
+							this.selectTarget(null);
+							this.updateInventory();
+							this.showActions(null);
+						});
+					}
+				});
+			}
+		}
+	}
+
+	showBubble(msg, callback) {
+		const speechBubble = document.getElementById("speech-bubble");
+		this.monkor.speechStarted = 0;
+		if (msg) {
+			if (!this.monkor.scared) {
+				speechBubble.style.display = "block";
+			}
+			speechBubble.style.left = `${canvas.offsetLeft + this.monkor.x - speechBubble.offsetWidth/2 - 20}px`;
+			speechBubble.style.top = `${canvas.offsetTop + this.monkor.y - this.monkor.size[1] - speechBubble.offsetHeight - 20}px`;
+
+			if (window.speechSynthesis) {
+				const utterance = this.getUterrance(msg, 16);
+				window.speechSynthesis.speak(utterance);
+				utterance.onstart = () => {
+					this.monkor.speechStarted = this.lastTime;
+					this.monkor.onEndSpeech = callback;
+				};
+			} else {
+				this.monkor.speechStarted = this.lastTime;
+				this.monkor.onEndSpeech = callback;
+			}
+		} else {
+			speechBubble.style.display = "none";
+		}
+		speechBubble.innerText = "";
+		this.monkor.speech = msg;
+	}
+
+	updateSpeech(time) {
+		const { speech, speechStarted } = this.monkor;
+		if (speech && speechStarted) {
+			const timeEllapsed = time - speechStarted;
+			const numCharacters = Math.ceil(timeEllapsed / 50);
+			const speechBubble = document.getElementById("speech-bubble");
+			speechBubble.innerText = speech.substr(0, numCharacters);
+		}
+	}
+
+	finishedSpeech(time) {
+		const { speech, speechStarted } = this.monkor;
+		if (!speech) {
+			return 1;
+		}
+		const timeEllapsed = time - speechStarted;
+		const numCharacters = Math.ceil(timeEllapsed / 50);
+		return numCharacters <= speech.length ? 0 : numCharacters - speech.length;
+	}
+
+	pointContains(x, y, collisionBox) {
+		const px = x, py = y;
+		return collisionBox.left <= px && px <= collisionBox.right && collisionBox.top <= py && py <= collisionBox.bottom;
+	}
+
+	setAudio(audio, value, volume, ignore) {
+		if (value) {
+			document.getElementById("speaker").innerText = "🔊";
+			document.getElementById("mute").innerText = "unmute";
+			audio.play();
+			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
+				this.showBubble("I like this music.");
+			}
+		} else {
+			document.getElementById("speaker").innerText = "🔇";
+			document.getElementById("mute").innerText = "mute";
+			audio.pause();					
+			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
+				this.showBubble("I don't like this music.");
+			}
+		}
+		audio.volume = volume;
+	}
 
 	initialize(gl, uniforms, {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}}) {
 		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
-		gl.clearColor(.8, .8, .8, 1);
+		gl.clearColor(.1, .0, .0, 1);
 
 		const viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
 		gl.uniformMatrix4fv(uniforms.view.location, false, viewMatrix);
@@ -440,358 +847,92 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 	}
 
-	applyKeyboard(cheoni, keyboardHandler, time) {
-		const { keys } = keyboardHandler;
-		// if (!state.sceneChangeStarting && !state.foundEva) {
-		const frame = cheoni.getAnimationFrame(time);
-		const crouching = keys["ArrowDown"] || keys["s"];
-		const crawling = crouching && this.frameInfo.crawling[frame];
-		const backup = (this.frameInfo.crawling[frame] || this.frameInfo.backup[frame]) && !crouching;
-		const jumping = keys[" "] || keys["Shift"] || keys["w"] || keys["ArrowUp"] || this.frameInfo.jumping[frame];
-		cheoni.dx = (keys["ArrowLeft"] || keys["a"] ? -1 : 0) + (keys["ArrowRight"] || keys["d"] ? 1 : 0);
+	applyKeyboard(monkor, keyboardHandler, time) {
 
-		const anim = backup ? this.atlas.backup
-					: crawling ? (cheoni.dx !== 0 ? this.atlas.crawling : this.atlas.crawled)
-					: jumping ? this.atlas.jump
-					: crouching ? this.atlas.down
-					: cheoni.dx !== 0 ? this.atlas.walk
-					: this.atlas.still;
-		if (cheoni.changeAnimation(anim, time)) {
-			// const frameOffset = anim.firstFrame - anim.startFrame;
-			// const frameDuration = 1000 / anim.frameRate;
-			// console.log(time,- frameDuration * frameOffset, frameOffset);
-			// cheoni.resetAnimation(time - frameDuration * frameOffset, time);
-			cheoni.resetAnimation(time);
-		}
-
-		if (cheoni.dx !== 0) {
-			cheoni.changeDirection(cheoni.dx, time);
-		}
-
-		// 	state.movement = dx !== 0 ? "running" : null;
-		// 	if (dx !== 0) {
-		// 		state.direction = dx;
-		// 	}
-		// }
 	}
 
-	// changeScene(time, state, nextScene) {
-	// 	state.sceneChangeStarting = time;
-	// 	state.nextScene = this.getNextScene(state.scene, state.x, state);
-	// 	state.movement = 0;
-	// 	console.log(state.scene, "=>", state.nextScene);
+	applyMovement(monkor, dt, time) {
 
-	// 	if (!state.audioTriggered) {
-	// 		state.audioTriggered = true;
-
-	// 		console.log("Starting audio.");
-	// 		document.getElementById("audio").currentTime = null;
-	// 		document.getElementById("audio").volume = .3;
-	// 		document.getElementById("audio").play();
-	// 	}
-	// }
-
-	// shouldMove(state, viewportWidth) {
-	// 	const dist = Math.abs(state.x - viewportWidth / 2);
-	// 	return state.movement || dist <= 30 || (dist >= 40 && dist < 100);
-	// }
-
-	applyMovement(cheoni, dt, time) {
-		// if (!state.sceneChangeStarting) {
-		// 	const dirDist = state.x - viewportWidth / 2;
-		// 	if (this.shouldMove(state, viewportWidth)) {
-		const mul = 2;
-		const frame = cheoni.getAnimationFrame(time);
-		const airborn = this.frameInfo.airborn[frame];
-		const crawling = this.frameInfo.crawling[frame];
-		dt = Math.min(dt, 20);
-		let px = cheoni.x;
-		if (cheoni.anim === this.atlas.walk) {
-			px = cheoni.x + dt * cheoni.dx / 6 * mul;
-		} else if (crawling) {
-			px = cheoni.x + dt * cheoni.dx / 10 * mul;
-		} else if (airborn) {
-			px = cheoni.x + dt * cheoni.dx / 4 * mul;
-		}
-		px = Math.max(20, Math.min(px, 800 - 20));
-		cheoni.changePosition(px, cheoni.y, time);
-		// 		if (state.x < 0) {
-		// 			this.changeScene(time, state, this.getNextScene(state.scene, state.x, state));
-		// 		} else if (state.x > viewportWidth) {
-		// 			this.changeScene(time, state, this.getNextScene(state.scene, state.x, state));
-		// 		}
-		// 		if (this.timeout) {
-		// 			clearTimeout(this.timeout);
-		// 			clearTimeout(this.timeout2)
-		// 			this.timeout = 0;
-		// 			this.timeout2 = 0;
-		// 			document.getElementById("eva").src = "assets/eva.gif";
-		// 		}
-		// 	} else if(!this.timeout) {
-		// 		const dist = Math.abs(dirDist);
-		// 		if (dist > 30 && dist < 50 && !this.timeout) {
-		// 			console.log(dist);
-		// 			this.timeout = setTimeout(() => {
-		// 				if (dirDist * state.direction < 0) {
-		// 					document.getElementById("eva").src = "assets/eva-2.gif";
-		// 				}
-		// 			}, 500);
-
-		// 			if (state.win) {
-		// 				this.timeout2 = setTimeout(() => {
-		// 					if (dirDist * state.direction < 0) {
-		// 						state.foundEva = true;
-		// 						const img = new Image();
-		// 						img.addEventListener("load", () => {
-		// 							state.hideSelf = true;
-		// 							document.getElementById("eva").src = img.src;
-		// 						});
-		// 						img.src = "assets/hug.gif";
-		// 						document.getElementById("message-box").innerText = "";
-		// 						localStorage.removeItem("with-eva");
-		// 						this.winEva(state);
-		// 					}
-		// 				}, 3000);
-		// 			}
-		// 		}
-		// 	}
-		// 	if (Math.random() < .05 && !state.evaTurning) {
-		// 		if (state.evaDirection * dirDist < 0) {
-		// 			state.evaDirection = dirDist;
-		// 			state.evaTurning = true;
-		// 			document.getElementById("eva").src = "assets/eva-turn.gif";
-		// 			const finalDir = dirDist;
-		// 			setTimeout(() => {
-		// 				document.getElementById("eva").src = "assets/eva.gif";
-		// 				document.getElementById("eva").style.transform = `scaleX(${finalDir < 0 ? -1 : 1})`;
-		// 				state.evaTurning = false;
-		// 			}, 450);
-		// 		}
-		// 	}
-		// }		
-	}
-
-	moveBalloon(balloon, index, time, dt) {
-		const newBaloon = balloon.x < -64;
-		if (newBaloon) {
-			balloon.changeOpacity(1, time);
-			balloon.popped = 0;
-			const colorIndex = Math.floor(Math.random() * (this.extra ? 8 : 7));
-			if (this.extra && colorIndex === 7) {
-				this.extra --;
+		if (this.mouse.alive) {
+			if (time - this.mouse.alive < 3000) {
+				const dx = this.mouse.x - monkor.x;
+				monkor.changeDirection(dx < 0 ? -1 : 1, time);
+				monkor.changeAnimation(this.atlas.monkor_scared, time);
+				if (!monkor.scared) {
+					monkor.scared = time;
+					this.playAudio("audio/scream.mp3", 1);
+					this.setAudio(audio, audio.paused, 0);
+				}
+			} else {
+				const dx = -(this.mouse.x - monkor.x);
+				monkor.changeDirection(dx < 0 ? -1 : 1, time);
+				monkor.changeAnimation(this.atlas.monkor_run, time);
+				monkor.changePosition(monkor.x + (dx < 0 ? -5 : 5), monkor.y, time);
+				if (!monkor.running_away) {
+					monkor.running_away = time;
+					setTimeout(() => this.gameOver(), 6000);					
+				}
 			}
-			balloon.changeAnimation(this.atlas["balloon" + colorIndex], time);
+			return;
 		}
-		const px = (newBaloon ? balloon.x + 1000 : balloon.x) - dt * .2;
-		balloon.changePosition(px, 20 + 40 * Math.sin((time + index * 3333) / 500), time);
-//		balloon.changePosition(balloon.x, 200, time)
-	}
 
-	doCollide(sprite1, sprite2, time) {
-		const box1 = sprite1.getCollisionBox(time);
-		const box2 = sprite2.getCollisionBox(time);
-		if (!box1 || !box2) {
-			return false;
+
+		if (this.monkor.goingup) {
+			const elapsed = Math.max(0, time - this.monkor.goingup - 500);
+			if (elapsed > 0) {
+				this.monkor.changeAnimation(this.atlas.monkor_back, time);
+				this.monkor.changePosition(400, 350 - 30 * (elapsed / 2000), time);
+				this.monkor.changeOpacity(Math.max(0, 1 - (elapsed / 2000)), time);
+				if (elapsed > 4000 && !this.monkor.levelup) {
+					this.monkor.levelup = this.lastTime;
+					document.getElementById("game-over-message").style.display = "block";
+					document.getElementById("game-over-message").innerText = "Ok I lied. This room is possible to get into. But you can't get out, because I didn't finish making this game. Sorry! Come back later!";
+					this.gameOver();
+				}
+			}
+			return;
 		}
-		return box1.right >= box2.left && box2.right >= box1.left && box1.bottom >= box2.top && box2.bottom >= box1.top;
-	}
 
-	checkBalloon(balloon, cheoni, time) {
-//		console.log(balloon.popped, this.doCollide(balloon, cheoni, time));
-		if (!balloon.popped && this.doCollide(balloon, cheoni, time)) {
-			balloon.popped = time;
-			balloon.changeOpacity(0, time);
-			document.getElementById("hit-audio").play();
-			// document.getElementById("info-box").innerText = "POP";//this.cheoni.getAnimationFrame(time);
-//			console.log("POP");
-			this.dropCandy(balloon.x, balloon.y, balloon.anim === this.atlas.balloon7, false, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
-			this.dropCandy(balloon.x, balloon.y, false, true, time);
+
+		const speed = 2 * monkor.speed;
+		const dx = (monkor.goal.x - monkor.x);
+		const dy = (monkor.goal.y - monkor.y);
+		const dist = Math.sqrt(dx * dx + dy * dy);
+		const actualSpeed = Math.min(dist, speed);
+		let anim = this.atlas.monkor_still;
+		if (dist) {
+			monkor.changePosition(monkor.x + actualSpeed * dx / dist, monkor.y + actualSpeed * dy / dist, time);
+			monkor.changeDirection(dx < 0 ? -1 : 1, time);
+			if (Math.abs(dx) > Math.abs(dy)) {
+				anim = this.atlas.monkor_right;
+			} else if (dy > 0) {
+				anim = this.atlas.monkor_front;
+			} else {
+				anim = this.atlas.monkor_back;
+			}
 		} else {
-			// document.getElementById("info-box").innerText = "NOPOP";//this.cheoni.getAnimationFrame(time);
-		}
-
-	}
-
-	dropCandy(x, y, dino, sparkle, time) {
-		const candy = this.candies.pop();
-		if (candy) {
-			candy.changePosition(x, y, time);
-			candy.x = x;
-			candy.y = y;
-			candy.changeOpacity(sparkle ? .3 : 1, time);
-			candy.dx = (Math.random() - .5) * 20;
-			candy.dy = -5 + 10 * Math.random();
-
-			candy.changeAnimation(sparkle ? this.atlas.sparkle : dino ? this.atlas.dino : Math.random() < .3 ? this.atlas.chocolate : this.atlas.candy, time);
-
-			//console.log(candy);
-			this.flyingCandies.push(candy);
-		}
-	}
-
-	processPipe(time) {
-		if (this.pipe.show) {
-			if (this.pipe.opacity === 0) {
-				this.pipe.changePosition(Math.random() * 600 + 100, this.pipe.y, time);
-				this.pipe.changeOpacity(1, time);
-				this.pipe.changeAnimation(this.atlas.pipe_out, time);
-			} else if (this.pipe.anim === this.atlas.pipe_out) {
-				const frame = this.pipe.getAnimationFrame(time);
-				if (frame === 10) {
-					this.pipe.changeAnimation(this.atlas.pipe, time);
+			const finishedSpeech = this.finishedSpeech(time);
+			if (!finishedSpeech) {
+				anim = this.atlas.monkor_talk;
+			} else if (monkor.smoking) {
+				anim = (time / 400) % 10 < 2 ? this.atlas.monkor_puff : this.atlas.monkor_smoke;
+				if (time - monkor.smoking >= 5000 && !this.piano.dropping) {
+					this.dropPiano(time);
 				}
-			} else if (this.pipe.anim === this.atlas.pipe) {
-				const cheoniFrame = this.cheoni.getAnimationFrame(time);
-				if (this.frameInfo.landing[cheoniFrame] && Math.abs(this.cheoni.x - this.pipe.x) < 50) {
-					this.pipe.changeAnimation(this.atlas.pipe_in, time);
-//					this.cheoni.changeAnimation(this.atlas.jump,)
+			}
+
+			if (finishedSpeech) {
+				if (monkor.onEndSpeech) {
+					monkor.onEndSpeech();
+					monkor.onEndSpeech = null;
 				}
-			} else if (this.pipe.anim === this.atlas.pipe_in) {
-				const frame = this.pipe.getAnimationFrame(time);
-				if (frame === 19) {
-					this.pipe.changeOpacity(0, time);
-					this.pipe.show = false;
+				if (finishedSpeech > 50 && this.monkor.speechStarted) {
+					this.showBubble(null);
 				}
 			}
 		}
+		monkor.changeAnimation(anim, time);
 	}
-
-	processCandies(dt, time) {
-		const crawling = this.cheoni.anim === this.atlas.crawling;
-		for (let i = this.flyingCandies.length - 1; i >= 0; i--) {
-			const candy = this.flyingCandies[i];
-			if (candy.landed) {
-				const frame = this.cheoni.getAnimationFrame(time);
-				const crawling = this.frameInfo.crawling[frame];
-
-				if (crawling && Math.abs(this.cheoni.x - candy.x) < 50) {
-					candy.landed = false;
-					this.flyingCandies[i] = this.flyingCandies[this.flyingCandies.length - 1];
-					this.flyingCandies.pop();
-					this.candies.push(candy);
-					candy.changeOpacity(0, time);
-					const pickupAudio = document.getElementById("pickup-audio");
-//					this.cheoni.changeAnimation(this.atlas.pickup, time);
-					pickupAudio.currentTime = 0;
-					pickupAudio.play();
-					if (this.atlas.dino === candy.anim) {
-						this.dinoCount ++;
-					} else {
-						const count = this.score + this.chocolate;
-						if (this.atlas.chocolate === candy.anim) {
-							this.chocolate ++;						
-						} else {
-							this.score ++;
-						}
-						if (count % 10 === 0) {
-							this.extra++;
-						}
-					}
-
-
-					document.getElementById("score").innerText = this.score ? "🍬: " + this.score + " " : "";
-					localStorage.setItem("score", this.score);
-					document.getElementById("chocolate").innerText = this.chocolate ? "🍫: " + this.chocolate + " " : "";
-					localStorage.setItem("chocolate", this.chocolate);
-					document.getElementById("dino").innerText = this.dinoCount ? "🦖: " + this.dinoCount + " " : "";
-					localStorage.setItem("dino", this.dinoCount);
-
-				}
-
-				continue;
-			}
-			candy.changeRotation(candy.rotation + dt * 10 * candy.rotationSpeed, time);
-
-			const px = Math.max(50, Math.min(800-50, candy.x + candy.dx));
-			const py = candy.y + candy.dy;
-			candy.dy += .3;
-			if (px <= 50 || px >= 800 - 50) {
-				candy.dx = -candy.dx;
-			}
-			candy.changePosition(px, py, time);
-			if (candy.y >= 282) {
-				candy.landed = true;
-				if (candy.anim === this.atlas.dino) {
-					candy.changeRotation(0, time);
-				} else if (candy.anim === this.atlas.sparkle) {
-					this.flyingCandies[i] = this.flyingCandies[this.flyingCandies.length - 1];
-					this.flyingCandies.pop();
-					this.candies.push(candy);
-					candy.changeOpacity(0, time);
-					candy.landed = false;
-				}
- 			}
-		}
-	}
-
-	checkCollisions(time) {
-		if (this.doCollide(this.pipe, this.cheoni, time)) {
-//			const dx = 
-		}
-	}
-
-	test(time) {
-		this.checkBalloon(this.balloons[0], this.cheoni, time);
-		// const cheoniRect = this.cheoni.anim.getCollisionBox(this.cheoni.getAnimationFrame(time));
-		// const balloonRect = this.balloons[0].anim.getCollisionBox(this.balloons[0].getAnimationFrame(time));
-		// console.log(cheoniRect, balloonRect);
-	}
-
-	// applySceneChange(state, time) {
-	// 	const { gl } = this;
-	// 	const [viewportWidth, viewportHeight] = this.config.viewport.size;
-	// 	state.time = time;
-	// 	const colorMultiplier = state.gameOver ? .2 : 1;
-	// 	const color = .8 * colorMultiplier;
-	// 	if (state.sceneChangeStarting) {
-	// 		const progress = (time - state.sceneChangeStarting) / 2000;
-	// 		if (progress < .3) {
-	// 			const fadeProgress = Math.max(0, (.3 - progress) / .3) * colorMultiplier;
-	// 			gl.clearColor(.8 * fadeProgress, .8 * fadeProgress, .8 * fadeProgress, 1);
-	// 		} else if (progress >= .8) {
-	// 			state.sceneChangeStarting = 0;
-	// 			gl.clearColor(color, color, color, 1);		
-	// 		} else if (progress > .7) {
-	// 			const fadeProgress = Math.min(1, (progress - .7) / .3) * colorMultiplier;
-	// 			gl.clearColor(.8 * fadeProgress, .8 * fadeProgress, .8 * fadeProgress, 1);				
-	// 		} else if (progress >= .5 && state.nextScene) {
-	// 			state.scene = state.nextScene;
-	// 			if (this.sceneMap[state.scene]) {
-	// 				state.scene = this.sceneMap[state.scene];
-	// 			}
-	// 			console.log("scene: ", state.scene);
-	// 			if (state.win) {
-	// 				state.win = false;
-	// 				state.gameOver = state.scene !== "reset";			
-	// 			}
-
-	// 			state.nextScene = null;
-	// 			state.x = state.x < viewportWidth / 2 ? 700 : 100;
-	// 			if (!state.win) {
-	// 				if (state.scene !== "reset") {
-	// 					document.getElementById("eva").style.display = "none";
-	// 					localStorage.setItem("lost-eva", true);
-	// 				}
-	// 				localStorage.removeItem("with-eva");
-	// 			}
-	// 			document.getElementById("controls").style.display = "none";
-	// 			if (state.scene !== "reset") {
-	// 				setTimeout(() => {
-	// 					document.getElementById("message-box").innerText = this.getMessage(state.scene, state);
-	// 				}, 500);
-	// 			}
-	// 			this.onScene(state.scene, state);
-	// 		}
-	// 	}
-	// }
 
 	configShader(gl) {
 		gl.enable(gl.CULL_FACE);
@@ -806,6 +947,7 @@ class Engine {
 		canvas.style.width = `${viewportWidth}px`;
 		canvas.style.height = `${viewportHeight}px`;
 		canvas.style.opacity = 1;
+		document.getElementById("title").style.opacity = .5;
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 	}
 
@@ -816,6 +958,8 @@ class Engine {
 		};
 		loop(0);
 	}
+
+
 
 	// getNextScene(scene, direction, state) {
 	// 	if (state.gameOver) {
@@ -967,6 +1111,40 @@ class Engine {
 	// 	return "";
 	// }
 
+	doCollide(box1, box2, time) {
+		if (!box1 || !box2) {
+			return false;
+		}
+		return box1.right >= box2.left && box2.right >= box1.left && box1.bottom >= box2.top && box2.bottom >= box1.top;
+	}
+
+	checkCollisions(time) {
+		const monkorBox = this.monkor.getCollisionBox(time);	
+		for (let i = 0; i < this.spriteCollection.size(); i++) {
+			const sprite = this.spriteCollection.get(i);
+			if (sprite.actions) {
+				const collisionBox = sprite.getCollisionBox(time);
+				if (this.doCollide(monkorBox, collisionBox)) {
+					if (sprite === this.monkor.target) {
+						this.showActions(sprite);
+					}
+				}
+			}
+		}
+	}
+
+	handleFrames(time) {
+		for (let i = 0; i < this.spriteCollection.size(); i++) {
+			const sprite = this.spriteCollection.get(i);
+			if (sprite.onFrame) {
+				const f = sprite.onFrame[sprite.getAnimationFrame(time)];
+				if (f) {
+					f(sprite);
+				}
+			}
+		}		
+	}
+
 	showDebugCanvas(time) {
 		this.debugCanvas.width = this.canvas.width;
 		this.debugCanvas.height = this.canvas.height;
@@ -976,12 +1154,14 @@ class Engine {
 		this.debugCanvas.style.top = `${this.canvas.offsetTop}px`;
 		this.debugCanvas.style.display = "";
 		const ctx = this.debugCtx;
+		const { config: { viewport: { pixelScale } } } = this;
+		const margin = 10 / pixelScale;
 		ctx.clearRect(0, 0, this.debugCanvas.width, this.debugCanvas.height);
 		ctx.beginPath();
-		ctx.rect(5, 5, this.debugCanvas.width - 10, this.debugCanvas.height - 10);
+		ctx.rect(margin, margin, this.debugCanvas.width - margin * 2, this.debugCanvas.height - margin * 2);
 		ctx.stroke()
 
-		const { cheoni } = this;
+//		const { cheoni } = this;
 		ctx.strokeStyle = "#FF0000";
 		ctx.beginPath();
 
@@ -996,11 +1176,19 @@ class Engine {
 	}
 
 	drawCollisionBox(ctx, sprite, time) {
+		const { config: { viewport: { pixelScale } } } = this;
 		const rect = sprite.getCollisionBox(time);
 		if (!rect) {
 			return;
 		}
-		ctx.rect(rect.left, rect.top, rect.right - rect.left + 1, rect.bottom - rect.top + 1);
+		ctx.rect(rect.left / pixelScale, rect.top / pixelScale, (rect.right - rect.left) / pixelScale, (rect.bottom - rect.top) / pixelScale);
+	}
+
+	playAudio(sound, volume) {
+		const audio = new Audio();
+		audio.src = sound;
+		audio.volume = volume || 1;
+		audio.play();
 	}
 
 	refresh(time) {
@@ -1019,18 +1207,25 @@ class Engine {
 
 		const { state } = this;
 		// this.applySceneChange(state, time);
-		this.applyKeyboard(this.cheoni, this.keyboardHandler, time);
-		this.applyMovement(this.cheoni, dt, time);
+		// this.applyKeyboard(this.cheoni, this.keyboardHandler, time);
+		this.applyMovement(this.monkor, dt, time);
 
-		for (let i = 0; i < this.balloons.length; i++) {
-			this.moveBalloon(this.balloons[i], i, time, dt);
-			this.checkBalloon(this.balloons[i], this.cheoni, time);
-		}
+		// for (let i = 0; i < this.balloons.length; i++) {
+		// 	// this.moveBalloon(this.balloons[i], i, time, dt);
+		// 	// this.checkBalloon(this.balloons[i], this.cheoni, time);
+		// }
 
 		this.checkCollisions(time);
 
-		this.processCandies(dt, time);
-		this.processPipe(time);
+		this.updateSpeech(time);
+
+		this.handleFrames(time);
+
+		this.updatePiano(time);
+		this.updateMouse(time);
+
+		// this.processCandies(dt, time);
+		// this.processPipe(time);
 
 		//	sprite
 		//	- x, y, width, height
@@ -1076,7 +1271,7 @@ class Engine {
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 		this.lastTime = time;
-		this.showDebugCanvas(time);
+//		this.showDebugCanvas(time);
 	}
 }
 

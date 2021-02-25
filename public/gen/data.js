@@ -39,7 +39,7 @@ const globalData={
 	},
 	"config": {
 		"viewport": {
-			"pixelScale": 2,
+			"pixelScale": 0.5,
 			"size": [
 				800,
 				400

@@ -7,9 +7,14 @@ class SpriteCollection {
 		this.sprites = [];
 	}
 
-	create(data) {
+	create(data, attributes) {
 		const sprite = new Sprite(data);
 		this.sprites.push(sprite);
+		
+
+		for (let i in attributes) {
+			sprite[i] = attributes[i];
+		}
 		return sprite;
 	}
 

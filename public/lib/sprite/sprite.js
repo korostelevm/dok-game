@@ -9,6 +9,7 @@
 
 class Sprite {
 	constructor(data) {
+		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.size = data.size || [0, 0];
@@ -110,19 +111,28 @@ class Sprite {
 	}
 
 	getCollisionBox(time) {
-		const rect = this.anim.getCollisionBox(this.getAnimationFrame(time));
+		const rect = this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time));
 		if (!rect) {
 			return null;
 		}
-		const cellLeft = this.direction < 0 ? this.anim.spriteWidth - rect.right : rect.left 
-		const left = (this.x - this.hotspot[0]) / 2 + cellLeft * 2;
-		const top = (this.y - this.hotspot[1]) / 2 + rect.top * 2;
-		const width = (rect.right - rect.left + 1) * 2;
-		const height = (rect.bottom - rect.top + 1) * 2;
-		this.collisionBox.left = left;
-		this.collisionBox.top = top;
-		this.collisionBox.right = left + width - 1;
-		this.collisionBox.bottom = top + height - 1;;
+		const [ width, height ] = this.size;
+		const left = this.x - this.hotspot[0];
+		const top = this.y - this.hotspot[1];
+		this.collisionBox.left = left + rect.left * width;
+		this.collisionBox.right = left + rect.right * width;
+		this.collisionBox.top = top + rect.top * height;
+		this.collisionBox.bottom = top + rect.bottom * height;
 		return this.collisionBox;
+//		const [ spriteWidth, spriteHeight ] = this.size;
+		// const cellLeft = this.direction < 0 ? this.anim.spriteWidth - rect.right : rect.left 
+		// const left = (this.x - this.hotspot[0]) / 2 + cellLeft * 2;
+		// const top = (this.y - this.hotspot[1]) / 2 + rect.top * 2;
+		// const width = (rect.right - rect.left + 1) * 2;
+		// const height = (rect.bottom - rect.top + 1) * 2;
+		// this.collisionBox.left = left;
+		// this.collisionBox.top = top;
+		// this.collisionBox.right = left + width - 1;
+		// this.collisionBox.bottom = top + height - 1;
+		// return this.collisionBox;
 	}
 }

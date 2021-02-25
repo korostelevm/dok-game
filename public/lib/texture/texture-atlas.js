@@ -68,10 +68,10 @@ class TextureAtlas {
 					const cellHeight = canvas.height / this.rows;
 					const cellX = col * cellWidth;
 					const cellY = row * cellHeight;
-					const top = this.getTop(context, cellX, cellY, cellWidth, cellHeight);
-					const bottom = this.getBottom(context, cellX, cellY, cellWidth, cellHeight);
-					const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight);
-					const right = this.getRight(context, cellX, cellY, cellWidth, cellHeight);
+					const top = this.getTop(context, cellX, cellY, cellWidth, cellHeight) / this.spriteHeight;
+					const bottom = this.getBottom(context, cellX, cellY, cellWidth, cellHeight) / this.spriteHeight;
+					const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight) / this.spriteWidth;
+					const right = this.getRight(context, cellX, cellY, cellWidth, cellHeight) / this.spriteWidth;
 					if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
 						this.collisionBoxes[row * this.cols + col] = {
 							top, left, bottom, right,
@@ -87,7 +87,7 @@ class TextureAtlas {
 		return this;
 	}
 
-	getCollisionBox(frame) {
+	getCollisionBoxNormalized(frame) {
 		//console.log(frame, this.collisionBoxes);
 		return this.collisionBoxes[frame];
 	}
