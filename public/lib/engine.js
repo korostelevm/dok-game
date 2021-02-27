@@ -481,7 +481,7 @@ class Engine {
 		keyboardHandler.addKeyDownListener("r", e => {
 			const msg = "Actually I lied. Pressing R does nothing.";
 			if (window.speechSynthesis) {
-				const utterance = this.getUterrance(msg, 39);
+				const utterance = this.getUterrance(msg, "Mei-Jia");
 				window.speechSynthesis.speak(utterance);			
 			}
 			document.getElementById("pressing-r").innerText = msg;
@@ -611,21 +611,27 @@ class Engine {
 		});
 	}
 
-	getUterrance(msg, voiceId) {
-		if (!this.utterrances) {
-			this.utterrances = {};
-		}
-		if (this.utterrances[msg + voiceId]) {
-			return this.utterrances[msg + voiceId];
-		}
-		const utterance = new SpeechSynthesisUtterance();
-		utterance.text = msg;
+	getUterrance(msg, voiceName) {
 		if (!this.voices) {
 			this.voices = speechSynthesis.getVoices();
 		}
+
 		const voices = this.voices;
-		utterance.voice = voices[voiceId];
-		this.utterrances[msg + voiceId] = utterance;
+		const voice = voices.filter(({name}) => name === voiceName)[0] || voices[Math.floor(Math.random() * voices.length)];
+		if (!voice) {
+			return null;
+		}
+
+		if (!this.utterrances) {
+			this.utterrances = {};
+		}
+		if (!this.utterrances[voice.name]) {
+			this.utterrances[voice.name] = new SpeechSynthesisUtterance();
+			this.utterrances[voice.name].voice = voice;
+			console.log(voice.name);
+		}
+		const utterance = this.utterrances[voice.name];
+		utterance.text = msg;
 		return utterance;
 
 	}
@@ -777,7 +783,7 @@ class Engine {
 			speechBubble.style.top = `${canvas.offsetTop + this.monkor.y - this.monkor.size[1] - speechBubble.offsetHeight - 20}px`;
 
 			if (window.speechSynthesis) {
-				const utterance = this.getUterrance(msg, 16);
+				const utterance = this.getUterrance(msg, "Daniel");
 				window.speechSynthesis.speak(utterance);
 				utterance.onstart = () => {
 					this.monkor.speechStarted = this.lastTime;
