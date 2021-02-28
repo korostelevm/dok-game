@@ -19,6 +19,8 @@ app.get('/', (req, res, next) => {
 	Promise.all([
 		fs.promises.readFile(`${__dirname}/public/index.html`),
 		generateData(),
+		listFiles(`${__dirname}/public`, "")
+			.then(data => fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${JSON.stringify(data,null,'\t')};`)),
 	]).then(([html]) => {
 		res.write(html);
 		res.end();
@@ -67,6 +69,26 @@ function generateData() {
 		})
 		.then(dataChunks => Object.fromEntries(dataChunks))
 		.then(data => fs.promises.writeFile(`${__dirname}/public/gen/data.js`, `const globalData=${JSON.stringify(data,null,'\t')};`));
+}
+
+function listFiles(root, path) {
+	return fs.promises.readdir(`${root}${path}`).then(files => {
+		return Promise.all(files.map(filename => {
+			if (fs.lstatSync(`${root}${path}/${filename}`).isDirectory()) {
+				return listFiles(root, `${path}/${filename}`).then(result => {
+					return {
+						[filename] : result,
+					};
+				});
+			} else {
+				return filename;
+			}
+
+			// return fs.lstatSync(`${root}${path}/${filename}`).isDirectory()
+			// 	? listFiles(root, `${path}/${filename}`)
+			// 	: `${path}/${filename}`;
+		}))
+	});
 }
 
 function zipPublic(source, out) {
