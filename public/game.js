@@ -1,7 +1,8 @@
 class Game extends GameCore {
 	constructor() {
 		super();
-		ImageLoader.loader.preloadImages(
+		const imageLoader = new ImageLoader();
+		imageLoader.preloadImages(
 			"assets/background-door.png",
 			"assets/background-door-collision.png",
 			"assets/sign.png",
@@ -13,6 +14,7 @@ class Game extends GameCore {
 			"assets/monkor.png",
 			"assets/monkor-collision.png",
 		);
+
 		document.addEventListener("DOMContentLoaded", () => {
 			engine.setGame(this);
 		});
@@ -707,6 +709,7 @@ class Game extends GameCore {
 		this.monkor.currentSpeech = "";
 		this.monkor.lastCharacter = 0;
 		this.monkor.characterIndex = 0;
+		this.monkor.finishedSpeech = 0;
 		if (msg) {
 			if (!this.monkor.scared) {
 //				speechBubble.style.display = "block";
@@ -760,6 +763,9 @@ class Game extends GameCore {
 				if (char === " ") {
 					this.monkor.speechPause++;
 				}
+				if (this.monkor.currentSpeech.length >= speech.length) {
+					this.monkor.finishedSpeech = time;
+				}
 			}
 
 			// const timeEllapsed = time - speechStarted;
@@ -770,8 +776,8 @@ class Game extends GameCore {
 	}
 
 	finishedSpeech() {
-		const { speech, currentSpeech, speechStarted } = this.monkor;
-		return !speechStarted || currentSpeech.length >= speech.length;
+		const { speech, currentSpeech, speechStarted, finishedSpeech } = this.monkor;
+		return !speechStarted ? 1 : finishedSpeech;
 	}
 
 	applyMovement(monkor, dt, time) {
@@ -850,7 +856,7 @@ class Game extends GameCore {
 					monkor.onEndSpeech();
 					monkor.onEndSpeech = null;
 				}
-				if (finishedSpeech > 50 && this.monkor.speechStarted) {
+				if (time - finishedSpeech > 1000 && this.monkor.speechStarted) {
 					this.showBubble(null);
 				}
 			}

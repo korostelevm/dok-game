@@ -46,6 +46,15 @@ const globalFiles=[
 		]
 	},
 	"favicon.ico",
+	{
+		"fonts": [
+			".DS_Store",
+			"american-captain.otf",
+			"cartoon-script.ttf",
+			"demode.ttf",
+			"grotto.ttf"
+		]
+	},
 	"game-core.js",
 	"game-scripter.js",
 	"game.js",

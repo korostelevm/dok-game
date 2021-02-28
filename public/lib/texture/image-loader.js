@@ -63,5 +63,3 @@ class ImageLoader {
 		});
 	}
 }
-
-ImageLoader.loader = new ImageLoader();

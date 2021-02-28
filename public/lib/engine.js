@@ -1,7 +1,6 @@
 class Engine {
-	constructor(config, imageLoader) {
+	constructor(config) {
 		this.init(config);
-		this.imageLoader = imageLoader;
 	}
 
 	async loadDomContent(document) {
@@ -70,7 +69,7 @@ class Engine {
 		this.shader = new Shader(gl, ext, vertexShader, fragmentShader, attributes, maxInstancesCount);
 
 		/* Texture management */
-		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.imageLoader, this.chrono);
+		this.textureManager = new TextureManager(gl, this.shader.uniforms, new ImageLoader(), this.chrono);
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection();
@@ -299,4 +298,4 @@ class Engine {
 	}
 }
 
-const engine = new Engine(globalData.config, ImageLoader.loader);
+const engine = new Engine(globalData.config);

@@ -15,6 +15,16 @@
 		<meta name="description" content="Dobuki Game Description">
 
 		<style type="text/css">
+			@font-face {
+			  font-family: speech-font;
+			  src: url(fonts/cartoon-script.ttf);
+			}
+			@font-face {
+			  font-family: title-font;
+			  src: url(fonts/american-captain.otf);
+			}
+
+
 			canvas {  
 			  image-rendering: -moz-crisp-edges;
 			  image-rendering: -webkit-crisp-edges;
@@ -82,6 +92,7 @@
   				color: lightgreen;
   				white-space:nowrap;
 				text-shadow: 2px 2px darkgreen;
+				font-family: title-font;
   			}
 
 			.container {
@@ -173,6 +184,9 @@
 			    box-shadow: 1px 1px 0px 0px black;
 			    /*display: none;*/
 			    opacity: 0;
+			    font-family: speech-font;
+			    font-size: 10pt;
+			    color: black;
 
   				transition-property: opacity;
   				transition-duration: 1s;
@@ -262,7 +276,7 @@
 	</head>
 	<body>
 		<!-- https://www.beepbox.co/#8n31sbk0l00e0ft3em0a7g0fj07i0r1o3210T5v0L4u50q1d5f8y1z6C1c0h0H-JJAArrqiih999T6v1L4u77q1d1f7y4z1C1c2W79T1v0L4u55q1d1f9y0z6C1c0A4F2B4V1Q40c0Pd73bE0111T3v3L4u03q0d1f8y0z1C2S-JIAArrrrrqiiiib4x8Qd18ilBoi4zgR4x8Qd14h8Och4icz4h4h414h4h0p23dFE-y-y38X2eQzEF8W2eH04t17hihO97ghQkRkRqGa2e2FKI8W2eyMzG8Zd517rj8Op7ghQkRkQWiewzEAieIzEbWyeAzRlmSng5dlJJJtBJd9jpvhSqq_3FU2tDwdv9ePMaDmt_v9YEUeEUckR_52qfiwcEWv2koz0phvgnQp2z4rsGwUY5Cz0K8WkkQpk0hQklAt17mhQ4o0 -->
-		<div id="title" style="user-select: text; position: absolute; top: 50px; left:200px; z-index: 300; font-size: 40pt"><span id="im" contenteditable="true">THE IMPOSSIBLE ROOM</span></div>
+		<div id="title" style="user-select: text; position: absolute; top: 80px; left:300px; z-index: 300; font-size: 40pt"><span id="im" contenteditable="true">THE IMPOSSIBLE ROOM</span></div>
 		<div id="overlay" ondrop="game.onDropMouse(event)" ondragover="(event.preventDefault())"></div>
 		<div id="game-over"></div>
 		<div class="centered" id="game-over-message"></div>
@@ -293,24 +307,24 @@
 			<div><span id="speaker">🔇</span>: Press M to <span id="mute">mute</span></div>
 			<div>🔁: <span id="pressing-r">R to start over.</span></div>
 		</div>
-		<script type="text/javascript" src="lib/texture/image-loader.js" defer></script>
-		<script type="text/javascript" src="game-core.js" defer></script>
-		<script type="text/javascript" src="game.js" defer></script>
-		<script type="text/javascript" src="gen/data.js" defer></script>
-		<script type="text/javascript" src="lib/utils/chrono.js" defer></script>
-		<script type="text/javascript" src="lib/math/gl-matrix.js" defer></script>
-		<script type="text/javascript" src="lib/opengl/buffer-renderer.js" defer></script>
-		<script type="text/javascript" src="lib/opengl/shader.js" defer></script>
-		<script type="text/javascript" src="lib/opengl/utils.js" defer></script>
-		<script type="text/javascript" src="lib/renderer/sprite-renderer.js" defer></script>
-		<script type="text/javascript" src="lib/texture/texture-atlas.js" defer></script>
-		<script type="text/javascript" src="lib/texture/texture-manager.js" defer></script>
-		<script type="text/javascript" src="lib/sprite/sprite.js" defer></script>
-		<script type="text/javascript" src="lib/sprite/sprite-collection.js" defer></script>
-		<script type="text/javascript" src="lib/engine.js" defer></script>
-		<script type="text/javascript" src="lib/ui/keyboard-handler.js" defer></script>
-		<script type="text/javascript" src="lib/ui/focus-fixer.js" defer></script>
-		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js" defer></script>
-		<script type="text/javascript" src="lib/newgrounds/ng.js" defer></script>
+		<script type="text/javascript" src="lib/texture/image-loader.js"></script>
+		<script type="text/javascript" src="game-core.js"></script>
+		<script type="text/javascript" src="game.js"></script>
+		<script type="text/javascript" src="gen/data.js"></script>
+		<script type="text/javascript" src="lib/utils/chrono.js"></script>
+		<script type="text/javascript" src="lib/math/gl-matrix.js"></script>
+		<script type="text/javascript" src="lib/opengl/buffer-renderer.js"></script>
+		<script type="text/javascript" src="lib/opengl/shader.js"></script>
+		<script type="text/javascript" src="lib/opengl/utils.js"></script>
+		<script type="text/javascript" src="lib/renderer/sprite-renderer.js"></script>
+		<script type="text/javascript" src="lib/texture/texture-atlas.js"></script>
+		<script type="text/javascript" src="lib/texture/texture-manager.js"></script>
+		<script type="text/javascript" src="lib/sprite/sprite.js"></script>
+		<script type="text/javascript" src="lib/sprite/sprite-collection.js"></script>
+		<script type="text/javascript" src="lib/engine.js"></script>
+		<script type="text/javascript" src="lib/ui/keyboard-handler.js"></script>
+		<script type="text/javascript" src="lib/ui/focus-fixer.js"></script>
+		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
+		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
 	</body>
 </html>
