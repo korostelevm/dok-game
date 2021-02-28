@@ -91,7 +91,7 @@ class Sprite {
 		return false;
 	}
 
-	changeAnimation(anim, time) {
+	changeAnimation(anim, time, updateTime) {
 		if (this.anim !== anim) {
 			if (!anim) {
 				console.warn("anim is null.");
@@ -99,7 +99,7 @@ class Sprite {
 			}
 			this.anim = anim;
 			this.updated.animation = time;
-			this.updated.updateTime = time;
+			this.updated.updateTime = updateTime || time;
 			return true;
 		}
 		return false;

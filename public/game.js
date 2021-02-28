@@ -703,6 +703,10 @@ class Game extends GameCore {
 		const { lastTime } = engine;
 		const speechBubble = document.getElementById("speech-bubble");
 		this.monkor.speechStarted = 0;
+		this.monkor.speechPause = 1;
+		this.monkor.currentSpeech = "";
+		this.monkor.lastCharacter = 0;
+		this.monkor.characterIndex = 0;
 		if (msg) {
 			if (!this.monkor.scared) {
 //				speechBubble.style.display = "block";
@@ -719,9 +723,13 @@ class Game extends GameCore {
 					this.monkor.speechStarted = lastTime;
 					this.monkor.onEndSpeech = callback;
 				};
+				utterance.onboundary = e => {
+					this.unblockText();
+				};
 			} else {
 				this.monkor.speechStarted = lastTime;
 				this.monkor.onEndSpeech = callback;
+				this.monkor.noVoice = true;
 			}
 			speechBubble.innerText = "";
 		} else {
@@ -731,24 +739,39 @@ class Game extends GameCore {
 		this.monkor.speech = msg;
 	}
 
+	unblockText() {
+		this.monkor.speechPause--;
+	}
+
 	updateSpeech(time) {
-		const { speech, speechStarted } = this.monkor;
-		if (speech && speechStarted) {
-			const timeEllapsed = time - speechStarted;
-			const numCharacters = Math.ceil(timeEllapsed / 50);
-			const speechBubble = document.getElementById("speech-bubble");
-			speechBubble.innerText = speech.substr(0, numCharacters);
+		if (this.finishedSpeech()) {
+			return;
+		}
+		const { speech, speechStarted, lastCharacter } = this.monkor;
+		if (speech && speechStarted && (this.monkor.speechPause <= 0 || this.monkor.noVoice)) {
+			const textSpeed = this.monkor.noVoice ? 50 : 20;
+			if (!lastCharacter || time - lastCharacter >= textSpeed) {
+				this.monkor.lastCharacter = time;
+				const char = speech.charAt(this.monkor.characterIndex);
+				this.monkor.currentSpeech += char;
+				const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
+				speechBubble.innerText = this.monkor.currentSpeech; //speech.substr(0, numCharacters);
+				this.monkor.characterIndex++;
+				if (char === " ") {
+					this.monkor.speechPause++;
+				}
+			}
+
+			// const timeEllapsed = time - speechStarted;
+			// const numCharacters = Math.ceil(timeEllapsed / 50);
+			// const speechBubble = document.getElementById("speech-bubble");
+			// speechBubble.innerText = speech.substr(0, numCharacters);
 		}
 	}
 
-	finishedSpeech(time) {
-		const { speech, speechStarted } = this.monkor;
-		if (!speech) {
-			return 1;
-		}
-		const timeEllapsed = time - speechStarted;
-		const numCharacters = Math.ceil(timeEllapsed / 50);
-		return numCharacters <= speech.length ? 0 : numCharacters - speech.length;
+	finishedSpeech() {
+		const { speech, currentSpeech, speechStarted } = this.monkor;
+		return !speechStarted || currentSpeech.length >= speech.length;
 	}
 
 	applyMovement(monkor, dt, time) {
@@ -812,8 +835,8 @@ class Game extends GameCore {
 				anim = this.atlas.monkor_back;
 			}
 		} else {
-			const finishedSpeech = this.finishedSpeech(time);
-			if (!finishedSpeech) {
+			const finishedSpeech = this.finishedSpeech();
+			if (!finishedSpeech && monkor.speechPause <= 0) {
 				anim = this.atlas.monkor_talk;
 			} else if (monkor.smoking) {
 				anim = (time / 400) % 10 < 2 ? this.atlas.monkor_puff : this.atlas.monkor_smoke;
@@ -832,7 +855,7 @@ class Game extends GameCore {
 				}
 			}
 		}
-		monkor.changeAnimation(anim, time);
+		monkor.changeAnimation(anim, time, anim === this.atlas.monkor_talk ? monkor.speechStarted : 0);
 	}
 
 
