@@ -3,15 +3,18 @@ class ImageLoader {
 		this.imageStock = {};
 	}
 
+	async preloadImages(...urls) {
+		return Promise.all(urls.map(async url => {
+			return await this.loadImage(url);
+		}));
+	}
 
 	async loadImage(url) {
 		return new Promise((resolve, reject) => {
 			if (this.imageStock[url]) {
-				const { img } = this.imageStock[url];
-				if (!img.complete) {
-					img.addEventListener("load", () => {
-						resolve(img);
-					});
+				const { img, loaded, onLoadListeners } = this.imageStock[url];
+				if (!loaded) {
+					onLoadListeners.push(resolve);
 				} else {
 					resolve(img);
 				}
@@ -22,6 +25,7 @@ class ImageLoader {
 			    	img,
 			    	url,
 			    	progress: 0,
+			    	onLoadListeners: [],
 			    };
 			    req.open('GET', url);
 		        req.responseType = 'blob';
@@ -35,6 +39,9 @@ class ImageLoader {
 								URL.revokeObjectURL(imageURL);
 								resolve(img);
 								this.imageStock[url].progress = 1;
+								this.imageStock[url].loaded = true;
+								this.imageStock[url].onLoadListeners.forEach(callback => callback(img));
+								delete this.imageStock[url].onLoadListeners;
 							});
 							img.src = imageURL;
 						} else {
@@ -56,3 +63,5 @@ class ImageLoader {
 		});
 	}
 }
+
+ImageLoader.loader = new ImageLoader();

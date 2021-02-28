@@ -1,6 +1,18 @@
 class Game extends GameCore {
 	constructor() {
 		super();
+		ImageLoader.loader.preloadImages(
+			"assets/background-door.png",
+			"assets/background-door-collision.png",
+			"assets/sign.png",
+			"assets/smoking-sign.png",
+			"assets/piano.png",
+			"assets/mouse.png",
+			"assets/mat.png",
+			"assets/mat-collision.png",
+			"assets/monkor.png",
+			"assets/monkor-collision.png",
+		);
 		document.addEventListener("DOMContentLoaded", () => {
 			engine.setGame(this);
 		});
@@ -11,6 +23,8 @@ class Game extends GameCore {
 		this.engine = engine;
 
 		const { gl, config } = engine;
+
+		engine.chrono.tick("game init start.");
 
 		/* Load image */
 		this.atlas = {
@@ -446,17 +460,16 @@ class Game extends GameCore {
 			this.handleMouse(e);
 		});
 
-		console.log(gl);
+//		console.log(gl);
+		document.getElementById("title").style.opacity = .5;
 
 		this.score = parseInt(localStorage.getItem("score") || 0);
 		this.chocolate = parseInt(localStorage.getItem("chocolate") || 0);
 		this.dinoCount = parseInt(localStorage.getItem("dino") || 0);
 
 		this.title = document.getElementById("title");
-
-		this.engine.game = this;
+		this.ready = true;
 	}
-
 
 	onDropMouse(e) {
 		const { lastTime, canvas } = this.engine;
@@ -845,7 +858,7 @@ class Game extends GameCore {
 	checkCollisions(time) {
 		const { engine } = this;
 		const monkorBox = this.monkor.getCollisionBox(time);
-		const targetBox = this.monkor.target ? this.monkor.target.getCollisionBox(time) : null;
+		const targetBox = this.monkor.target && this.monkor.target.getCollisionBox ? this.monkor.target.getCollisionBox(time) : null;
 		if (engine.doCollide(monkorBox, targetBox)) {
 			this.showActions(this.monkor.target);			
 		}

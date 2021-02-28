@@ -1,6 +1,7 @@
 class Engine {
-	constructor(config) {
+	constructor(config, imageLoader) {
 		this.init(config);
+		this.imageLoader = imageLoader;
 	}
 
 	async loadDomContent(document) {
@@ -69,8 +70,7 @@ class Engine {
 		this.shader = new Shader(gl, ext, vertexShader, fragmentShader, attributes, maxInstancesCount);
 
 		/* Texture management */
-		this.imageLoader = new ImageLoader();
-		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.imageLoader);
+		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.imageLoader, this.chrono);
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection();
@@ -155,7 +155,6 @@ class Engine {
 		canvas.style.width = `${viewportWidth}px`;
 		canvas.style.height = `${viewportHeight}px`;
 		canvas.style.opacity = 1;
-		document.getElementById("title").style.opacity = .5;
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 	}
 
@@ -272,7 +271,7 @@ class Engine {
 		this.handleFrames(time);
 
 		const { game } = this;
-		if (game) {
+		if (game && game.ready) {
 			game.refresh(time, dt);
 		}
 
@@ -296,8 +295,8 @@ class Engine {
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 		this.lastTime = time;
-//		this.showDebugCanvas(time);
+		this.showDebugCanvas(time);
 	}
 }
 
-const engine = new Engine(globalData.config);
+const engine = new Engine(globalData.config, ImageLoader.loader);

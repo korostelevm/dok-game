@@ -1,5 +1,5 @@
 class TextureAtlas {
-	constructor(gl, glTextures, index, x, y, width, height, textureSize, imageLoader) {
+	constructor(gl, glTextures, index, x, y, width, height, textureSize, imageLoader, chrono) {
 		this.gl = gl;
 		this.glTextures = glTextures;
 		this.index = index || 0;
@@ -14,6 +14,7 @@ class TextureAtlas {
 		this.spriteHeight = 0;
 		this.startIndex = 0;
 		this.endIndex = 0;
+		this.chrono = chrono;
 
 		this.tempMatrix = new Uint16Array([
 			0, 0, 0, 0,
@@ -25,9 +26,7 @@ class TextureAtlas {
 		this.floatVec4 = new Float32Array(4);
 	}
 
-	async setImage(animationData) {
-		const { url, collision_url } = animationData;
-		const image = await this.imageLoader.loadImage(url);
+	getCanvasImage(image) {
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
 		canvas.height = this.height || image.naturalHeight;
@@ -35,56 +34,60 @@ class TextureAtlas {
 		const context = canvas.getContext("2d");
 		context.imageSmoothingEnabled = false;
 		context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
+		return canvas;
+	}
 
+	async setImage(animationData) {
+		const { url, collision_url } = animationData;
+		const image = await this.imageLoader.loadImage(url);
+		const imageToDraw = this.getCanvasImage(image);
 
-		// const cols = animationData.cols || 1;
-		// const rows = animationData.rows || 1;
-		// const totalFrames = cols * rows;
-		// context.font = "10px Arial";
-		// for (let i = 0; i < totalFrames; i++) {
-		// 	context.fillText("" + i,
-		// 		(i % cols) * canvas.width / cols + 10,
-		// 		Math.floor(i / cols) * canvas.height / rows + 20);
-		// }
-		// console.log(cols, rows, totalFrames);
-		// canvas.style.position = "absolute";
-		// canvas.style.left = "0px"
-		// canvas.style.top = "0px"
-//		document.body.appendChild(canvas);
-
-
-		this.saveTexture(gl, glTextures, index, textureSize, x, y, canvas);
+		const { gl, glTextures, textureSize, index, x, y } = this;
+		this.saveTexture(gl, glTextures, index, textureSize, x, y, imageToDraw);
 		this.onUpdateImage(image, animationData || {});
 
-		this.collisionBoxes = [];
+		this.chrono.tick(`Done loading image: ${url}`);
 		if (collision_url) {
-			context.clearRect(0, 0, canvas.width, canvas.height);
-			const collisionImage = await this.imageLoader.loadImage(collision_url);
-			context.drawImage(collisionImage, 0, 0, collisionImage.naturalWidth, collisionImage.naturalHeight, 0, 0, canvas.width, canvas.height);
+			this.collisionBoxes = await this.calculateCollisionBoxes(collision_url);
+			this.chrono.tick(`Done loading collision image: ${collision_url}`);
+		} else {
+			this.collisionBoxes = [];
+		}
 
-			for (let row = 0; row < this.rows; row++) {
-				for (let col = 0; col < this.cols; col++) {
-					const cellWidth = canvas.width / this.cols;
-					const cellHeight = canvas.height / this.rows;
-					const cellX = col * cellWidth;
-					const cellY = row * cellHeight;
-					const top = this.getTop(context, cellX, cellY, cellWidth, cellHeight) / this.spriteHeight;
-					const bottom = this.getBottom(context, cellX, cellY, cellWidth, cellHeight) / this.spriteHeight;
-					const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight) / this.spriteWidth;
-					const right = this.getRight(context, cellX, cellY, cellWidth, cellHeight) / this.spriteWidth;
-					if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
-						this.collisionBoxes[row * this.cols + col] = {
-							top, left, bottom, right,
-						};
-					}
+		return this;
+	}
 
-//					console.log(url, col, row, "=>", top, bottom, left, right);
+	async calculateCollisionBoxes(collision_url) {
+		const { canvas } = this;
+		const collisionBoxes = [];
+		const collisionImage = await this.imageLoader.loadImage(collision_url);
+		canvas.width = collisionImage.naturalWidth;
+		canvas.height = collisionImage.naturalHeight;
+		const context = canvas.getContext("2d");
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		context.drawImage(collisionImage, 0, 0);
+
+		for (let row = 0; row < this.rows; row++) {
+			for (let col = 0; col < this.cols; col++) {
+				const cellWidth = canvas.width / this.cols;
+				const cellHeight = canvas.height / this.rows;
+				const cellX = col * cellWidth;
+				const cellY = row * cellHeight;
+				const top = this.getTop(context, cellX, cellY, cellWidth, cellHeight) / cellHeight;
+				if (top < 0) {
+					continue;
+				}
+				const bottom = this.getBottom(context, cellX, cellY, cellWidth, cellHeight) / cellHeight;
+				const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight) / cellWidth;
+				const right = this.getRight(context, cellX, cellY, cellWidth, cellHeight) / cellWidth;
+				if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
+					collisionBoxes[row * this.cols + col] = {
+						top, left, bottom, right,
+					};
 				}
 			}
 		}
-
-
-		return this;
+		return collisionBoxes;
 	}
 
 	getCollisionBoxNormalized(frame) {

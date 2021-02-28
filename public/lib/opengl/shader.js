@@ -131,7 +131,6 @@ class Shader {
 		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
 		for (let i = 0; i < numRows; i++) {
-			console.log(attributeConfig);
 			const offset = i * size * this.getByteSize(glType);
 			gl.vertexAttribPointer(
 			  location + i,  				// location
@@ -145,9 +144,8 @@ class Shader {
 		}
 		const bufferSize = (attributeConfig.instances ? maxInstanceCount : NUM_VERTICES) * bytesPerInstance;
 		gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl[attributeConfig.usage]);
-		console.log(`Buffer initialized: ${name}(${dataType}) usage:${attributeConfig.usage} => ${bufferSize}`);
-		console.log(name, attributeConfig);
-
+		//console.log(`Buffer initialized: ${name}(${dataType}) usage:${attributeConfig.usage} => ${bufferSize}`);
+		
 		return {
 			name,
 			location,
@@ -194,7 +192,7 @@ class Shader {
 		for (let i = 0; i < size; i++) {
 			this.gl.enableVertexAttribArray(loc + i);
 
-			console.log(`Enabled location ${name}. Type: ${dataType}.`, loc);
+			//console.log(`Enabled location ${name}. Type: ${dataType}.`, loc);
 		}
 	}
 
