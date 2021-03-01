@@ -14,7 +14,7 @@ class TextureAtlas {
 		this.spriteWidth = 0;
 		this.spriteHeight = 0;
 
-		this.tempMatrix = new Uint16Array([
+		this.tempMatrix = new Float32Array([
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 			0, 0, 0, 0,

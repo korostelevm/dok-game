@@ -17,7 +17,7 @@ const globalData={
 			"instances": 1
 		},
 		"textureCoordinates": {
-			"type": "UNSIGNED_SHORT",
+			"type": "FLOAT",
 			"usage": "DYNAMIC_DRAW",
 			"instances": 1
 		},
