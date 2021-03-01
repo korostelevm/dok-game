@@ -16,7 +16,7 @@ class TextureAtlas {
 		this.endIndex = 0;
 		this.chrono = chrono;
 
-		this.tempMatrix = new Uint16Array([
+		this.tempMatrix = new Float32Array([
 			0, 0, 0, 0,
 			0, 0, 0, 0,
 			0, 0, 0, 0,
@@ -37,14 +37,71 @@ class TextureAtlas {
 		return canvas;
 	}
 
+	textureMix(image, texture, texture_alpha) {
+		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
+		const context = canvas.getContext("2d");
+		if (canvas !== image) {
+			getCanvasImage(image);
+		}
+		context.globalCompositeOperation = "source-atop";
+		context.globalAlpha = texture_alpha || .5;
+
+		let frame = 0;
+		for (let row = 0; row < this.rows; row++) {
+			for (let col = 0; col < this.cols; col++) {
+				if (frame >= this.startFrame && frame <= this.endFrame) {
+					const cellWidth = canvas.width / this.cols;
+					const cellHeight = canvas.height / this.rows;
+					const cellX = col * cellWidth;
+					const cellY = row * cellHeight;
+					context.drawImage(texture, 0, 0, cellWidth, cellHeight, cellX, cellY, cellWidth, cellHeight);
+					console.log(frame, cellX, cellY, cellWidth, cellHeight);
+				}
+				frame++;
+			}
+		}
+		context.globalCompositeOperation = "";
+		context.globalAlpha = 1;
+
+		const cvs = document.body.appendChild(document.createElement("canvas"));
+		cvs.style.position = "absolute";
+		cvs.style.left = "0xp";
+		cvs.style.top = "0px";
+		cvs.style.width = "100px";
+		cvs.width = canvas.width; cvs.height = canvas.height;
+		cvs.getContext("2d").drawImage(canvas, 0, 0);
+
+
+
+
+		return canvas;
+	}
+
 	async setImage(animationData) {
-		const { url, collision_url } = animationData;
+		const { url, collision_url, texture_url, texture_alpha } = animationData;
 		const image = await this.imageLoader.loadImage(url);
+		this.onUpdateImage(image, animationData || {});
+
 		const imageToDraw = this.getCanvasImage(image);
+		const blendedImage = texture_url ? this.textureMix(imageToDraw, await this.imageLoader.loadImage(texture_url)) : imageToDraw;
+
+		// let frame = 0;
+		// for (let row = 0; row < this.rows; row++) {
+		// 	for (let col = 0; col < this.cols; col++) {
+		// 		if (frame >= this.startFrame && frame <= this.endFrame) {
+		// 			const cellWidth = canvas.width / this.cols;
+		// 			const cellHeight = canvas.height / this.rows;
+		// 			const cellX = col * cellWidth;
+		// 			const cellY = row * cellHeight;
+		// 			context.drawImage(texture, 0, 0, cellWidth, cellHeight, cellX, cellY, cellWidth, cellHeight);
+		// 			console.log(frame, cellX, cellY, cellWidth, cellHeight);
+		// 		}
+		// 		frame++;
+		// 	}
+		// }
 
 		const { gl, glTextures, textureSize, index, x, y } = this;
-		this.saveTexture(gl, glTextures, index, textureSize, x, y, imageToDraw);
-		this.onUpdateImage(image, animationData || {});
+		this.saveTexture(gl, glTextures, index, textureSize, x, y, blendedImage);
 
 		this.chrono.tick(`Done loading image: ${url}`);
 		if (collision_url) {

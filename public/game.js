@@ -33,6 +33,8 @@ class Game extends GameCore {
 			entrance: await engine.textureManager.createAtlas(1).setImage(
 				{
 					url: "assets/background-door.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
 					cols:2,rows:4,
 					collision_url: "assets/background-door-collision.png",
 					range:[0],
@@ -40,6 +42,8 @@ class Game extends GameCore {
 			entrance_open: await engine.textureManager.createAtlas(1).setImage(
 				{
 					url: "assets/background-door.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
 					cols:2,rows:4,
 					collision_url: "assets/background-door-collision.png",
 					frameRate: 10,
@@ -48,6 +52,8 @@ class Game extends GameCore {
 			entrance_opened: await engine.textureManager.createAtlas(1).setImage(
 				{
 					url: "assets/background-door.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
 					cols:2,rows:4,
 					collision_url: "assets/background-door-collision.png",
 					range:[6],
@@ -426,7 +432,7 @@ class Game extends GameCore {
 		engine.keyboardHandler.addKeyDownListener("r", e => {
 			const msg = "Actually I lied. Pressing R does nothing.";
 			if (window.speechSynthesis) {
-				const utterance = engine.getUterrance(msg, "Mei-Jia");
+				const utterance = engine.getUterrance(msg, ["Mei-Jia", "Google UK English Female"]);
 				window.speechSynthesis.speak(utterance);			
 			}
 			document.getElementById("pressing-r").innerText = msg;
@@ -705,7 +711,7 @@ class Game extends GameCore {
 		const { lastTime } = engine;
 		const speechBubble = document.getElementById("speech-bubble");
 		this.monkor.speechStarted = 0;
-		this.monkor.speechPause = 1;
+		this.monkor.speechPause = 0;
 		this.monkor.currentSpeech = "";
 		this.monkor.lastCharacter = 0;
 		this.monkor.characterIndex = 0;
@@ -714,11 +720,17 @@ class Game extends GameCore {
 			if (!this.monkor.scared) {
 //				speechBubble.style.display = "block";
 				speechBubble.style.opacity = 1;
+
 			}
 			speechBubble.style.left = `${canvas.offsetLeft + this.monkor.x - speechBubble.offsetWidth/2 - 20}px`;
 			speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + this.monkor.y - this.monkor.size[1] - 20)}px`;
 
 			const utterance = engine.getUterrance(msg, "Daniel");
+			if (utterance.voice.name === "Daniel") {
+				this.monkor.speechPause++;
+			} else if (utterance.voice.name.startsWith("Microsoft")) {
+				this.monkor.speechPause+=2;
+			}
 
 			if (utterance) {
 				window.speechSynthesis.speak(utterance);
@@ -727,6 +739,9 @@ class Game extends GameCore {
 					this.monkor.onEndSpeech = callback;
 				};
 				utterance.onboundary = e => {
+					if (!this.monkor.speechHasBoundary) {
+						this.monkor.speechHasBoundary = true;
+					}
 					this.unblockText();
 				};
 			} else {
@@ -762,7 +777,7 @@ class Game extends GameCore {
 				this.monkor.characterIndex++;
 				if (this.monkor.noVoice) {
 					this.monkor.speechPause = 0;
-				} else if (char === " ") {
+				} else if (char === " " && this.monkor.speechHasBoundary) {
 					this.monkor.speechPause++;
 				}
 				if (this.monkor.currentSpeech.length >= speech.length) {

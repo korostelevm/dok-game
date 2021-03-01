@@ -58,13 +58,7 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 }
 
 void main() {
-	// float vIsPerspective = (sin(time / 1000.) + 1.) * .5 * isPerspective;
-	// mat4 projection = vIsPerspective * perspective + (1. - vIsPerspective) * ortho;
-	// // Multiply the position by the matrix.
-	// gl_Position = projection * view * (vec4(position, 0) + matrix * vec4(vertexPosition, 0, 1.));
-	// v_color = getCornerValue(colors, vertexPosition);
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
-	// vec4 animInfo = vec4(2., 4., 24., 0.);//animationInfo;
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex;

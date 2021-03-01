@@ -1,5 +1,6 @@
 class Engine {
 	constructor(config) {
+		this.localhost = location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com");
 		this.init(config);
 	}
 
@@ -90,7 +91,7 @@ class Engine {
 		this.initialize(gl, this.shader.uniforms, config);
 
 		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
-		console.log(this.voices);
+		//console.log(this.voices);
 
 //		this.game = null;
 
@@ -229,6 +230,21 @@ class Engine {
 		audio.play();
 	}
 
+	bestVoice(voices, voiceName) {
+		if (!this.voiceReplacements) {
+			this.voiceReplacements = {};
+		}
+		if (this.voiceReplacements[voiceName]) {
+			return this.voiceReplacements[voiceName];
+		}
+		for (let i = 0; i < voices.length; i++) {
+			if (voices[i].lang.startsWith("en")) {
+				return this.voiceReplacements[voiceName] = voices[i];
+			}
+		}
+		return this.voiceReplacements[voiceName] = voices[Math.floor(Math.random() * voices.length)];
+	}
+
 	getUterrance(msg, voiceName) {
 		if (!window.speechSynthesis) {
 			return null;
@@ -238,7 +254,19 @@ class Engine {
 		}
 
 		const voices = this.voices;
-		const voice = voices.filter(({name}) => name === voiceName)[0] || voices[Math.floor(Math.random() * voices.length)];
+		const voiceNames = Array.isArray(voiceName) ? voiceName : [voiceName];
+		let voice = null;
+		let lowestIndex = voices.length - 1;
+		for (let i = 0; i < voices.length; i++) {
+			const index = voiceNames.indexOf(voices[i].name);
+			if (index >= 0 && index < lowestIndex) {
+				voice = voices[i];
+				lowestIndex = index;
+			}
+		}
+		if (!voice) {
+			voice = this.bestVoice(this.voices, voiceNames[0]);
+		}
 		if (!voice) {
 			return null;
 		}
@@ -249,7 +277,7 @@ class Engine {
 		if (!this.utterrances[voice.name]) {
 			this.utterrances[voice.name] = new SpeechSynthesisUtterance();
 			this.utterrances[voice.name].voice = voice;
-			console.log(voice.name);
+			console.log(voice);
 		}
 		const utterance = this.utterrances[voice.name];
 		utterance.text = msg;
@@ -297,7 +325,9 @@ class Engine {
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 		this.lastTime = time;
-//		this.showDebugCanvas(time);
+		if (this.localhost) {
+			this.showDebugCanvas(time);
+		}
 	}
 }
 
