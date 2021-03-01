@@ -5,6 +5,7 @@ class TextureManager {
 		this.textureSize = 4096;
 		this.imageLoader = imageLoader;
 		this.chrono = chrono;
+		this.textureAtlas = [];
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {
@@ -26,6 +27,24 @@ class TextureManager {
 	}
 
 	createAtlas(index, x, y, width, height) {
-		return new TextureAtlas(this.gl, this.glTextures, index, x, y, width, height, this.textureSize, this.imageLoader, this.chrono);
+		const atlas = new TextureAtlas(this.gl, this.glTextures, index, x, y, width, height, this.textureSize, this.imageLoader, this.chrono);
+		this.textureAtlas.push(atlas);
+		return atlas;
+	}
+
+	generateMipMap(index) {
+		const { gl } = this;
+		gl.activeTexture(gl[`TEXTURE${index}`]);
+		gl.generateMipmap(gl.TEXTURE_2D);
+	}
+
+	generateAllMipMaps() {
+		let maxIndex = 0;
+		this.textureAtlas.forEach(({maxTextureIndex}) => {
+			maxIndex = Math.max(maxIndex, maxTextureIndex);
+		});
+		for (let i = 0; i <= maxIndex; i++) {
+			this.generateMipMap(i);
+		}
 	}
 }

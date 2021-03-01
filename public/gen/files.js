@@ -27,6 +27,7 @@ const globalFiles=[
 			"pipe-collision.png",
 			"pipe.png",
 			"sign.png",
+			"skin-texture.jpg",
 			"smoking-sign.png",
 			"sparkle.png"
 		]

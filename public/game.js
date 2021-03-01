@@ -13,6 +13,8 @@ class Game extends GameCore {
 			"assets/mat-collision.png",
 			"assets/monkor.png",
 			"assets/monkor-collision.png",
+			"assets/skin-texture.jpg",
+			"assets/backwall.jpg",
 		);
 
 		document.addEventListener("DOMContentLoaded", () => {
@@ -35,6 +37,7 @@ class Game extends GameCore {
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
 					texture_alpha: .25,
+					texture_blend: "luminosity",
 					cols:2,rows:4,
 					collision_url: "assets/background-door-collision.png",
 					range:[0],
@@ -44,6 +47,7 @@ class Game extends GameCore {
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
 					texture_alpha: .25,
+					texture_blend: "luminosity",
 					cols:2,rows:4,
 					collision_url: "assets/background-door-collision.png",
 					frameRate: 10,
@@ -54,6 +58,7 @@ class Game extends GameCore {
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
 					texture_alpha: .25,
+					texture_blend: "luminosity",
 					cols:2,rows:4,
 					collision_url: "assets/background-door-collision.png",
 					range:[6],
@@ -101,6 +106,8 @@ class Game extends GameCore {
 			mat: await engine.textureManager.createAtlas(2).setImage(
 				{
 					url: "assets/mat.png",
+					texture_url: "assets/skin-texture.jpg",
+					texture_alpha: .3,
 					cols:2,rows:4,
 					collision_url: "assets/mat-collision.png",
 					range:[0],
@@ -108,6 +115,8 @@ class Game extends GameCore {
 			mat_pulling: await engine.textureManager.createAtlas(2).setImage(
 				{
 					url: "assets/mat.png",
+					texture_url: "assets/skin-texture.jpg",
+					texture_alpha: .3,
 					cols:2,rows:4,
 					collision_url: "assets/mat-collision.png",
 					frameRate: 4,
@@ -116,6 +125,8 @@ class Game extends GameCore {
 			mat_pulled: await engine.textureManager.createAtlas(2).setImage(
 				{
 					url: "assets/mat.png",
+					texture_url: "assets/skin-texture.jpg",
+					texture_alpha: .3,
 					cols:2,rows:4,
 					collision_url: "assets/mat-collision.png",
 					range:[2],
@@ -123,6 +134,8 @@ class Game extends GameCore {
 			mat_picked_key: await engine.textureManager.createAtlas(2).setImage(
 				{
 					url: "assets/mat.png",
+					texture_url: "assets/skin-texture.jpg",
+					texture_alpha: .3,
 					cols:2,rows:4,
 					collision_url: "assets/mat-collision.png",
 					range:[3],
@@ -131,12 +144,16 @@ class Game extends GameCore {
 				{
 					url: "assets/monkor.png",
 					collision_url: "assets/monkor-collision.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					range:[0],
 				}),
 			monkor_front: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:10,
 					range:[1, 4],
@@ -144,6 +161,8 @@ class Game extends GameCore {
 			monkor_back: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:10,
 					range:[5, 8],
@@ -151,6 +170,8 @@ class Game extends GameCore {
 			monkor_right: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:10,
 					range:[9, 12],
@@ -158,6 +179,8 @@ class Game extends GameCore {
 			monkor_talk: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:10,
 					range:[13, 16],
@@ -165,6 +188,8 @@ class Game extends GameCore {
 			monkor_smoke: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:8,
 					range:[17, 19],
@@ -172,18 +197,24 @@ class Game extends GameCore {
 			monkor_puff: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					range:[20],
 				}),
 			monkor_scared: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					range:[21],
 				}),
 			monkor_run: await engine.textureManager.createAtlas(0).setImage(
 				{
 					url: "assets/monkor.png",
+					// texture_url: "assets/skin-texture.jpg",
+					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:10,
 					range:[21, 24],
@@ -628,7 +659,9 @@ class Game extends GameCore {
 			this.monkor.touched = hovering;
 			this.lastMouseDown = lastTime;
 			this.showActions(null);
-			this.showBubble(null);
+			if (!this.finishedSpeech()) {
+				this.speechBubble.style.opacity = 0;
+			}
 		} else if (e.type === "mouseup") {
 			let newTarget = null;
 			if (this.monkor.touched === hovering) {
@@ -708,8 +741,8 @@ class Game extends GameCore {
 
 	showBubble(msg, callback) {
 		const { engine } = this;
-		const { lastTime } = engine;
-		const speechBubble = document.getElementById("speech-bubble");
+		const { lastTime, canvas } = engine;
+		const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
 		this.monkor.speechStarted = 0;
 		this.monkor.speechPause = 0;
 		this.monkor.currentSpeech = "";
@@ -722,8 +755,7 @@ class Game extends GameCore {
 				speechBubble.style.opacity = 1;
 
 			}
-			speechBubble.style.left = `${canvas.offsetLeft + this.monkor.x - speechBubble.offsetWidth/2 - 20}px`;
-			speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + this.monkor.y - this.monkor.size[1] - 20)}px`;
+			this.updateBubble(speechBubble);
 
 			const utterance = engine.getUterrance(msg, "Daniel");
 			if (utterance.voice.name === "Daniel") {
@@ -733,6 +765,7 @@ class Game extends GameCore {
 			}
 
 			if (utterance) {
+				window.speechSynthesis.cancel();
 				window.speechSynthesis.speak(utterance);
 				utterance.onstart = () => {
 					this.monkor.speechStarted = lastTime;
@@ -761,10 +794,18 @@ class Game extends GameCore {
 		this.monkor.speechPause--;
 	}
 
+	updateBubble(speechBubble) {
+		const { engine } = this;
+		const { lastTime, canvas } = engine;
+		speechBubble.style.left = `${canvas.offsetLeft + this.monkor.x - speechBubble.offsetWidth/2 - 20}px`;
+		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + this.monkor.y - this.monkor.size[1] - 20)}px`;
+	}
+
 	updateSpeech(time) {
 		if (this.finishedSpeech()) {
 			return;
 		}
+
 		const { speech, speechStarted, lastCharacter } = this.monkor;
 		if (speech && speechStarted && (this.monkor.speechPause <= 0 || this.monkor.noVoice)) {
 			const textSpeed = this.monkor.noVoice ? 50 : 20;
@@ -772,7 +813,7 @@ class Game extends GameCore {
 				this.monkor.lastCharacter = time;
 				const char = speech.charAt(this.monkor.characterIndex);
 				this.monkor.currentSpeech += char;
-				const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
+				const speechBubble = this.speechBubble;
 				speechBubble.innerText = this.monkor.currentSpeech; //speech.substr(0, numCharacters);
 				this.monkor.characterIndex++;
 				if (this.monkor.noVoice) {
@@ -784,11 +825,6 @@ class Game extends GameCore {
 					this.monkor.finishedSpeech = time;
 				}
 			}
-
-			// const timeEllapsed = time - speechStarted;
-			// const numCharacters = Math.ceil(timeEllapsed / 50);
-			// const speechBubble = document.getElementById("speech-bubble");
-			// speechBubble.innerText = speech.substr(0, numCharacters);
 		}
 	}
 

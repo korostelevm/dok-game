@@ -3,6 +3,7 @@ class TextureAtlas {
 		this.gl = gl;
 		this.glTextures = glTextures;
 		this.index = index || 0;
+		this.maxTextureIndex = 0;
 		this.x = x || 0;
 		this.y = y || 0;
 		this.width = width || 0;
@@ -26,6 +27,22 @@ class TextureAtlas {
 		this.floatVec4 = new Float32Array(4);
 	}
 
+	textureMix(image, texture, texture_alpha, texture_blend) {
+		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
+		const context = canvas.getContext("2d");
+		if (canvas !== image) {
+			this.getCanvasImage(image);
+		}
+		context.globalCompositeOperation = texture_blend || "source-atop";
+		context.globalAlpha = texture_alpha || .5;
+
+		context.drawImage(texture, 0, 0);
+
+		context.globalCompositeOperation = "";
+		context.globalAlpha = 1;
+		return canvas;
+	}
+
 	getCanvasImage(image) {
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
@@ -37,71 +54,40 @@ class TextureAtlas {
 		return canvas;
 	}
 
-	textureMix(image, texture, texture_alpha) {
+
+	getSpriteImageForFrame(image, frame) {
+		if (this.cols === 1 && this.rows === 1) {
+			return image;
+		}
+		const { spriteWidth, spriteHeight } = this;
+		const col = frame % this.cols;
+		const row = Math.floor(frame / this.cols);
 		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
+		canvas.width = spriteWidth;
+		canvas.height = spriteHeight;
+
 		const context = canvas.getContext("2d");
-		if (canvas !== image) {
-			getCanvasImage(image);
-		}
-		context.globalCompositeOperation = "source-atop";
-		context.globalAlpha = texture_alpha || .5;
-
-		let frame = 0;
-		for (let row = 0; row < this.rows; row++) {
-			for (let col = 0; col < this.cols; col++) {
-				if (frame >= this.startFrame && frame <= this.endFrame) {
-					const cellWidth = canvas.width / this.cols;
-					const cellHeight = canvas.height / this.rows;
-					const cellX = col * cellWidth;
-					const cellY = row * cellHeight;
-					context.drawImage(texture, 0, 0, cellWidth, cellHeight, cellX, cellY, cellWidth, cellHeight);
-					console.log(frame, cellX, cellY, cellWidth, cellHeight);
-				}
-				frame++;
-			}
-		}
-		context.globalCompositeOperation = "";
-		context.globalAlpha = 1;
-
-		const cvs = document.body.appendChild(document.createElement("canvas"));
-		cvs.style.position = "absolute";
-		cvs.style.left = "0xp";
-		cvs.style.top = "0px";
-		cvs.style.width = "100px";
-		cvs.width = canvas.width; cvs.height = canvas.height;
-		cvs.getContext("2d").drawImage(canvas, 0, 0);
-
-
-
-
+		context.imageSmoothingEnabled = false;
+		context.drawImage(image, col * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight,
+			0, 0, canvas.width, canvas.height);
 		return canvas;
 	}
 
 	async setImage(animationData) {
-		const { url, collision_url, texture_url, texture_alpha } = animationData;
+		const { url, collision_url, texture_url, texture_alpha, texture_blend } = animationData;
 		const image = await this.imageLoader.loadImage(url);
 		this.onUpdateImage(image, animationData || {});
 
-		const imageToDraw = this.getCanvasImage(image);
-		const blendedImage = texture_url ? this.textureMix(imageToDraw, await this.imageLoader.loadImage(texture_url)) : imageToDraw;
+		const { spriteWidth, spriteHeight } = this;
+		for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
+			const spriteImage = this.getSpriteImageForFrame(image, frame);
+			const blendedImage = texture_url ? this.textureMix(spriteImage, await this.imageLoader.loadImage(texture_url), texture_alpha, texture_blend) : spriteImage;
 
-		// let frame = 0;
-		// for (let row = 0; row < this.rows; row++) {
-		// 	for (let col = 0; col < this.cols; col++) {
-		// 		if (frame >= this.startFrame && frame <= this.endFrame) {
-		// 			const cellWidth = canvas.width / this.cols;
-		// 			const cellHeight = canvas.height / this.rows;
-		// 			const cellX = col * cellWidth;
-		// 			const cellY = row * cellHeight;
-		// 			context.drawImage(texture, 0, 0, cellWidth, cellHeight, cellX, cellY, cellWidth, cellHeight);
-		// 			console.log(frame, cellX, cellY, cellWidth, cellHeight);
-		// 		}
-		// 		frame++;
-		// 	}
-		// }
-
-		const { gl, glTextures, textureSize, index, x, y } = this;
-		this.saveTexture(gl, glTextures, index, textureSize, x, y, blendedImage);
+			const { gl, glTextures, index, x, y } = this;
+			const col = frame % this.cols;
+			const row = Math.floor(frame / this.cols);
+			this.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
+		}
 
 		this.chrono.tick(`Done loading image: ${url}`);
 		if (collision_url) {
@@ -110,6 +96,9 @@ class TextureAtlas {
 		} else {
 			this.collisionBoxes = [];
 		}
+
+		this.canvas.width = 0;
+		this.canvas.height = 0;
 
 		return this;
 	}
@@ -201,19 +190,21 @@ class TextureAtlas {
 		return false;
 	}
 
-	saveTexture(gl, glTextures, index, textureSize, x, y, canvas) {
-		const glTexture = glTextures[index];
+	saveTexture(index, x, y, canvas) {
+		const { textureSize, glTextures, gl } = this;
+		this.maxTextureIndex = Math.max(index, this.maxTextureIndex);
 		gl.activeTexture(gl[`TEXTURE${index}`]);
-		gl.bindTexture(gl.TEXTURE_2D, glTexture.glTexture);
+		const glTexture = glTextures[index];
 		if (glTexture.width < textureSize || glTexture.height < textureSize) {
+			gl.bindTexture(gl.TEXTURE_2D, glTexture.glTexture);
 			glTexture.width = glTexture.height = textureSize;
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, glTexture.width, glTexture.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 		}
 		gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 		gl.generateMipmap(gl.TEXTURE_2D);		
 	}
 

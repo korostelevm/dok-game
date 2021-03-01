@@ -1,6 +1,9 @@
 class Engine {
 	constructor(config) {
-		this.localhost = location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com");
+		/* Prototypes */
+		this.setupPrototypes();
+
+		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
 		this.init(config);
 	}
 
@@ -50,9 +53,6 @@ class Engine {
 		/* Focus Fixer */
 		this.focusFixer = new FocusFixer(canvas);	
 
-		/* Prototypes */
-		this.setupPrototypes();
-
 		if (!gl.getExtension('OES_element_index_uint')) {
 			throw new Error("OES_element_index_uint not available.");
 		}
@@ -101,6 +101,10 @@ class Engine {
 			await game.init(this);
 			this.chrono.tick("game init done");
 		}
+
+		this.textureManager.generateAllMipMaps();
+		this.chrono.tick("mipmaps generated");
+
 		this.ready = true;
 		Engine.start(this);
 		this.chrono.tick("engine started");
@@ -126,7 +130,7 @@ class Engine {
 
 	initialize(gl, uniforms, {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}}) {
 		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
-		gl.clearColor(.1, .0, .0, 1);
+		gl.clearColor(.0, .0, .1, 1);
 
 		const viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
 		gl.uniformMatrix4fv(uniforms.view.location, false, viewMatrix);
@@ -325,7 +329,7 @@ class Engine {
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 		this.lastTime = time;
-		if (this.localhost) {
+		if (this.debug) {
 			this.showDebugCanvas(time);
 		}
 	}
