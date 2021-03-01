@@ -1,8 +1,8 @@
 class Game extends GameCore {
 	constructor() {
 		super();
-		const imageLoader = new ImageLoader();
-		imageLoader.preloadImages(
+		this.imageLoader = new ImageLoader();
+		this.imageLoader.preloadImages(
 			"assets/background-door.png",
 			"assets/background-door-collision.png",
 			"assets/sign.png",
@@ -32,7 +32,7 @@ class Game extends GameCore {
 
 		/* Load image */
 		this.atlas = {
-			entrance: await engine.textureManager.createAtlas(1).setImage(
+			entrance: await engine.textureManager.createAtlas(1, this.imageLoader).setImage(
 				{
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
@@ -42,7 +42,7 @@ class Game extends GameCore {
 					collision_url: "assets/background-door-collision.png",
 					range:[0],
 				}),
-			entrance_open: await engine.textureManager.createAtlas(1).setImage(
+			entrance_open: await engine.textureManager.createAtlas(1, this.imageLoader).setImage(
 				{
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
@@ -53,7 +53,7 @@ class Game extends GameCore {
 					frameRate: 10,
 					range:[4,6],
 				}),
-			entrance_opened: await engine.textureManager.createAtlas(1).setImage(
+			entrance_opened: await engine.textureManager.createAtlas(1, this.imageLoader).setImage(
 				{
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
@@ -63,47 +63,47 @@ class Game extends GameCore {
 					collision_url: "assets/background-door-collision.png",
 					range:[6],
 				}),
-			sign: await engine.textureManager.createAtlas(3).setImage(
+			sign: await engine.textureManager.createAtlas(3, this.imageLoader).setImage(
 				{
 					url: "assets/sign.png",
 					collision_url: "assets/sign.png",
 				}),
-			smokingsign: await engine.textureManager.createAtlas(4).setImage(
+			smokingsign: await engine.textureManager.createAtlas(4, this.imageLoader).setImage(
 				{
 					url: "assets/smoking-sign.png",
 					collision_url: "assets/smoking-sign.png",
 				}),
-			cigarette: await engine.textureManager.createAtlas(5).setImage(
+			cigarette: await engine.textureManager.createAtlas(5, this.imageLoader).setImage(
 				{
 					url: "assets/cigarette.png",
 					collision_url: "assets/cigarette.png",
 				}),
-			piano: await engine.textureManager.createAtlas(6).setImage(
+			piano: await engine.textureManager.createAtlas(6, this.imageLoader).setImage(
 				{
 					url: "assets/piano.png",
 					cols:1,rows:2,
 					range:[0],
 				}),
-			piano_splash: await engine.textureManager.createAtlas(6).setImage(
+			piano_splash: await engine.textureManager.createAtlas(6, this.imageLoader).setImage(
 				{
 					url: "assets/piano.png",
 					cols:1,rows:2,
 					range:[1],
 				}),
-			mouse: await engine.textureManager.createAtlas(7).setImage(
+			mouse: await engine.textureManager.createAtlas(7, this.imageLoader).setImage(
 				{
 					url: "assets/mouse.png",
 					cols:2,rows:2,
 					range:[0],
 				}),
-			mouse_run: await engine.textureManager.createAtlas(7).setImage(
+			mouse_run: await engine.textureManager.createAtlas(7, this.imageLoader).setImage(
 				{
 					url: "assets/mouse.png",
 					cols:2,rows:2,
 					frameRate: 20,
 					range:[1, 2],
 				}),
-			mat: await engine.textureManager.createAtlas(2).setImage(
+			mat: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -112,7 +112,7 @@ class Game extends GameCore {
 					collision_url: "assets/mat-collision.png",
 					range:[0],
 				}),
-			mat_pulling: await engine.textureManager.createAtlas(2).setImage(
+			mat_pulling: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -122,7 +122,7 @@ class Game extends GameCore {
 					frameRate: 4,
 					range:[1, 2],
 				}),
-			mat_pulled: await engine.textureManager.createAtlas(2).setImage(
+			mat_pulled: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -131,7 +131,7 @@ class Game extends GameCore {
 					collision_url: "assets/mat-collision.png",
 					range:[2],
 				}),
-			mat_picked_key: await engine.textureManager.createAtlas(2).setImage(
+			mat_picked_key: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -140,7 +140,7 @@ class Game extends GameCore {
 					collision_url: "assets/mat-collision.png",
 					range:[3],
 				}),
-			monkor_still: await engine.textureManager.createAtlas(0).setImage(
+			monkor_still: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					collision_url: "assets/monkor-collision.png",
@@ -149,7 +149,7 @@ class Game extends GameCore {
 					cols:5,rows:5,
 					range:[0],
 				}),
-			monkor_front: await engine.textureManager.createAtlas(0).setImage(
+			monkor_front: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -158,7 +158,7 @@ class Game extends GameCore {
 					frameRate:10,
 					range:[1, 4],
 				}),
-			monkor_back: await engine.textureManager.createAtlas(0).setImage(
+			monkor_back: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -167,7 +167,7 @@ class Game extends GameCore {
 					frameRate:10,
 					range:[5, 8],
 				}),
-			monkor_right: await engine.textureManager.createAtlas(0).setImage(
+			monkor_right: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -176,7 +176,7 @@ class Game extends GameCore {
 					frameRate:10,
 					range:[9, 12],
 				}),
-			monkor_talk: await engine.textureManager.createAtlas(0).setImage(
+			monkor_talk: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -185,7 +185,7 @@ class Game extends GameCore {
 					frameRate:10,
 					range:[13, 16],
 				}),
-			monkor_smoke: await engine.textureManager.createAtlas(0).setImage(
+			monkor_smoke: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -194,7 +194,7 @@ class Game extends GameCore {
 					frameRate:8,
 					range:[17, 19],
 				}),
-			monkor_puff: await engine.textureManager.createAtlas(0).setImage(
+			monkor_puff: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -202,7 +202,7 @@ class Game extends GameCore {
 					cols:5,rows:5,
 					range:[20],
 				}),
-			monkor_scared: await engine.textureManager.createAtlas(0).setImage(
+			monkor_scared: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -210,7 +210,7 @@ class Game extends GameCore {
 					cols:5,rows:5,
 					range:[21],
 				}),
-			monkor_run: await engine.textureManager.createAtlas(0).setImage(
+			monkor_run: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
 				{
 					url: "assets/monkor.png",
 					// texture_url: "assets/skin-texture.jpg",
@@ -220,9 +220,11 @@ class Game extends GameCore {
 					range:[21, 24],
 				}),
 		};
+		this.imageLoader.unload();
 		engine.chrono.tick("done creating atlas");
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
+
 
 
 		this.inventory = [];

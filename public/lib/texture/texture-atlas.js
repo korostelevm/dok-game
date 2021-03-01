@@ -1,11 +1,11 @@
 class TextureAtlas {
-	constructor(gl, glTextures, index, x, y, width, height, textureSize, imageLoader, chrono) {
+	constructor(gl, glTextures, index, width, height, textureSize, imageLoader, chrono) {
 		this.gl = gl;
 		this.glTextures = glTextures;
 		this.index = index || 0;
 		this.maxTextureIndex = 0;
-		this.x = x || 0;
-		this.y = y || 0;
+		this.x = 0;
+		this.y = 0;
 		this.width = width || 0;
 		this.height = height || 0;
 		this.textureSize = textureSize;
@@ -28,7 +28,7 @@ class TextureAtlas {
 	}
 
 	textureMix(image, texture, texture_alpha, texture_blend) {
-		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
+		const { index, canvas } = this;
 		const context = canvas.getContext("2d");
 		if (canvas !== image) {
 			this.getCanvasImage(image);
@@ -44,7 +44,7 @@ class TextureAtlas {
 	}
 
 	getCanvasImage(image) {
-		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
+		const { index, canvas } = this;
 		canvas.width = this.width || image.naturalWidth;
 		canvas.height = this.height || image.naturalHeight;
 
@@ -62,7 +62,7 @@ class TextureAtlas {
 		const { spriteWidth, spriteHeight } = this;
 		const col = frame % this.cols;
 		const row = Math.floor(frame / this.cols);
-		const { gl, glTextures, textureSize, index, x, y, canvas } = this;
+		const { index, canvas } = this;
 		canvas.width = spriteWidth;
 		canvas.height = spriteHeight;
 

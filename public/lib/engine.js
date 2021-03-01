@@ -70,7 +70,7 @@ class Engine {
 		this.shader = new Shader(gl, ext, vertexShader, fragmentShader, attributes, maxInstancesCount);
 
 		/* Texture management */
-		this.textureManager = new TextureManager(gl, this.shader.uniforms, new ImageLoader(), this.chrono);
+		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.chrono);
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection();

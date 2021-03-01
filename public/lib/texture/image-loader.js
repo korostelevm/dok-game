@@ -3,6 +3,20 @@ class ImageLoader {
 		this.imageStock = {};
 	}
 
+	unload() {
+		this.unloadStockExceptUrls([]);
+	}
+
+	unloadStockExceptUrls(exceptUrls) {
+		const hash = {};
+		exceptUrls.forEach(url => hash[url] = true);
+		for (let url in this.imageStock) {
+			if (!hash[url]) {
+				delete this.imageStock[url];
+			}
+		}
+	}
+
 	async preloadImages(...urls) {
 		return Promise.all(urls.map(async url => {
 			return await this.loadImage(url);
