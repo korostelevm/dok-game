@@ -49,6 +49,8 @@ const globalFiles=[
 	{
 		"fonts": [
 			".DS_Store",
+			"Lato-Bold.ttf",
+			"Lato-Regular.ttf",
 			"american-captain.otf",
 			"cartoon-script.ttf",
 			"demode.ttf",

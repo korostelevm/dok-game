@@ -718,7 +718,7 @@ class Game extends GameCore {
 			speechBubble.style.left = `${canvas.offsetLeft + this.monkor.x - speechBubble.offsetWidth/2 - 20}px`;
 			speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + this.monkor.y - this.monkor.size[1] - 20)}px`;
 
-			const utterance = window.speechSynthesis ? engine.getUterrance(msg, "Daniel") : null;
+			const utterance = engine.getUterrance(msg, "Daniel");
 
 			if (utterance) {
 				window.speechSynthesis.speak(utterance);
@@ -760,7 +760,9 @@ class Game extends GameCore {
 				const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
 				speechBubble.innerText = this.monkor.currentSpeech; //speech.substr(0, numCharacters);
 				this.monkor.characterIndex++;
-				if (char === " ") {
+				if (this.monkor.noVoice) {
+					this.monkor.speechPause = 0;
+				} else if (char === " ") {
 					this.monkor.speechPause++;
 				}
 				if (this.monkor.currentSpeech.length >= speech.length) {

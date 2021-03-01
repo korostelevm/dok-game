@@ -89,7 +89,7 @@ class Engine {
 		this.resize(canvas, gl, config);
 		this.initialize(gl, this.shader.uniforms, config);
 
-		this.voices = window.speechSynthesis.getVoices();
+		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
 		console.log(this.voices);
 
 //		this.game = null;
@@ -230,6 +230,9 @@ class Engine {
 	}
 
 	getUterrance(msg, voiceName) {
+		if (!window.speechSynthesis) {
+			return null;
+		}
 		if (!this.voices || !this.voices.length) {
 			this.voices = window.speechSynthesis.getVoices();
 		}
@@ -294,7 +297,7 @@ class Engine {
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
 		this.lastTime = time;
-		this.showDebugCanvas(time);
+//		this.showDebugCanvas(time);
 	}
 }
 
