@@ -64,6 +64,9 @@ const globalFiles=[
 	"game-scripter.js",
 	"game.js",
 	{
+		"games": []
+	},
+	{
 		"gen": [
 			"data.js",
 			"files.js"

@@ -192,6 +192,11 @@
 				font-weight: bold;
 			}
 
+			.action.selected {
+				color: yellow;
+				font-weight: bold;
+			}
+
 			.speech-bubble {
 				position: absolute;
 				background-color: #ffffff;
@@ -234,8 +239,20 @@
 
 			.inventory-item.selected {
 				cursor:;
-				border: 1px solid black;
+				border: 1px solid blue;
 				margin: 0px 4px;
+				background-color: #0088ff66;
+			}
+
+			.inventory-item.deemphasized {
+				opacity: .6;
+			}
+
+			.inventory-item.deemphasized:hover {
+				opacity: 1;
+				border: 1px solid red;
+				margin: 0px 4px;		
+				background-color: #ff000066;
 			}
 
 			@-webkit-keyframes spin {

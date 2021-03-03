@@ -295,19 +295,24 @@ class Engine {
 			return;
 		}
 
+		const { game } = this;
+		if (game && game.ready) {
+			if (game.paused) {
+				return;
+			}
+			game.refresh(time, dt);
+		}
+
 		const { gl, ext } = this;
 		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
 		const {attributes, uniforms} = this.shader;
 
+		//	Reset view
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.uniform1f(uniforms.time.location, time);
 
+		//	Handle special frame actions
 		this.handleFrames(time);
-
-		const { game } = this;
-		if (game && game.ready) {
-			game.refresh(time, dt);
-		}
 
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);

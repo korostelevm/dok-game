@@ -225,12 +225,16 @@ class Game extends GameCore {
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
-
-
 		this.inventory = [];
 
 		this.inventoryDetails = {
+			note: {
+				actions: [
+					{ name: "read", message: () => `It's a letter. It says: "You've been invited to the IMPOSSIBLE ROOM! A room that's impossible to escape."` },
+				],
+			},
 			key: {
+				defaultCommand: (item, target) => `insert ${item.name} into ${target.name}.`,
 				actions: [
 					{ name: "look", message: () => "I picked up some keys that didn't belong to me from under a mat." },
 					{ name: "eat", message: () => "I swallowed the key. Now, this game is truly IMPOSSIBLE!.", 
@@ -240,7 +244,7 @@ class Game extends GameCore {
 							engine.playAudio("audio/eat.mp3", .5);
 							this.showBubble(key.pendingMessage);
 							key.pendingMessage = null;
-							setTimeout(() => this.gameOver(), 6000);					
+							setTimeout(() => this.gameOver(), 6000);
 						},
 					},
 				],
@@ -259,9 +263,9 @@ class Game extends GameCore {
 					},
 				],
 			},
-			title: {
+			"game title": {
 				actions: [
-					{ name: "look", message: () => `${document.getElementById("title").innerText}` },
+					{ name: "read", message: () => `${document.getElementById("title").innerText}` },
 				],
 			},
 		};
@@ -271,16 +275,20 @@ class Game extends GameCore {
 		}
 
 		engine.spriteCollection.create({
-			name: "entrance",
+			name: "entrance door",
 			anim: this.atlas.entrance,
 			size: [800, 400],
 		}, {
+			defaultCommand: (item, target) => target.unlocked ? `use ${item.name} on ${target.name}` : `unlock ${target.name} with ${item.name}`,
 			actions: [
-				{ name: "look", condition: entrance => !entrance.opened, message: () => `There's a door, that leads to ${this.title.innerText}` },
+				{ name: "look", condition: entrance => !entrance.opened,
+					message: () => `There's a door, that leads to ${this.title.innerText}` },
 				{ name: "open", condition: entrance => !entrance.unlocked, message: `It's locked.` },
-				{ name: "unlock", condition: entrance => this.inventory.contains("key"), message: `Yeah! I unlocked the door.`,
+				{ name: "unlock", condition: entrance => this.selectedItem === "key" && !entrance.unlocked,
+					message: `Yeah! I unlocked the door.`,
+					item: "key",
+					command: (item, target) => `unlock ${target.name} with ${item.name}.`,
 					action: entrance => {
-						this.inventory.remove("key");
 						this.updateInventory();
 						engine.playAudio("audio/dud.mp3", 1);
 						entrance.unlocked = true;
@@ -288,6 +296,29 @@ class Game extends GameCore {
 							this.showBubble(entrance.pendingMessage);
 							entrance.pendingMessage = null;
 						}, 500);
+					},
+				},
+				{ name: "lock", condition: entrance => this.selectedItem === "key" && entrance.unlocked,
+					message: `I locked the door.`,
+					item: "key",
+					command: (item, target) => `lock ${target.name} with ${item.name}.`,
+					action: entrance => {
+						this.updateInventory();
+						engine.playAudio("audio/dud.mp3", 1);
+						entrance.unlocked = false;
+						entrance.opened = false;
+						entrance.changeAnimation(this.atlas.entrance, engine.lastTime);
+						setTimeout(() => {
+							this.showBubble(entrance.pendingMessage);
+							entrance.pendingMessage = null;
+						}, 500);
+					},
+				},
+				{ name: "close", condition: entrance => entrance.unlocked && entrance.opened,
+					action: entrance => {
+						engine.playAudio("audio/hit.mp3", .5);
+						entrance.opened = false;
+						entrance.changeAnimation(this.atlas.entrance, engine.lastTime);
 					},
 				},
 				{ name: "open", condition: entrance => entrance.unlocked && !entrance.opened,
@@ -347,7 +378,7 @@ class Game extends GameCore {
 		}, {
 			actions: [
 				{ name: "look", message: `It's a half smoked cigarette butt on the ground.` },
-				{ name: "pick up", message: "Sure, I'll pick up this cigarette butt on the ground, half smoked by a random person.",
+				{ name: "pickup", message: "Sure, I'll pickup this cigarette butt on the ground, half smoked by a random person.",
 					action: item => {
 						item.changeOpacity(0, engine.lastTime);
 						this.inventory.push("cigarette");
@@ -369,14 +400,16 @@ class Game extends GameCore {
 				{ name: "look", condition: mat => !mat.opened, message: `It's a mat in front of the entrance. It says: "You're welcome to try."` },
 				{ name: "look", condition: mat => mat.opened && !mat.pickedKey, message: `There's a key. Should I pick it up?` },
 				{ name: "look", condition: mat => mat.opened && mat.pickedKey, message: `Nothing left but dust under the mat.` },
-				{ name: "pull", condition: mat => !mat.opened, message: `How surprising, there's a key under the mat!`,
+				{ name: "pull", condition: mat => !mat.opened, message: mat => `How ${mat.sawkey ? "unsurprising" : "surprising"}, there's a key under the mat!`,
 					action: mat => {
+						mat.sawkey = true;
 						engine.playAudio("audio/hit.mp3", .5);
 						mat.changeAnimation(this.atlas.mat_pulling, engine.lastTime);
 					}
 				},
 				{ name: "pickup key", condition: mat => mat.opened && !mat.pickedKey, message: `I wonder where that key fits...`,
 					action: mat => {
+						mat.pickedKey = true;
 						mat.changeAnimation(this.atlas.mat_picked_key, engine.lastTime);
 						this.inventory.push("key");
 						this.updateInventory();
@@ -384,6 +417,18 @@ class Game extends GameCore {
 						this.showBubble(mat.pendingMessage);
 						mat.pendingMessage = null;
 					}
+				},
+				{ name: "put back key", condition: entrance => this.selectedItem === "key",
+					item: "key",
+					command: (item, target) => `put ${target.name} under the ${item.name}`,
+					action: mat => {
+						this.inventory.remove("key");
+						this.updateInventory();
+						engine.playAudio("audio/hit.mp3", .5);
+						delete mat.pickedKey;
+						delete mat.opened;
+						mat.changeAnimation(this.atlas.mat, engine.lastTime);
+					},
 				},
 			],
 			onFrame: {
@@ -428,6 +473,7 @@ class Game extends GameCore {
 
 		this.monkor.goal = {x:this.monkor.x, y:this.monkor.y};
 		this.monkor.speed = 1;
+		this.defaultCommand = (item, target) => `use ${item.name} on ${target.name}`;
 
 		engine.keyboardHandler.addKeyUpListener("Escape", e => {
 			console.log("Escape");
@@ -475,8 +521,21 @@ class Game extends GameCore {
 			if (!this.active()) {
 				return;
 			}
-			this.selectTarget(this.inventoryDetails.title);
-			this.showActions(this.inventoryDetails.title);
+			const gameTitle = this.inventoryDetails["game title"];
+			if (this.selectedItem) {
+				const itemDetails = this.inventoryDetails[this.selectedItem];
+				const action = this.getActionWithItem(gameTitle, itemDetails);
+				this.performAction(action, gameTitle);
+			} else {
+				this.selectTarget(gameTitle);
+				this.showActions(gameTitle);
+			}
+		});
+		document.getElementById("title").addEventListener("mouseover", e => {
+			this.checkItem(this.inventoryDetails.title);
+		});
+		document.getElementById("title").addEventListener("mouseout", e => {
+			this.checkItem(null);
 		});
 
 		document.addEventListener("mousedown", e => {
@@ -509,6 +568,10 @@ class Game extends GameCore {
 		this.dinoCount = parseInt(localStorage.getItem("dino") || 0);
 
 		this.title = document.getElementById("title");
+
+		this.inventory.push("note");
+		this.updateInventory();
+
 		this.ready = true;
 	}
 
@@ -572,6 +635,7 @@ class Game extends GameCore {
 	}
 
 	gameOver() {
+		this.paused = true;
 		document.getElementById("restart").style.display = "block";
 		document.getElementById("game-over").style.display = "block";
 		document.getElementById("restart").addEventListener("click", e => {
@@ -597,25 +661,49 @@ class Game extends GameCore {
 				case "cigarette":
 					k.innerText = "🚬 cigarette"
 					break;
+				case "note":
+					k.innerText = "📜 note";
+					break;
 			}
+			const itemDetails = this.inventoryDetails[item];
+			k.addEventListener("mouseover", e => {
+				this.checkItem(itemDetails);
+			});
+			k.addEventListener("mouseout", e => {
+				this.checkItem(null);
+			});
 			k.addEventListener("click", e => {
 				if (!this.active()) {
 					return;
 				}
-				this.updateInventory(item);
-				//inventoryDetails
+				if (!this.selectedItem) {
+					this.updateInventory(item);
+				}  else if (this.selectedItem !== item) {
+					const action = this.getActionWithItem(itemDetails, this.inventoryDetails[this.selectedItem]);
+					this.performAction(action, itemDetails);
+				} else {
+					this.updateInventory(null);
+					this.selectTarget(null);
+					this.showActions(null);
+					this.showSubject(null);
+				}
 			});
 			if (selection === item) {
 				this.selectedItem = item;
-				k.classList.add("selected");				
+				k.classList.add("selected");
 				const itemDetails = this.inventoryDetails[item];
 				this.selectTarget(itemDetails);
 				this.showActions(itemDetails);
+			} else if (selection) {
+				k.classList.add("deemphasized");
 			}
 		});
 	}
 
 	active() {
+		if (this.paused) {
+			return false;
+		}
 		if (this.monkor.paused || this.monkor.dead || this.mouse.alive || this.monkor.anim === this.atlas.monkor_talk) {
 			return false;
 		}
@@ -664,6 +752,13 @@ class Game extends GameCore {
 			if (!this.finishedSpeech()) {
 				this.speechBubble.style.opacity = 0;
 			}
+			if (this.selectedItem && hovering) {
+				const itemDetails = this.inventoryDetails[this.selectedItem];
+				this.monkor.pendingAction = this.getActionWithItem(hovering, itemDetails);
+				this.showActions(itemDetails, hovering);
+			} else {
+				this.monkor.pendingAction = null;
+			}
 		} else if (e.type === "mouseup") {
 			let newTarget = null;
 			if (this.monkor.touched === hovering) {
@@ -675,20 +770,40 @@ class Game extends GameCore {
 			this.selectTarget(newTarget);
 			this.monkor.touched = null;
 		}
-		const focused = this.monkor.target || hovering;
-		if (!this.subjectNameDiv) {
-			this.subjectNameDiv = document.getElementById("subject-name");
-		}
-		this.subjectNameDiv.innerText = focused ? focused.name : "";
+		this.showSubject(this.monkor.target || hovering);
 		overlay.style.cursor = hovering ? "pointer" : "";
 
 		if (this.selectedItem && e.type === "mousedown") {
 			this.updateInventory(null);
 		}
+
+		if (this.lastHovering !== hovering) {
+			this.lastHovering = hovering;
+			this.checkItem(hovering);
+		}
+	}
+
+	showSubject(subject) {
+		if (!this.subjectNameDiv) {
+			this.subjectNameDiv = document.getElementById("subject-name");
+		}
+		this.subjectNameDiv.innerText = subject ? subject.name : "";		
+	}
+
+	checkItem(hovering) {
+		if (this.selectedItem) {
+			const itemDetails = this.inventoryDetails[this.selectedItem];
+			this.showActions(itemDetails, hovering);
+		}
+	}
+
+	onClickWithItem(target, item) {
+		console.log(item, target);
 	}
 
 	selectTarget(target) {
 		const { engine } = this;
+
 		if (!this.subjectDiv) {
 			this.subjectDiv = document.getElementById("subject");
 		}
@@ -696,10 +811,7 @@ class Game extends GameCore {
 			this.monkor.target = target;
 			if (this.monkor.target) {
 				engine.playAudio("audio/beep.mp3", .5);
-				if (!this.subjectNameDiv) {
-					this.subjectNameDiv = document.getElementById("subject-name");
-				}
-				this.subjectNameDiv.innerText = target.name;
+				this.showSubject(this.monkor.target);
 				this.subjectDiv.classList.add("selected");
 			} else {
 				this.subjectDiv.classList.remove("selected");
@@ -707,38 +819,87 @@ class Game extends GameCore {
 		}
 	}
 
-	showActions(target) {
-		if (this.showingTarget !== target) {
+	showActions(target, hovering) {
+		if (this.showingTarget !== target || this.showingHovering !== hovering) {
 			const subjecActions = document.getElementById("subject-actions");
 			this.showingTarget = target;
+			this.showingHovering = hovering;
 			subjecActions.style.display = this.showingTarget && this.showingTarget.actions ? "" : "none";
 			if (this.showingTarget) {
-
 				subjecActions.innerText = "";
-				this.showingTarget.actions.forEach(({name, condition, message, action}) => {
-					if (!condition || condition(target)) {
-						const div = subjecActions.appendChild(document.createElement("div"));
-						div.classList.add("action");
-						div.innerText = name;
-						div.addEventListener("click", e => {
-							if (!this.active()) {
-								return;
-							}
-							const msg = typeof(message) === "function" ? message(target) : message;
-							if (action) {
-								target.pendingMessage = msg;
-								action(target);
-							} else if (msg) {
-								this.showBubble(msg);
-							}
-							this.selectTarget(null);
-							this.updateInventory();
-							this.showActions(null);
-						});
+				if (this.monkor.pendingAction && hovering) {
+					const command = this.monkor.pendingAction.command || hovering.defaultCommand || target.defaultCommand || this.defaultCommand;
+					this.addAction(this.monkor.target, this.monkor.pendingAction, true, command(target, hovering));
+				} else {
+					this.showingTarget.actions.forEach(action => this.addAction(target, action));
+
+					if (hovering) {
+						this.checkActionsWithItem(hovering, target);
 					}
-				});
+				}
 			}
 		}
+	}
+
+	itemActionOnTarget(item, target) {
+		return {
+			item: item.name,
+			message: `I cannot use the ${item.name} on the ${target.name}.`,
+		};
+	}
+
+	getActionWithItem(target, item) {
+		if (target === item) {
+			return null;
+		}
+		return target.actions.filter(action => {
+			if (action.condition && !action.condition(target)) {
+				return false;
+			}
+			return action.item === item.name;
+		})[0] || this.itemActionOnTarget(item, target);
+	}
+
+	checkActionsWithItem(target, item) {
+		const action = this.getActionWithItem(target, item);
+		if (!action) {
+			return;
+		}
+		const command = action.command || target.defaultCommand || item.defaultCommand || this.defaultCommand;
+		this.addAction(item, action, true, command(item, target));
+	}
+
+	addAction(target, action, highlight, messageOverride) {
+		if (action.condition && !action.condition(target)) {
+			return false;
+		}
+		const subjecActions = document.getElementById("subject-actions");
+		const div = subjecActions.appendChild(document.createElement("div"));
+		div.classList.add("action");
+		if (highlight) {
+			div.classList.add("selected");
+		}
+		div.innerText = messageOverride || action.name;
+		div.addEventListener("click", e => {
+			this.performAction(action, target);
+		});
+	}
+
+	performAction({name, condition, message, action}, target) {
+		if (!this.active()) {
+			return;
+		}
+		const msg = typeof(message) === "function" ? message(target) : message;
+		if (action) {
+			target.pendingMessage = msg;
+			action(target);
+		} else if (msg) {
+			this.showBubble(msg);
+		}
+		this.monkor.pendingAction = null;
+		this.selectTarget(null);
+		this.updateInventory();
+		this.showActions(null);
 	}
 
 	showBubble(msg, callback) {
@@ -944,7 +1105,11 @@ class Game extends GameCore {
 		const monkorBox = this.monkor.getCollisionBox(time);
 		const targetBox = this.monkor.target && this.monkor.target.getCollisionBox ? this.monkor.target.getCollisionBox(time) : null;
 		if (engine.doCollide(monkorBox, targetBox)) {
-			this.showActions(this.monkor.target);			
+			if (this.monkor.pendingAction) {
+				this.performAction(this.monkor.pendingAction, this.monkor.target);
+			} else {
+				this.showActions(this.monkor.target);
+			}
 		}
 	}
 
