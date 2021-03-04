@@ -190,8 +190,10 @@ class Engine {
 	}
 
 	showDebugCanvas(time) {
-		this.debugCanvas.width = this.canvas.width;
-		this.debugCanvas.height = this.canvas.height;
+		this.debugCanvas.style.border = "5px solid pink";
+		const zoom = 4;
+		this.debugCanvas.width = this.canvas.width / zoom;
+		this.debugCanvas.height = this.canvas.height / zoom;
 		this.debugCanvas.style.width = `${this.canvas.offsetWidth}px`;
 		this.debugCanvas.style.height = `${this.canvas.offsetHeight}px`;
 		this.debugCanvas.style.left = `${this.canvas.offsetLeft}px`;
@@ -199,7 +201,7 @@ class Engine {
 		this.debugCanvas.style.display = "";
 		const ctx = this.debugCtx;
 		const { config: { viewport: { pixelScale } } } = this;
-		const margin = 10 / pixelScale;
+		const margin = 10 / pixelScale / zoom;
 		ctx.clearRect(0, 0, this.debugCanvas.width, this.debugCanvas.height);
 		ctx.beginPath();
 		ctx.rect(margin, margin, this.debugCanvas.width - margin * 2, this.debugCanvas.height - margin * 2);
@@ -211,20 +213,20 @@ class Engine {
 
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
-			this.drawCollisionBox(ctx, sprite, time);
+			this.drawCollisionBox(ctx, sprite, time, zoom);
 		}
 
 		ctx.stroke();
 
 	}
 
-	drawCollisionBox(ctx, sprite, time) {
+	drawCollisionBox(ctx, sprite, time, zoom) {
 		const { config: { viewport: { pixelScale } } } = this;
 		const rect = sprite.opacity > 0 ? sprite.getCollisionBox(time) : null;
 		if (!rect) {
 			return;
 		}
-		ctx.rect(rect.left / pixelScale, rect.top / pixelScale, (rect.right - rect.left) / pixelScale, (rect.bottom - rect.top) / pixelScale);
+		ctx.rect(rect.left / pixelScale / zoom, rect.top / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
 	}
 
 	playAudio(sound, volume) {

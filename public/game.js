@@ -16,10 +16,6 @@ class Game extends GameCore {
 			"assets/skin-texture.jpg",
 			"assets/backwall.jpg",
 		);
-
-		document.addEventListener("DOMContentLoaded", () => {
-			engine.setGame(this);
-		});
 	}
 
 	async init(engine) {
@@ -237,7 +233,7 @@ class Game extends GameCore {
 				defaultCommand: (item, target) => `insert ${item.name} into ${target.name}.`,
 				actions: [
 					{ name: "look", message: () => "I picked up some keys that didn't belong to me from under a mat." },
-					{ name: "eat", message: () => "I swallowed the key. Now, this game is truly IMPOSSIBLE!.", 
+					{ name: "eat", condition: () => !this.entrance.unlocked, message: () => "I swallowed the key. Now, this game is truly IMPOSSIBLE!.", 
 						action: key => {
 							this.inventory.remove("key");
 							this.updateInventory();
@@ -245,6 +241,15 @@ class Game extends GameCore {
 							this.showBubble(key.pendingMessage);
 							key.pendingMessage = null;
 							setTimeout(() => this.gameOver(), 6000);
+						},
+					},
+					{ name: "eat", condition: () => this.entrance.unlocked, message: () => "I swallowed the key. Tasted like metal.", 
+						action: key => {
+							this.inventory.remove("key");
+							this.updateInventory();
+							engine.playAudio("audio/eat.mp3", .5);
+							this.showBubble(key.pendingMessage);
+							key.pendingMessage = null;
 						},
 					},
 				],
@@ -274,7 +279,7 @@ class Game extends GameCore {
 			this.inventoryDetails[name].name = name;
 		}
 
-		engine.spriteCollection.create({
+		this.entrance = engine.spriteCollection.create({
 			name: "entrance door",
 			anim: this.atlas.entrance,
 			size: [800, 400],
@@ -292,6 +297,7 @@ class Game extends GameCore {
 						this.updateInventory();
 						engine.playAudio("audio/dud.mp3", 1);
 						entrance.unlocked = true;
+						entrance.unlockedOnce = true;
 						setTimeout(() => {
 							this.showBubble(entrance.pendingMessage);
 							entrance.pendingMessage = null;
@@ -407,7 +413,7 @@ class Game extends GameCore {
 						mat.changeAnimation(this.atlas.mat_pulling, engine.lastTime);
 					}
 				},
-				{ name: "pickup key", condition: mat => mat.opened && !mat.pickedKey, message: `I wonder where that key fits...`,
+				{ name: "pickup key", condition: mat => mat.opened && !mat.pickedKey, message: () => this.entrance.unlockedOnce ? `It's the key that unlocks the entrance to ${this.title.innerText}` : `I wonder where that key fits...`,
 					action: mat => {
 						mat.pickedKey = true;
 						mat.changeAnimation(this.atlas.mat_picked_key, engine.lastTime);
@@ -900,6 +906,7 @@ class Game extends GameCore {
 		this.selectTarget(null);
 		this.updateInventory();
 		this.showActions(null);
+		this.showSubject(null);
 	}
 
 	showBubble(msg, callback) {
@@ -964,15 +971,15 @@ class Game extends GameCore {
 		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + this.monkor.y - this.monkor.size[1] - 20)}px`;
 	}
 
-	updateSpeech(time) {
+	updateSpeech(time, dt) {
 		if (this.finishedSpeech()) {
 			return;
 		}
 
 		const { speech, speechStarted, lastCharacter } = this.monkor;
 		if (speech && speechStarted && (this.monkor.speechPause <= 0 || this.monkor.noVoice)) {
-			const textSpeed = this.monkor.noVoice ? 50 : 20;
-			if (!lastCharacter || time - lastCharacter >= textSpeed) {
+			const textSpeed = (this.monkor.noVoice ? 50 : 20);
+			if (!lastCharacter || (time - lastCharacter) * Math.min(2, dt / 16) >= textSpeed) {
 				this.monkor.lastCharacter = time;
 				const char = speech.charAt(this.monkor.characterIndex);
 				this.monkor.currentSpeech += char;
@@ -1040,7 +1047,8 @@ class Game extends GameCore {
 		}
 
 
-		const speed = 2 * monkor.speed;
+
+		const speed = 2 * monkor.speed * Math.min(2, dt / 16);
 		const dx = (monkor.goal.x - monkor.x);
 		const dy = (monkor.goal.y - monkor.y);
 		const dist = Math.sqrt(dx * dx + dy * dy);
@@ -1117,10 +1125,8 @@ class Game extends GameCore {
 		const { state } = this;
 		this.applyMovement(this.monkor, dt, time);
 		this.checkCollisions(time);
-		this.updateSpeech(time);
+		this.updateSpeech(time, dt);
 		this.updatePiano(time);
 		this.updateMouse(time);
 	}
 }
-
-const game = new Game();
