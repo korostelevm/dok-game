@@ -8,7 +8,7 @@
 
 
 class Sprite {
-	constructor(data) {
+	constructor(data, time) {
 		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;
@@ -27,12 +27,12 @@ class Sprite {
 		};
 
 		this.updated = {
-			sprite: 0,
-			spriteSheet: 0,
-			animation: 0,
-			updateTime: 0,
-			direction: 0,
-			opacity: 0,
+			sprite: time,
+			spriteSheet: time,
+			animation: time,
+			updateTime: time,
+			direction: time,
+			opacity: time,
 		};
 	}
 

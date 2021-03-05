@@ -44,7 +44,7 @@ class Engine {
 		this.debugCanvas = document.createElement("canvas");
 		this.debugCanvas.style.position = "absolute";
 		this.debugCanvas.zIndex = 1;
-		document.body.appendChild(this.debugCanvas);
+		document.getElementById("container").appendChild(this.debugCanvas);
 		this.debugCtx = this.debugCanvas.getContext("2d");
 		this.debugCanvas.style.display = "none";
 
@@ -73,7 +73,7 @@ class Engine {
 		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.chrono);
 
 		/* Load sprite */
-		this.spriteCollection = new SpriteCollection();
+		this.spriteCollection = new SpriteCollection(this);
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, config);
@@ -82,9 +82,11 @@ class Engine {
 		/* Keyboard handler */
 		this.keyboardHandler = new KeyboardHandler(document);
 
+		this.setupMouseListeners();
+
 		/* Setup constants */
-		this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
-		console.log("numInstances", 30);
+		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
+		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
 
 		this.resize(canvas, gl, config);
@@ -98,7 +100,8 @@ class Engine {
 		this.lastTime = 0;
 		if (this.game) {
 			this.chrono.tick("game init");
-			await game.init(this);
+			await this.game.init(this);
+			this.game.ready = true;
 			this.chrono.tick("game init done");
 		}
 
@@ -114,9 +117,40 @@ class Engine {
 		this.game = game;
 		if (this.ready) {
 			this.chrono.tick("game init");
+			this.resetScene();
 			await this.game.init(this);
+			this.game.ready = true;
 			this.chrono.tick("game init done");
 		}
+	}
+
+	handleMouse(e) {
+		if (this.game) {
+			this.game.handleMouse(e);
+		}
+	}
+
+	setupMouseListeners() {
+		document.addEventListener("click", e => {
+			this.handleMouse(e);
+		});
+		document.addEventListener("mousedown", e => {
+			this.handleMouse(e);
+		});
+		document.addEventListener("mousemove", e => {
+			this.handleMouse(e);
+		});
+		document.addEventListener("mouseup", e => {
+			this.handleMouse(e);
+		});		
+	}
+
+	resetScene() {
+		if (this.game) {
+			this.game.ready = false;
+			this.game.clear(engine);
+		}
+		this.spriteCollection.clear();
 	}
 
 	setupPrototypes() {
@@ -194,8 +228,8 @@ class Engine {
 		const zoom = 4;
 		this.debugCanvas.width = this.canvas.width / zoom;
 		this.debugCanvas.height = this.canvas.height / zoom;
-		this.debugCanvas.style.width = `${this.canvas.offsetWidth}px`;
-		this.debugCanvas.style.height = `${this.canvas.offsetHeight}px`;
+		this.debugCanvas.style.width = `${this.canvas.offsetWidth - zoom}px`;
+		this.debugCanvas.style.height = `${this.canvas.offsetHeight - zoom}px`;
 		this.debugCanvas.style.left = `${this.canvas.offsetLeft}px`;
 		this.debugCanvas.style.top = `${this.canvas.offsetTop}px`;
 		this.debugCanvas.style.display = "";
@@ -290,6 +324,12 @@ class Engine {
 		return utterance;
 	}
 
+	onDropOnOverlay(event) {
+		if (this.game.onDropOnOverlay) {
+			this.game.onDropOnOverlay(event);
+		}
+	}
+
 	refresh(time) {
 		const dt = time - this.lastTime;
 		if (!this.focusFixer.focused) {
@@ -334,7 +374,7 @@ class Engine {
 		}
 
 		//	DRAW CALL
-		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.numInstances);
+		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());
 		this.lastTime = time;
 		if (this.debug) {
 			this.showDebugCanvas(time);

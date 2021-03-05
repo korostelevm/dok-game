@@ -1,5 +1,5 @@
-const game = new Game();
+const entrance = new Entrance();
 
 document.addEventListener("DOMContentLoaded", () => {
-	engine.setGame(game);
+	engine.setGame(entrance);
 });

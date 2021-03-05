@@ -3,12 +3,13 @@
 */
 
 class SpriteCollection {
-	constructor() {
+	constructor(engine) {
 		this.sprites = [];
+		this.engine = engine;
 	}
 
 	create(data, attributes) {
-		const sprite = new Sprite(data);
+		const sprite = new Sprite(data, this.engine.lastTime);
 		this.sprites.push(sprite);
 		
 
@@ -24,5 +25,9 @@ class SpriteCollection {
 
 	size() {
 		return this.sprites.length;
+	}
+
+	clear() {
+		this.sprites.length = 0;
 	}
 }

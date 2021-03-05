@@ -298,7 +298,12 @@
 				height: 100px;
 				font-size: 30pt;
 				display: none;
-			}
+				border: 2px solid gray;
+				color: silver;
+				border-radius: 25px;
+				background: rgb(2,0,36);
+				background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(78,40,47,1) 35%, rgba(150,63,63,1) 100%);
+				}
 
 			#game-over-message {
 				width: 600px;
@@ -311,41 +316,41 @@
 
 	</head>
 	<body>
-		<!-- https://www.beepbox.co/#8n31sbk0l00e0ft3em0a7g0fj07i0r1o3210T5v0L4u50q1d5f8y1z6C1c0h0H-JJAArrqiih999T6v1L4u77q1d1f7y4z1C1c2W79T1v0L4u55q1d1f9y0z6C1c0A4F2B4V1Q40c0Pd73bE0111T3v3L4u03q0d1f8y0z1C2S-JIAArrrrrqiiiib4x8Qd18ilBoi4zgR4x8Qd14h8Och4icz4h4h414h4h0p23dFE-y-y38X2eQzEF8W2eH04t17hihO97ghQkRkRqGa2e2FKI8W2eyMzG8Zd517rj8Op7ghQkRkQWiewzEAieIzEbWyeAzRlmSng5dlJJJtBJd9jpvhSqq_3FU2tDwdv9ePMaDmt_v9YEUeEUckR_52qfiwcEWv2koz0phvgnQp2z4rsGwUY5Cz0K8WkkQpk0hQklAt17mhQ4o0 -->
-		<div id="title" style="user-select: text; position: absolute; top: 80px; left:310px; z-index: 300; font-size: 40pt"><span id="im" contenteditable="true">THE IMPOSSIBLE ROOM</span></div>
-		<div id="overlay" ondrop="game.onDropMouse(event)" ondragover="(event.preventDefault())"></div>
-		<div id="game-over"></div>
-		<div class="centered" id="game-over-message"></div>
-		<button id="restart" class="centered restart">Restart</button>
-		<div class="speech-bubble" id="speech-bubble" style="left: 50px;"></div>
-		<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
-		<audio id="hit-audio" src="audio/hit-land.mp3" style="position: absolute; display: none"></audio>
-		<audio id="pickup-audio" src="audio/pickup.mp3" style="position: absolute; display: none"></audio>
-		<div id="info-box" style="position: absolute; z-index: 10"></div>
-		<div class="container">
+		<div id="container" class="container">
+			<!-- https://www.beepbox.co/#8n31sbk0l00e0ft3em0a7g0fj07i0r1o3210T5v0L4u50q1d5f8y1z6C1c0h0H-JJAArrqiih999T6v1L4u77q1d1f7y4z1C1c2W79T1v0L4u55q1d1f9y0z6C1c0A4F2B4V1Q40c0Pd73bE0111T3v3L4u03q0d1f8y0z1C2S-JIAArrrrrqiiiib4x8Qd18ilBoi4zgR4x8Qd14h8Och4icz4h4h414h4h0p23dFE-y-y38X2eQzEF8W2eH04t17hihO97ghQkRkRqGa2e2FKI8W2eyMzG8Zd517rj8Op7ghQkRkQWiewzEAieIzEbWyeAzRlmSng5dlJJJtBJd9jpvhSqq_3FU2tDwdv9ePMaDmt_v9YEUeEUckR_52qfiwcEWv2koz0phvgnQp2z4rsGwUY5Cz0K8WkkQpk0hQklAt17mhQ4o0 -->
+			<div id="title" style="user-select: text; position: absolute; top: 80px; left:310px; z-index: 300; font-size: 40pt"><span id="im" contenteditable="true">THE IMPOSSIBLE ROOM</span></div>
+			<div id="overlay" ondrop="engine.onDropOnOverlay(event)" ondragover="(event.preventDefault())"></div>
+			<div id="game-over"></div>
+			<div class="centered" id="game-over-message"></div>
+			<button id="restart" class="centered restart">restart</button>
+			<div class="speech-bubble" id="speech-bubble" style="left: 50px;"></div>
+			<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
+			<audio id="hit-audio" src="audio/hit-land.mp3" style="position: absolute; display: none"></audio>
+			<audio id="pickup-audio" src="audio/pickup.mp3" style="position: absolute; display: none"></audio>
+			<div id="info-box" style="position: absolute; z-index: 10"></div>
 			<div style="position:absolute; top: 20px; left: 100px">
 				<span id="score"></span>
 				<span id="chocolate"></span>
 				<span id="dino"></span>
 			</div>
 			<canvas id="canvas"  ondrop="console.log(event)" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
-		</div>
-		<div id="actions" style="position: absolute; top: 460px; left: 400px; display: flex; flex-direction: : horizontal; z-index: 121;">
-			<div id="subject" class="subject">
-				<div id="subject-name"></div>
+			<div id="actions" style="position: absolute; top: 460px; left: 400px; display: flex; flex-direction: : horizontal; z-index: 121;">
+				<div id="subject" class="subject">
+					<div id="subject-name"></div>
+				</div>
+				<div class="actions" id="subject-actions"></div>
 			</div>
-			<div class="actions" id="subject-actions"></div>
-		</div>
-		<div id="inventory" style="position: absolute; top: 460px; left: 100px; z-index: 141; display: flex; flex-direction: horizontal">
-		</div>
-		<div id="controls" style="position: absolute; top: 490px; left: 100px; z-index: 131">
-			<div><span id="mouse" class="mouse" draggable="true" style=>🐁</span>: Use mouse to move Monkor.</div>
-			<div><span id="speaker">🔇</span>: Press M to <span id="mute">mute</span></div>
-			<div>🔁: <span id="pressing-r">R to start over.</span></div>
+			<div id="inventory" style="position: absolute; top: 460px; left: 100px; z-index: 141; display: flex; flex-direction: horizontal">
+			</div>
+			<div id="controls" style="position: absolute; top: 490px; left: 100px; z-index: 131">
+				<div><span id="mouse" class="mouse" draggable="true" style=>🐁</span>: Use mouse to move Monkor.</div>
+				<div><span id="speaker">🔇</span>: Press M to <span id="mute">mute</span></div>
+				<div>🔁: <span id="pressing-r">R to start over.</span></div>
+			</div>
 		</div>
 		<script type="text/javascript" src="lib/texture/image-loader.js"></script>
 		<script type="text/javascript" src="game-core.js"></script>
-		<script type="text/javascript" src="game.js"></script>
+		<script type="text/javascript" src="entrance.js"></script>
 		<script type="text/javascript" src="game-scripter.js"></script>
 		<script type="text/javascript" src="gen/data.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono.js"></script>

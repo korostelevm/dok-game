@@ -48,6 +48,7 @@ const globalFiles=[
 			"weirdsong.mp3"
 		]
 	},
+	"entrance.js",
 	"favicon.ico",
 	{
 		"fonts": [
@@ -62,7 +63,6 @@ const globalFiles=[
 	},
 	"game-core.js",
 	"game-scripter.js",
-	"game.js",
 	{
 		"games": []
 	},

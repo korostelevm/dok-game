@@ -57,4 +57,10 @@ class KeyboardHandler {
 			}
 		}
 	}
+
+	clearListeners() {
+		for (let i in this.listeners) {
+			delete this.listeners[i];
+		}
+	}
 }
