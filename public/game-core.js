@@ -1,74 +1,71 @@
 class GameCore {
+	constructor(imageLoader) {
+		this.imageLoader = imageLoader;
+	}
+
 	async init(engine) {
 		const { gl, config } = engine;
 		this.engine = engine;
 
 		//	Monkor
 		this.atlas = {
-			monkor_still: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_still: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
 					collision_url: "assets/monkor-collision.png",
 					cols:5,rows:5,
 					range:[0],
 				}),
-			monkor_front: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_front: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
 					cols:5,rows:5,
 					frameRate:10,
 					range:[1, 4],
 				}),
-			monkor_back: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_back: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
 					cols:5,rows:5,
 					frameRate:10,
 					range:[5, 8],
 				}),
-			monkor_right: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_right: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
 					cols:5,rows:5,
 					frameRate:10,
 					range:[9, 12],
 				}),
-			monkor_talk: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_talk: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
 					cols:5,rows:5,
 					frameRate:10,
 					range:[13, 16],
 				}),
-			monkor_smoke: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_smoke: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
-					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:8,
 					range:[17, 19],
 				}),
-			monkor_puff: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_puff: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
-					// texture_url: "assets/skin-texture.jpg",
-					// texture_alpha: .15,
 					cols:5,rows:5,
 					range:[20],
 				}),
-			monkor_scared: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_scared: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
-					// texture_url: "assets/skin-texture.jpg",
-					// texture_alpha: .15,
 					cols:5,rows:5,
 					range:[21],
 				}),
-			monkor_run: await engine.textureManager.createAtlas(0, this.imageLoader).setImage(
+			monkor_run: await engine.addTexture(
 				{
 					url: "assets/monkor.png",
-					// texture_url: "assets/skin-texture.jpg",
-					// texture_alpha: .15,
 					cols:5,rows:5,
 					frameRate:10,
 					range:[21, 24],
@@ -80,7 +77,6 @@ class GameCore {
 		this.inventory = [];
 		this.inventoryIcons = {};
 		this.inventoryDetails = {};
-
 	}
 
 	postInit() {
@@ -180,7 +176,7 @@ class GameCore {
 			document.getElementById("restart").style.display = "none";
 			document.getElementById("game-over").style.display = "none";
 			document.getElementById("game-over-message").style.display = "none";
-			this.engine.setGame(new this.constructor());
+			this.engine.setGame(new this.constructor(this.imageLoader));
 		});
 	}
 
@@ -227,12 +223,13 @@ class GameCore {
 		}
 
 		let hovering = null;
-		for (let i = 0; i < engine.spriteCollection.size(); i++) {
+		for (let i = engine.spriteCollection.size() - 1; i >= 0; i--) {
 			const sprite = engine.spriteCollection.get(i);
 			if (sprite.actions) {
 				const collisionBox = sprite.getCollisionBox(lastTime);
 				if (collisionBox && engine.pointContains(x, y, collisionBox)) {
 					hovering = sprite;
+					break;
 				}
 			}
 		}

@@ -77,3 +77,5 @@ class ImageLoader {
 		});
 	}
 }
+
+const imageLoader = new ImageLoader();

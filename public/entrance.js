@@ -1,8 +1,7 @@
 class Entrance extends GameCore {
-	constructor() {
-		super();
-		this.imageLoader = new ImageLoader();
-		this.imageLoader.preloadImages(
+	constructor(imageLoader) {
+		super(imageLoader);
+		imageLoader.preloadImages(
 			"assets/background-door.png",
 			"assets/background-door-collision.png",
 			"assets/sign.png",
@@ -28,7 +27,7 @@ class Entrance extends GameCore {
 		/* Load image */
 		this.atlas = {
 			...this.atlas,
-			entrance: await engine.textureManager.createAtlas(1, this.imageLoader).setImage(
+			entrance: await engine.addTexture(
 				{
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
@@ -38,7 +37,7 @@ class Entrance extends GameCore {
 					collision_url: "assets/background-door-collision.png",
 					range:[0],
 				}),
-			entrance_open: await engine.textureManager.createAtlas(1, this.imageLoader).setImage(
+			entrance_open: await engine.addTexture(
 				{
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
@@ -49,7 +48,7 @@ class Entrance extends GameCore {
 					frameRate: 10,
 					range:[4,6],
 				}),
-			entrance_opened: await engine.textureManager.createAtlas(1, this.imageLoader).setImage(
+			entrance_opened: await engine.addTexture(
 				{
 					url: "assets/background-door.png",
 					texture_url: "assets/backwall.jpg",
@@ -59,47 +58,47 @@ class Entrance extends GameCore {
 					collision_url: "assets/background-door-collision.png",
 					range:[6],
 				}),
-			sign: await engine.textureManager.createAtlas(3, this.imageLoader).setImage(
+			sign: await engine.addTexture(
 				{
 					url: "assets/sign.png",
 					collision_url: "assets/sign.png",
 				}),
-			smokingsign: await engine.textureManager.createAtlas(4, this.imageLoader).setImage(
+			smokingsign: await engine.addTexture(
 				{
 					url: "assets/smoking-sign.png",
 					collision_url: "assets/smoking-sign.png",
 				}),
-			cigarette: await engine.textureManager.createAtlas(5, this.imageLoader).setImage(
+			cigarette: await engine.addTexture(
 				{
 					url: "assets/cigarette.png",
 					collision_url: "assets/cigarette.png",
 				}),
-			piano: await engine.textureManager.createAtlas(6, this.imageLoader).setImage(
+			piano: await engine.addTexture(
 				{
 					url: "assets/piano.png",
 					cols:1,rows:2,
 					range:[0],
 				}),
-			piano_splash: await engine.textureManager.createAtlas(6, this.imageLoader).setImage(
+			piano_splash: await engine.addTexture(
 				{
 					url: "assets/piano.png",
 					cols:1,rows:2,
 					range:[1],
 				}),
-			mouse: await engine.textureManager.createAtlas(7, this.imageLoader).setImage(
+			mouse: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
 					cols:2,rows:2,
 					range:[0],
 				}),
-			mouse_run: await engine.textureManager.createAtlas(7, this.imageLoader).setImage(
+			mouse_run: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
 					cols:2,rows:2,
 					frameRate: 20,
 					range:[1, 2],
 				}),
-			mat: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
+			mat: await engine.addTexture(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -108,7 +107,7 @@ class Entrance extends GameCore {
 					collision_url: "assets/mat-collision.png",
 					range:[0],
 				}),
-			mat_pulling: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
+			mat_pulling: await engine.addTexture(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -118,7 +117,7 @@ class Entrance extends GameCore {
 					frameRate: 4,
 					range:[1, 2],
 				}),
-			mat_pulled: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
+			mat_pulled: await engine.addTexture(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",
@@ -127,7 +126,7 @@ class Entrance extends GameCore {
 					collision_url: "assets/mat-collision.png",
 					range:[2],
 				}),
-			mat_picked_key: await engine.textureManager.createAtlas(2, this.imageLoader).setImage(
+			mat_picked_key: await engine.addTexture(
 				{
 					url: "assets/mat.png",
 					texture_url: "assets/skin-texture.jpg",

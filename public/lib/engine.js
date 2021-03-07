@@ -1,9 +1,11 @@
 class Engine {
-	constructor(config) {
+	constructor(config, imageLoader) {
 		/* Prototypes */
 		this.setupPrototypes();
 
 		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
+		this.imageLoader = imageLoader;
+
 		this.init(config);
 	}
 
@@ -74,6 +76,8 @@ class Engine {
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection(this);
+		this.nextTextureIndex = 0;
+		this.urlToTextureIndex = {};
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, config);
@@ -150,6 +154,14 @@ class Engine {
 			this.game.clear(engine);
 		}
 		this.spriteCollection.clear();
+		this.nextTextureIndex = 0;
+		this.urlToTextureIndex = {};
+	}
+
+	async addTexture(imageConfig) {
+		const index = this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.nextTextureIndex++);
+		console.log(`New texture at index ${index} for ${imageConfig.url}`);
+		return await this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
 	}
 
 	setupPrototypes() {
@@ -381,4 +393,4 @@ class Engine {
 	}
 }
 
-const engine = new Engine(globalData.config);
+const engine = new Engine(globalData.config, imageLoader);
