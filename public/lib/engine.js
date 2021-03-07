@@ -95,12 +95,11 @@ class Engine {
 		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
 		//console.log(this.voices);
 
-//		this.game = null;
-
 		this.lastTime = 0;
 		if (this.game) {
 			this.chrono.tick("game init");
 			await this.game.init(this);
+			this.game.postInit();
 			this.game.ready = true;
 			this.chrono.tick("game init done");
 		}

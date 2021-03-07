@@ -80,6 +80,10 @@ class GameCore {
 		this.inventory = [];
 		this.inventoryIcons = {};
 		this.inventoryDetails = {};
+
+	}
+
+	postInit() {
 	}
 
 	clear(engine) {
@@ -175,6 +179,7 @@ class GameCore {
 			document.getElementById("restart").removeEventListener("click", f);
 			document.getElementById("restart").style.display = "none";
 			document.getElementById("game-over").style.display = "none";
+			document.getElementById("game-over-message").style.display = "none";
 			this.engine.setGame(new this.constructor());
 		});
 	}
@@ -572,15 +577,15 @@ class GameCore {
 	setAudio(audio, value, volume, ignore) {
 		if (value) {
 			document.getElementById("speaker").innerText = "🔊";
-			document.getElementById("mute").innerText = "unmute";
+			document.getElementById("mute").innerText = "mute";
 			audio.play();
 			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
 				this.showBubble("I like this music.");
 			}
 		} else {
-			document.getElementById("speaker").innerText = "🔇";
-			document.getElementById("mute").innerText = "mute";
 			audio.pause();
+			document.getElementById("speaker").innerText = "🔇";
+			document.getElementById("mute").innerText = "unmute";
 			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
 				this.showBubble("I don't like this music.");
 			}
