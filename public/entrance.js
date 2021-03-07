@@ -73,31 +73,6 @@ class Entrance extends GameCore {
 					url: "assets/cigarette.png",
 					collision_url: "assets/cigarette.png",
 				}),
-			piano: await engine.addTexture(
-				{
-					url: "assets/piano.png",
-					cols:1,rows:2,
-					range:[0],
-				}),
-			piano_splash: await engine.addTexture(
-				{
-					url: "assets/piano.png",
-					cols:1,rows:2,
-					range:[1],
-				}),
-			mouse: await engine.addTexture(
-				{
-					url: "assets/mouse.png",
-					cols:2,rows:2,
-					range:[0],
-				}),
-			mouse_run: await engine.addTexture(
-				{
-					url: "assets/mouse.png",
-					cols:2,rows:2,
-					frameRate: 20,
-					range:[1, 2],
-				}),
 			mat: await engine.addTexture(
 				{
 					url: "assets/mat.png",
@@ -365,44 +340,7 @@ class Entrance extends GameCore {
 			},
 		});
 
-		this.monkor = engine.spriteCollection.create({
-			name: "monkor",
-			x: 50, y: 380,
-			size: [128, 128],
-			hotspot: [64,128],
-			anim: this.atlas.monkor_still,
-		});
-
-		this.mouse = engine.spriteCollection.create({
-			name: "mouse",
-			size: [24, 24],
-			hotspot: [12, 12],
-			anim: this.atlas.mouse,
-			opacity: 0,
-		}, {
-			goal: { x:0, y:0 },
-		});
-
-		this.piano = engine.spriteCollection.create({
-			name: "piano",
-			opacity: 0,
-			size: [300, 200],
-			hotspot: [150, 200],
-			anim: this.atlas.piano,
-		});
-
-		this.monkor.goal = {x:this.monkor.x, y:this.monkor.y};
-		this.monkor.speed = 1;
-		this.defaultCommand = (item, target) => `use ${item.name} on ${target.name}`;
-
-		this.addListeners(engine);
-
-		this.inventoryIcons = {
-			...this.inventoryIcons,
-			key: "🗝",
-			cigarette: "🚬",
-			note: "📜",
-		}
+		this.addMonkor();
 
 //		console.log(gl);
 		document.getElementById("title").style.opacity = .5;
@@ -441,34 +379,5 @@ class Entrance extends GameCore {
 				this.checkItem(null);
 				break;
 		}
-	}
-
-	dropPiano(time) {
-		this.piano.dropping = time;
-		this.piano.changeOpacity(1, time);
-		this.piano.dy = 30;
-		this.piano.changePosition(this.monkor.x, this.monkor.y - 1000, time);
-	}
-
-	updatePiano(time, dt) {
-		if (!this.piano.dropping) {
-			return;
-		}
-		if (this.piano.y < this.monkor.y) {
-			this.piano.changePosition(this.piano.x, this.piano.y + this.piano.dy * Math.min(2, dt / 16), time);
-		} else if(this.piano.anim !== this.atlas.piano_splash) {
-			this.piano.changeAnimation(this.atlas.piano_splash, time);
-			this.monkor.changeOpacity(0, time);
-			this.monkor.dead = time;
-			engine.playAudio("audio/piano.mp3", 1);
-			const audio = document.getElementById("audio");
-			this.setAudio(audio, audio.paused, 0);
-			setTimeout(() => this.gameOver(), 5000);
-		}
-	}
-
-	updateElements(time) {
-		this.updatePiano(time);
-		this.updateMouse(time);		
 	}
 }
