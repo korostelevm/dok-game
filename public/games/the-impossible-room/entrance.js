@@ -21,6 +21,7 @@ class Entrance extends GameCore {
 		await super.init(engine);
 
 		const { gl, config } = engine;
+		const { gender } = this.data;
 
 		engine.chrono.tick("game init start.");
 
@@ -131,6 +132,8 @@ class Entrance extends GameCore {
 
 		engine.chrono.tick("done setting up inventory");
 
+		const I = gender === "T" ? "We" : "I";
+
 		this.entrance = engine.spriteCollection.create({
 			name: "entrance door",
 			anim: this.atlas.entrance,
@@ -142,7 +145,7 @@ class Entrance extends GameCore {
 					message: () => `There's a door, that leads to ${this.title.innerText}` },
 				{ name: "open", condition: entrance => !entrance.unlocked, message: `It's locked.` },
 				{ name: "unlock", condition: entrance => this.selectedItem === "key" && !entrance.unlocked,
-					message: `Yeah! I unlocked the door.`,
+					message: `Yeah! ${I} unlocked the door.`,
 					item: "key",
 					command: (item, target) => `unlock ${target.name} with ${item.name}.`,
 					action: entrance => {
@@ -156,7 +159,7 @@ class Entrance extends GameCore {
 					},
 				},
 				{ name: "lock", condition: entrance => this.selectedItem === "key" && entrance.unlocked,
-					message: `I locked the door.`,
+					message: ` ${I} locked the door.`,
 					item: "key",
 					command: (item, target) => `lock ${target.name} with ${item.name}.`,
 					action: entrance => {
@@ -183,8 +186,8 @@ class Entrance extends GameCore {
 						entrance.changeAnimation(this.atlas.entrance_open, engine.lastTime);
 					},
 				},
-				{ name: "enter", condition: entrance => entrance.opened && this.title.innerText.toLowerCase().contains("impossible"), message: () => `I don't want to go in, it's ${this.title.innerText}! I might never escape!` },
-				{ name: "enter", condition: entrance => entrance.opened && !this.title.innerText.toLowerCase().contains("impossible"), message: () => `I guess this is not the impossible room. This is ${this.title.innerText}. Okay, I shall go in.`,
+				{ name: "enter", condition: entrance => entrance.opened && this.title.innerText.toLowerCase().contains("impossible"), message: () => ` ${I} don't want to go in, it's ${this.title.innerText}! ${I} might never escape!` },
+				{ name: "enter", condition: entrance => entrance.opened && !this.title.innerText.toLowerCase().contains("impossible"), message: () => `I guess this is not the impossible room. This is ${this.title.innerText}. Okay, ${I} shall go in.`,
 					action: entrance => {
 						this.monkor.paused = engine.lastTime;
 						this.showBubble(entrance.pendingMessage, () => {
@@ -234,7 +237,7 @@ class Entrance extends GameCore {
 		}, {
 			actions: [
 				{ name: "look", message: `It's a half smoked cigarette butt on the ground.` },
-				{ name: "pickup", message: "Sure, I'll pickup this cigarette butt on the ground, half smoked by a random person.",
+				{ name: "pickup", message: `Sure, ${I}'ll pickup this cigarette butt on the ground, half smoked by a random person.`,
 					action: item => {
 						item.changeOpacity(0, engine.lastTime);
 						this.addToInventory("cigarette");
@@ -253,7 +256,7 @@ class Entrance extends GameCore {
 		}, {
 			actions: [
 				{ name: "look", condition: mat => !mat.opened, message: `It's a mat in front of the entrance. It says: "You're welcome to try."` },
-				{ name: "look", condition: mat => mat.opened && !mat.pickedKey, message: `There's a key. Should I pick it up?` },
+				{ name: "look", condition: mat => mat.opened && !mat.pickedKey, message: `There's a key. Should ${I} pick it up?` },
 				{ name: "look", condition: mat => mat.opened && mat.pickedKey, message: `Nothing left but dust under the mat.` },
 				{ name: "pull", condition: mat => !mat.opened, message: mat => `How ${mat.sawkey ? "unsurprising" : "surprising"}, there's a key under the mat!`,
 					action: mat => {
@@ -308,6 +311,7 @@ class Entrance extends GameCore {
 		// this.dinoCount = parseInt(localStorage.getItem("dino") || 0);
 
 		this.title = document.getElementById("title");
+		document.getElementById("im").innerText = "THE IMPOSSIBLE ROOM";
 
 		this.addToInventory("note");
 
