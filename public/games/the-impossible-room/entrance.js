@@ -1,6 +1,6 @@
 class Entrance extends GameCore {
-	constructor(imageLoader) {
-		super(imageLoader);
+	constructor(imageLoader, data) {
+		super(imageLoader, data);
 		imageLoader.preloadImages(
 			"assets/background-door.png",
 			"assets/background-door-collision.png",
@@ -118,48 +118,6 @@ class Entrance extends GameCore {
 
 		this.inventoryDetails = {
 			...this.inventoryDetails,
-			note: {
-				actions: [
-					{ name: "read", message: () => `It's a letter. It says: "You've been invited to the IMPOSSIBLE ROOM! A room that's impossible to escape."` },
-				],
-			},
-			key: {
-				defaultCommand: (item, target) => `insert ${item.name} into ${target.name}.`,
-				actions: [
-					{ name: "look", message: () => "I picked up some keys that didn't belong to me from under a mat." },
-					{ name: "eat", condition: () => !this.entrance.unlocked, message: () => "I swallowed the key. Now, this game is truly IMPOSSIBLE!", 
-						action: key => {
-							this.removeFromInventory("key");
-							engine.playAudio("audio/eat.mp3", .5);
-							this.showBubble(key.pendingMessage);
-							key.pendingMessage = null;
-							setTimeout(() => this.gameOver(), 6000);
-						},
-					},
-					{ name: "eat", condition: () => this.entrance.unlocked, message: () => "I swallowed the key. Tasted like metal.", 
-						action: key => {
-							this.removeFromInventory("key");
-							engine.playAudio("audio/eat.mp3", .5);
-							this.showBubble(key.pendingMessage);
-							key.pendingMessage = null;
-						},
-					},
-				],
-			},
-			cigarette: {
-				actions: [
-					{ name: "look", message: () => "It's a cigarette butt. I'm not a regular smoker, but I don't think it will kill me." },
-					{ name: "smoke", message: () => "Let me take a puff of that cigarette.",
-						action: item => {
-							this.showBubble(item.pendingMessage, () => {
-								this.monkor.smoking = engine.lastTime;
-								this.monkor.paused = engine.lastTime;
-							});
-							item.pendingMessage = null;
-						},
-					},
-				],
-			},
 			"game title": {
 				actions: [
 					{ name: "read", message: () => `${document.getElementById("title").innerText}` },

@@ -2,11 +2,52 @@ class Engine {
 	constructor(config, imageLoader) {
 		/* Prototypes */
 		this.setupPrototypes();
+		/* Setup stylesheet emoji cursors. */
+		this.setupEmojiCursors();
 
 		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
 		this.imageLoader = imageLoader;
 
 		this.init(config);
+	}
+
+	setupEmojiCursors() {
+		this.sheet = (() => {
+			const style = document.createElement("style");
+			style.appendChild(document.createTextNode(""));
+			document.head.appendChild(style);
+			return style.sheet;
+		})();
+		this.iconEmojis = {};
+		this.addEmojiRule("happy", "😀");
+	}
+
+	addEmojiRule(id, emoji) {
+		if (!this.iconEmojis[id]) {
+			this.iconEmojis[id] = true;
+			this.sheet.insertRule(`#overlay.cursor-${id} { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:white;fill:white;font-size:18px;'><circle cx='50%' cy='50%' r='10'/><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
+				this.sheet.rules.length);
+			this.sheet.insertRule(`#overlay.cursor-${id}.highlight { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:yellow;fill:yellow;font-size:18px;stroke-width:3'><circle cx='50%' cy='50%' r='10'/><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
+				this.sheet.rules.length);
+		}
+	}
+
+	setCursor(id, highlight) {
+		const classList = document.getElementById("overlay").classList;
+		for (let i = 0; i < classList.length; i++) {
+			const c = classList[i];
+			if (c.startsWith("cursor-")) {
+				classList.remove(classList[i]);
+			}
+		}
+		if (id) {
+			classList.add(`cursor-${id}`);
+		}
+		if (highlight) {
+			classList.add('highlight');
+		} else {
+			classList.remove('highlight');
+		}
 	}
 
 	async loadDomContent(document) {
@@ -103,7 +144,7 @@ class Engine {
 		if (this.game) {
 			this.chrono.tick("game init");
 			await this.game.init(this);
-			this.game.postInit();
+			await this.game.postInit();
 			this.game.ready = true;
 			this.chrono.tick("game init done");
 		}
@@ -120,8 +161,9 @@ class Engine {
 		this.game = game;
 		if (this.ready) {
 			this.chrono.tick("game init");
-			this.resetScene();
+			await this.resetScene();
 			await this.game.init(this);
+			await this.game.postInit();
 			this.game.ready = true;
 			this.chrono.tick("game init done");
 		}
@@ -148,10 +190,10 @@ class Engine {
 		});		
 	}
 
-	resetScene() {
+	async resetScene() {
 		if (this.game) {
 			this.game.ready = false;
-			this.game.clear(engine);
+			await this.game.clear(engine);
 		}
 		this.spriteCollection.clear();
 		this.nextTextureIndex = 0;
@@ -336,7 +378,7 @@ class Engine {
 	}
 
 	onDropOnOverlay(event) {
-		if (this.game.onDropOnOverlay) {
+		if (this.game) {
 			this.game.onDropOnOverlay(event);
 		}
 	}

@@ -327,11 +327,14 @@
 			<audio id="hit-audio" src="audio/hit-land.mp3" style="position: absolute; display: none"></audio>
 			<audio id="pickup-audio" src="audio/pickup.mp3" style="position: absolute; display: none"></audio>
 			<div id="info-box" style="position: absolute; z-index: 10"></div>
-			<div style="position:absolute; top: 20px; left: 100px">
+<!-- 			<div style="position:absolute; top: 20px; left: 100px">
 				<span id="score"></span>
 				<span id="chocolate"></span>
 				<span id="dino"></span>
 			</div>
+ -->			
+ 			<div id="scene-switcher">
+ 			</div>
 			<canvas id="canvas"  ondrop="console.log(event)" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
 			<div id="actions" style="position: absolute; top: 460px; left: 400px; display: flex; flex-direction: : horizontal; z-index: 121;">
 				<div id="subject" class="subject">
@@ -348,8 +351,10 @@
 			</div>
 		</div>
 		<script type="text/javascript" src="lib/texture/image-loader.js"></script>
-		<script type="text/javascript" src="game-core.js"></script>
-		<script type="text/javascript" src="entrance.js"></script>
+		<script type="text/javascript" src="lib/game-base.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/game-core.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/entrance.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/selecti.js"></script>
 		<script type="text/javascript" src="game-scripter.js"></script>
 		<script type="text/javascript" src="gen/data.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono.js"></script>
@@ -367,5 +372,9 @@
 		<script type="text/javascript" src="lib/ui/focus-fixer.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
+		<script>
+
+//			addEmojiRule("happy", '😀');
+		</script>
 	</body>
 </html>

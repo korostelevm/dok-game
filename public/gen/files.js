@@ -8,6 +8,7 @@ const globalFiles=[
 			"backwall.jpg",
 			"balloon-collision.png",
 			"balloon.png",
+			"butler.png",
 			"candy-collision.png",
 			"candy.png",
 			"cheoni-collision.png",
@@ -17,19 +18,24 @@ const globalFiles=[
 			"dino-stupid.png",
 			"door-collision.png",
 			"entrance.png",
+			"lobby.png",
 			"mat-collision.png",
 			"mat.png",
 			"metal.jpg",
 			"monkor-collision.png",
+			"monkor-shit.png",
 			"monkor.png",
 			"mouse.png",
+			"nuna.png",
 			"piano.png",
 			"pipe-collision.png",
 			"pipe.png",
 			"sign.png",
 			"skin-texture.jpg",
 			"smoking-sign.png",
-			"sparkle.png"
+			"sparkle.png",
+			"toilet-room.png",
+			"twin.png"
 		]
 	},
 	{
@@ -48,7 +54,6 @@ const globalFiles=[
 			"weirdsong.mp3"
 		]
 	},
-	"entrance.js",
 	"favicon.ico",
 	{
 		"fonts": [
@@ -61,10 +66,18 @@ const globalFiles=[
 			"grotto.ttf"
 		]
 	},
-	"game-core.js",
 	"game-scripter.js",
 	{
-		"games": []
+		"games": [
+			".DS_Store",
+			{
+				"the-impossible-room": [
+					"entrance.js",
+					"game-core.js",
+					"selection.js"
+				]
+			}
+		]
 	},
 	{
 		"gen": [
@@ -77,6 +90,7 @@ const globalFiles=[
 		"lib": [
 			".DS_Store",
 			"engine.js",
+			"game-base.js",
 			{
 				"math": [
 					"gl-matrix.js"

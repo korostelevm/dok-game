@@ -211,7 +211,7 @@ class TextureAtlas {
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = this.width || (image ? image.naturalWidth : 0);
 		this.spriteSheetHeight = this.width || (image ? image.naturalHeight : 0);
-		const { cols, rows, frameRate, range, firstFrame } = animationData;
+		const { cols, rows, frameRate, range, firstFrame, direction } = animationData;
 		this.frameRate = frameRate || 1;
 		this.cols = cols || 1;
 		this.rows = rows || 1;
@@ -220,12 +220,13 @@ class TextureAtlas {
 		this.startFrame = (range ? range[0] : 0) || 0;
 		this.endFrame = (range ? range[1] : 0) || this.startFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
+		this.direction = direction || 1;
 	}
 
 	getTextureCoordinatesFromRect(x, y, width, height, index, direction, opacity) {
 		let x0 = x;
 		let x1 = x + width;
-		if (direction < 0) {
+		if (direction * this.direction < 0) {
 			x0 = x + width;
 			x1 = x;
 		}

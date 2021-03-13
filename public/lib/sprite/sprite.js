@@ -123,16 +123,5 @@ class Sprite {
 		this.collisionBox.top = top + rect.top * height;
 		this.collisionBox.bottom = top + rect.bottom * height;
 		return this.collisionBox;
-//		const [ spriteWidth, spriteHeight ] = this.size;
-		// const cellLeft = this.direction < 0 ? this.anim.spriteWidth - rect.right : rect.left 
-		// const left = (this.x - this.hotspot[0]) / 2 + cellLeft * 2;
-		// const top = (this.y - this.hotspot[1]) / 2 + rect.top * 2;
-		// const width = (rect.right - rect.left + 1) * 2;
-		// const height = (rect.bottom - rect.top + 1) * 2;
-		// this.collisionBox.left = left;
-		// this.collisionBox.top = top;
-		// this.collisionBox.right = left + width - 1;
-		// this.collisionBox.bottom = top + height - 1;
-		// return this.collisionBox;
 	}
 }
