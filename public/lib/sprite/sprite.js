@@ -8,7 +8,7 @@
 
 
 class Sprite {
-	constructor(data, time) {
+	constructor(data, time, properties) {
 		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;
@@ -25,6 +25,8 @@ class Sprite {
 			bottom:0,
 			right:0,
 		};
+		this.properties = properties || {};
+		this.onChange = {};
 
 		this.updated = {
 			sprite: time,
@@ -34,6 +36,20 @@ class Sprite {
 			direction: time,
 			opacity: time,
 		};
+	}
+
+	setProperty(key, value) {
+		const oldValue = this.properties[key];
+		if (oldValue !== value) {
+			this.properties[key] = value;
+			this.onUpdate(key, value);
+		}
+	}
+
+	onUpdate(key, value, initial) {
+		if (this.onChange[key]) {
+			this.onChange[key](this, value, initial);
+		}
 	}
 
 	getAnimationTime() {

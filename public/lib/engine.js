@@ -1,12 +1,15 @@
 class Engine {
-	constructor(config, imageLoader) {
+	constructor(config) {
 		/* Prototypes */
 		this.setupPrototypes();
 		/* Setup stylesheet emoji cursors. */
 		this.setupEmojiCursors();
 
 		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
-		this.imageLoader = imageLoader;
+		this.imageLoader = new ImageLoader();
+
+		this.perfIndex = 0;
+		this.perfTimers = new Array(20).map(() => 0);
 
 		this.init(config);
 	}
@@ -33,7 +36,12 @@ class Engine {
 	}
 
 	setCursor(id, highlight) {
-		const classList = document.getElementById("overlay").classList;
+		if (this.cursorId === id && this.cursorHighlight === highlight) {
+			return;
+		}
+		this.cursorId = id;
+		this.cursorHighlight = highlight;
+		const classList = this.overlay.classList;
 		for (let i = 0; i < classList.length; i++) {
 			const c = classList[i];
 			if (c.startsWith("cursor-")) {
@@ -129,6 +137,11 @@ class Engine {
 
 		this.setupMouseListeners();
 
+		/* Setup game tab. */
+		if (this.debug) {
+			this.setupGameTab(globalFiles);
+		}
+
 		/* Setup constants */
 		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
 		// console.log("numInstances", 30);
@@ -157,11 +170,53 @@ class Engine {
 		this.chrono.tick("engine started");
 	}
 
+	setupGameTab(globalFiles) {
+		const gameTab = document.getElementById("game-tab");
+
+		const gameList = {};
+		globalFiles.forEach(file => {
+			const { games } = file;
+			if (games) {
+				games.forEach(game => {
+					if (typeof(game) === "object") {
+						for (let name in game) {
+							if (!gameList[name]) {
+								gameList[name] = [];
+							}
+							game[name].forEach(sceneFile => {
+								const [ scene ] = sceneFile.split(".");
+								if (scene !== "index" && scene !== "game-core") {
+									gameList[name].push(scene);
+								}
+							});
+						}
+					}
+				});
+			}
+		});
+
+		for (let name in gameList) {
+			const groupDiv = gameTab.appendChild(document.createElement("div"));
+			groupDiv.style.margin = "2px";
+			groupDiv.style.padding = "4px";
+			groupDiv.style.backgroundColor = "yellow";
+			const titleDiv = groupDiv.appendChild(document.createElement("div"));
+			titleDiv.innerText = name;
+			const sceneGroupDiv = groupDiv.appendChild(document.createElement("div"));
+			gameList[name].forEach(scene => {
+				const button = sceneGroupDiv.appendChild(document.createElement("button"));
+				button.classList.add("scene-button");
+				button.innerText = scene;
+			});
+		}
+	}
+
 	async setGame(game) {
+		this.resetScene();
+
 		this.game = game;
 		if (this.ready) {
 			this.chrono.tick("game init");
-			await this.resetScene();
 			await this.game.init(this);
 			await this.game.postInit();
 			this.game.ready = true;
@@ -190,14 +245,23 @@ class Engine {
 		});		
 	}
 
-	async resetScene() {
+	resetScene() {
 		if (this.game) {
 			this.game.ready = false;
-			await this.game.clear(engine);
+			this.game.onExit(engine);
 		}
-		this.spriteCollection.clear();
+		if (this.spriteCollection) {
+			this.spriteCollection.clear();
+		}
+		if (this.textureManager) {
+			this.textureManager.clear();
+		}
 		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
+	}
+
+	resetGame() {
+		this.data = {};
 	}
 
 	async addTexture(imageConfig) {
@@ -277,15 +341,18 @@ class Engine {
 	}
 
 	showDebugCanvas(time) {
-		this.debugCanvas.style.border = "5px solid pink";
 		const zoom = 4;
-		this.debugCanvas.width = this.canvas.width / zoom;
-		this.debugCanvas.height = this.canvas.height / zoom;
-		this.debugCanvas.style.width = `${this.canvas.offsetWidth - zoom}px`;
-		this.debugCanvas.style.height = `${this.canvas.offsetHeight - zoom}px`;
-		this.debugCanvas.style.left = `${this.canvas.offsetLeft}px`;
-		this.debugCanvas.style.top = `${this.canvas.offsetTop}px`;
-		this.debugCanvas.style.display = "";
+		if (!this.debugCanvasInited) {
+			this.debugCanvas.style.outline = "5px solid pink";
+			this.debugCanvas.width = this.canvas.width / zoom;
+			this.debugCanvas.height = this.canvas.height / zoom;
+			this.debugCanvas.style.width = `${this.canvas.offsetWidth - zoom}px`;
+			this.debugCanvas.style.height = `${this.canvas.offsetHeight - zoom}px`;
+			this.debugCanvas.style.left = `${this.canvas.offsetLeft}px`;
+			this.debugCanvas.style.top = `${this.canvas.offsetTop}px`;
+			this.debugCanvas.style.display = "";
+
+		}
 		const ctx = this.debugCtx;
 		const { config: { viewport: { pixelScale } } } = this;
 		const margin = 10 / pixelScale / zoom;
@@ -384,6 +451,7 @@ class Engine {
 	}
 
 	refresh(time) {
+//		const startTime = Date.now();
 		const dt = time - this.lastTime;
 		if (!this.focusFixer.focused) {
 			this.lastTime = time;
@@ -432,7 +500,17 @@ class Engine {
 		if (this.debug) {
 			this.showDebugCanvas(time);
 		}
+
+		if (this.debug) {
+			this.perfTimers[this.perfIndex] = time;
+			this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
+			const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];
+			const timeCalc = 1000 / timeDiff * this.perfTimers.length;
+	//		const timeCalc = Date.now() - startTime;
+	//		const timeCalc = this.perfDiff || 0;
+			document.getElementById("info-box").innerText = `${timeCalc.toFixed(2)}fps`;
+		}
 	}
 }
 
-const engine = new Engine(globalData.config, imageLoader);
+const engine = new Engine(globalData.config);

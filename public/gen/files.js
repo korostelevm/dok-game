@@ -74,6 +74,7 @@ const globalFiles=[
 				"the-impossible-room": [
 					"entrance.js",
 					"game-core.js",
+					"index.js",
 					"selection.js"
 				]
 			}
@@ -120,6 +121,7 @@ const globalFiles=[
 			{
 				"sprite": [
 					"sprite-collection.js",
+					"sprite-factory.js",
 					"sprite.js"
 				]
 			},

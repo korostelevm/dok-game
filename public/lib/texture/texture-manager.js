@@ -31,6 +31,10 @@ class TextureManager {
 		return atlas;
 	}
 
+	clear() {
+		this.textureAtlas.length = 0;
+	}
+
 	generateMipMap(index) {
 		const { gl } = this;
 		gl.activeTexture(gl[`TEXTURE${index}`]);

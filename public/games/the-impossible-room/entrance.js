@@ -1,22 +1,4 @@
 class Entrance extends GameCore {
-	constructor(imageLoader, data) {
-		super(imageLoader, data);
-		imageLoader.preloadImages(
-			"assets/background-door.png",
-			"assets/background-door-collision.png",
-			"assets/sign.png",
-			"assets/smoking-sign.png",
-			"assets/piano.png",
-			"assets/mouse.png",
-			"assets/mat.png",
-			"assets/mat-collision.png",
-			"assets/monkor.png",
-			"assets/monkor-collision.png",
-			"assets/skin-texture.jpg",
-			"assets/backwall.jpg",
-		);
-	}
-
 	async init(engine) {
 		await super.init(engine);
 
@@ -134,38 +116,38 @@ class Entrance extends GameCore {
 
 		const I = gender === "T" ? "We" : "I";
 
-		this.entrance = engine.spriteCollection.create({
+		this.entrance = this.spriteFactory.create({
 			name: "entrance door",
 			anim: this.atlas.entrance,
 			size: [800, 400],
 		}, {
-			defaultCommand: (item, target) => target.unlocked ? `use ${item.name} on ${target.name}` : `unlock ${target.name} with ${item.name}`,
+			defaultCommand: (item, target) => target.properties.unlocked ? `use ${item.name} on ${target.name}` : `unlock ${target.name} with ${item.name}`,
 			actions: [
-				{ name: "look", condition: entrance => !entrance.opened,
+				{ name: "look", condition: entrance => !entrance.properties.opened,
 					message: () => `There's a door, that leads to ${this.title.innerText}` },
-				{ name: "open", condition: entrance => !entrance.unlocked, message: `It's locked.` },
-				{ name: "unlock", condition: entrance => this.selectedItem === "key" && !entrance.unlocked,
+				{ name: "open", condition: entrance => !entrance.properties.unlocked, message: `It's locked.` },
+				{ name: "unlock", condition: entrance => this.selectedItem === "key" && !entrance.properties.unlocked,
 					message: `Yeah! ${I} unlocked the door.`,
 					item: "key",
 					command: (item, target) => `unlock ${target.name} with ${item.name}.`,
 					action: entrance => {
 						engine.playAudio("audio/dud.mp3", 1);
-						entrance.unlocked = true;
-						entrance.unlockedOnce = true;
+						entrance.setProperty("unlocked", true);
+						entrance.setProperty("unlockedOnce", true);
 						setTimeout(() => {
 							this.showBubble(entrance.pendingMessage);
 							entrance.pendingMessage = null;
 						}, 500);
 					},
 				},
-				{ name: "lock", condition: entrance => this.selectedItem === "key" && entrance.unlocked,
-					message: ` ${I} locked the door.`,
+				{ name: "lock", condition: entrance => this.selectedItem === "key" && entrance.properties.unlocked,
+					message: `${I} locked the door.`,
 					item: "key",
 					command: (item, target) => `lock ${target.name} with ${item.name}.`,
 					action: entrance => {
 						engine.playAudio("audio/dud.mp3", 1);
-						entrance.unlocked = false;
-						entrance.opened = false;
+						entrance.setProperty("unlocked", false);
+						entrance.setProperty("opened", false);
 						entrance.changeAnimation(this.atlas.entrance, engine.lastTime);
 						setTimeout(() => {
 							this.showBubble(entrance.pendingMessage);
@@ -173,21 +155,20 @@ class Entrance extends GameCore {
 						}, 500);
 					},
 				},
-				{ name: "close", condition: entrance => entrance.unlocked && entrance.opened,
+				{ name: "close", condition: entrance => entrance.properties.unlocked && entrance.properties.opened,
 					action: entrance => {
 						engine.playAudio("audio/hit.mp3", .5);
-						entrance.opened = false;
-						entrance.changeAnimation(this.atlas.entrance, engine.lastTime);
+						entrance.setProperty("opened", false);
 					},
 				},
-				{ name: "open", condition: entrance => entrance.unlocked && !entrance.opened,
+				{ name: "open", condition: entrance => entrance.properties.unlocked && !entrance.properties.opened,
 					action: entrance => {
 						engine.playAudio("audio/door.mp3", .3);
 						entrance.changeAnimation(this.atlas.entrance_open, engine.lastTime);
 					},
 				},
-				{ name: "enter", condition: entrance => entrance.opened && this.title.innerText.toLowerCase().contains("impossible"), message: () => ` ${I} don't want to go in, it's ${this.title.innerText}! ${I} might never escape!` },
-				{ name: "enter", condition: entrance => entrance.opened && !this.title.innerText.toLowerCase().contains("impossible"), message: () => `I guess this is not the impossible room. This is ${this.title.innerText}. Okay, ${I} shall go in.`,
+				{ name: "enter", condition: entrance => entrance.properties.opened && this.title.innerText.toLowerCase().contains("impossible"), message: () => ` ${I} don't want to go in, it's ${this.title.innerText}! ${I} might never escape!` },
+				{ name: "enter", condition: entrance => entrance.properties.opened && !this.title.innerText.toLowerCase().contains("impossible"), message: () => `I guess this is not the impossible room. This is ${this.title.innerText}. Okay, ${I} shall go in.`,
 					action: entrance => {
 						this.monkor.paused = engine.lastTime;
 						this.showBubble(entrance.pendingMessage, () => {
@@ -200,17 +181,21 @@ class Entrance extends GameCore {
 					},
 				},
 			],
+			onChange: {
+				opened: (entrance, opened) => {
+					entrance.changeAnimation(opened ? this.atlas.entrance_opened : this.atlas.entrance, engine.lastTime);
+				},
+			},
 			onFrame: {
 				6: entrance => {
-					if (!entrance.opened) {
-						entrance.changeAnimation(this.atlas.entrance_opened, engine.lastTime);
-						entrance.opened = true;
+					if (!entrance.properties.opened) {
+						entrance.setProperty("opened", true);
 					}
 				},
 			},
 		});
 
-		engine.spriteCollection.create({
+		this.spriteFactory.create({
 			name: "sign",
 			anim: this.atlas.sign,
 			size: [800, 400],
@@ -220,7 +205,7 @@ class Entrance extends GameCore {
 			],
 		});
 
-		engine.spriteCollection.create({
+		this.spriteFactory.create({
 			name: "graffiti",
 			anim: this.atlas.smokingsign,
 			size: [800, 400],
@@ -230,7 +215,7 @@ class Entrance extends GameCore {
 			],
 		});
 
-		engine.spriteCollection.create({
+		this.spriteFactory.create({
 			name: "cigarette",
 			anim: this.atlas.cigarette,
 			size: [800, 400],
@@ -239,35 +224,40 @@ class Entrance extends GameCore {
 				{ name: "look", message: `It's a half smoked cigarette butt on the ground.` },
 				{ name: "pickup", message: `Sure, ${I}'ll pickup this cigarette butt on the ground, half smoked by a random person.`,
 					action: item => {
-						item.changeOpacity(0, engine.lastTime);
+						item.setProperty("pickedUp", true);
 						this.addToInventory("cigarette");
 						engine.playAudio("audio/pickup.mp3", .3);
 						this.showBubble(item.pendingMessage);
 						item.pendingMessage = null;
-					}
+					},
 				}
 			],
+			onChange: {
+				pickedUp: (item, value) => {
+					item.changeOpacity(value ? 0 : 1, engine.lastTime);
+				},
+			},
 		});
 
-		this.mat = engine.spriteCollection.create({
+		this.mat = this.spriteFactory.create({
 			name: "mat",
 			anim: this.atlas.mat,
 			size: [800, 400],
 		}, {
 			actions: [
-				{ name: "look", condition: mat => !mat.opened, message: `It's a mat in front of the entrance. It says: "You're welcome to try."` },
-				{ name: "look", condition: mat => mat.opened && !mat.pickedKey, message: `There's a key. Should ${I} pick it up?` },
-				{ name: "look", condition: mat => mat.opened && mat.pickedKey, message: `Nothing left but dust under the mat.` },
-				{ name: "pull", condition: mat => !mat.opened, message: mat => `How ${mat.sawkey ? "unsurprising" : "surprising"}, there's a key under the mat!`,
+				{ name: "look", condition: mat => !mat.properties.pulled, message: `It's a mat in front of the entrance. It says: "You're welcome to try."` },
+				{ name: "look", condition: mat => mat.properties.pulled && !mat.properties.pickedKey, message: `There's a key. Should ${I} pick it up?` },
+				{ name: "look", condition: mat => mat.properties.pulled && mat.properties.pickedKey, message: `Nothing left but dust under the mat.` },
+				{ name: "pull", condition: mat => !mat.properties.pulled, message: mat => `How ${mat.properties.sawkey ? "unsurprising" : "surprising"}, there's a key under the mat!`,
 					action: mat => {
-						mat.sawkey = true;
+						mat.setProperty("sawkey", true);
 						engine.playAudio("audio/hit.mp3", .5);
 						mat.changeAnimation(this.atlas.mat_pulling, engine.lastTime);
 					}
 				},
-				{ name: "pickup key", condition: mat => mat.opened && !mat.pickedKey, message: () => this.entrance.unlockedOnce ? `It's the key that unlocks the entrance to ${this.title.innerText}` : `I wonder where that key fits...`,
+				{ name: "pickup key", condition: mat => mat.properties.pulled && !mat.properties.pickedKey, message: () => this.entrance.properties.unlockedOnce ? `It's the key that unlocks the entrance to ${this.title.innerText}` : `I wonder where that key fits...`,
 					action: mat => {
-						mat.pickedKey = true;
+						mat.setProperty("pickedKey", true);
 						mat.changeAnimation(this.atlas.mat_picked_key, engine.lastTime);
 						this.addToInventory("key");
 						engine.playAudio("audio/pickup.mp3", .3);
@@ -281,17 +271,30 @@ class Entrance extends GameCore {
 					action: mat => {
 						this.removeFromInventory("key")
 						engine.playAudio("audio/hit.mp3", .5);
-						delete mat.pickedKey;
-						delete mat.opened;
+						mat.setProperty("pickedKey", false);
+						mat.setProperty("pulled", false);
 						mat.changeAnimation(this.atlas.mat, engine.lastTime);
 					},
 				},
 			],
+			onChange: {
+				pickedKey: (mat, value) => {
+					const anim = !mat.properties.pulled ? this.atlas.mat
+						: mat.properties.pickedKey ? this.atlas.mat_picked_key
+						: this.atlas.mat_pulled;
+					mat.changeAnimation(anim, engine.lastTime);
+				},
+				pulled: (mat, value) => {
+					const anim = !mat.properties.pulled ? this.atlas.mat
+						: mat.properties.pickedKey ? this.atlas.mat_picked_key
+						: this.atlas.mat_pulled;
+					mat.changeAnimation(anim, engine.lastTime);
+				},
+			},
 			onFrame: {
 				2: mat => {
-					if (!mat.opened) {
-						mat.changeAnimation(this.atlas.mat_pulled, engine.lastTime);
-						mat.opened = true;
+					if (!mat.properties.pulled) {
+						mat.setProperty("pulled", true);
 						if (mat.pendingMessage) {
 							this.showBubble(mat.pendingMessage);
 							mat.pendingMessage = null;
@@ -303,19 +306,21 @@ class Entrance extends GameCore {
 
 		this.addMonkor();
 
-//		console.log(gl);
-		document.getElementById("title").style.opacity = .5;
-
-		// this.score = parseInt(localStorage.getItem("score") || 0);
-		// this.chocolate = parseInt(localStorage.getItem("chocolate") || 0);
-		// this.dinoCount = parseInt(localStorage.getItem("dino") || 0);
-
 		this.title = document.getElementById("title");
-		document.getElementById("im").innerText = "THE IMPOSSIBLE ROOM";
+		this.title.style.opacity = .5;
+		document.getElementById("im").innerText = this.properties.title || "THE IMPOSSIBLE ROOM";
 
-		this.addToInventory("note");
+		if (!this.inventory.contains("note")) {
+			this.addToInventory("note");
+		}
 
 		engine.chrono.tick("done entrance initialization");		
+	}
+
+	onExit(engine) {
+		this.setProperty("title", document.getElementById("im").innerText);
+		this.title.style.opacity = 0;
+		super.onExit(engine);
 	}
 
 	onMouseTitle(e) {
