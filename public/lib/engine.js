@@ -362,7 +362,6 @@ class Engine {
 		ctx.stroke()
 
 		ctx.strokeStyle = "#FF0000";
-		ctx.beginPath();
 
 
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
@@ -370,24 +369,19 @@ class Engine {
 			this.drawCollisionBox(ctx, sprite, time, zoom);
 		}
 
-		ctx.stroke();
-
+		ctx.globalAlpha = "";
 	}
 
 	drawCollisionBox(ctx, sprite, time, zoom) {
 		const { config: { viewport: { pixelScale } } } = this;
-		const rect = sprite.opacity > 0 ? sprite.getCollisionBox(time) : null;
+		const rect = sprite.disabled ? null : sprite.getCollisionBox(time);
 		if (!rect) {
 			return;
 		}
+		ctx.beginPath();
+		ctx.globalAlpha = sprite.opacity > 0 ? 1 : .2;
 		ctx.rect(rect.left / pixelScale / zoom, rect.top / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
-	}
-
-	playAudio(sound, volume) {
-		const audio = new Audio();
-		audio.src = sound;
-		audio.volume = volume || 1;
-		audio.play();
+		ctx.stroke();
 	}
 
 	bestVoice(voices, voiceName) {
@@ -451,7 +445,6 @@ class Engine {
 	}
 
 	refresh(time) {
-//		const startTime = Date.now();
 		const dt = time - this.lastTime;
 		if (!this.focusFixer.focused) {
 			this.lastTime = time;
@@ -506,8 +499,6 @@ class Engine {
 			this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
 			const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];
 			const timeCalc = 1000 / timeDiff * this.perfTimers.length;
-	//		const timeCalc = Date.now() - startTime;
-	//		const timeCalc = this.perfDiff || 0;
 			document.getElementById("info-box").innerText = `${timeCalc.toFixed(2)}fps`;
 		}
 	}

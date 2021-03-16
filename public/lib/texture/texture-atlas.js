@@ -36,7 +36,8 @@ class TextureAtlas {
 		context.globalCompositeOperation = texture_blend || "source-atop";
 		context.globalAlpha = texture_alpha || .5;
 
-		context.drawImage(texture, 0, 0);
+		const scale = Math.max(1, Math.max((image.naturalWidth || image.width) / texture.naturalWidth, (image.naturalHeight || image.height) / texture.naturalHeight));
+		context.drawImage(texture, 0, 0, texture.naturalWidth, texture.naturalHeight, 0, 0, texture.naturalWidth * scale, texture.naturalHeight * scale);
 
 		context.globalCompositeOperation = "";
 		context.globalAlpha = 1;
@@ -75,13 +76,16 @@ class TextureAtlas {
 
 	async setImage(animationData) {
 		const { url, collision_url, texture_url, texture_alpha, texture_blend } = animationData;
-		const image = await this.imageLoader.loadImage(url);
+		const image = url ? await this.imageLoader.loadImage(url) : null;
 		this.onUpdateImage(image, animationData || {});
 
 		const { spriteWidth, spriteHeight } = this;
 		for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
 			const spriteImage = this.getSpriteImageForFrame(image, frame);
 			const blendedImage = texture_url ? this.textureMix(spriteImage, await this.imageLoader.loadImage(texture_url), texture_alpha, texture_blend) : spriteImage;
+			if (!blendedImage) {
+				continue;
+			}
 
 			const { gl, glTextures, index, x, y } = this;
 			const col = frame % this.cols;
@@ -123,9 +127,9 @@ class TextureAtlas {
 				if (top < 0) {
 					continue;
 				}
-				const bottom = this.getBottom(context, cellX, cellY, cellWidth, cellHeight) / cellHeight;
+				const bottom = (this.getBottom(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellHeight;
 				const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight) / cellWidth;
-				const right = this.getRight(context, cellX, cellY, cellWidth, cellHeight) / cellWidth;
+				const right = (this.getRight(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellWidth;
 				if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
 					collisionBoxes[row * this.cols + col] = {
 						top, left, bottom, right,
@@ -137,7 +141,6 @@ class TextureAtlas {
 	}
 
 	getCollisionBoxNormalized(frame) {
-		//console.log(frame, this.collisionBoxes);
 		return this.collisionBoxes[frame];
 	}
 

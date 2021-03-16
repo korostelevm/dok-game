@@ -10,8 +10,8 @@ class GameBase {
 	}
 
 	setProperty(key, value) {
-		if (this.sceneData.properties[key] !== value) {
-			this.sceneData.properties[key] = value;
+		if (this.properties[key] !== value) {
+			this.properties[key] = value;
 			this.onChange(key, value);
 		}
 	}
@@ -20,6 +20,9 @@ class GameBase {
 	}
 
 	async postInit() {
+		for (let key in this.properties) {
+			this.onChange(key, this.properties[key]);
+		}
 	}
 
 	get sceneName() {

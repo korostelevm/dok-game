@@ -18,14 +18,21 @@ const globalFiles=[
 			"dino-stupid.png",
 			"door-collision.png",
 			"entrance.png",
+			"ground-entrance.png",
+			"invitation-check-collision.png",
+			"invitation-check.png",
+			"invitation.png",
 			"lobby.png",
 			"mat-collision.png",
 			"mat.png",
+			"menu-select.png",
+			"menu.png",
 			"metal.jpg",
 			"monkor-collision.png",
 			"monkor-shit.png",
 			"monkor.png",
 			"mouse.png",
+			"next-button.png",
 			"nuna.png",
 			"piano.png",
 			"pipe-collision.png",
@@ -34,6 +41,7 @@ const globalFiles=[
 			"skin-texture.jpg",
 			"smoking-sign.png",
 			"sparkle.png",
+			"title.png",
 			"toilet-room.png",
 			"twin.png"
 		]
@@ -60,6 +68,7 @@ const globalFiles=[
 			".DS_Store",
 			"Lato-Bold.ttf",
 			"Lato-Regular.ttf",
+			"alphabetized-cassette-tapes.ttf",
 			"american-captain.otf",
 			"cartoon-script.ttf",
 			"demode.ttf",
@@ -74,7 +83,10 @@ const globalFiles=[
 				"the-impossible-room": [
 					"entrance.js",
 					"game-core.js",
+					"game-title.js",
 					"index.js",
+					"menu.js",
+					"restroom.js",
 					"selection.js"
 				]
 			}
@@ -116,6 +128,11 @@ const globalFiles=[
 			{
 				"renderer": [
 					"sprite-renderer.js"
+				]
+			},
+			{
+				"sound": [
+					"sound.js"
 				]
 			},
 			{

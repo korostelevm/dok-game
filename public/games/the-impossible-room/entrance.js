@@ -7,9 +7,18 @@ class Entrance extends GameCore {
 
 		engine.chrono.tick("game init start.");
 
+		/* Load Audio */
+		this.audio = {
+			...this.audio,
+		};
+
 		/* Load image */
 		this.atlas = {
 			...this.atlas,
+			ground: await engine.addTexture(
+				{
+					collision_url: "assets/ground-entrance.png",
+				}),
 			entrance: await engine.addTexture(
 				{
 					url: "assets/background-door.png",
@@ -108,10 +117,6 @@ class Entrance extends GameCore {
 			},
 		};
 
-		for (let name in this.inventoryDetails) {
-			this.inventoryDetails[name].name = name;
-		}
-
 		engine.chrono.tick("done setting up inventory");
 
 		const I = gender === "T" ? "We" : "I";
@@ -131,7 +136,7 @@ class Entrance extends GameCore {
 					item: "key",
 					command: (item, target) => `unlock ${target.name} with ${item.name}.`,
 					action: entrance => {
-						engine.playAudio("audio/dud.mp3", 1);
+						this.audio.dud.play();
 						entrance.setProperty("unlocked", true);
 						entrance.setProperty("unlockedOnce", true);
 						setTimeout(() => {
@@ -145,7 +150,7 @@ class Entrance extends GameCore {
 					item: "key",
 					command: (item, target) => `lock ${target.name} with ${item.name}.`,
 					action: entrance => {
-						engine.playAudio("audio/dud.mp3", 1);
+						this.audio.dud.play();
 						entrance.setProperty("unlocked", false);
 						entrance.setProperty("opened", false);
 						entrance.changeAnimation(this.atlas.entrance, engine.lastTime);
@@ -157,13 +162,13 @@ class Entrance extends GameCore {
 				},
 				{ name: "close", condition: entrance => entrance.properties.unlocked && entrance.properties.opened,
 					action: entrance => {
-						engine.playAudio("audio/hit.mp3", .5);
+						this.audio.hit.play();
 						entrance.setProperty("opened", false);
 					},
 				},
 				{ name: "open", condition: entrance => entrance.properties.unlocked && !entrance.properties.opened,
 					action: entrance => {
-						engine.playAudio("audio/door.mp3", .3);
+						this.audio.door.play();
 						entrance.changeAnimation(this.atlas.entrance_open, engine.lastTime);
 					},
 				},
@@ -193,6 +198,12 @@ class Entrance extends GameCore {
 					}
 				},
 			},
+		});
+
+		this.ground = this.spriteFactory.create({
+			name: "ground",
+			anim: this.atlas.ground,
+			size: [800, 400],
 		});
 
 		this.spriteFactory.create({
@@ -226,7 +237,7 @@ class Entrance extends GameCore {
 					action: item => {
 						item.setProperty("pickedUp", true);
 						this.addToInventory("cigarette");
-						engine.playAudio("audio/pickup.mp3", .3);
+						this.audio.pickup.play();
 						this.showBubble(item.pendingMessage);
 						item.pendingMessage = null;
 					},
@@ -251,7 +262,7 @@ class Entrance extends GameCore {
 				{ name: "pull", condition: mat => !mat.properties.pulled, message: mat => `How ${mat.properties.sawkey ? "unsurprising" : "surprising"}, there's a key under the mat!`,
 					action: mat => {
 						mat.setProperty("sawkey", true);
-						engine.playAudio("audio/hit.mp3", .5);
+						this.audio.hit.play();
 						mat.changeAnimation(this.atlas.mat_pulling, engine.lastTime);
 					}
 				},
@@ -260,7 +271,7 @@ class Entrance extends GameCore {
 						mat.setProperty("pickedKey", true);
 						mat.changeAnimation(this.atlas.mat_picked_key, engine.lastTime);
 						this.addToInventory("key");
-						engine.playAudio("audio/pickup.mp3", .3);
+						this.audio.pickup.play();
 						this.showBubble(mat.pendingMessage);
 						mat.pendingMessage = null;
 					}
@@ -270,7 +281,7 @@ class Entrance extends GameCore {
 					command: (item, target) => `put ${target.name} under the ${item.name}`,
 					action: mat => {
 						this.removeFromInventory("key")
-						engine.playAudio("audio/hit.mp3", .5);
+						this.audio.hit.play();
 						mat.setProperty("pickedKey", false);
 						mat.setProperty("pulled", false);
 						mat.changeAnimation(this.atlas.mat, engine.lastTime);
@@ -304,10 +315,10 @@ class Entrance extends GameCore {
 			},
 		});
 
-		this.addMonkor();
-
 		this.title = document.getElementById("title");
+		this.title.style.display = "";
 		this.title.style.opacity = .5;
+		document.getElementById("im").style.display = "";
 		document.getElementById("im").innerText = this.properties.title || "THE IMPOSSIBLE ROOM";
 
 		if (!this.inventory.contains("note")) {
@@ -318,6 +329,7 @@ class Entrance extends GameCore {
 	}
 
 	onExit(engine) {
+		document.getElementById("im").style.display = "none";
 		this.setProperty("title", document.getElementById("im").innerText);
 		this.title.style.opacity = 0;
 		super.onExit(engine);
@@ -346,5 +358,9 @@ class Entrance extends GameCore {
 				this.checkItem(null);
 				break;
 		}
+	}
+
+	upperLevel() {
+		this.engine.setGame(new Restroom());
 	}
 }

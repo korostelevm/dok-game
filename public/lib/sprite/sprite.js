@@ -80,6 +80,16 @@ class Sprite {
 		return false;
 	}
 
+	changeSize(width, height, time) {
+		if (this.size[0] !== width || this.size[1] !== height) {
+			this.size[0] = width;
+			this.size[1] = height;
+			this.updated.sprite = time;
+			return true;
+		}
+		return false;
+	}
+
 	changeRotation(rotation, time) {
 		if (this.rotation !== rotation) {
 			this.rotation = rotation;

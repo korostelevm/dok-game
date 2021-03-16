@@ -16,6 +16,23 @@ class GameCore extends GameBase {
 			cols: gender === 'T' ? 6 : 5,
 			rows: gender === 'T' ? 6 : 5,
 		};
+		if (!url) {
+			console.error(`ERROR: gender ${gender}.`);
+		}
+
+		//	Audio
+		this.audio = {
+			eat: new Sound("audio/eat.mp3", .5),
+			scream: new Sound("audio/scream.mp3", 1),
+			piano: new Sound("audio/piano.mp3", 1),
+			beep: new Sound("audio/beep.mp3", .5,),
+			dud: new Sound("audio/dud.mp3", 1),
+			hit: new Sound("audio/hit.mp3", .5),
+			door: new Sound("audio/door.mp3", .5),
+			pickup: new Sound("audio/pickup.mp3", .3),
+		};
+
+
 		//	Monkor
 		this.atlas = {
 			monkor_still: await engine.addTexture(
@@ -156,7 +173,7 @@ class GameCore extends GameBase {
 						default: true,
 						action: key => {
 							this.removeFromInventory("key");
-							engine.playAudio("audio/eat.mp3", .5);
+							this.audio.eat.play();
 							this.showBubble(key.pendingMessage);
 							key.pendingMessage = null;
 							setTimeout(() => this.gameOver(), 6000);
@@ -166,7 +183,7 @@ class GameCore extends GameBase {
 						default: true,
 						action: key => {
 							this.removeFromInventory("key");
-							engine.playAudio("audio/eat.mp3", .5);
+							this.audio.eat.play();
 							this.showBubble(key.pendingMessage);
 							key.pendingMessage = null;
 						},
@@ -191,6 +208,9 @@ class GameCore extends GameBase {
 		};
 
 		this.defaultCommand = (item, target) => `use ${item.name} on ${target.name}`;
+
+		document.getElementById("controls").style.display = "";
+		document.getElementById("player-name").innerText = (this.data.name || "Monkor").split(" ")[0];
 
 		this.addListeners(engine);
 
@@ -237,6 +257,12 @@ class GameCore extends GameBase {
 
 	async postInit() {
 		await super.postInit();
+		this.addMonkor();
+
+		for (let name in this.inventoryDetails) {
+			this.inventoryDetails[name].name = name;
+		}
+
 		for (let id in this.inventoryIcons) {
 			this.engine.addEmojiRule(id, this.inventoryIcons[id]);
 		}
@@ -244,6 +270,7 @@ class GameCore extends GameBase {
 	}
 
 	onExit(engine) {
+		document.getElementById("controls").style.display = "none";
 		this.removeListeners(engine);
 		this.clearActions();
 		super.onExit(engine);
@@ -357,7 +384,7 @@ class GameCore extends GameBase {
 			document.getElementById("game-over-message").style.display = "none";
 			this.resetMouse();
 			this.resetGame();
-			this.engine.setGame(new this.constructor());
+			this.engine.setGame(new GameTitle());
 		});
 	}
 
@@ -410,6 +437,10 @@ class GameCore extends GameBase {
 			return;
 		}
 
+		const wakeArea = {
+
+		};
+
 		if (buttons || e.type !== "mousemove") {
 			this.monkor.goal.x = Math.max(40, Math.min(x, 760));
 			this.monkor.goal.y = Math.max(345, Math.min(400, y));
@@ -426,6 +457,9 @@ class GameCore extends GameBase {
 		let hovering = null;
 		for (let i = engine.spriteCollection.size() - 1; i >= 0; i--) {
 			const sprite = engine.spriteCollection.get(i);
+			if (sprite.opacity <= 0) {
+				continue;
+			}
 			if (sprite.actions || sprite.self && this.selectedItem) {
 				const collisionBox = sprite.getCollisionBox(lastTime);
 				if (collisionBox && engine.pointContains(x, y, collisionBox)) {
@@ -515,7 +549,7 @@ class GameCore extends GameBase {
 		if (this.monkor.target !== target) {
 			this.monkor.target = target;
 			if (this.monkor.target) {
-				engine.playAudio("audio/beep.mp3", .5);
+				this.audio.beep.play();
 				this.showSubject(this.monkor.target);
 				this.subjectDiv.classList.add("selected");
 			} else {
@@ -727,7 +761,7 @@ class GameCore extends GameBase {
 				monkor.changeAnimation(dx < 0 ? this.atlas.monkor_scared_left : this.atlas.monkor_scared_right, time);
 				if (!monkor.scared) {
 					monkor.scared = time;
-					engine.playAudio("audio/scream.mp3", 1);
+					this.audio.scream.play();
 					this.setAudio(audio, audio.paused, 0);
 				}
 			} else {
@@ -751,9 +785,9 @@ class GameCore extends GameBase {
 				monkor.changeOpacity(Math.max(0, 1 - (elapsed / 2000)), time);
 				if (elapsed > 4000 && !monkor.levelup) {
 					this.monkor.levelup = lastTime;
-					document.getElementById("game-over-message").style.display = "block";
-					document.getElementById("game-over-message").innerText = "Ok I lied. This room is possible to get into. But you can't get out, because I didn't finish making this game. Sorry! Come back later!";
-					this.gameOver();
+					if (this.upperLevel) {
+						this.upperLevel();
+					}
 				}
 			}
 			return;
@@ -801,6 +835,15 @@ class GameCore extends GameBase {
 				}
 			}
 		}
+		const walking = dist !== 0;
+		if (monkor.walking !== walking) {
+			monkor.walking = walking;
+			if (monkor.walking) {
+				this.audio.hit.loop(.2);
+			} else {
+				this.audio.hit.stop();
+			}
+		}
 		monkor.changeAnimation(anim, time,
 			anim === this.atlas.monkor_talk || anim === this.atlas.monkor_talk_2
 			? monkor.speechStarted : 0);
@@ -823,7 +866,7 @@ class GameCore extends GameBase {
 			this.piano.changeAnimation(this.atlas.piano_splash, time);
 			this.monkor.changeOpacity(0, time);
 			this.monkor.dead = time;
-			engine.playAudio("audio/piano.mp3", 1);
+			this.audio.piano.play();
 			const audio = document.getElementById("audio");
 			this.setAudio(audio, audio.paused, 0);
 			setTimeout(() => this.gameOver(), 5000);
