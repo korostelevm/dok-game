@@ -6,8 +6,6 @@ class TextureAtlas {
 		this.maxTextureIndex = 0;
 		this.x = 0;
 		this.y = 0;
-		this.width = width || 0;
-		this.height = height || 0;
 		this.textureSize = textureSize;
 		this.canvas = document.createElement("canvas");
 		this.imageLoader = imageLoader;
@@ -28,7 +26,7 @@ class TextureAtlas {
 	}
 
 	textureMix(image, texture, texture_alpha, texture_blend) {
-		const { index, canvas } = this;
+		const { canvas } = this;
 		const context = canvas.getContext("2d");
 		if (canvas !== image) {
 			this.getCanvasImage(image);
@@ -45,9 +43,9 @@ class TextureAtlas {
 	}
 
 	getCanvasImage(image) {
-		const { index, canvas } = this;
-		canvas.width = this.width || image.naturalWidth;
-		canvas.height = this.height || image.naturalHeight;
+		const { canvas } = this;
+		canvas.width = image.naturalWidth;
+		canvas.height = image.naturalHeight;
 
 		const context = canvas.getContext("2d");
 		context.imageSmoothingEnabled = false;
@@ -63,7 +61,7 @@ class TextureAtlas {
 		const { spriteWidth, spriteHeight } = this;
 		const col = frame % this.cols;
 		const row = Math.floor(frame / this.cols);
-		const { index, canvas } = this;
+		const { canvas } = this;
 		canvas.width = spriteWidth;
 		canvas.height = spriteHeight;
 
@@ -80,17 +78,19 @@ class TextureAtlas {
 		this.onUpdateImage(image, animationData || {});
 
 		const { spriteWidth, spriteHeight } = this;
-		for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
-			const spriteImage = this.getSpriteImageForFrame(image, frame);
-			const blendedImage = texture_url ? this.textureMix(spriteImage, await this.imageLoader.loadImage(texture_url), texture_alpha, texture_blend) : spriteImage;
-			if (!blendedImage) {
-				continue;
-			}
+		const { gl, glTextures, index, x, y } = this;
+		if (index >= 0) {
+			for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
+				const spriteImage = this.getSpriteImageForFrame(image, frame);
+				const blendedImage = texture_url ? this.textureMix(spriteImage, await this.imageLoader.loadImage(texture_url), texture_alpha, texture_blend) : spriteImage;
+				if (!blendedImage) {
+					continue;
+				}
 
-			const { gl, glTextures, index, x, y } = this;
-			const col = frame % this.cols;
-			const row = Math.floor(frame / this.cols);
-			this.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
+				const col = frame % this.cols;
+				const row = Math.floor(frame / this.cols);
+				this.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
+			}
 		}
 
 		this.chrono.tick(`Done loading image: ${url}`);
@@ -212,8 +212,8 @@ class TextureAtlas {
 	}
 
 	onUpdateImage(image, animationData) {
-		this.spriteSheetWidth = this.width || (image ? image.naturalWidth : 0);
-		this.spriteSheetHeight = this.width || (image ? image.naturalHeight : 0);
+		this.spriteSheetWidth = image ? image.naturalWidth : 0;
+		this.spriteSheetHeight = image ? image.naturalHeight : 0;
 		const { cols, rows, frameRate, range, firstFrame, direction } = animationData;
 		this.frameRate = frameRate || 1;
 		this.cols = cols || 1;
@@ -226,7 +226,7 @@ class TextureAtlas {
 		this.direction = direction || 1;
 	}
 
-	getTextureCoordinatesFromRect(x, y, width, height, index, direction, opacity) {
+	getTextureCoordinatesFromRect(x, y, width, height, direction, opacity) {
 		let x0 = x;
 		let x1 = x + width;
 		if (direction * this.direction < 0) {
@@ -245,8 +245,8 @@ class TextureAtlas {
 	}
 
 	getTextureCoordinates(direction, opacity) {
-		const { x, y, index, spriteWidth, spriteHeight } = this;
-		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, index, direction, opacity);
+		const { x, y, spriteWidth, spriteHeight } = this;
+		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, direction, opacity);
 	}
 
 	getSpritesheetInfo() {

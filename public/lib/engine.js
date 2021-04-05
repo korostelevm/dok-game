@@ -79,7 +79,7 @@ class Engine {
 
 		this.chrono.tick("init");
 		console.log(config);
-		const maxInstancesCount = 1000;
+		const maxInstancesCount = config.maxInstancesCount || 1000;
 		console.log("maxInstancesCount", maxInstancesCount);
 		await this.loadDomContent(document);
 		console.log("Starting engine...");
@@ -92,12 +92,7 @@ class Engine {
 		this.gl = gl;
 		this.chrono.tick("dom content loaded");
 
-		this.debugCanvas = document.createElement("canvas");
-		this.debugCanvas.style.position = "absolute";
-		this.debugCanvas.zIndex = 1;
-		document.getElementById("container").appendChild(this.debugCanvas);
-		this.debugCtx = this.debugCanvas.getContext("2d");
-		this.debugCanvas.style.display = "none";
+		this.debugView = new DebugView(this);
 
 		this.overlay = document.getElementById("overlay");
 
@@ -114,7 +109,7 @@ class Engine {
 		this.ext = ext;
 
 		/* Config shader */
-		this.configShader(gl);
+		this.configShader(gl, config);
 
 		/* Initialize Shader program */
 		const { vertexShader, fragmentShader, attributes } = globalData;
@@ -139,8 +134,11 @@ class Engine {
 
 		/* Setup game tab. */
 		if (this.debug) {
-			this.setupGameTab(globalFiles);
+			const gameTab = document.getElementById("game-tab");
+			this.sceneTab = new SceneTab(this, globalFiles, gameTab);
 		}
+
+		await this.setupGameName(globalFiles);
 
 		/* Setup constants */
 		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
@@ -148,18 +146,13 @@ class Engine {
 		this.numVerticesPerInstance = 6;
 
 		this.resize(canvas, gl, config);
-		this.initialize(gl, this.shader.uniforms, config);
 
 		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
 		//console.log(this.voices);
 
 		this.lastTime = 0;
 		if (this.game) {
-			this.chrono.tick("game init");
-			await this.game.init(this);
-			await this.game.postInit();
-			this.game.ready = true;
-			this.chrono.tick("game init done");
+			await this.initGame(this.game);
 		}
 
 		this.textureManager.generateAllMipMaps();
@@ -170,45 +163,30 @@ class Engine {
 		this.chrono.tick("engine started");
 	}
 
-	setupGameTab(globalFiles) {
-		const gameTab = document.getElementById("game-tab");
-
-		const gameList = {};
-		globalFiles.forEach(file => {
-			const { games } = file;
+	async setupGameName(globalFiles) {
+		this.classToGame = {};
+		globalFiles.forEach(({games}) => {
 			if (games) {
-				games.forEach(game => {
-					if (typeof(game) === "object") {
-						for (let name in game) {
-							if (!gameList[name]) {
-								gameList[name] = [];
-							}
-							game[name].forEach(sceneFile => {
-								const [ scene ] = sceneFile.split(".");
-								if (scene !== "index" && scene !== "game-core") {
-									gameList[name].push(scene);
+				games.forEach(folder => {
+					for (let dirName in folder) {
+						if (Array.isArray(folder[dirName])) {
+							const gameName = StringUtil.kebabToClass(dirName);
+							console.log(`/games/${dirName}`);
+
+							folder[dirName].forEach(sceneFile => {
+								const [ scene, extension ] = sceneFile.split(".");
+								if (extension !== "js") {
+									return;
 								}
+								const className = StringUtil.kebabToClass(scene);
+								this.classToGame[className] = gameName;
 							});
 						}
 					}
 				});
 			}
 		});
-
-		for (let name in gameList) {
-			const groupDiv = gameTab.appendChild(document.createElement("div"));
-			groupDiv.style.margin = "2px";
-			groupDiv.style.padding = "4px";
-			groupDiv.style.backgroundColor = "yellow";
-			const titleDiv = groupDiv.appendChild(document.createElement("div"));
-			titleDiv.innerText = name;
-			const sceneGroupDiv = groupDiv.appendChild(document.createElement("div"));
-			gameList[name].forEach(scene => {
-				const button = sceneGroupDiv.appendChild(document.createElement("button"));
-				button.classList.add("scene-button");
-				button.innerText = scene;
-			});
-		}
+		console.log(globalFiles);
 	}
 
 	async setGame(game) {
@@ -216,12 +194,17 @@ class Engine {
 
 		this.game = game;
 		if (this.ready) {
-			this.chrono.tick("game init");
-			await this.game.init(this);
-			await this.game.postInit();
-			this.game.ready = true;
-			this.chrono.tick("game init done");
+			await this.initGame(this.game);
 		}
+	}
+
+	async initGame(game) {
+		this.chrono.tick("game init " + this.game.sceneName);
+		await this.game.init(this, this.classToGame[this.game.sceneName]);
+		await this.game.postInit();
+		this.game.ready = true;
+		this.chrono.tick("game init done");
+		this.sceneTab.setScene(game);
 	}
 
 	handleMouse(e) {
@@ -265,8 +248,8 @@ class Engine {
 	}
 
 	async addTexture(imageConfig) {
-		const index = this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.nextTextureIndex++);
-		console.log(`New texture at index ${index} for ${imageConfig.url}`);
+		const index = !imageConfig.url ? -1 : (this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.nextTextureIndex++));
+//		console.log(`New texture at index ${index} for ${imageConfig.url}`);
 		return await this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
 	}
 
@@ -279,7 +262,7 @@ class Engine {
 		};		
 	}
 
-	initialize(gl, uniforms, {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}}) {
+	initialize(gl, uniforms, {webgl: {depth}, viewport: {viewAngle, pixelScale, size: [viewportWidth, viewportHeight]}}) {
 		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
@@ -288,8 +271,16 @@ class Engine {
 
 		const zNear = -1;
 		const zFar = 2000;
+
+		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
+		const aspect = gl.canvas.width / gl.canvas.height;
+		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
+		
+
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
+		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
+		gl.uniform1f(uniforms.isPerspective.location, 0);
 	}
 
 	pointContains(x, y, collisionBox) {
@@ -297,20 +288,28 @@ class Engine {
 		return collisionBox.left <= px && px <= collisionBox.right && collisionBox.top <= py && py <= collisionBox.bottom;
 	}
 
-	configShader(gl) {
+	configShader(gl, {webgl: {depth}}) {
 		gl.enable(gl.CULL_FACE);
 		gl.cullFace(gl.BACK);
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+		if (depth) {
+			gl.enable(gl.DEPTH_TEST);
+			gl.depthFunc(gl.GEQUAL);
+			// gl.depthFunc(gl.LEQUAL);
+		}
 	}
 
-	resize(canvas, gl, {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}}) {
+	resize(canvas, gl, config) {
+		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = config;
 		canvas.width = viewportWidth / pixelScale;
 		canvas.height = viewportHeight / pixelScale;
 		canvas.style.width = `${viewportWidth}px`;
 		canvas.style.height = `${viewportHeight}px`;
 		canvas.style.opacity = 1;
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+		this.initialize(gl, this.shader.uniforms, config);
 	}
 
 	static start(engine) {
@@ -331,57 +330,16 @@ class Engine {
 	handleFrames(time) {
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
+			const frame = sprite.getAnimationFrame(time);
+			const previousFrame = sprite.frame;
+			sprite.frame = frame;
 			if (sprite.onFrame) {
-				const f = sprite.onFrame[sprite.getAnimationFrame(time)];
+				const f = sprite.onFrame[frame];
 				if (f) {
-					f(sprite);
+					f(sprite, previousFrame);
 				}
 			}
 		}		
-	}
-
-	showDebugCanvas(time) {
-		const zoom = 4;
-		if (!this.debugCanvasInited) {
-			this.debugCanvas.style.outline = "5px solid pink";
-			this.debugCanvas.width = this.canvas.width / zoom;
-			this.debugCanvas.height = this.canvas.height / zoom;
-			this.debugCanvas.style.width = `${this.canvas.offsetWidth - zoom}px`;
-			this.debugCanvas.style.height = `${this.canvas.offsetHeight - zoom}px`;
-			this.debugCanvas.style.left = `${this.canvas.offsetLeft}px`;
-			this.debugCanvas.style.top = `${this.canvas.offsetTop}px`;
-			this.debugCanvas.style.display = "";
-
-		}
-		const ctx = this.debugCtx;
-		const { config: { viewport: { pixelScale } } } = this;
-		const margin = 10 / pixelScale / zoom;
-		ctx.clearRect(0, 0, this.debugCanvas.width, this.debugCanvas.height);
-		ctx.beginPath();
-		ctx.rect(margin, margin, this.debugCanvas.width - margin * 2, this.debugCanvas.height - margin * 2);
-		ctx.stroke()
-
-		ctx.strokeStyle = "#FF0000";
-
-
-		for (let i = 0; i < this.spriteCollection.size(); i++) {
-			const sprite = this.spriteCollection.get(i);
-			this.drawCollisionBox(ctx, sprite, time, zoom);
-		}
-
-		ctx.globalAlpha = "";
-	}
-
-	drawCollisionBox(ctx, sprite, time, zoom) {
-		const { config: { viewport: { pixelScale } } } = this;
-		const rect = sprite.disabled ? null : sprite.getCollisionBox(time);
-		if (!rect) {
-			return;
-		}
-		ctx.beginPath();
-		ctx.globalAlpha = sprite.opacity > 0 ? 1 : .2;
-		ctx.rect(rect.left / pixelScale / zoom, rect.top / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
-		ctx.stroke();
 	}
 
 	bestVoice(voices, voiceName) {
@@ -405,6 +363,7 @@ class Engine {
 		}
 		if (!this.voices || !this.voices.length) {
 			this.voices = window.speechSynthesis.getVoices();
+			speechSynthesis.addEventListener("voicechanged", console.log);
 		}
 
 		const voices = this.voices;
@@ -466,6 +425,7 @@ class Engine {
 		//	Reset view
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.uniform1f(uniforms.time.location, time);
+		gl.clearDepth(0);
 
 		//	Handle special frame actions
 		this.handleFrames(time);
@@ -473,8 +433,8 @@ class Engine {
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
 			if (sprite.updated.sprite >= this.lastTime) {
-				const {x, y, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
-				this.spriteRenderer.setAttributeSprite(i, x, y, width, height, hotX, hotY, rotation);
+				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
+				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation);
 			}
 			if (sprite.updated.animation >= this.lastTime
 				|| sprite.updated.direction >= this.lastTime
@@ -491,7 +451,7 @@ class Engine {
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());
 		this.lastTime = time;
 		if (this.debug) {
-			this.showDebugCanvas(time);
+			this.debugView.showDebugCanvas(time, this.canvas);
 		}
 
 		if (this.debug) {

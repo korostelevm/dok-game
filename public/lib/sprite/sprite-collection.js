@@ -16,10 +16,15 @@ class SpriteCollection {
 		for (let i in attributes) {
 			sprite[i] = attributes[i];
 		}
-		for (let key in sprite.properties) {
-			sprite.onUpdate(key, sprite.properties[key], true);
-		}
 		return sprite;
+	}
+
+	postCreate() {
+		this.sprites.forEach(sprite => {
+			for (let key in sprite.properties) {
+				sprite.onUpdate(key, sprite.properties[key], true);
+			}
+		});
 	}
 
 	get(index) {

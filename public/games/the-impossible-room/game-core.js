@@ -1,6 +1,6 @@
 class GameCore extends GameBase {
-	async init(engine) {
-		await super.init(engine);
+	async init(engine, gameName) {
+		await super.init(engine, gameName);
 		const { gl, config } = this.engine;
 
 		const gender = this.data.gender || (this.data.gender = "M");
@@ -22,10 +22,11 @@ class GameCore extends GameBase {
 
 		//	Audio
 		this.audio = {
-			eat: new Sound("audio/eat.mp3", .5),
+			... this.audio,
 			scream: new Sound("audio/scream.mp3", 1),
 			piano: new Sound("audio/piano.mp3", 1),
 			beep: new Sound("audio/beep.mp3", .5,),
+			eat: new Sound("audio/eat.mp3", .5),
 			dud: new Sound("audio/dud.mp3", 1),
 			hit: new Sound("audio/hit.mp3", .5),
 			door: new Sound("audio/door.mp3", .5),
@@ -40,6 +41,12 @@ class GameCore extends GameBase {
 					...spritesheet,
 					collision_url: "assets/monkor-collision.png",
 					range:[0],
+				}),
+			monkor_back_still: await engine.addTexture(
+				{
+					...spritesheet,
+					collision_url: "assets/monkor-collision.png",
+					range:[6],
 				}),
 			monkor_front: await engine.addTexture(
 				{
@@ -164,6 +171,24 @@ class GameCore extends GameBase {
 					},
 				],
 			},
+			key_turd: {
+				name: "key",
+				defaultCommand: (item, target) => `insert ${item.name} into ${target.name}.`,
+				actions: [
+					{ name: "look", message: () => "This is the entrance key. It has a distinct smell to it.",
+					},
+					{ name: "eat", condition: () => !this.entrance, message: () => "I swallowed the key. Tasted... ergh... very foul!...", 
+						default: true,
+						action: key => {
+							this.removeFromInventory("key_turd");
+							this.audio.eat.play();
+							this.showBubble(key.pendingMessage);
+							key.pendingMessage = null;
+							this.data.ateKey = true;
+						},
+					},
+				],
+			},
 			key: {
 				defaultCommand: (item, target) => `insert ${item.name} into ${target.name}.`,
 				actions: [
@@ -177,6 +202,7 @@ class GameCore extends GameBase {
 							this.showBubble(key.pendingMessage);
 							key.pendingMessage = null;
 							setTimeout(() => this.gameOver(), 6000);
+							this.data.ateKey = true;
 						},
 					},
 					{ name: "eat", condition: () => !this.entrance || this.entrance.properties.unlocked, message: () => "I swallowed the key. Tasted like metal.", 
@@ -186,6 +212,7 @@ class GameCore extends GameBase {
 							this.audio.eat.play();
 							this.showBubble(key.pendingMessage);
 							key.pendingMessage = null;
+							this.data.ateKey = true;
 						},
 					},
 				],
@@ -198,7 +225,7 @@ class GameCore extends GameBase {
 						action: item => {
 							this.showBubble(item.pendingMessage, () => {
 								this.monkor.smoking = engine.lastTime;
-								this.monkor.paused = engine.lastTime;
+								this.monkor.setProperty("paused", engine.lastTime);
 							});
 							item.pendingMessage = null;
 						},
@@ -217,20 +244,29 @@ class GameCore extends GameBase {
 		this.inventoryIcons = {
 			...this.inventoryIcons,
 			key: "🗝",
+			key_turd: "💩",
 			cigarette: "🚬",
 			note: "📜",
 		};
 	}
 
 	addMonkor() {
+		this.sceneData.monkor = this.sceneData.monkor ?? { x:50, y:380 };
 		this.monkor = this.spriteFactory.create({
 			name: "monkor",
-			x: 50, y: 380,
+			x: this.sceneData.monkor.x, y: this.sceneData.monkor.y,
 			size: [128, 128],
 			hotspot: [64,128],
 			anim: this.atlas.monkor_still,
 		}, {
 			self: true,
+			onChange: {
+				paused: (monkor, paused) => {
+					this.setInventoryVisibility(!paused);
+					this.setControlVisibility(!paused);
+				},
+			},
+			goal: { x:this.sceneData.monkorGoal.x, y:this.sceneData.monkorGoal.y },
 		});
 
 		this.mouse = this.spriteFactory.create({
@@ -251,28 +287,36 @@ class GameCore extends GameBase {
 			anim: this.atlas.piano,
 		});
 
-		this.monkor.goal = {x:this.monkor.x, y:this.monkor.y};
 		this.monkor.speed = 1;
+		this.monkor.setProperty("paused", false);
 	}
 
 	async postInit() {
-		await super.postInit();
+		this.sceneData.monkorGoal = this.sceneData.monkorGoal || {... this.sceneData.monkor};
 		this.addMonkor();
 
 		for (let name in this.inventoryDetails) {
-			this.inventoryDetails[name].name = name;
+			if (!this.inventoryDetails[name].name) {
+				this.inventoryDetails[name].name = name;
+			}
 		}
 
 		for (let id in this.inventoryIcons) {
 			this.engine.addEmojiRule(id, this.inventoryIcons[id]);
 		}
 		this.updateInventory();
+		await super.postInit();
 	}
 
 	onExit(engine) {
 		document.getElementById("controls").style.display = "none";
 		this.removeListeners(engine);
 		this.clearActions();
+		for (let a in this.audio) {
+			this.audio[a].stop();
+		}
+		window.speechSynthesis.cancel();
+		this.showBubble(null);
 		super.onExit(engine);
 	}
 
@@ -351,11 +395,14 @@ class GameCore extends GameBase {
 	}
 
 	updateMouse(time) {
-		if (this.mouse.alive) {
-			const falling = this.mouse.y < 345 ? (time - this.mouse.alive) / 100 : 0;
+		if (this.mouse && this.mouse.alive) {
+			const walkArea = this.getWalkArea();
+			const top = walkArea.top || 0;
+			const bottom = walkArea.bottom || 400;
+			const falling = this.mouse.y < top ? (time - this.mouse.alive) / 100 : 0;
 			if (!this.mouse.lastAction || time - this.mouse.lastAction > 1300) {
 				this.mouse.goal.x = 40 + 720 * Math.random();
-				this.mouse.goal.y = 345 + 55 * Math.random();
+				this.mouse.goal.y = top + (bottom - top) * Math.random();
 				this.mouse.lastAction = time + Math.random() * 500;
 			}
 			const dx = falling ? 0 : this.mouse.goal.x - this.mouse.x;
@@ -392,7 +439,7 @@ class GameCore extends GameBase {
 		if (this.paused) {
 			return false;
 		}
-		if (!this.monkor || this.monkor.paused
+		if (!this.monkor || this.monkor.properties.paused
 			|| this.monkor.dead || this.mouse.alive
 			|| this.monkor.anim === this.atlas.monkor_talk
 			|| this.monkor.anim === this.atlas.monkor_talk_2) {
@@ -437,20 +484,29 @@ class GameCore extends GameBase {
 			return;
 		}
 
-		const wakeArea = {
-
-		};
-
 		if (buttons || e.type !== "mousemove") {
-			this.monkor.goal.x = Math.max(40, Math.min(x, 760));
-			this.monkor.goal.y = Math.max(345, Math.min(400, y));
-			this.monkor.speed = buttons ? 2 : 1;
-			if(!buttons) {
-				const diff = lastTime - this.lastMouseUp;
-				if (diff < 250) {
-					this.monkor.speed = 2;
+			if (!this.monkor.busy) {
+				const walkArea = this.getWalkArea();
+				const left = walkArea.left || 0;
+				const right = walkArea.right || 800;
+				const top = walkArea.top || 0;
+				const bottom = walkArea.bottom || 400;
+
+
+				this.monkor.goal.x = Math.max(left + 40, Math.min(x, right - 40));
+				this.monkor.goal.y = Math.max(top, Math.min(bottom, y));
+
+				this.sceneData.monkorGoal.x = this.monkor.goal.x;
+				this.sceneData.monkorGoal.y = this.monkor.goal.y;
+
+				this.monkor.speed = buttons ? 2 : 1;
+				if(!buttons) {
+					const diff = lastTime - this.lastMouseUp;
+					if (diff < 250) {
+						this.monkor.speed = 2;
+					}
+					this.lastMouseUp = lastTime;
 				}
-				this.lastMouseUp = lastTime;
 			}
 		}
 
@@ -600,7 +656,8 @@ class GameCore extends GameBase {
 			if (action.condition && !action.condition(target)) {
 				return false;
 			}
-			return action.item === item.name;
+			const actionItems = Array.isArray(action.item) ? action.item : [action.item];
+			return actionItems.contains(item.name);
 		})[0] || this.itemActionOnTarget(item, target);
 	}
 
@@ -629,7 +686,7 @@ class GameCore extends GameBase {
 		});
 	}
 
-	performAction({name, condition, message, action}, target) {
+	performAction({name, condition, message, action, lookup}, target) {
 		if (!this.active()) {
 			return;
 		}
@@ -639,6 +696,9 @@ class GameCore extends GameBase {
 			action(target);
 		} else if (msg) {
 			this.showBubble(msg);
+		}
+		if (lookup) {
+			this.monkor.lookupUntil = this.engine.lastTime + lookup;
 		}
 		this.monkor.pendingAction = null;
 		this.selectTarget(null);
@@ -652,13 +712,15 @@ class GameCore extends GameBase {
 		const { lastTime, canvas } = engine;
 		const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
 		const msg = msgOrNull ? msgOrNull.trim() : null;
-		this.monkor.speechStarted = 0;
-		this.monkor.speechPause = 0;
-		this.monkor.currentSpeech = "";
-		this.monkor.lastCharacter = 0;
-		this.monkor.characterIndex = 0;
-		this.monkor.finishedSpeech = 0;
-		this.monkor.speaker = Math.random() < .5 ? 1 : 2;
+		if (this.monkor) {
+			this.monkor.speechStarted = 0;
+			this.monkor.speechPause = 0;
+			this.monkor.currentSpeech = "";
+			this.monkor.lastCharacter = 0;
+			this.monkor.characterIndex = 0;
+			this.monkor.finishedSpeech = 0;
+			this.monkor.speaker = Math.random() < .5 ? 1 : 2;
+		}
 		if (msg) {
 			if (!this.monkor.scared) {
 				speechBubble.style.opacity = 1;
@@ -703,7 +765,9 @@ class GameCore extends GameBase {
 		} else {
 			speechBubble.style.opacity = 0;
 		}
-		this.monkor.speech = msg;
+		if (this.monkor) {
+			this.monkor.speech = msg;
+		}
 	}
 
 	unblockText() {
@@ -748,6 +812,9 @@ class GameCore extends GameBase {
 	}
 
 	finishedSpeech() {
+		if (!this.monkor) {
+			return 1;
+		}
 		const { speech, currentSpeech, speechStarted, finishedSpeech } = this.monkor;
 		return !speechStarted ? 1 : finishedSpeech;
 	}
@@ -755,7 +822,7 @@ class GameCore extends GameBase {
 	applyMovement(monkor, mouse, dt, time) {
 		const { engine } = this;
 		const { lastTime } = engine;
-		if (mouse.alive && mouse.y > 330) {
+		if (mouse && mouse.alive && mouse.y > 330) {
 			if (time - mouse.alive < 3000) {
 				const dx = mouse.x - monkor.x;
 				monkor.changeAnimation(dx < 0 ? this.atlas.monkor_scared_left : this.atlas.monkor_scared_right, time);
@@ -776,6 +843,10 @@ class GameCore extends GameBase {
 			return;
 		}
 
+		if (!monkor) {
+			return;
+		}
+
 
 		if (monkor.goingup) {
 			const elapsed = Math.max(0, time - monkor.goingup - 500);
@@ -783,7 +854,7 @@ class GameCore extends GameBase {
 				monkor.changeAnimation(this.atlas.monkor_back, time);
 				monkor.changePosition(400, 350 - 30 * (elapsed / 2000), time);
 				monkor.changeOpacity(Math.max(0, 1 - (elapsed / 2000)), time);
-				if (elapsed > 4000 && !monkor.levelup) {
+				if (elapsed > 3000 && !monkor.levelup) {
 					this.monkor.levelup = lastTime;
 					if (this.upperLevel) {
 						this.upperLevel();
@@ -800,7 +871,8 @@ class GameCore extends GameBase {
 		const dy = (monkor.goal.y - monkor.y);
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		const actualSpeed = Math.min(dist, speed);
-		let anim = this.atlas.monkor_still;
+		const lookup = this.monkor.lookupUntil && this.monkor.lookupUntil > time;
+		let anim = lookup ? this.atlas.monkor_back_still : this.atlas.monkor_still;
 		if (dist) {
 			monkor.changePosition(monkor.x + actualSpeed * dx / dist, monkor.y + actualSpeed * dy / dist, time);
 			if (Math.abs(dx) > Math.abs(dy)) {
@@ -810,7 +882,7 @@ class GameCore extends GameBase {
 			} else {
 				anim = this.atlas.monkor_back;
 			}
-		} else {
+		} else if (!lookup) {
 			const finishedSpeech = this.finishedSpeech();
 			if (!finishedSpeech && monkor.speechPause <= 0) {
 				anim = monkor.speaker == 1 ? this.atlas.monkor_talk_2 : this.atlas.monkor_talk;
@@ -847,6 +919,11 @@ class GameCore extends GameBase {
 		monkor.changeAnimation(anim, time,
 			anim === this.atlas.monkor_talk || anim === this.atlas.monkor_talk_2
 			? monkor.speechStarted : 0);
+		this.sceneData.monkor.x = monkor.x;
+		this.sceneData.monkor.y = monkor.y;
+		if (monkor.x > 850 && this.nextLevelRight) {
+			this.nextLevelRight();
+		}
 	}
 
 	dropPiano(time) {
@@ -857,7 +934,7 @@ class GameCore extends GameBase {
 	}
 
 	updatePiano(time, dt) {
-		if (!this.piano.dropping) {
+		if (!this.piano || !this.piano.dropping) {
 			return;
 		}
 		if (this.piano.y < this.monkor.y + 20) {
@@ -895,16 +972,23 @@ class GameCore extends GameBase {
 	}
 
 	checkCollisions(time) {
-		const { engine } = this;
-		const monkorBox = this.monkor.getCollisionBox(time);
-		const targetBox = this.monkor.target && this.monkor.target.getCollisionBox ? this.monkor.target.getCollisionBox(time) : null;
+		const { engine, monkor } = this;
+		if (!monkor) {
+			return;
+		}
+		const monkorBox = monkor.getCollisionBox(time);
+		const targetBox = monkor.target && monkor.target.getCollisionBox ? monkor.target.getCollisionBox(time) : null;
 		if (engine.doCollide(monkorBox, targetBox)) {
-			if (this.monkor.pendingAction) {
-				this.performAction(this.monkor.pendingAction, this.monkor.target);
+			if (monkor.pendingAction) {
+				this.performAction(monkor.pendingAction, monkor.target);
 			} else {
-				this.showActions(this.monkor.target);
+				this.showActions(monkor.target);
 			}
 		}
+	}
+
+	getWalkArea() {
+		return {};
 	}
 
 	addToInventory(item) {
@@ -924,10 +1008,21 @@ class GameCore extends GameBase {
 		}
 	}
 
+	setInventoryVisibility(visible) {
+		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
+		const div = document.getElementById("inventory");
+		div.style.display = actualVisibilty ? "flex" : "none";
+	}
+
+	setControlVisibility(visible) {
+		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
+		const div = document.getElementById("controls");
+		div.style.display = actualVisibilty ? "" : "none";
+	}
+
 	updateInventory(selection) {
 		const div = document.getElementById("inventory");
 		div.innerText = "";
-		div.style.display = "flex";
 		div.style.flexDirection = "row";
 		this.setSelection(null);
 		this.inventory.forEach(item => {

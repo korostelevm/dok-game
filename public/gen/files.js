@@ -25,6 +25,7 @@ const globalFiles=[
 			"lobby.png",
 			"mat-collision.png",
 			"mat.png",
+			"mazoo.png",
 			"menu-select.png",
 			"menu.png",
 			"metal.jpg",
@@ -42,15 +43,21 @@ const globalFiles=[
 			"smoking-sign.png",
 			"sparkle.png",
 			"title.png",
+			"toilet-collision.png",
+			"toilet-exit-collision.png",
+			"toilet-room-ground.png",
 			"toilet-room.png",
-			"twin.png"
+			"twin.png",
+			"water-faucet-collision.png"
 		]
 	},
 	{
 		"audio": [
 			".DS_Store",
 			"beep.mp3",
+			"diving.mp3",
 			"door.mp3",
+			"drink.mp3",
 			"dud.mp3",
 			"eat.mp3",
 			"hit-land.mp3",
@@ -58,6 +65,7 @@ const globalFiles=[
 			"om.mp3",
 			"piano.mp3",
 			"pickup.mp3",
+			"player-hurt.mp3",
 			"scream.mp3",
 			"weirdsong.mp3"
 		]
@@ -75,16 +83,21 @@ const globalFiles=[
 			"grotto.ttf"
 		]
 	},
-	"game-scripter.js",
+	"game-starter.js",
 	{
 		"games": [
 			".DS_Store",
+			{
+				"one-rule": [
+					"game-ring.js"
+				]
+			},
 			{
 				"the-impossible-room": [
 					"entrance.js",
 					"game-core.js",
 					"game-title.js",
-					"index.js",
+					"lobby.js",
 					"menu.js",
 					"restroom.js",
 					"selection.js"
@@ -104,6 +117,7 @@ const globalFiles=[
 			".DS_Store",
 			"engine.js",
 			"game-base.js",
+			"game-template.js",
 			{
 				"math": [
 					"gl-matrix.js"
@@ -120,7 +134,6 @@ const globalFiles=[
 			{
 				"opengl": [
 					"buffer-renderer.js",
-					"gl-wrapper.js",
 					"shader.js",
 					"utils.js"
 				]
@@ -151,13 +164,16 @@ const globalFiles=[
 			},
 			{
 				"ui": [
+					"debug-view.js",
 					"focus-fixer.js",
-					"keyboard-handler.js"
+					"keyboard-handler.js",
+					"scene-tab.js"
 				]
 			},
 			{
 				"utils": [
-					"chrono.js"
+					"chrono.js",
+					"string.js"
 				]
 			}
 		]

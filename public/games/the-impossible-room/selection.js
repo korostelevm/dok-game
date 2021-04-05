@@ -1,6 +1,6 @@
 class Selection extends GameBase {
-	async init(engine) {
-		await super.init(engine);
+	async init(engine, gameName) {
+		await super.init(engine, gameName);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;
@@ -58,7 +58,7 @@ class Selection extends GameBase {
 
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
-			size: [800, 400],
+			size: [viewportWidth, viewportHeight],
 			opacity: .5,
 		});
 		this.card = this.spriteFactory.create({
@@ -121,14 +121,11 @@ class Selection extends GameBase {
 		input.style.fontFamily = "handwriting";
 		this.playerNameInput = input;
 
-		if (!this.properties.check) {
-			this.setProperty("check", "none");
-		}
+		this.applyGender(gender);
 	}
 
 	startGame() {
 		this.engine.setGame(new Menu());
-//		this.engine.setGame(new Entrance());
 	}
 
 	onChange(key, value) {
@@ -142,6 +139,23 @@ class Selection extends GameBase {
 			this.check_they.changeOpacity(they ? 1 : 0, engine.lastTime);
 			this.next_button.disabled = !(he || she || they);
 			this.next_button.changeOpacity(this.next_button.disabled ? .2 : 1, engine.lastTime);
+		}
+	}
+
+	applyGender(gender) {
+		switch(gender) {
+			case "M":
+				this.setProperty("check", "he");
+				break;
+			case "W":
+				this.setProperty("check", "she");
+				break;
+			case "T":
+				this.setProperty("check", "they");
+				break;
+			default:
+				this.setProperty("check", "none");
+				break;
 		}
 	}
 

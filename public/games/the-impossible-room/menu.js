@@ -1,6 +1,6 @@
 class Menu extends GameBase {
-	async init(engine) {
-		await super.init(engine);
+	async init(engine, gameName) {
+		await super.init(engine, gameName);
 
 		const { config } = engine;
 
@@ -35,7 +35,7 @@ class Menu extends GameBase {
 				cols: 2, rows: 3,
 				range: [2],
 			}),
-			about: await engine.addTexture({
+			load: await engine.addTexture({
 				url: "assets/menu-select.png",
 				collision_url: "assets/menu-select.png",
 				cols: 2, rows: 3,
@@ -74,8 +74,8 @@ class Menu extends GameBase {
 				this.engine.setGame(new Selection());
 			},		
 		});
-		this.about = this.spriteFactory.create({
-			anim: this.atlas.about,
+		this.load = this.spriteFactory.create({
+			anim: this.atlas.load,
 			opacity: 0,
 			size: [800, 400],
 		});
@@ -136,7 +136,7 @@ class Menu extends GameBase {
 			}
 		}
 		this.customize.changeOpacity(hovering===this.customize?1:0, this.engine.lastTime);
-		this.about.changeOpacity(hovering===this.about?1:0, this.engine.lastTime);
+		this.load.changeOpacity(hovering===this.load?1:0, this.engine.lastTime);
 		this.start.changeOpacity(hovering===this.start?1:0, this.engine.lastTime);
 
 		const cursor = !this.selectedItem && hovering ? "pointer" : "";

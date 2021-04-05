@@ -20,5 +20,8 @@ vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 v
 
 void main() {
 	vec4 color = getTextureColor(uTextures, v_index, v_textureCoord);
+	if (color.a == 0.) {
+		discard;
+	}
 	gl_FragColor = vec4(color.xyz, color.w * v_opacity);
 }

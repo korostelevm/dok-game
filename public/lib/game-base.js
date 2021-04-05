@@ -1,12 +1,14 @@
 class GameBase {
-	async init(engine) {
+	async init(engine, gameName) {
 		this.engine = engine;
 		this.imageLoader = engine.imageLoader;
 		engine.data = engine.data || (engine.data = {});
-		this.data = engine.data;
-		this.sceneData = engine.data[this.sceneName] || (engine.data[this.sceneName] = {});
+		const gameData = engine.data[gameName] || (engine.data[gameName] = {});
+		this.data = gameData;
+		this.sceneData = this.data[this.sceneName] || (this.data[this.sceneName] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
 		this.spriteFactory = new SpriteFactory(this.sceneData, engine.spriteCollection, this);
+		this.audio = {};
 	}
 
 	setProperty(key, value) {
@@ -23,6 +25,7 @@ class GameBase {
 		for (let key in this.properties) {
 			this.onChange(key, this.properties[key]);
 		}
+		this.spriteFactory.postCreate();
 	}
 
 	get sceneName() {

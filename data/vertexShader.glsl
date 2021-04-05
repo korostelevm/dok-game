@@ -8,7 +8,6 @@ const int ANIMATION_UPDATE_INDEX = 0;
 attribute vec2 vertexPosition;
 // attribute mat4 colors;
 attribute mat4 matrix;
-// attribute float isPerspective;
 // attribute vec2 position;
 attribute float textureIndex;
 attribute mat4 textureCoordinates;
@@ -16,8 +15,9 @@ attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
 attribute vec4 updateTime;
 
+uniform float isPerspective;
 uniform float time;
-// uniform mat4 perspective;
+uniform mat4 perspective;
 uniform mat4 ortho;
 uniform mat4 view;
 
@@ -64,5 +64,5 @@ void main() {
 	v_index = textureIndex;
 	v_opacity = textureInfo.z / 1000.;
 
-	gl_Position = ortho * view * matrix * vec4(vertexPosition.xy, 0, 1.);
+	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * view * matrix * vec4(vertexPosition.xy, 0., 1.);
 }

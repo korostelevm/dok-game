@@ -12,4 +12,7 @@ class SpriteFactory {
 		return this.spriteCollection.create(data, attributes, properties);
 	}
 
+	postCreate() {
+		this.spriteCollection.postCreate();
+	}
 }

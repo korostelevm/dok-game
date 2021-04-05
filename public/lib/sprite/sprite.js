@@ -12,6 +12,7 @@ class Sprite {
 		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;
+		this.z = data.z || 0;
 		this.size = data.size || [0, 0];
 		this.hotspot = data.hotspot || [0, 0];
 		this.rotation = data.rotation || 0;

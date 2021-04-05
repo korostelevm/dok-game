@@ -4,7 +4,7 @@
 		"size": [800, 400]
 	},
 	"webgl": {
-		"antialias": true,
+		"antialias": false,
 		"preserveDrawingBuffer": false,
 		"alpha": false,
 		"depth": true,
@@ -15,5 +15,6 @@
 	"newgrounds": {
 		"key": "",
 		"secret": ""
-	}
+	},
+	"maxInstancesCount": 10000
 }

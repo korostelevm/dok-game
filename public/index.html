@@ -96,7 +96,7 @@
 				height: 512px;
 				background-color: #000000;
 				opacity: 0;
-  				transition-property: opacity, background-color;
+  				transition-property: opacity, background-color, width, height;
   				transition-duration: .2s;
   			}
 
@@ -324,8 +324,15 @@
 				border-radius: 8pt;
 				cursor: pointer;
 			}
+			.scene-button.first {
+				border: 2px solid yellow;
+			}
 			.scene-button:hover {
 				background-color: purple;
+				color: white;
+			}
+			.scene-button.selected {
+				background-color: darkblue;
 				color: white;
 			}
 		</style>
@@ -374,11 +381,13 @@
 		<script type="text/javascript" src="games/the-impossible-room/entrance.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/selection.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/game-title.js"></script>
-		<script type="text/javascript" src="games/the-impossible-room/index.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/menu.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/restroom.js"></script>
-		<script type="text/javascript" src="game-scripter.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/lobby.js"></script>
+		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
+		<script type="text/javascript" src="game-starter.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono.js"></script>
+		<script type="text/javascript" src="lib/utils/string.js"></script>
 		<script type="text/javascript" src="lib/math/gl-matrix.js"></script>
 		<script type="text/javascript" src="lib/opengl/buffer-renderer.js"></script>
 		<script type="text/javascript" src="lib/opengl/shader.js"></script>
@@ -393,6 +402,8 @@
 		<script type="text/javascript" src="lib/engine.js"></script>
 		<script type="text/javascript" src="lib/ui/keyboard-handler.js"></script>
 		<script type="text/javascript" src="lib/ui/focus-fixer.js"></script>
+		<script type="text/javascript" src="lib/ui/scene-tab.js"></script>
+		<script type="text/javascript" src="lib/ui/debug-view.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
 		<script>

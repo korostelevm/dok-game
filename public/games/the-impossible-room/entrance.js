@@ -1,6 +1,6 @@
 class Entrance extends GameCore {
-	async init(engine) {
-		await super.init(engine);
+	async init(engine, gameName) {
+		await super.init(engine, gameName);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;
@@ -112,7 +112,7 @@ class Entrance extends GameCore {
 			...this.inventoryDetails,
 			"game title": {
 				actions: [
-					{ name: "read", message: () => `${document.getElementById("title").innerText}` },
+					{ name: "read", message: () => `${document.getElementById("title").innerText}`, lookup: 500, },
 				],
 			},
 		};
@@ -129,11 +129,16 @@ class Entrance extends GameCore {
 			defaultCommand: (item, target) => target.properties.unlocked ? `use ${item.name} on ${target.name}` : `unlock ${target.name} with ${item.name}`,
 			actions: [
 				{ name: "look", condition: entrance => !entrance.properties.opened,
-					message: () => `There's a door, that leads to ${this.title.innerText}` },
-				{ name: "open", condition: entrance => !entrance.properties.unlocked, message: `It's locked.` },
+					message: () => `There's a door, that leads to ${this.title.innerText}`,
+					 lookup: 500,
+				},
+				{ name: "open", condition: entrance => !entrance.properties.unlocked, message: `It's locked.`,
+					 lookup: 500,
+				},
 				{ name: "unlock", condition: entrance => this.selectedItem === "key" && !entrance.properties.unlocked,
 					message: `Yeah! ${I} unlocked the door.`,
-					item: "key",
+					lookup: 500,
+					item: ["key", "key_turd"],
 					command: (item, target) => `unlock ${target.name} with ${item.name}.`,
 					action: entrance => {
 						this.audio.dud.play();
@@ -147,7 +152,8 @@ class Entrance extends GameCore {
 				},
 				{ name: "lock", condition: entrance => this.selectedItem === "key" && entrance.properties.unlocked,
 					message: `${I} locked the door.`,
-					item: "key",
+					lookup: 500,
+					item: ["key", "key_turd"],
 					command: (item, target) => `lock ${target.name} with ${item.name}.`,
 					action: entrance => {
 						this.audio.dud.play();
@@ -161,12 +167,14 @@ class Entrance extends GameCore {
 					},
 				},
 				{ name: "close", condition: entrance => entrance.properties.unlocked && entrance.properties.opened,
+					lookup: 500,
 					action: entrance => {
 						this.audio.hit.play();
 						entrance.setProperty("opened", false);
 					},
 				},
 				{ name: "open", condition: entrance => entrance.properties.unlocked && !entrance.properties.opened,
+					lookup: 500,
 					action: entrance => {
 						this.audio.door.play();
 						entrance.changeAnimation(this.atlas.entrance_open, engine.lastTime);
@@ -175,7 +183,7 @@ class Entrance extends GameCore {
 				{ name: "enter", condition: entrance => entrance.properties.opened && this.title.innerText.toLowerCase().contains("impossible"), message: () => ` ${I} don't want to go in, it's ${this.title.innerText}! ${I} might never escape!` },
 				{ name: "enter", condition: entrance => entrance.properties.opened && !this.title.innerText.toLowerCase().contains("impossible"), message: () => `I guess this is not the impossible room. This is ${this.title.innerText}. Okay, ${I} shall go in.`,
 					action: entrance => {
-						this.monkor.paused = engine.lastTime;
+						this.monkor.setProperty("paused", engine.lastTime);
 						this.showBubble(entrance.pendingMessage, () => {
 							setTimeout(() => {
 								this.showBubble(null);
@@ -212,7 +220,9 @@ class Entrance extends GameCore {
 			size: [800, 400],
 		}, {
 			actions: [
-				{ name: "read", message: `I read: "This is the entrance of the impossible room. It's impossible to get in, and impossible to get out."` },
+				{ name: "read", message: `I read: "This is the entrance of the impossible room. It's impossible to get in, and impossible to get out."`,
+					lookup: 1000,
+				},
 			],
 		});
 
@@ -222,7 +232,9 @@ class Entrance extends GameCore {
 			size: [800, 400],
 		}, {
 			actions: [
-				{ name: "read", message: `It says: "Smoking will kill you". Hum... I don't believe so.` },
+				{ name: "read", message: `It says: "Smoking will kill you". Hum... I don't believe so.`,
+					lookup: 1000,
+				},
 			],
 		});
 
@@ -328,10 +340,16 @@ class Entrance extends GameCore {
 		engine.chrono.tick("done entrance initialization");		
 	}
 
+	getWalkArea() {
+		return this.ground.getCollisionBox(engine.lastTime);		
+	}
+
 	onExit(engine) {
 		document.getElementById("im").style.display = "none";
 		this.setProperty("title", document.getElementById("im").innerText);
-		this.title.style.opacity = 0;
+		if (this.title) {
+			this.title.style.opacity = 0;
+		}
 		super.onExit(engine);
 	}
 

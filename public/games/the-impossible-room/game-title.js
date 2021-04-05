@@ -1,6 +1,6 @@
 class GameTitle extends GameBase {
-	async init(engine) {
-		await super.init(engine);
+	async init(engine, gameName) {
+		await super.init(engine, gameName);
 
 		const { config } = engine;
 
@@ -50,19 +50,21 @@ class GameTitle extends GameBase {
 		const timeDiff = (time - this.fadeStart);
 		const log = Math.log(timeDiff) / 10;
 
+		const totalTime = 10000;
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 		const width = 700 * log;
 		const height = 80 * log;
-		const opacityOut = Math.max(0, (12000 - timeDiff) / 2000);
+		const opacityOut = Math.max(0, (totalTime - timeDiff) / 2000);
 		const opacity = Math.min(opacityOut, Math.min(1, timeDiff / 5000));
 		const x = viewportWidth / 2 - width / 2;
 		const y = viewportHeight / 2 - height / 2;
 		this.title.changePosition(x, y, time);
 		this.title.changeSize(width, height, time);
 		this.title.changeOpacity(opacity, time);
-		if (timeDiff > 12000 && !this.changingScene) {
+		if (timeDiff > totalTime && !this.changingScene) {
 			this.changingScene = true;
 			this.engine.setGame(new Menu());
 		}
 	}
 }
+GameTitle.start = true;
