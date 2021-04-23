@@ -22,6 +22,7 @@ const globalFiles=[
 			"invitation-check-collision.png",
 			"invitation-check.png",
 			"invitation.png",
+			"lobby-collision.png",
 			"lobby.png",
 			"mat-collision.png",
 			"mat.png",
@@ -34,6 +35,7 @@ const globalFiles=[
 			"monkor.png",
 			"mouse.png",
 			"next-button.png",
+			"nuna-shit.png",
 			"nuna.png",
 			"piano.png",
 			"pipe-collision.png",
@@ -47,6 +49,7 @@ const globalFiles=[
 			"toilet-exit-collision.png",
 			"toilet-room-ground.png",
 			"toilet-room.png",
+			"twin-shit.png",
 			"twin.png",
 			"water-faucet-collision.png"
 		]

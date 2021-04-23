@@ -38,7 +38,7 @@ class Sound {
 		}
 	}
 
-	play(volume) {
+	play(volume, callback) {
 		const audio = this.audios.pop();
 		audio.volume = volume ?? this.volume;
 		audio.play();

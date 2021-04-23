@@ -159,6 +159,9 @@ class GameCore extends GameBase {
 				}),
 		};
 
+		const I = gender === "T" ? "We" : "I";
+		const me = gender === "T" ? "us" : "me";
+
 
 		//	inventory		
 		this.inventory = this.data.inventory ?? (this.data.inventory = []);
@@ -177,7 +180,7 @@ class GameCore extends GameBase {
 				actions: [
 					{ name: "look", message: () => "This is the entrance key. It has a distinct smell to it.",
 					},
-					{ name: "eat", condition: () => !this.entrance, message: () => "I swallowed the key. Tasted... ergh... very foul!...", 
+					{ name: "eat", condition: () => !this.entrance, message: () => `${I} swallowed the key. Tasted... ergh... very foul!...`, 
 						default: true,
 						action: key => {
 							this.removeFromInventory("key_turd");
@@ -192,9 +195,9 @@ class GameCore extends GameBase {
 			key: {
 				defaultCommand: (item, target) => `insert ${item.name} into ${target.name}.`,
 				actions: [
-					{ name: "look", message: () => "I picked up some keys that didn't belong to me from under a mat.",
+					{ name: "look", message: () => `${I} picked up some keys that didn't belong to ${me} from under a mat.`,
 					},
-					{ name: "eat", condition: () => this.entrance && !this.entrance.properties.unlocked, message: () => "I swallowed the key. Now, this game is truly IMPOSSIBLE!", 
+					{ name: "eat", condition: () => this.entrance && !this.entrance.properties.unlocked, message: () => `${I} swallowed the key. Now, this game is truly IMPOSSIBLE!`, 
 						default: true,
 						action: key => {
 							this.removeFromInventory("key");
@@ -205,7 +208,7 @@ class GameCore extends GameBase {
 							this.data.ateKey = true;
 						},
 					},
-					{ name: "eat", condition: () => !this.entrance || this.entrance.properties.unlocked, message: () => "I swallowed the key. Tasted like metal.", 
+					{ name: "eat", condition: () => !this.entrance || this.entrance.properties.unlocked, message: () => `${I} swallowed the key. Tasted like metal.`, 
 						default: true,
 						action: key => {
 							this.removeFromInventory("key");
@@ -219,8 +222,8 @@ class GameCore extends GameBase {
 			},
 			cigarette: {
 				actions: [
-					{ name: "look", message: () => "It's a cigarette butt. I'm not a regular smoker, but I don't think it will kill me." },
-					{ name: "smoke", message: () => "Let me take a puff of that cigarette.",
+					{ name: "look", message: () => `It's a cigarette butt. I'm not a regular smoker, but I don't think it will kill ${me}.` },
+					{ name: "smoke", message: () => `Let ${me} take a puff of that cigarette.`,
 						default: true,
 						action: item => {
 							this.showBubble(item.pendingMessage, () => {
@@ -266,7 +269,10 @@ class GameCore extends GameBase {
 					this.setControlVisibility(!paused);
 				},
 			},
-			goal: { x:this.sceneData.monkorGoal.x, y:this.sceneData.monkorGoal.y },
+			goal: {
+				x:this.sceneData.monkorGoal.x ?? this.sceneData.monkor.x,
+				y:this.sceneData.monkorGoal.y ?? this.sceneData.monkor.y,
+			},
 		});
 
 		this.mouse = this.spriteFactory.create({
@@ -851,6 +857,11 @@ class GameCore extends GameBase {
 		if (monkor.goingup) {
 			const elapsed = Math.max(0, time - monkor.goingup - 500);
 			if (elapsed > 0) {
+				if (!monkor.walkingup) {
+					monkor.walkingup = time;
+					this.audio.hit.loop(.2);
+				}
+
 				monkor.changeAnimation(this.atlas.monkor_back, time);
 				monkor.changePosition(400, 350 - 30 * (elapsed / 2000), time);
 				monkor.changeOpacity(Math.max(0, 1 - (elapsed / 2000)), time);
@@ -923,6 +934,9 @@ class GameCore extends GameBase {
 		this.sceneData.monkor.y = monkor.y;
 		if (monkor.x > 850 && this.nextLevelRight) {
 			this.nextLevelRight();
+		}
+		if (monkor.x < -50 && this.nextLevelLeft) {
+			this.nextLevelLeft();
 		}
 	}
 
@@ -1028,8 +1042,8 @@ class GameCore extends GameBase {
 		this.inventory.forEach(item => {
 			const k = div.appendChild(document.createElement("div"));
 			k.classList.add("inventory-item");
-			k.innerText = this.inventoryIcons[item] + " " + item;
 			const itemDetails = this.inventoryDetails[item];
+			k.innerText = this.inventoryIcons[item] + " " + itemDetails.name;
 			k.addEventListener("mouseover", e => {
 				this.checkItem(itemDetails);
 			});

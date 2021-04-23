@@ -204,7 +204,9 @@ class Engine {
 		await this.game.postInit();
 		this.game.ready = true;
 		this.chrono.tick("game init done");
-		this.sceneTab.setScene(game);
+		if (this.sceneTab) {
+			this.sceneTab.setScene(game);
+		}
 	}
 
 	handleMouse(e) {

@@ -14,6 +14,16 @@ class Restroom extends GameCore {
 			flush: new Sound("audio/diving.mp3", 1),
 		};
 
+		const genderToShitUrl = {
+			M: "assets/monkor-shit.png",
+			W: "assets/nuna-shit.png",
+			T: "assets/twin-shit.png",
+		};
+		const I = gender === "T" ? "We" : "I";
+		const my = gender === "T" ? "our" : "my";
+		const My = gender === "T" ? "Our" : "My";
+
+
 		/* Load image */
 		this.atlas = {
 			...this.atlas,
@@ -62,39 +72,39 @@ class Restroom extends GameCore {
 				}),
 			monkor_shit: await engine.addTexture(
 				{
-					url: "assets/monkor-shit.png",
+					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 				}),
 			monkor_shit_push: await engine.addTexture(
 				{
-					url: "assets/monkor-shit.png",
+					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 					frameRate: 2,
 					range: [0, 1],
 				}),
 			monkor_shit_pick_paper: await engine.addTexture(
 				{
-					url: "assets/monkor-shit.png",
+					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 					range: [2],
 				}),
 			monkor_shit_wipe: await engine.addTexture(
 				{
-					url: "assets/monkor-shit.png",
+					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 					frameRate: 8,
 					range: [3, 4],
 				}),
 			monkor_shit_talk: await engine.addTexture(
 				{
-					url: "assets/monkor-shit.png",
+					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 					frameRate: 8,
 					range: [5, 8],
 				}),
 			monkor_shit_talk_pause: await engine.addTexture(
 				{
-					url: "assets/monkor-shit.png",
+					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 					frameRate: 8,
 					range: [5],
@@ -184,7 +194,7 @@ class Restroom extends GameCore {
 				{ name: "look", condition: door => door.properties.opened && !this.monkor_shit.properties.sit && this.monkor_shit.properties.has_shit === "turd", message: "There's a big turd in the toilet",
 					lookup: 500,
 				},
-				{ name: "look", condition: door => door.properties.opened && !this.monkor_shit.properties.sit && this.monkor_shit.properties.has_shit === "key", message: "I see a key. I must have pooped it out of my body.",
+				{ name: "look", condition: door => door.properties.opened && !this.monkor_shit.properties.sit && this.monkor_shit.properties.has_shit === "key", message: `I see a key. ${I} must have pooped it out of ${my} body.`,
 					lookup: 500,
 					action: door => {
 						const seat = this.monkor_shit;
@@ -226,7 +236,7 @@ class Restroom extends GameCore {
 			size: [800, 400],
 		});
 		this.water_faucet = this.spriteFactory.create({
-			name: "Water Faucet",
+			name: "Water Sink",
 			anim: this.atlas.water_faucet,
 			size: [800, 400],
 		}, {
@@ -235,11 +245,15 @@ class Restroom extends GameCore {
 					action: door => {
 						const seat = this.monkor_shit;
 						seat.setProperty("stinky_hand", null);
-						this.audio.flush.play();						
+						this.audio.flush.play();
+						setTimeout(() => {
+							this.showBubble(`${My} hands are clean.`, () => {
+							});
+						}, 1000);
 					},
 					lookup: 1000,
 				},
-
+				{ name: "look in the mirror", message: `Good thing ${I} shaved this morning.` },
 			],
 		});
 		this.exit = this.spriteFactory.create({
@@ -306,7 +320,7 @@ class Restroom extends GameCore {
 					if (seat.startWipe && engine.lastTime - seat.startWipe > 2000) {
 						this.monkor_shit.setProperty("sit", false);
 						seat.startWipe = 0;
-						this.showBubble(`I should wash my hands.`, () => {
+						this.showBubble(`${I} should wash ${my} hands.`, () => {
 						});
 
 					}
