@@ -5,11 +5,15 @@ class SpriteFactory {
 		this.index = 0;
 	}
 
-	create(data, attributes) {
+	create(data, attributes, initCallback) {
 		const id = data.name || this.index;
 		const properties = this.spriteData[id] || (this.spriteData[id] = {});
 		this.index++;
-		return this.spriteCollection.create(data, attributes, properties);
+		const sprite = this.spriteCollection.create(data, attributes, properties);
+		if (initCallback) {
+			initCallback(sprite);
+		}
+		return sprite;
 	}
 
 	postCreate() {

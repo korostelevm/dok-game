@@ -12,6 +12,10 @@ class Engine {
 		this.perfTimers = new Array(20).map(() => 0);
 
 		this.init(config);
+
+		if (this.debug) {
+			document.getElementById("info-box").style.display = "";
+		}
 	}
 
 	setupEmojiCursors() {
@@ -28,9 +32,9 @@ class Engine {
 	addEmojiRule(id, emoji) {
 		if (!this.iconEmojis[id]) {
 			this.iconEmojis[id] = true;
-			this.sheet.insertRule(`#overlay.cursor-${id} { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:white;fill:white;font-size:18px;'><circle cx='50%' cy='50%' r='10'/><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
+			this.sheet.insertRule(`#overlay.cursor-${id} { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:white;fill:white;font-size:18px;'><circle cx='50%' cy='50%' r='10'/><line x1='16' y1='0' x2='8' y2='10' style='stroke:rgb(255,255,255);stroke-width:1' /><line x1='16' y1='0' x2='24' y2='10' style='stroke:rgb(255,255,255);stroke-width:1' /><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
 				this.sheet.rules.length);
-			this.sheet.insertRule(`#overlay.cursor-${id}.highlight { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:yellow;fill:yellow;font-size:18px;stroke-width:3'><circle cx='50%' cy='50%' r='10'/><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
+			this.sheet.insertRule(`#overlay.cursor-${id}.highlight { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:yellow;fill:yellow;font-size:18px;stroke-width:3'><circle cx='50%' cy='50%' r='10'/><line x1='16' y1='0' x2='8' y2='10' style='stroke:rgb(255,255,0);stroke-width:3' /><line x1='16' y1='0' x2='24' y2='10' style='stroke:rgb(255,255,0);stroke-width:3' /><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
 				this.sheet.rules.length);
 		}
 	}
@@ -227,7 +231,7 @@ class Engine {
 		});
 		document.addEventListener("mouseup", e => {
 			this.handleMouse(e);
-		});		
+		});
 	}
 
 	resetScene() {
@@ -336,7 +340,10 @@ class Engine {
 			const previousFrame = sprite.frame;
 			sprite.frame = frame;
 			if (sprite.onFrame) {
-				const f = sprite.onFrame[frame];
+				let f = sprite.onFrame[frame];
+				if (typeof f === "number") {
+					f = sprite.onFrame[f];
+				}
 				if (f) {
 					f(sprite, previousFrame);
 				}
@@ -360,7 +367,7 @@ class Engine {
 	}
 
 	getUterrance(msg, voiceName) {
-		if (!window.speechSynthesis) {
+		if (!window.speechSynthesis || this.muteVoice) {
 			return null;
 		}
 		if (!this.voices || !this.voices.length) {
@@ -461,7 +468,10 @@ class Engine {
 			this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
 			const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];
 			const timeCalc = 1000 / timeDiff * this.perfTimers.length;
-			document.getElementById("info-box").innerText = `${timeCalc.toFixed(2)}fps`;
+			const newFPS = `${timeCalc.toFixed(1)}fps`
+			if (document.getElementById("info-box").value !== newFPS) {
+				document.getElementById("info-box").value = newFPS;
+			}
 		}
 	}
 }

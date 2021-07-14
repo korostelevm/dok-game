@@ -55,6 +55,10 @@ class Sprite {
 
 	getAnimationTime() {
 		const { anim, updated } = this;
+		if (!anim) {
+			console.error("Anim not available for " + this.name);
+			return 0;
+		}
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameDuration = 1000 / anim.frameRate;
 		return updated.animation - frameOffset * frameDuration;
@@ -62,6 +66,10 @@ class Sprite {
 
 	getAnimationFrame(time) {
 		const { anim, updated } = this;
+		if (!anim) {
+			console.error("Anim not available for " + this.name);
+			return 0;
+		}
 		const frameDuration = 1000 / anim.frameRate;
 		const animationElapsed = time - updated.animation;
 		const framesElapsed = Math.floor(animationElapsed / frameDuration);
@@ -142,13 +150,14 @@ class Sprite {
 		if (!rect) {
 			return null;
 		}
+		const collisionPadding = this.anim.collisionPadding ?? 0;
 		const [ width, height ] = this.size;
 		const left = this.x - this.hotspot[0];
 		const top = this.y - this.hotspot[1];
-		this.collisionBox.left = left + rect.left * width;
-		this.collisionBox.right = left + rect.right * width;
-		this.collisionBox.top = top + rect.top * height;
-		this.collisionBox.bottom = top + rect.bottom * height;
+		this.collisionBox.left = left + rect.left * width - collisionPadding;
+		this.collisionBox.right = left + rect.right * width + collisionPadding;
+		this.collisionBox.top = top + rect.top * height - collisionPadding;
+		this.collisionBox.bottom = top + rect.bottom * height + collisionPadding;
 		return this.collisionBox;
 	}
 }

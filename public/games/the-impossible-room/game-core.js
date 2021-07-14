@@ -3,11 +3,16 @@ class GameCore extends GameBase {
 		await super.init(engine, gameName);
 		const { gl, config } = this.engine;
 
-		const gender = this.data.gender || (this.data.gender = "M");
+		const { gender } = this.data;
 		const genderToUrl = {
 			M: "assets/monkor.png",
 			W: "assets/nuna.png",
 			T: "assets/twin.png",
+		};
+		const genderToShakeUrl = {
+			M: "assets/monkor-shake.png",
+			W: "assets/nuna-shake.png",
+			T: "assets/twin-shake.png",			
 		};
 
 		const url = genderToUrl[gender];
@@ -31,6 +36,7 @@ class GameCore extends GameBase {
 			hit: new Sound("audio/hit.mp3", .5),
 			door: new Sound("audio/door.mp3", .5),
 			pickup: new Sound("audio/pickup.mp3", .3),
+			mouse: new Sound("audio/animal-cry.mp3", 1),
 		};
 
 
@@ -71,7 +77,26 @@ class GameCore extends GameBase {
 				{
 					...spritesheet,
 					frameRate:10,
-					range:[9, 12],
+					range: gender === 'T' ? [13, 16] : [9, 12],
+				}),
+			monkor_stand_left: await engine.addTexture(
+				{
+					...spritesheet,
+					frameRate:10,
+					range: gender === 'T' ? [14] : [10],
+					direction: gender === 'T' ? 1 : -1,
+				}),
+			monkor_stand_right: await engine.addTexture(
+				{
+					...spritesheet,
+					frameRate:10,
+					range: gender === 'T' ? [14] : [10],
+				}),
+			monkor_chew: await engine.addTexture(
+				{
+					...spritesheet,
+					frameRate:10,
+					range: gender==="T" ? [17, 18] : [13, 14],
 				}),
 			monkor_talk: await engine.addTexture(
 				{
@@ -157,6 +182,185 @@ class GameCore extends GameBase {
 					frameRate: 20,
 					range:[1, 2],
 				}),
+			monkor_shake_left: await engine.addTexture({
+					url: genderToShakeUrl[gender],
+					collision_url: genderToShakeUrl[gender],
+					cols: 1, rows: 2,
+					direction: -1,
+					range: [0,1],
+					frameRate: 5,
+				}),
+			monkor_shake_right: await engine.addTexture({
+					url: genderToShakeUrl[gender],
+					collision_url: genderToShakeUrl[gender],
+					cols: 1, rows: 2,
+					range: [0,1],
+					frameRate: 5,
+				}),
+			backwall: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .15,
+					texture_blend: "source-atop",
+					cols:4,rows:7,
+					range:[0],
+				}),
+			backwallforeground: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .15,
+					texture_blend: "source-atop",
+					cols:4,rows:7,
+					range:[23],
+				}),			
+			side_doors: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					cols:4,rows:7,
+					range:[1],
+				}),	
+			left_door: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					cols:4,rows:7,
+					range:[14],
+				}),
+			left_door_opened: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					cols:4,rows:7,
+					range:[15],
+				}),
+			right_door: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					cols:4,rows:7,
+					range:[12],
+				}),
+			right_door_opened: await engine.addTexture(
+				{
+					url: "assets/lobby.png",
+					collision_url: "assets/lobby-collision.png",
+					cols:4,rows:7,
+					range:[13],
+				}),
+			butler: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [0],
+				}),
+			butler_still_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [17],
+					frameRate: 5,
+				}),
+			butler_walk_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [5, 8],
+					frameRate: 5,
+				}),
+			butler_talk_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [17,20],
+					frameRate: 5,
+				}),
+			butler_shake_hands_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [21,22],
+					frameRate: 5,
+				}),
+			butler_shake_hands_talk_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [22,25],
+					frameRate: 5,
+				}),
+			butler_still_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [17],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_walk_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [5, 8],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_talk_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [17,20],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_shake_hands_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [21,22],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_shake_hands_talk_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [22,25],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_angry_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [41],
+					direction: -1,
+				}),
+			butler_angry_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [41],
+				}),
+			butler_talk_angry_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [41,44],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_talk_angry_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 9, rows: 5,
+					range: [41,44],
+					frameRate: 5,
+				}),
 		};
 
 		const I = gender === "T" ? "We" : "I";
@@ -235,6 +439,30 @@ class GameCore extends GameBase {
 					},
 				],
 			},			
+			gum: {
+				actions: [
+					{ name: "look", message: () => this.monkor.properties.chewed ? `It's a chewing gum, half masticated by me and a random person.` : `It's a chewing gum. I wonder if it still has some flavor.` },
+					{ name: "chew", message: () => `Let ${me} chew that gum.`,
+						default: true,
+						action: item => {
+							this.removeFromInventory("gum");
+							this.showBubble(item.pendingMessage, () => {
+								this.audio.eat.play();
+								this.monkor.setProperty("paused", engine.lastTime);
+								this.monkor.chewing = engine.lastTime;
+								this.monkor.setProperty("chewed", engine.lastTime);
+								setTimeout(() => {
+									this.addToInventory("gum");
+									this.monkor.setProperty("paused", null);
+									delete this.monkor.chewing;
+									this.showBubble("It had no taste.");
+								}, 3000);
+							});
+							item.pendingMessage = null;
+						},
+					},
+				],
+			},			
 		};
 
 		this.defaultCommand = (item, target) => `use ${item.name} on ${target.name}`;
@@ -250,7 +478,10 @@ class GameCore extends GameBase {
 			key_turd: "💩",
 			cigarette: "🚬",
 			note: "📜",
+			gum: "🧠",
 		};
+
+		this.showVoices();
 	}
 
 	addMonkor() {
@@ -301,10 +532,11 @@ class GameCore extends GameBase {
 		this.sceneData.monkorGoal = this.sceneData.monkorGoal || {... this.sceneData.monkor};
 		this.addMonkor();
 
-		for (let name in this.inventoryDetails) {
-			if (!this.inventoryDetails[name].name) {
-				this.inventoryDetails[name].name = name;
+		for (let id in this.inventoryDetails) {
+			if (!this.inventoryDetails[id].name) {
+				this.inventoryDetails[id].name = id;
 			}
+			this.inventoryDetails[id].id = id;
 		}
 
 		for (let id in this.inventoryIcons) {
@@ -340,28 +572,21 @@ class GameCore extends GameBase {
 			this.setAudio(audio, audio.paused, .5);
 		});
 
-		//	Allow audio
-		// let f;
-		// keyboardHandler.addKeyDownListener(null, f = e => {
-		// 	//console.log(e.key);
-		// 	const audio = document.getElementById("audio");
-		// 	this.setAudio(audio, false, 0, true);
-		// 	keyboardHandler.removeListener(f);
-		// 	document.removeListener("mousedown", f2);
-		// });
+		engine.keyboardHandler.addKeyUpListener("v", e => {
+			this.setVoice(!engine.muteVoice);
+		});
 
-		// let f2;
-		// document.addEventListener("mousedown", f2 = e => {
-		// 	//console.log(e.key);
-		// 	const audio = document.getElementById("audio");
-		// 	this.setAudio(audio, false, 0, true);
-		// 	keyboardHandler.removeListener(f);
-		// 	document.removeListener("mousedown", f2);
-		// });
+		document.getElementById("mute-toggle").addEventListener("click", () => {
+			this.setAudio(audio, audio.paused, .5);			
+		});
 
-		// keyboardHandler.addKeyDownListener("t", e => {
-		// 	this.test(this.lastTime);
-		// });
+		document.getElementById("voice-mute-toggle").addEventListener("click", () => {
+			this.setVoice(!engine.muteVoice);
+		});
+
+		document.getElementById("mouse").addEventListener("click", () => {
+			this.audio.mouse.play();
+		});
 
 		engine.keyboardHandler.addKeyDownListener("r", e => {
 			const msg = "Actually I lied. Pressing R does nothing.";
@@ -464,11 +689,17 @@ class GameCore extends GameBase {
 			return;
 		}
 		if (e.type === "click") {
+			if (e.target.classList.contains("chat-selection")
+				&& !e.target.classList.contains("disabled")
+				&& !e.target.classList.contains("selected")) {
+				this.selectDialog(e.target.id);
+			}
 			return;
 		}
 		if (this.selectedItem && this.lastHovering && this.lastHovering.self && e.type !== "mousemove") {
 			if (e.type === "mouseup") {
 				const itemDetails = this.inventoryDetails[this.selectedItem];
+
 				const action = itemDetails.actions.filter(action => {
 					if (action.condition && !action.condition(itemDetails)) {
 						return false;
@@ -482,6 +713,11 @@ class GameCore extends GameBase {
 			}
 			return;
 		}
+
+		if (this.dialog) {
+			return;
+		}
+
 		const { engine } = this;
 		const { canvas, lastTime, overlay } = engine;
 		const { pageX, pageY, buttons } = e;
@@ -536,7 +772,7 @@ class GameCore extends GameBase {
 			this.monkor.touched = hovering;
 			this.lastMouseDown = lastTime;
 			this.showActions(null);
-			if (!this.finishedSpeech()) {
+			if (!this.finishedSpeech(this.monkor)) {
 				this.speechBubble.style.opacity = 0;
 			}
 			if (this.selectedItem && hovering) {
@@ -626,9 +862,19 @@ class GameCore extends GameBase {
 			this.showingTarget = target;
 			this.showingHovering = hovering;
 			subjecActions.style.display = this.showingTarget && this.showingTarget.actions ? "" : "none";
+			
 			if (this.showingTarget) {
 				subjecActions.innerText = "";
-				if (this.monkor.pendingAction && hovering) {
+				if (this.dialog) {
+					this.addAction(target, {
+						name: "give", action: item => {
+							this.showBubble(`Would you like this ${item.name}?`, () => {
+								const dialogIndex = this.getDialogIndexFromTopic(item.name);
+								this.continueDialog(null, dialogIndex || "unwanted-item");
+							});
+						},
+					}, false);
+				} else if (this.monkor.pendingAction && hovering) {
 					const command = this.monkor.pendingAction.command || hovering.defaultCommand || target.defaultCommand || this.defaultCommand;
 					this.addAction(hovering, this.monkor.pendingAction, true, command(target, hovering));
 				} else {
@@ -663,7 +909,8 @@ class GameCore extends GameBase {
 				return false;
 			}
 			const actionItems = Array.isArray(action.item) ? action.item : [action.item];
-			return actionItems.contains(item.name);
+			console.log(actionItems, item.name);
+			return actionItems.contains(item.id);
 		})[0] || this.itemActionOnTarget(item, target);
 	}
 
@@ -713,26 +960,27 @@ class GameCore extends GameBase {
 		this.showSubject(null);
 	}
 
-	showBubble(msgOrNull, callback) {
+	showBubble(msgOrNull, callback, voiceName, sprite, onStart, secondsAfterEnd) {
 		const { engine } = this;
 		const { lastTime, canvas } = engine;
 		const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
 		const msg = msgOrNull ? msgOrNull.trim() : null;
-		if (this.monkor) {
-			this.monkor.speechStarted = 0;
-			this.monkor.speechPause = 0;
-			this.monkor.currentSpeech = "";
-			this.monkor.lastCharacter = 0;
-			this.monkor.characterIndex = 0;
-			this.monkor.finishedSpeech = 0;
-			this.monkor.speaker = Math.random() < .5 ? 1 : 2;
+		sprite = sprite || this.monkor;
+		if (sprite) {
+			sprite.speechStarted = 0;
+			sprite.speechPause = 0;
+			sprite.currentSpeech = "";
+			sprite.lastCharacter = 0;
+			sprite.characterIndex = 0;
+			sprite.finishedSpeech = 0;
+			sprite.speaker = Math.random() < .5 ? 1 : 2;
 		}
 		if (msg) {
-			if (!this.monkor.scared) {
+			if (sprite && !sprite.scared) {
 				speechBubble.style.opacity = 1;
 
 			}
-			this.updateBubble(speechBubble);
+			this.updateBubble(speechBubble, sprite);
 
 			const { gender } = this.data;
 			const genderToVoice = {
@@ -740,88 +988,126 @@ class GameCore extends GameBase {
 				W: "Karen",
 				T: "Alex",
 			};
-			const voiceName = genderToVoice[gender];
+			voiceName = voiceName || genderToVoice[gender];
+			const ignoreSpeechBoundary = voiceName === "Thomas";
 
-			const utterance = engine.getUterrance(msg, voiceName);
-			if (utterance.voice.name === voiceName) {
-				this.monkor.speechPause++;
-			} else if (utterance.voice.name.startsWith("Microsoft")) {
-				this.monkor.speechPause+=2;
-			}
-
-			if (utterance) {
-				window.speechSynthesis.cancel();
-				window.speechSynthesis.speak(utterance);
-				utterance.onstart = () => {
-					this.monkor.speechStarted = lastTime;
-					this.monkor.onEndSpeech = callback;
-				};
-				utterance.onboundary = e => {
-					if (!this.monkor.speechHasBoundary) {
-						this.monkor.speechHasBoundary = true;
-					}
-					this.unblockText();
-				};
-			} else {
-				this.monkor.speechStarted = lastTime;
-				this.monkor.onEndSpeech = callback;
-				this.monkor.noVoice = true;
-			}
+			this.startSpeechSynthesis(msg, voiceName, callback, sprite, onStart, ignoreSpeechBoundary, secondsAfterEnd);
 			speechBubble.innerText = "";
 		} else {
 			speechBubble.style.opacity = 0;
 		}
-		if (this.monkor) {
-			this.monkor.speech = msg;
+		if (sprite) {
+			sprite.speech = msg;
 		}
 	}
 
-	unblockText() {
-		this.monkor.speechPause--;
+	showVoices() {
+		const voices = window.speechSynthesis.getVoices().map(voice=>voice.name);
+		console.log(voices);
 	}
 
-	updateBubble(speechBubble) {
+	startSpeechSynthesis(msg, voiceName, callback, sprite, onStart, ignoreSpeechBoundary, secondsAfterEnd) {
+		const { engine } = this;
+		const { lastTime } = engine;
+		const utterance = engine.getUterrance(msg, voiceName);
+		sprite = sprite || this.monkor;
+		if (ignoreSpeechBoundary) {
+			console.log("ignore speech boundary.");
+		} else if (utterance && utterance.voice.name === voiceName) {
+			sprite.speechPause++;
+		} else if (utterance && utterance.voice.name.startsWith("Microsoft")) {
+			sprite.speechPause+=2;
+		}
+
+		const calllbackCaller = callback ? subject => {
+			setTimeout(subject => {
+				callback(subject);
+			}, (secondsAfterEnd || 0) * 1000, subject);
+		} : null;
+
+		if (utterance) {
+			window.speechSynthesis.lang = 'en-US';
+			window.speechSynthesis.cancel();
+			window.speechSynthesis.speak(utterance);
+			utterance.onstart = () => {
+				if (onStart) {
+					onStart();
+				}
+				sprite.speechStarted = lastTime;
+				sprite.onEndSpeech = calllbackCaller;
+			};
+			utterance.onboundary = e => {
+				if (!ignoreSpeechBoundary && !sprite.speechHasBoundary) {
+					sprite.speechHasBoundary = true;
+				}
+				this.unblockText(sprite);
+			};
+		} else {
+			sprite.speechStarted = lastTime;
+			sprite.onEndSpeech = calllbackCaller;
+			sprite.noVoice = true;
+		}
+	}
+
+
+	unblockText(sprite) {
+		sprite.speechPause--;
+	}
+
+	updateBubble(speechBubble, sprite) {
 		const { engine } = this;
 		const { lastTime, canvas } = engine;
-		speechBubble.style.left = `${canvas.offsetLeft + this.monkor.x - speechBubble.offsetWidth/2 - 20}px`;
-		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + this.monkor.y - this.monkor.size[1] - 20)}px`;
+		const collisionBox = sprite.getCollisionBox(lastTime);
+		const midX = !collisionBox ? sprite.x : (collisionBox.left + collisionBox.right)/2;
+		const topY = !collisionBox ? sprite.y - sprite.size[1] : collisionBox.top;
+
+		speechBubble.style.left = `${canvas.offsetLeft + midX - speechBubble.offsetWidth/2 - 20}px`;
+		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + topY - (sprite.bubbleTop || 60))}px`;
 	}
 
-	updateSpeech(time, dt) {
-		if (this.finishedSpeech()) {
+	updateSpeech(time, dt, sprite) {
+		const finishedSpeech = this.finishedSpeech(sprite);
+		if (finishedSpeech) {
+			if (sprite.onEndSpeech) {
+				sprite.onEndSpeech();
+				sprite.onEndSpeech = null;
+			}
+			if (time - finishedSpeech > 1000 && sprite.speechStarted) {
+				this.showBubble(null, null, null, sprite);
+			}
 			return;
-		}
+		}		
 
-		const { speech, speechStarted, lastCharacter } = this.monkor;
-		if (speech && speechStarted && (this.monkor.speechPause <= 0 || this.monkor.noVoice)) {
-			const textSpeed = (this.monkor.noVoice ? 50 : 20);
+		const { speech, speechStarted, lastCharacter } = sprite;
+		if (speech && speechStarted && (sprite.speechPause <= 0 || sprite.noVoice)) {
+			const textSpeed = (sprite.noVoice ? 50 : 20);
 			if (!lastCharacter || (time - lastCharacter) * Math.min(2, dt / 16) >= textSpeed) {
-				this.monkor.lastCharacter = time;
-				const char = speech.charAt(this.monkor.characterIndex);
-				this.monkor.currentSpeech += char;
+				sprite.lastCharacter = time;
+				const char = speech.charAt(sprite.characterIndex);
+				sprite.currentSpeech += char;
 				const speechBubble = this.speechBubble;
-				if (this.speechBubbleText !== this.monkor.currentSpeech) {
-					this.speechBubbleText = this.monkor.currentSpeech;
+				if (this.speechBubbleText !== sprite.currentSpeech) {
+					this.speechBubbleText = sprite.currentSpeech;
 					speechBubble.innerText = this.speechBubbleText;
 				}
-				this.monkor.characterIndex++;
-				if (this.monkor.noVoice) {
-					this.monkor.speechPause = 0;
-				} else if (char === " " && this.monkor.speechHasBoundary) {
-					this.monkor.speechPause++;
+				sprite.characterIndex++;
+				if (sprite.noVoice) {
+					sprite.speechPause = 0;
+				} else if (char === " " && sprite.speechHasBoundary) {
+					sprite.speechPause++;
 				}
-				if (this.monkor.currentSpeech.length >= speech.length) {
-					this.monkor.finishedSpeech = time;
+				if (sprite.currentSpeech.length >= speech.length) {
+					sprite.finishedSpeech = time;
 				}
 			}
 		}
 	}
 
-	finishedSpeech() {
-		if (!this.monkor) {
+	finishedSpeech(sprite) {
+		if (!sprite) {
 			return 1;
 		}
-		const { speech, currentSpeech, speechStarted, finishedSpeech } = this.monkor;
+		const { speech, currentSpeech, speechStarted, finishedSpeech } = sprite;
 		return !speechStarted ? 1 : finishedSpeech;
 	}
 
@@ -875,8 +1161,6 @@ class GameCore extends GameBase {
 			return;
 		}
 
-
-
 		const speed = 2 * monkor.speed * Math.min(2, dt / 16);
 		const dx = (monkor.goal.x - monkor.x);
 		const dy = (monkor.goal.y - monkor.y);
@@ -894,7 +1178,7 @@ class GameCore extends GameBase {
 				anim = this.atlas.monkor_back;
 			}
 		} else if (!lookup) {
-			const finishedSpeech = this.finishedSpeech();
+			const finishedSpeech = this.finishedSpeech(this.monkor);
 			if (!finishedSpeech && monkor.speechPause <= 0) {
 				anim = monkor.speaker == 1 ? this.atlas.monkor_talk_2 : this.atlas.monkor_talk;
 			} else if (monkor.smoking) {
@@ -906,17 +1190,25 @@ class GameCore extends GameBase {
 				if (time - monkor.smoking >= 5000 && !this.piano.dropping) {
 					this.dropPiano(time);
 				}
+			} else if (this.monkor.shakingHands) {
+//				if (this.monkor.sh)
+				anim = dx < 0 || this.monkor.lookLeft ? this.atlas.monkor_shake_left : this.atlas.monkor_shake_right;
+			} else if (this.monkor.chewing) {
+				anim = this.atlas.monkor_chew;				
+			} else if (monkor.lookLeft) {
+				anim = this.atlas.monkor_stand_left;
+			} else if (monkor.lookRight) {
+				anim = this.atlas.monkor_stand_right;
 			}
-
-			if (finishedSpeech) {
-				if (monkor.onEndSpeech) {
-					monkor.onEndSpeech();
-					monkor.onEndSpeech = null;
-				}
-				if (time - finishedSpeech > 1000 && this.monkor.speechStarted) {
-					this.showBubble(null);
-				}
-			}
+			// if (finishedSpeech) {
+			// 	if (monkor.onEndSpeech) {
+			// 		monkor.onEndSpeech();
+			// 		monkor.onEndSpeech = null;
+			// 	}
+			// 	if (time - finishedSpeech > 1000 && this.monkor.speechStarted) {
+			// 		this.showBubble(null);
+			// 	}
+			// }
 		}
 		const walking = dist !== 0;
 		if (monkor.walking !== walking) {
@@ -928,8 +1220,10 @@ class GameCore extends GameBase {
 			}
 		}
 		monkor.changeAnimation(anim, time,
-			anim === this.atlas.monkor_talk || anim === this.atlas.monkor_talk_2
-			? monkor.speechStarted : 0);
+			this.monkor.shakingHands || (
+				anim === this.atlas.monkor_talk || anim === this.atlas.monkor_talk_2
+				? monkor.speechStarted : 0)
+		);
 		this.sceneData.monkor.x = monkor.x;
 		this.sceneData.monkor.y = monkor.y;
 		if (monkor.x > 850 && this.nextLevelRight) {
@@ -967,9 +1261,10 @@ class GameCore extends GameBase {
 	setAudio(audio, value, volume, ignore) {
 		const { gender } = this.data;
 		const I = gender === "T" ? "We" : "I";
+		audio.volume = volume;
 		if (value) {
 			document.getElementById("speaker").innerText = "🔊";
-			document.getElementById("mute").innerText = "mute";
+			document.getElementById("mute").innerText = "mute music";
 			audio.play();
 			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
 				this.showBubble(`${I} like this music.`);
@@ -977,12 +1272,30 @@ class GameCore extends GameBase {
 		} else {
 			audio.pause();
 			document.getElementById("speaker").innerText = "🔇";
-			document.getElementById("mute").innerText = "unmute";
+			document.getElementById("mute").innerText = "unmute music";
 			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
 				this.showBubble(`${I} don't like this music.`);
 			}
 		}
-		audio.volume = volume;
+	}
+
+	setVoice(value, ignore) {
+		const { gender } = this.data;
+		const I = gender === "T" ? "We" : "I";
+		engine.muteVoice = value;
+		if (!engine.muteVoice) {
+			document.getElementById("voice-speaker").innerText = "😮";
+			document.getElementById("voice-mute").innerText = "mute voice";
+			if (!this.monkor.dead && !ignore) {
+				this.showBubble(`Hello there.`);
+			}
+		} else {
+			document.getElementById("voice-speaker").innerText = "🤫";
+			document.getElementById("voice-mute").innerText = "unmute voice";
+			if (!this.monkor.dead && !ignore) {
+				this.showBubble(`Ok, ${I} will be quiet.`);
+			}
+		}
 	}
 
 	checkCollisions(time) {
@@ -1034,6 +1347,32 @@ class GameCore extends GameBase {
 		div.style.display = actualVisibilty ? "" : "none";
 	}
 
+	setDialogVisibility(visible, responses) {
+		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
+		const div = document.getElementById("conversation");
+		div.style.display = actualVisibilty ? "" : "none";
+
+		if (actualVisibilty) {
+			let responseIndex = 1;
+			for (let i = 0; i < responses.length && responseIndex <= 4; i++) {
+				const index = responseIndex;
+				const div = document.getElementById(`conversation-${index}`);
+				const { response, condition } = responses[i] || {};
+				if (!response || condition && !condition(responses[i])) {
+					div.style.display = "none";
+				} else {
+					div.style.display = "";
+					div.textContent = response;
+					responseIndex++;
+				}
+			}
+			for (;responseIndex <= 4; responseIndex++) {
+				const div = document.getElementById(`conversation-${responseIndex}`);
+				div.style.display = "none";
+			}
+		}
+	}
+
 	updateInventory(selection) {
 		const div = document.getElementById("inventory");
 		div.innerText = "";
@@ -1078,12 +1417,158 @@ class GameCore extends GameBase {
 		});
 	}
 
+	updateSpeechForSprites(time, dt) {
+		for (let i = engine.spriteCollection.size() - 1; i >= 0; i--) {
+			const sprite = engine.spriteCollection.get(i);
+			if (sprite.speaker) {
+				this.updateSpeech(time, dt, sprite);
+			}
+		}		
+	}
+
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.applyMovement(this.monkor, this.mouse, dt, time);
 		this.checkCollisions(time);
-		this.updateSpeech(time, dt);
+		this.updateSpeechForSprites(time, dt);
 		this.updatePiano(time, dt);
 		this.updateMouse(time);		
+	}
+
+	selectDialog(id) {
+		for (let i = 1; i <= 4; i++) {
+			const div = document.getElementById(`conversation-${i}`);
+			if (div.id !== id) {
+				div.classList.remove("selected");
+			} else {
+				div.classList.add("selected");
+				this.showBubble(div.textContent, () => {
+					this.continueDialog(parseInt(div.id.split("conversation-")[1]));
+				}, null, null, () => {
+					this.setDialogVisibility(false);
+				});
+			}
+			if (id === null || div.id === id) {
+				div.classList.remove("disabled");
+			} else {
+				div.classList.add("disabled");
+			}
+		}
+	}
+
+	getResponse(index) {
+		let dialogIndex = 0;
+
+		for (let i = 0; this.dialogResponses.length; i++ ) {
+			const { response, condition } = this.dialogResponses[i] || {};
+			if (!response || condition && !condition(this.dialogResponses[i])) {
+				continue;
+			}
+			if (dialogIndex === index) {
+				return this.dialogResponses[i];
+			}
+			dialogIndex++;
+		}		
+		return null;
+	}
+
+	getDialogIndexFromTopic(passedTopic) {
+		for (let i = 0; i < this.dialog.length; i++) {
+			const dialogItem = this.dialog[i];
+			if (dialogItem.topic === passedTopic) {
+				return i;
+			}
+		}
+		return 0;
+	}
+
+	continueDialog(selection, next) {
+		const response = selection ? this.getResponse(selection - 1) : null;
+		let nextDialogIndex = this.dialogIndex + 1;
+		if (response) {
+			response.discussed = true;
+		}
+		if (response && response.onSelect) {
+			response.onSelect(response);
+		}
+
+		if (response && response.topic) {
+			this.dialog.forEach(({topic, message}, index) => {
+				if (topic === response.topic) {
+					nextDialogIndex = index;
+				}
+			});
+		} else if (response && typeof(response.next) !== "undefined") {
+			nextDialogIndex = response.next;
+		} else if (typeof(next) !== "undefined") {
+			nextDialogIndex = next;
+		}
+		setTimeout(() => {
+			this.startDialog(this.dialogSubject, this.dialog, nextDialogIndex);
+		}, 1000);
+	}
+
+	applyDialogResponses(responses) {
+		if (responses) {
+			this.setDialogVisibility(true, responses);
+			this.selectDialog(null);
+		} else {
+			this.setDialogVisibility(false);
+			this.selectDialog(null);
+		}
+	}
+
+	startDialog(subject, dialog, index) {
+		if (typeof(index) === "string") {
+			index = this.getDialogIndexFromTopic(index);
+		} else if (typeof(index) === "function") {
+			index = index(this.previousIndex);
+		}
+		index = index || 0;
+		const chitChat = dialog ? dialog[index] : null;
+		if (!chitChat) {
+			this.setControlVisibility(true);
+			this.setInventoryVisibility(true);
+			this.setDialogVisibility(false);
+			this.selectDialog(null);
+			this.dialog = null;
+			return;
+		}
+		this.showSubject("");
+		const speaker = chitChat.speaker === "monkor" ? this.monkor : subject;
+		this.dialogSubject = subject;
+		this.dialog = dialog;
+		this.previousIndex = this.dialogIndex;
+		this.dialogIndex = index;
+		this.dialogResponses = chitChat.responses;
+
+		this.setControlVisibility(false);
+		this.setInventoryVisibility(false);
+		this.setDialogVisibility(false);
+		this.selectDialog(null);
+		if (chitChat.onStart) {
+			chitChat.onStart(subject);
+		}
+		if (chitChat.lookup) {
+			this.monkor.lookupUntil = this.engine.lastTime + chitChat.lookup;			
+		}
+
+		if (chitChat.message) {
+			this.showBubble(chitChat.message, () => {			
+				this.applyDialogResponses(this.dialogResponses);
+				this.setInventoryVisibility(true);
+				if (chitChat.onEnd) {
+					chitChat.onEnd(subject);
+				}
+				if (!this.dialogResponses && !chitChat.exit) {
+					this.continueDialog(null, chitChat.next);
+				} else if (chitChat.exit) {
+					this.startDialog(null, null, null);
+				}
+			}, chitChat.voiceName, speaker, null, chitChat.secondsAfterEnd);
+		} else {
+			this.setInventoryVisibility(true);
+			this.applyDialogResponses(this.dialogResponses);
+		}
 	}
 }

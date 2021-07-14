@@ -19,6 +19,7 @@ const globalFiles=[
 			"door-collision.png",
 			"entrance.png",
 			"ground-entrance.png",
+			"gum.png",
 			"invitation-check-collision.png",
 			"invitation-check.png",
 			"invitation.png",
@@ -31,10 +32,12 @@ const globalFiles=[
 			"menu.png",
 			"metal.jpg",
 			"monkor-collision.png",
+			"monkor-shake.png",
 			"monkor-shit.png",
 			"monkor.png",
 			"mouse.png",
 			"next-button.png",
+			"nuna-shake.png",
 			"nuna-shit.png",
 			"nuna.png",
 			"piano.png",
@@ -49,6 +52,7 @@ const globalFiles=[
 			"toilet-exit-collision.png",
 			"toilet-room-ground.png",
 			"toilet-room.png",
+			"twin-shake.png",
 			"twin-shit.png",
 			"twin.png",
 			"water-faucet-collision.png"
@@ -57,6 +61,7 @@ const globalFiles=[
 	{
 		"audio": [
 			".DS_Store",
+			"animal-cry.mp3",
 			"beep.mp3",
 			"diving.mp3",
 			"door.mp3",
@@ -101,9 +106,12 @@ const globalFiles=[
 					"game-core.js",
 					"game-title.js",
 					"lobby.js",
+					"locked-room.js",
 					"menu.js",
 					"restroom.js",
-					"selection.js"
+					"selection.js",
+					"template.js",
+					"time-room.js"
 				]
 			}
 		]

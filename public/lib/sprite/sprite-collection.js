@@ -15,6 +15,9 @@ class SpriteCollection {
 
 		for (let i in attributes) {
 			sprite[i] = attributes[i];
+			if (typeof(attributes[i]) === "undefined") {
+				console.error("Key " + i + " is not valid on " + sprite.name);
+			}
 		}
 		return sprite;
 	}

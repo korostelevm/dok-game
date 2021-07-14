@@ -81,9 +81,6 @@
 				width: 100vw;
 				opacity: 0;
 				z-index: 100;
-				-moz-user-select: none;
-				-ms-user-select: none;
-				-webkit-user-select: none;
 				user-select: none;
 			}
 
@@ -335,6 +332,32 @@
 				background-color: darkblue;
 				color: white;
 			}
+			.chat-selection {
+				background-color: #000044;
+				font-size: 10pt;
+				padding: 2px;
+				margin-bottom: 2px;
+				cursor: pointer;
+				width: 750px;
+			    font-family: speech-font;
+			}
+			.chat-selection.disabled {
+				color: #555599;
+				cursor: auto;
+			}
+			.chat-selection.selected {
+				outline: 2px solid yellow;
+				color: black;
+				background-color: #cccc66;
+				cursor: auto;
+			}
+			.chat-selection.disabled {
+				color: black;
+			}
+			.chat-selection:hover:not(.selected):not(.disabled) {
+				color: black;
+				background-color: #cccccc;
+			}
 		</style>
 
 	</head>
@@ -349,13 +372,7 @@
 			<button id="restart" class="centered restart">restart</button>
 			<div class="speech-bubble" id="speech-bubble" style="left: 50px;"></div>
 			<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
-			<div id="info-box" style="right: 10px; top: 4px; width: 60px; position: absolute; z-index: 10"></div>
-<!-- 			<div style="position:absolute; top: 20px; left: 100px">
-				<span id="score"></span>
-				<span id="chocolate"></span>
-				<span id="dino"></span>
-			</div>
- -->			
+			<input id="info-box" style="border:  0; box-outline:  0;right: 10px; top: 4px; width: 60px; position: absolute; z-index: 10; display: none"></input>
 			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 100px">
 			</div>
 			<canvas id="canvas"  ondrop="console.log(event)" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
@@ -368,10 +385,22 @@
 			<div id="inventory" style="position: absolute; top: 460px; left: 100px; z-index: 141; display: flex; flex-direction: horizontal">
 			</div>
 			<div id="controls" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none">
-				<div><span id="mouse" class="mouse" draggable="true" style=>🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
-				<div><span id="speaker">🔇</span>: Press M to <span id="mute">unmute music</span></div>
+				<div><span id="mouse" class="mouse" draggable="true" style="cursor: pointer">🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
+				<div>
+					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🔇</span>: Press M to <span id="mute">unmute music</span></a>			</div>
+				<div>
+					<a id="voice-mute-toggle" style="cursor: pointer"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span></a>					
+				</div>
+
 				<div>🔁: <span id="pressing-r">R to start over.</span></div>
 			</div>
+			<div id="conversation" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none;">
+				<div class="chat-selection" id="conversation-1">Option 1</div>
+				<div class="chat-selection" id="conversation-2">Option 2</div>
+				<div class="chat-selection" id="conversation-3">Option 3</div>
+				<div class="chat-selection" id="conversation-4">Exit</div>
+			</div>
+
 		</div>
 		<script type="text/javascript" src="gen/data.js"></script>
 		<script type="text/javascript" src="gen/files.js"></script>
@@ -384,6 +413,9 @@
 		<script type="text/javascript" src="games/the-impossible-room/menu.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/restroom.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/lobby.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/time-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/locked-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono.js"></script>

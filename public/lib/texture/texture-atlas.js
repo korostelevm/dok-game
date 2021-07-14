@@ -73,7 +73,7 @@ class TextureAtlas {
 	}
 
 	async setImage(animationData) {
-		const { url, collision_url, texture_url, texture_alpha, texture_blend } = animationData;
+		const { url, collision_url, collision_padding, texture_url, texture_alpha, texture_blend } = animationData;
 		const image = url ? await this.imageLoader.loadImage(url) : null;
 		this.onUpdateImage(image, animationData || {});
 
@@ -103,6 +103,7 @@ class TextureAtlas {
 
 		this.canvas.width = 0;
 		this.canvas.height = 0;
+		this.collisionPadding = collision_padding;
 
 		return this;
 	}

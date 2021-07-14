@@ -7,8 +7,9 @@ class GameBase {
 		this.data = gameData;
 		this.sceneData = this.data[this.sceneName] || (this.data[this.sceneName] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
-		this.spriteFactory = new SpriteFactory(this.sceneData, engine.spriteCollection, this);
+		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
 		this.audio = {};
+		this.data.gender = (localStorage.getItem("playerGender") || "M");
 	}
 
 	setProperty(key, value) {
@@ -42,5 +43,8 @@ class GameBase {
 	}
 
 	refresh(time, dt) {
+	}
+
+	selectDialog(index) {
 	}
 }

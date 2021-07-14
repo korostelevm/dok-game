@@ -139,6 +139,18 @@ class Restroom extends GameCore {
 						this.monkor_shit.setProperty("sit", true);
 					},
 				},
+				{ name: "sing a song", condition: door => this.monkor_shit.properties.sit,
+					message: () => this.randomSong(),
+					action: door => {
+						const seat = this.monkor_shit;
+						seat.changeAnimation(this.atlas.monkor_shit_talk, engine.lastTime);
+						this.showBubble(door.pendingMessage, () => {
+							setTimeout(() => {
+								this.monkor_shit.setProperty("dump", engine.lastTime);
+							}, 500);
+						});
+					},
+				},
 				{ name: "stand up", condition: door => this.monkor_shit.properties.sit && !this.monkor_shit.wipeTime && !this.monkor_shit.startWipe && !this.monkor.speech,
 					action: door => {
 						this.monkor_shit.setProperty("sit", false);
@@ -146,8 +158,7 @@ class Restroom extends GameCore {
 				},
 				{ name: "take a number 2", condition: door => this.monkor_shit.properties.sit,
 					action: door => {
-						this.monkor_shit.shitTime = engine.lastTime;
-						this.monkor_shit.changeAnimation(this.atlas.monkor_shit_push, engine.lastTime);
+						this.monkor_shit.setProperty("dump", engine.lastTime);
 					},
 				},
 				{ name: "wipe down there", condition: door => this.monkor_shit.properties.stinky_butt && !this.monkor_shit.properties.nopaper && this.monkor_shit.properties.sit,
@@ -157,14 +168,7 @@ class Restroom extends GameCore {
 						seat.changeAnimation(this.atlas.monkor_shit_pick_paper, engine.lastTime);
 						setTimeout(() => {
 							seat.changeAnimation(this.atlas.monkor_shit_talk, engine.lastTime);
-							this.showBubble(`There's no paper left.`, () => {
-								// seat.startWipe = 0;
-								// seat.doneShit = engine.lastTime;
-								// setTimeout(() => {
-								// 	seat.changeAnimation(this.atlas.monkor_shit_wipe, engine.lastTime);
-								// 	seat.startWipe = engine.lastTime;
-								// }, 500);
-							});
+							this.showBubble(`There's no paper left.`);
 						}, 1000);
 					},
 				},
@@ -173,7 +177,7 @@ class Restroom extends GameCore {
 						const seat = this.monkor_shit;
 						seat.changeAnimation(this.atlas.monkor_shit_wipe, engine.lastTime);
 						seat.startWipe = engine.lastTime;
-						seat.setProperty("stinky_hand", true);
+						this.monkor.setProperty("stinky_hand", true);
 						seat.setProperty("stinky_butt", null);
 					},
 				},
@@ -210,7 +214,7 @@ class Restroom extends GameCore {
 						seat.setProperty("saw_key", null);
 						seat.setProperty("stinky_key", true);
 						seat.setProperty("has_shit", null);
-						seat.setProperty("stinky_hand", true);
+						this.monkor.setProperty("stinky_hand", true);
 
 						this.addToInventory("key_turd");
 						this.audio.pickup.play();
@@ -236,15 +240,14 @@ class Restroom extends GameCore {
 			size: [800, 400],
 		});
 		this.water_faucet = this.spriteFactory.create({
-			name: "Water Sink",
+			name: "water sink",
 			anim: this.atlas.water_faucet,
 			size: [800, 400],
 		}, {
 			actions: [
 				{ name: "wash hands",
 					action: door => {
-						const seat = this.monkor_shit;
-						seat.setProperty("stinky_hand", null);
+						this.monkor.setProperty("stinky_hand", null);
 						this.audio.flush.play();
 						setTimeout(() => {
 							this.showBubble(`${My} hands are clean.`, () => {
@@ -252,6 +255,21 @@ class Restroom extends GameCore {
 						}, 1000);
 					},
 					lookup: 1000,
+				},
+				{ name: "wash the keys", condition: entrance => this.selectedItem === "key_turd",
+					lookup: 500,
+					item: ["key_turd"],
+					command: (item, target) => `wash the ${item.name}.`,
+					action: entrance => {
+						this.audio.flush.play();
+						this.removeFromInventory("key_turd");
+						this.monkor.setProperty("stinky_hand", null);
+						this.addToInventory("key");
+						setTimeout(() => {
+							this.showBubble(`${I} washed the key, and my hands too.`, () => {
+							});
+						}, 1000);
+					},
 				},
 				{ name: "look in the mirror", message: `Good thing ${I} shaved this morning.` },
 			],
@@ -281,12 +299,27 @@ class Restroom extends GameCore {
 		}, {
 			onChange: {
 				sit: (seat, sitting) => {
-					seat.changeOpacity(sitting ? 1 : 0, engine.lastTime);
-					this.monkor.changeOpacity(sitting ? 0 : 1, engine.lastTime);
-					this.monkor.busy = sitting ? engine.lastTime : 0;
-					seat.changeAnimation(this.atlas.monkor_shit, engine.lastTime);
-					this.setInventoryVisibility(!sitting);
-					this.setControlVisibility(!sitting);
+					if (this.monkor) {
+						seat.changeOpacity(sitting ? 1 : 0, engine.lastTime);
+						this.monkor.changeOpacity(sitting ? 0 : 1, engine.lastTime);
+						this.monkor.busy = sitting ? engine.lastTime : 0;
+						seat.changeAnimation(this.atlas.monkor_shit, engine.lastTime);
+						this.setInventoryVisibility(!sitting);
+						this.setControlVisibility(!sitting);
+					}
+				},
+				dump: (seat, dump) => {
+					if (dump) {
+						this.monkor_shit.shitTime = engine.lastTime;
+						seat.setProperty("stinky_butt", engine.lastTime);
+						if (this.data.ateKey) {
+							seat.setProperty("has_shit", "key");
+							delete this.data.ateKey;
+						} else if (!seat.properties.has_shit) {
+							seat.setProperty("has_shit", "turd");
+						}
+						seat.changeAnimation(this.atlas.monkor_shit_push, engine.lastTime);
+					}
 				},
 			},
 			onFrame: {
@@ -303,37 +336,44 @@ class Restroom extends GameCore {
 				1: (seat, previousFrame) => {
 					if (previousFrame !== seat.frame) {
 						this.audio.shit.play();
-						seat.setProperty("stinky_butt", true);
-						if (this.data.ateKey) {
-							seat.setProperty("has_shit", "key");
-							delete this.data.ateKey;
-						} else if (!seat.properties.has_shit) {
-							seat.setProperty("has_shit", "turd");
-						}
-
 					}
 				},
 				4: (seat, previousFrame) => {
 					if (seat.frame !== previousFrame) {
-						this.audio.wipe.play();						
+						this.audio.wipe.play();
 					}
 					if (seat.startWipe && engine.lastTime - seat.startWipe > 2000) {
 						this.monkor_shit.setProperty("sit", false);
 						seat.startWipe = 0;
-						this.showBubble(`${I} should wash ${my} hands.`, () => {
+						this.showBubble(`${I} better wash ${my} hands.`, () => {
 						});
 
 					}
 				},
-				5: seat => {
-					const finishedSpeech = this.finishedSpeech();
+				5: (seat, previousFrame) => {
+					const finishedSpeech = this.finishedSpeech(this.monkor);
 					// const anim = this.atlas.monkor_shit_talk;
-					const anim = !finishedSpeech && this.monkor.speechPause <= 0 ? this.atlas.monkor_shit_talk : this.atlas.monkor_shit_talk_pause;
+					const anim = finishedSpeech && finishedSpeech !== 1 ? this.atlas.monkor_shit : !finishedSpeech && this.monkor.speechPause <= 0 ? this.atlas.monkor_shit_talk : this.atlas.monkor_shit_talk_pause;
 					seat.changeAnimation(anim, engine.lastTime, anim == this.atlas.monkor_shit_talk ? this.monkor.speechStarted : 0);
 				},
+				6: 5,
+				7: 5,
+				8: 5,
 			},
 		});
 		this.sceneData.monkor = this.sceneData.monkor || { x: 50, y: 300 };
+	}
+
+	randomSong() {
+		const songs = [
+			"I'm just sittin' on the dock of the bay. Wastin' time.",
+			"My hump my hump my hump, my lovely little lumps.",
+			"Ah, push it. Ah, push it. Ooh, baby baby.",
+			"Wake up. Wake up and smell the roses.",
+			"I wanna push you down. Well I will, well I will.",
+			"Smooth like butter. Like a criminal undercover. Gonna pop out trouble.",
+		];
+		return songs[Math.floor(Math.random()*songs.length)];
 	}
 
 	getWalkArea() {

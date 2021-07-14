@@ -6,7 +6,21 @@ class DebugView {
 		this.debugCanvas.zIndex = 1;
 		document.getElementById("container").appendChild(this.debugCanvas);
 		this.debugCtx = this.debugCanvas.getContext("2d");
-		this.debugCanvas.style.display = "none";		
+		this.debugCanvas.style.display = "none";
+		addEventListener('error', function(event) {
+			const div = document.body.appendChild(document.createElement("div"));
+			div.id = "errorView";
+			div.style.position = "absolute";
+			div.style.top = "0px";
+			div.style.left = "0px";
+			div.style.userSelect = "none";
+			div.style.pointerEvents = "none";
+			div.style.color = "#FF0000cc";
+			div.style.backgroundColor = "#660000aa";
+			div.style.zIndex = 200;
+			div.textContent = event.error.stack;
+			div.style.op
+		});
 	}
 
 	drawCollisionBox(ctx, sprite, time, zoom) {
