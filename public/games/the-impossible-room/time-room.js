@@ -130,7 +130,27 @@ class TimeRoom extends GameCore {
 			size: [800, 400],
 		});
 
+		this.title = document.getElementById("title");
+		this.title.style.display = "";
+		this.title.style.opacity = .5;
+		document.getElementById("im").style.display = "";
+		document.getElementById("im").textContent = "";
+
+
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+	}
+
+	updateClock() {
+		const date = new Date();
+		const hour = "" + date.getHours();
+		const minutes = "" + date.getMinutes();
+		const seconds = "" + date.getSeconds();
+		if (this.sec === seconds) {
+			return;
+		}
+		this.sec = seconds;
+		document.getElementById("im").textContent = `${hour.padStart(2, 0)}:${minutes.padStart(2, 0)}:${seconds.padStart(2, 0)}`;
+
 	}
 
 	updateHost(time) {
@@ -193,6 +213,7 @@ class TimeRoom extends GameCore {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
+		this.updateClock();
 	}	
 
 	nextLevelLeft() {

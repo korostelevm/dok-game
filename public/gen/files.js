@@ -47,6 +47,7 @@ const globalFiles=[
 			"skin-texture.jpg",
 			"smoking-sign.png",
 			"sparkle.png",
+			"time-room.png",
 			"title.png",
 			"toilet-collision.png",
 			"toilet-exit-collision.png",
