@@ -1,8 +1,6 @@
 const globalFiles=[
-	".DS_Store",
 	{
 		"assets": [
-			".DS_Store",
 			"background-door-collision.png",
 			"background-door.png",
 			"backwall.jpg",
@@ -61,7 +59,6 @@ const globalFiles=[
 	},
 	{
 		"audio": [
-			".DS_Store",
 			"animal-cry.mp3",
 			"beep.mp3",
 			"diving.mp3",
@@ -82,7 +79,6 @@ const globalFiles=[
 	"favicon.ico",
 	{
 		"fonts": [
-			".DS_Store",
 			"Lato-Bold.ttf",
 			"Lato-Regular.ttf",
 			"alphabetized-cassette-tapes.ttf",
@@ -95,7 +91,6 @@ const globalFiles=[
 	"game-starter.js",
 	{
 		"games": [
-			".DS_Store",
 			{
 				"one-rule": [
 					"game-ring.js"
@@ -126,7 +121,6 @@ const globalFiles=[
 	"index.html",
 	{
 		"lib": [
-			".DS_Store",
 			"engine.js",
 			"game-base.js",
 			"game-template.js",
@@ -137,7 +131,6 @@ const globalFiles=[
 			},
 			{
 				"newgrounds": [
-					".DS_Store",
 					"newgroundsio.min.js",
 					"ng.js",
 					"sound.mp3"

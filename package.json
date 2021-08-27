@@ -17,13 +17,13 @@
   },
   "homepage": "https://github.com/jacklehamster/dok-game#readme",
   "dependencies": {
-    "@neutralinojs/neu": "^2.2.1",
+    "@neutralinojs/neu": "^6.0.5",
     "archiver": "^5.2.0",
     "colors": "^1.4.0",
     "express": "^4.17.1",
     "express-static": "^1.2.6",
     "minify-all": "^1.2.2",
-    "node-zip": "^1.1.1",
+    "node-zip": "^1.0.1",
     "nw-builder": "^3.5.7",
     "uglify-js": "^3.12.5"
   }

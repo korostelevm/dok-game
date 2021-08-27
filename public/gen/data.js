@@ -1,5 +1,4 @@
 const globalData={
-	".DS_Store": null,
 	"attributes": {
 		"vertexPosition": {
 			"location": 0,
