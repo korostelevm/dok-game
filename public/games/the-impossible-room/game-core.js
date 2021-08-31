@@ -1171,7 +1171,7 @@ class GameCore extends GameBase {
 		const lookup = this.monkor.lookupUntil && this.monkor.lookupUntil > time;
 		let anim = lookup ? this.atlas.monkor_back_still : this.atlas.monkor_still;
 		if (dist) {
-			monkor.changePosition(monkor.x + actualSpeed * dx / dist, monkor.y + actualSpeed * dy / dist, time);
+			monkor.changePosition(monkor.x + (actualSpeed * dx) / dist, monkor.y + actualSpeed * dy / dist, time);
 			if (Math.abs(dx) > Math.abs(dy)) {
 				anim = dx > 0 ? this.atlas.monkor_right : this.atlas.monkor_left;
 			} else if (dy > 0) {
@@ -1212,6 +1212,7 @@ class GameCore extends GameBase {
 			// 	}
 			// }
 		}
+
 		const walking = dist !== 0;
 		if (monkor.walking !== walking) {
 			monkor.walking = walking;
@@ -1221,6 +1222,16 @@ class GameCore extends GameBase {
 				this.audio.hit.stop();
 			}
 		}
+		const rolling = monkor.x > 50 && monkor.x < 700 && this.isCarpetRolling();
+		if (rolling) {
+			monkor.changePosition(monkor.x - 4, monkor.y, time);
+			if (Math.abs(dist) < 5) {
+				monkor.goal.x = monkor.x;
+			}
+		}
+
+
+
 		monkor.changeAnimation(anim, time,
 			this.monkor.shakingHands || (
 				anim === this.atlas.monkor_talk || anim === this.atlas.monkor_talk_2
@@ -1234,6 +1245,10 @@ class GameCore extends GameBase {
 		if (monkor.x < -50 && this.nextLevelLeft) {
 			this.nextLevelLeft();
 		}
+	}
+
+	isCarpetRolling() {
+		return false;
 	}
 
 	dropPiano(time) {

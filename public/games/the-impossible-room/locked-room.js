@@ -608,7 +608,9 @@ class LockedRoom extends GameCore {
 	setNextDoorOpened(opened) {
 		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
 		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
-		this.doorNextLock.changeOpacity(opened?0:1, engine.lastTime);
+		if (this.doorNextLock) {
+			this.doorNextLock.changeOpacity(opened?0:1, engine.lastTime);
+		}
 	}
 
 	blockedButler() {

@@ -5,6 +5,10 @@ class TimeRoom extends GameCore {
 		const { gl, config } = engine;
 		const { gender } = this.data;
 
+		const I = gender === "T" ? "We" : "I";
+		const my = gender === "T" ? "our" : "my";
+		const My = gender === "T" ? "Our" : "My";
+
 		/* Load Audio */
 		this.audio = {
 			...this.audio,
@@ -12,6 +16,32 @@ class TimeRoom extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
+			rolling_carpet_still: await engine.addTexture(
+				{
+					url: "assets/time-room.png",
+					cols:2,rows:3,
+					range:[0],
+				}),
+			rolling_carpet_rolling: await engine.addTexture(
+				{
+					url: "assets/time-room.png",
+					cols:2,rows:3,
+					frameRate:11,
+					range:[0,2],
+				}),
+			red_button: await engine.addTexture(
+				{
+					url: "assets/time-room.png",
+					collision_url: "assets/time-room.png",
+					cols:2,rows:3,
+					range:[4],
+				}),
+			signs: await engine.addTexture(
+				{
+					url: "assets/time-room.png",
+					cols:2,rows:3,
+					range:[3],
+				}),
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -28,6 +58,12 @@ class TimeRoom extends GameCore {
 			size: [800, 400],
 		}, {
 		});
+		this.rollingCarpet = this.spriteFactory.create({
+			name: "Rolling Carpet",
+			anim: this.atlas.rolling_carpet_rolling,
+			size: [800, 400],
+		}, {
+		});
 
 		this.doorForwardOpened = this.spriteFactory.create({
 			name: "Next Room",
@@ -36,10 +72,16 @@ class TimeRoom extends GameCore {
 			opacity: 0,			
 		}, {
 			actions: [
-				{ name: "walk through",
+				{ name: "walk through", condition: () => this.isCarpetRolling(),
 					action: forward_door => {
-						this.monkor.setProperty("paused", engine.lastTime);
-						this.monkor.goal.x = 900;
+						if (this.isCarpetRolling()) {
+							this.monkor.setProperty("paused", this.engine.lastTime);
+							this.monkor.goal.x = 900;
+							this.walkingThrough = true;
+						} else {
+							this.showBubble(`${I} can't go through. The door is now closed.`, () => {
+							});							
+						}
 					},
 				},
 			],
@@ -47,6 +89,37 @@ class TimeRoom extends GameCore {
 
 		const Messire = gender === "T" ? "Messires" : gender === "W" ? "Madame" : "Messire";
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
+
+		this.signs = this.spriteFactory.create({
+			name: "Signs",
+			anim: this.atlas.signs,
+			size: [800, 400],
+		}, {
+
+		});
+
+		this.redButton = this.spriteFactory.create({
+			name: "Red Button",
+			anim: this.atlas.red_button,
+			size: [800, 400],
+		}, {
+			actions: [
+				{ name: "look", condition: button => !this.isCarpetRolling(),
+					message: `It's a big red button that says "one minute" on it.`,
+					lookup: 500,
+				},
+				{ name: "push button", condition: button => !this.isCarpetRolling(),
+					lookup: 100,
+					action: entrance => {
+						this.audio.beep.play();
+						const timeIn60 = this.getTime(60);
+						this.redButton.setProperty("pushed", timeIn60);
+						document.getElementById("clock-2").textContent = timeIn60;
+						document.getElementById("clock-1").classList.add("blink_me");
+					},
+				},
+			],
+		});
 
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
@@ -63,7 +136,7 @@ class TimeRoom extends GameCore {
 							{
 								message: `Yes, ${messire}?`,
 								voiceName: "Thomas",
-								onStart: butler => butler.talking = engine.lastTime,
+								onStart: butler => butler.talking = this.engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 							},
 							{
@@ -73,6 +146,10 @@ class TimeRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										response: "What does the red button do?",
+										topic: "button",
+									},
+									{
 										response: "I'll be on my way",
 									},
 								],
@@ -80,17 +157,21 @@ class TimeRoom extends GameCore {
 							{
 								message: `Au revoir, ${messire}.`,
 								voiceName: "Thomas",
-								onStart: butler => butler.talking = engine.lastTime,
+								onStart: butler => butler.talking = this.engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 								exit: true,
 							},
+							{
+								topic: "button"
+								message: `Why don't you push it to find out, ${messire}?`,
+							}
 							{
 								topic: "impossible",
 								message: `No ${messire}, this is not yet the impossible room.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
-									butler.talking = engine.lastTime;
+									butler.talking = this.engine.lastTime;
 								},
 								onEnd: butler => {
 									butler.talking = 0;
@@ -101,7 +182,7 @@ class TimeRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
-									butler.talking = engine.lastTime;
+									butler.talking = this.engine.lastTime;
 								},
 								onEnd: butler => {
 									butler.talking = 0;
@@ -112,7 +193,7 @@ class TimeRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
-									butler.talking = engine.lastTime;
+									butler.talking = this.engine.lastTime;
 								},
 								onEnd: butler => {
 									butler.talking = 0;
@@ -136,21 +217,38 @@ class TimeRoom extends GameCore {
 		document.getElementById("im").style.display = "";
 		document.getElementById("im").textContent = "";
 
-
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
 
+	setNextDoorOpened(opened) {
+		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
+		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
+	}
+
+	isCarpetRolling() {
+		return this.redButton.properties.pushed && this.getTime() !== this.redButton.properties.pushed || this.walkingThrough;
+	}
+
 	updateClock() {
-		const date = new Date();
-		const hour = "" + date.getHours();
-		const minutes = "" + date.getMinutes();
-		const seconds = "" + date.getSeconds();
+		const seconds = this.getTime(0);
 		if (this.sec === seconds) {
 			return;
 		}
 		this.sec = seconds;
-		document.getElementById("im").textContent = `${hour.padStart(2, 0)}:${minutes.padStart(2, 0)}:${seconds.padStart(2, 0)}`;
+		document.getElementById("im").textContent = seconds;
+		document.getElementById("clock-1").textContent = seconds;
+	}
 
+	getTime(secondsOffset) {
+		const date = new Date();
+		if (secondsOffset) {
+			date.setSeconds(date.getSeconds() + secondsOffset);
+		}
+
+		const hour = "" + date.getHours();
+		const minutes = "" + date.getMinutes();
+		const seconds = "" + date.getSeconds();
+		return `${hour.padStart(2, 0)}:${minutes.padStart(2, 0)}:${seconds.padStart(2, 0)}`;
 	}
 
 	updateHost(time) {
@@ -204,17 +302,43 @@ class TimeRoom extends GameCore {
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+		this.walkingThrough = false;
+		document.getElementById("time-room-labels").style.display = "";
 	}
 
 	getWalkArea() {
-		return this.backwall.getCollisionBox(engine.lastTime);		
+		return this.backwall.getCollisionBox(this.engine.lastTime);		
 	}
 
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
+		this.checkRollingCarpet(time);
 		this.updateClock();
 	}	
+
+	onExit(engine) {
+		document.getElementById("time-room-clock").style.display = "none";
+		document.getElementById("time-room-labels").style.display = "none";
+		super.onExit(engine);
+	}
+
+	checkRollingCarpet(time) {
+		const rolling = this.isCarpetRolling();
+		if (this.wasCarpetRolling === rolling) {
+			return;
+		}
+		this.wasCarpetRolling = rolling;
+		const animation = rolling ? this.atlas.rolling_carpet_rolling : this.atlas.rolling_carpet_still;
+		this.rollingCarpet.changeAnimation(animation, time);
+		document.getElementById("time-room-clock").style.display = rolling ? "" : "none";
+		this.setNextDoorOpened(rolling);
+		if (!rolling) {
+			this.redButton.setProperty("pushed", null);
+			document.getElementById("clock-1").classList.remove("blink_me");
+		}
+	}
+
 
 	nextLevelLeft() {
 	}

@@ -1,4 +1,5 @@
 const globalFiles=[
+	".DS_Store",
 	{
 		"assets": [
 			"background-door-collision.png",
