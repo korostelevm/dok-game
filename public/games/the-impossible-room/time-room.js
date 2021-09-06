@@ -42,6 +42,13 @@ class TimeRoom extends GameCore {
 					cols:2,rows:3,
 					range:[3],
 				}),
+			one_minute: await engine.addTexture(
+				{
+					url: "assets/time-room.png",
+					collision_url: "assets/time-room.png",
+					cols:2,rows:3,
+					range:[5],
+				}),
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -90,8 +97,14 @@ class TimeRoom extends GameCore {
 		const Messire = gender === "T" ? "Messires" : gender === "W" ? "Madame" : "Messire";
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
 
+		this.spriteFactory.create({
+			anim: this.atlas.one_minute,
+			size: [800, 400],
+		}, {
+
+		});
+
 		this.signs = this.spriteFactory.create({
-			name: "Signs",
 			anim: this.atlas.signs,
 			size: [800, 400],
 		}, {
@@ -111,11 +124,14 @@ class TimeRoom extends GameCore {
 				{ name: "push button", condition: button => !this.isCarpetRolling(),
 					lookup: 100,
 					action: entrance => {
-						this.audio.beep.play();
-						const timeIn60 = this.getTime(60);
-						this.redButton.setProperty("pushed", timeIn60);
-						document.getElementById("clock-2").textContent = timeIn60;
-						document.getElementById("clock-1").classList.add("blink_me");
+						if (this.redButton.properties.pushed) {
+							this.redButton.setProperty("pushed", null);
+							document.getElementById("clock-1").classList.remove("blink_me");
+						} else {
+							const timeIn60 = this.getTime(60);
+							this.redButton.setProperty("pushed", timeIn60);
+							this.redButton.setProperty("pushedOnce", true);
+						}
 					},
 				},
 			],
@@ -140,6 +156,7 @@ class TimeRoom extends GameCore {
 								onEnd: butler => butler.talking = 0,
 							},
 							{
+								topic: "questions",
 								responses: [
 									{
 										response: "Is this the impossible room?",
@@ -147,7 +164,17 @@ class TimeRoom extends GameCore {
 									},
 									{
 										response: "What does the red button do?",
+										condition: () => !this.redButton.properties.pushedOnce,
 										topic: "button",
+									},
+									{
+										response: "Can you push this red button for me?",
+										condition: () => this.redButton.properties.pushedOnce,
+										topic: "push_for_me",
+									},
+									{
+										response: "How do I get out of this room?",
+										topic: "how_get_out",
 									},
 									{
 										response: "I'll be on my way",
@@ -162,9 +189,52 @@ class TimeRoom extends GameCore {
 								exit: true,
 							},
 							{
-								topic: "button"
+								topic: "push_for_me",
+								message: `D'accord, ${messire}`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = this.engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.redButton.properties.pushed) {
+										this.redButton.setProperty("pushed", null);
+										document.getElementById("clock-1").classList.remove("blink_me");
+									} else {
+										const timeIn60 = this.getTime(60);
+										this.redButton.setProperty("pushed", timeIn60);
+										document.getElementById("clock-2").textContent = this.redButton.properties.pushed;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "how_get_out",
+								message: `It is impossible, because nobody can reach the door within one minute.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = this.engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+								next: "questions",
+							},
+							{
+								topic: "button",
 								message: `Why don't you push it to find out, ${messire}?`,
-							}
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = this.engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+								next: "questions",
+							},
 							{
 								topic: "impossible",
 								message: `No ${messire}, this is not yet the impossible room.`,
@@ -218,6 +288,18 @@ class TimeRoom extends GameCore {
 		document.getElementById("im").textContent = "";
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+	}
+
+	openLeft() {
+		this.doorBack.changeOpacity(0, this.engine.lastTime);
+	}
+
+	openRight() {
+		this.setNextDoorOpened(true);
+	}
+
+	canUseJoker() {
+		return true;
 	}
 
 	setNextDoorOpened(opened) {
@@ -336,6 +418,10 @@ class TimeRoom extends GameCore {
 		if (!rolling) {
 			this.redButton.setProperty("pushed", null);
 			document.getElementById("clock-1").classList.remove("blink_me");
+		} else {
+			this.audio.beep.play();
+			document.getElementById("clock-2").textContent = this.redButton.properties.pushed;
+			document.getElementById("clock-1").classList.add("blink_me");			
 		}
 	}
 

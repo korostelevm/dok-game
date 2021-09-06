@@ -353,6 +353,10 @@ class Entrance extends GameCore {
 		super.onExit(engine);
 	}
 
+	canRunRight() {
+		return true;
+	}
+
 	onMouseTitle(e) {
 		switch(e.type) {
 			case "click":

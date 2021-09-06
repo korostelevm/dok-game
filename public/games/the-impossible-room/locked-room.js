@@ -469,6 +469,13 @@ class LockedRoom extends GameCore {
 		this.sceneStarted = engine.lastTime;
 	}
 
+	openLeft() {
+		this.doorBackOpened.changeOpacity(1, engine.lastTime);										
+		this.doorBack.changeOpacity(0, engine.lastTime);
+		this.doorBackLock.changeOpacity(0, engine.lastTime);
+	}
+
+
 	startShakingHands(time) {
 		this.butler.shakingHands = time;
 		this.monkor.shakingHands = time;
@@ -926,6 +933,6 @@ class LockedRoom extends GameCore {
 	}
 
 	nextLevelRight() {
-		this.engine.setGame(new TimeRoom());
+		this.engine.setGame(new JokerRoom());
 	}
 }

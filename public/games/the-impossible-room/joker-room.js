@@ -1,4 +1,4 @@
-class Template extends GameCore {
+class JokerRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
@@ -12,6 +12,14 @@ class Template extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
+			joker: await engine.addTexture(
+			{
+				url: "assets/joker.png",
+				collision_url: "assets/joker.png",
+				cols:1,rows:2,
+				range:[0,1],
+			}),
+
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -47,6 +55,91 @@ class Template extends GameCore {
 
 		const Messire = gender === "T" ? "Messires" : gender === "W" ? "Madame" : "Messire";
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
+		const Iam = gender === "T" ? "We are" : "I am";
+		const me = gender === "T" ? "us" : "me";
+
+		this.joker = this.spriteFactory.create({
+			name: "Joker",
+			anim: this.atlas.joker,
+			size: [50, 50],
+			x: 500, y: 340,
+			hotspot: [25,50],
+		}, {
+			actions: [
+				{ name: "talk",
+					action: joker => {
+						this.monkor.goal.x = this.joker.x < this.monkor.x ? this.joker.x - 30 : this.joker.x + 30;
+						this.startDialog(joker, [
+							{
+								message: `Howdy?`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => person.talking = 0,
+							},
+							{
+								responses: [
+									{
+										response: "What's so funny?",
+										topic: "funny",
+									},
+									{
+										response: "How do I get out of this room?",
+										topic: "get_out",
+									},
+									{
+										response: "I'll be on my way",
+									},
+								],
+							},
+							{
+								message: `Ok.`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => person.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "funny",
+								message: `You.`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => person.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "get_out",
+								message: `Take me.`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => {
+									person.talking = 0;
+									person.setProperty("canTake", true);
+								},
+								exit: true,
+							},						
+						]);
+					},
+				},
+				{
+					name: "take", message: `Alright, ${Iam} taking you with ${me}.`,
+					condition: joker => joker.properties.canTake,
+					action: item => {
+						item.setProperty("pickedUp", true);
+						this.addToInventory("joker");
+						this.audio.pickup.play();
+						this.showBubble(item.pendingMessage);
+						item.pendingMessage = null;
+						this.openRight();
+					},
+				},
+			],			
+			onChange: {
+				pickedUp: (joker, pickedUp) => {
+					joker.changeOpacity(pickedUp ? 0 : 1, engine.lastTime);
+				},
+			},
+		});
+
 
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
@@ -97,7 +190,7 @@ class Template extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Template Room. A placeholder room.",
+								message: "This is called the Joker Room.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -108,7 +201,7 @@ class Template extends GameCore {
 								},
 							},
 							{
-								message: `You must complete this room in order to continue further to the next room, ${messire}.`,
+								message: `I think that's because there's a Joker in the room.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -197,17 +290,26 @@ class Template extends GameCore {
 		this.updateHost(time);
 	}	
 
+	setNextDoorOpened(opened) {
+		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
+		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
+		if (this.doorNextLock) {
+			this.doorNextLock.changeOpacity(opened?0:1, engine.lastTime);
+		}
+	}
+
 	openLeft() {
 
 	}
 
 	openRight() {
-		
+		this.setNextDoorOpened(true);
 	}
 
 	nextLevelLeft() {
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new TimeRoom());
 	}
 }
