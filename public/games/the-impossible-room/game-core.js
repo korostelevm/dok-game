@@ -439,6 +439,11 @@ class GameCore extends GameBase {
 					},
 				],
 			},	
+			joker_card: {
+				actions: [
+					{ name: "look", message: () => `It's a Joker card. The Joker left this in my pocket.` },
+				],
+			},
 			joker: {
 				actions: [
 					{ name: "look", message: () => `It's a Joker.` },
@@ -490,6 +495,10 @@ class GameCore extends GameBase {
 						name: "use", condition: () => this.canUseJoker(),
 						action: item => {
 							this.openRight();
+							this.removeFromInventory("joker");
+							this.addToInventory("joker_card");
+							this.setProperty("joker", true);
+
 						},
 					},
 				],

@@ -67,7 +67,7 @@ class TimeRoom extends GameCore {
 		});
 		this.rollingCarpet = this.spriteFactory.create({
 			name: "Rolling Carpet",
-			anim: this.atlas.rolling_carpet_rolling,
+			anim: this.atlas.rolling_carpet_still,
 			size: [800, 400],
 		}, {
 		});
@@ -79,9 +79,9 @@ class TimeRoom extends GameCore {
 			opacity: 0,			
 		}, {
 			actions: [
-				{ name: "walk through", condition: () => this.isCarpetRolling(),
+				{ name: "walk through", condition: () => this.canGoThrough(),
 					action: forward_door => {
-						if (this.isCarpetRolling()) {
+						if (this.canGoThrough()) {
 							this.monkor.setProperty("paused", this.engine.lastTime);
 							this.monkor.goal.x = 900;
 							this.walkingThrough = true;
@@ -290,6 +290,10 @@ class TimeRoom extends GameCore {
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
 
+	canGoThrough() {
+		return this.isCarpetRolling() || this.properties.joker;		
+	}
+
 	openLeft() {
 		this.doorBack.changeOpacity(0, this.engine.lastTime);
 	}
@@ -308,7 +312,7 @@ class TimeRoom extends GameCore {
 	}
 
 	isCarpetRolling() {
-		return this.redButton.properties.pushed && this.getTime() !== this.redButton.properties.pushed || this.walkingThrough;
+		return this.redButton.properties.pushed && this.getTime() !== this.redButton.properties.pushed;
 	}
 
 	updateClock() {
@@ -414,7 +418,7 @@ class TimeRoom extends GameCore {
 		const animation = rolling ? this.atlas.rolling_carpet_rolling : this.atlas.rolling_carpet_still;
 		this.rollingCarpet.changeAnimation(animation, time);
 		document.getElementById("time-room-clock").style.display = rolling ? "" : "none";
-		this.setNextDoorOpened(rolling);
+		this.setNextDoorOpened(rolling && !this.walkingThrough);
 		if (!rolling) {
 			this.redButton.setProperty("pushed", null);
 			document.getElementById("clock-1").classList.remove("blink_me");
