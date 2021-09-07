@@ -44,6 +44,10 @@ class SceneTab {
 				if (classObj.start) {
 					button.classList.add("first");
 				}
+				if (!engine.classes) {
+					engine.classes = {};
+				}
+				engine.classes[className] = classObj;
 				this.buttonForScene[className] = button;
 				button.addEventListener("mousedown", () => 	engine.setGame(new classObj()));
 			});

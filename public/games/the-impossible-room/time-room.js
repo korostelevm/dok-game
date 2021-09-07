@@ -291,15 +291,15 @@ class TimeRoom extends GameCore {
 	}
 
 	canGoThrough() {
-		return this.isCarpetRolling() || this.properties.joker;		
+		return this.isCarpetRolling() || this.monkor.properties.joker;		
 	}
 
 	openLeft() {
 		this.doorBack.changeOpacity(0, this.engine.lastTime);
 	}
 
-	openRight() {
-		this.setNextDoorOpened(true);
+	setRightOpened(opened) {
+		this.setNextDoorOpened(opened);
 	}
 
 	canUseJoker() {
@@ -404,6 +404,7 @@ class TimeRoom extends GameCore {
 	}	
 
 	onExit(engine) {
+		document.getElementById("im").style.display = "";
 		document.getElementById("time-room-clock").style.display = "none";
 		document.getElementById("time-room-labels").style.display = "none";
 		super.onExit(engine);

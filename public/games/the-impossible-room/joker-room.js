@@ -12,14 +12,6 @@ class JokerRoom extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
-			joker: await engine.addTexture(
-			{
-				url: "assets/joker.png",
-				collision_url: "assets/joker.png",
-				cols:1,rows:2,
-				range:[0,1],
-			}),
-
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -55,91 +47,6 @@ class JokerRoom extends GameCore {
 
 		const Messire = gender === "T" ? "Messires" : gender === "W" ? "Madame" : "Messire";
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
-		const Iam = gender === "T" ? "We are" : "I am";
-		const me = gender === "T" ? "us" : "me";
-
-		this.joker = this.spriteFactory.create({
-			name: "Joker",
-			anim: this.atlas.joker,
-			size: [50, 50],
-			x: 500, y: 340,
-			hotspot: [25,50],
-		}, {
-			actions: [
-				{ name: "talk",
-					action: joker => {
-						this.monkor.goal.x = this.joker.x < this.monkor.x ? this.joker.x - 30 : this.joker.x + 30;
-						this.startDialog(joker, [
-							{
-								message: `Howdy?`,
-								voiceName: "Hysterical",
-								onStart: person => person.talking = engine.lastTime,
-								onEnd: person => person.talking = 0,
-							},
-							{
-								responses: [
-									{
-										response: "What's so funny?",
-										topic: "funny",
-									},
-									{
-										response: "How do I get out of this room?",
-										topic: "get_out",
-									},
-									{
-										response: "I'll be on my way",
-									},
-								],
-							},
-							{
-								message: `Ok.`,
-								voiceName: "Hysterical",
-								onStart: person => person.talking = engine.lastTime,
-								onEnd: person => person.talking = 0,
-								exit: true,
-							},
-							{
-								topic: "funny",
-								message: `You.`,
-								voiceName: "Hysterical",
-								onStart: person => person.talking = engine.lastTime,
-								onEnd: person => person.talking = 0,
-								exit: true,
-							},
-							{
-								topic: "get_out",
-								message: `Take me.`,
-								voiceName: "Hysterical",
-								onStart: person => person.talking = engine.lastTime,
-								onEnd: person => {
-									person.talking = 0;
-									person.setProperty("canTake", true);
-								},
-								exit: true,
-							},						
-						]);
-					},
-				},
-				{
-					name: "take", message: `Alright, ${Iam} taking you with ${me}.`,
-					condition: joker => joker.properties.canTake,
-					action: item => {
-						item.setProperty("pickedUp", true);
-						this.addToInventory("joker");
-						this.audio.pickup.play();
-						this.showBubble(item.pendingMessage);
-						item.pendingMessage = null;
-						this.openRight();
-					},
-				},
-			],			
-			onChange: {
-				pickedUp: (joker, pickedUp) => {
-					joker.changeOpacity(pickedUp ? 0 : 1, engine.lastTime);
-				},
-			},
-		});
-
 
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
@@ -201,7 +108,7 @@ class JokerRoom extends GameCore {
 								},
 							},
 							{
-								message: `I think that's because there's a Joker in the room.`,
+								message: () => this.joker.properties.pickedUp ? "And it is open." : `I think that's because there's a Joker in the room.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -227,6 +134,11 @@ class JokerRoom extends GameCore {
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
+
+	isJokerRoom() {
+		return true;
+	}
+
 
 	updateHost(time) {
 		const goalX = typeof(this.butler.goal.x) == "function" ? this.butler.goal.x(this.butler) : this.butler.goal.x;
@@ -279,6 +191,7 @@ class JokerRoom extends GameCore {
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+		this.joker.changeOpacity(1, engine.lastTime);
 	}
 
 	getWalkArea() {
@@ -302,8 +215,8 @@ class JokerRoom extends GameCore {
 
 	}
 
-	openRight() {
-		this.setNextDoorOpened(true);
+	setRightOpened(opened) {
+		this.setNextDoorOpened(opened);
 	}
 
 	nextLevelLeft() {

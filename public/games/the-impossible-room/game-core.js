@@ -36,6 +36,7 @@ class GameCore extends GameBase {
 			hit: new Sound("audio/hit.mp3", .5),
 			door: new Sound("audio/door.mp3", .5),
 			pickup: new Sound("audio/pickup.mp3", .3),
+			drink: new Sound("audio/drink.mp3", 1),
 			mouse: new Sound("audio/animal-cry.mp3", 1),
 		};
 
@@ -361,6 +362,12 @@ class GameCore extends GameBase {
 					range: [41,44],
 					frameRate: 5,
 				}),
+			joker: await engine.addTexture({
+				url: "assets/joker.png",
+				collision_url: "assets/joker.png",
+				cols:1,rows:2,
+				range:[0,1],
+			}),
 		};
 
 		const I = gender === "T" ? "We" : "I";
@@ -442,6 +449,16 @@ class GameCore extends GameBase {
 			joker_card: {
 				actions: [
 					{ name: "look", message: () => `It's a Joker card. The Joker left this in my pocket.` },
+					{ name: "read", message: "I read: Use this card to return to the joker's room.", },
+					{
+						name: "use", condition: () => this.constructor.name !== this.monkor.properties.joker,
+						action: item => {
+							this.audio.drink.play();
+							const classObj = this.engine.classes[this.monkor.properties.joker];
+							this.monkor.setProperty("jokerReturn", this.constructor.name);
+							engine.setGame(new classObj());
+						},
+					},
 				],
 			},
 			joker: {
@@ -492,13 +509,17 @@ class GameCore extends GameBase {
 						},
 					},
 					{
-						name: "use", condition: () => this.canUseJoker(),
+						name: "put down", condition: () => this.canUseJoker(),
 						action: item => {
-							this.openRight();
+							this.setRightOpened(true);
 							this.removeFromInventory("joker");
 							this.addToInventory("joker_card");
-							this.setProperty("joker", true);
-
+							this.monkor.setProperty("joker", this.constructor.name);
+							this.monkor.setProperty("joker_position", this.monkor.x);
+							this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, engine.lastTime);
+							this.joker.setProperty("pickedUp", false);
+							this.audio.hit.play();
+							this.showBubble(`Interesting. I can put down the joker to exit a room.`);
 						},
 					},
 				],
@@ -555,6 +576,99 @@ class GameCore extends GameBase {
 	}
 
 	addMonkor() {
+		const { gender } = this.data;
+
+		const Iam = gender === "T" ? "We are" : "I am";
+		const me = gender === "T" ? "us" : "me";
+
+		this.joker = this.spriteFactory.create({
+			name: "Joker",
+			anim: this.atlas.joker,
+			size: [50, 50],
+			x: 500, y: 340,
+			hotspot: [25,50],
+			opacity: 0,
+		}, {
+			actions: [
+				{ name: "talk",
+					action: joker => {
+						this.monkor.goal.x = this.joker.x < this.monkor.x ? this.joker.x - 30 : this.joker.x + 30;
+						this.startDialog(joker, [
+							{
+								message: `Howdy?`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => person.talking = 0,
+							},
+							{
+								responses: [
+									{
+										response: "What's so funny?",
+										topic: "funny",
+									},
+									{
+										condition: () => this.isJokerRoom(),
+										response: "How do I get out of this room?",
+										topic: "get_out",
+									},
+									{
+										response: "I'll be on my way",
+									},
+								],
+							},
+							{
+								message: `Ok.`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => person.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "funny",
+								message: `You.`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => person.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "get_out",
+								message: `Take me.`,
+								voiceName: "Hysterical",
+								onStart: person => person.talking = engine.lastTime,
+								onEnd: person => {
+									person.talking = 0;
+									person.setProperty("canTake", true);
+								},
+								exit: true,
+							},						
+						]);
+					},
+				},
+				{
+					name: "take", message: `Alright, ${Iam} taking you with ${me}.`,
+					condition: joker => joker.properties.canTake,
+					action: item => {
+						item.setProperty("pickedUp", true);
+						this.removeFromInventory("joker_card");
+						this.addToInventory("joker");
+						this.audio.pickup.play();
+						this.showBubble(item.pendingMessage);
+						item.pendingMessage = null;
+					},
+				},
+			],			
+			onChange: {
+				pickedUp: (joker, pickedUp) => {
+					joker.changeOpacity(pickedUp || this.monkor.properties.joker !== this.constructor.name ? 0 : 1, engine.lastTime);
+					this.setRightOpened(pickedUp === this.isJokerRoom());
+				},
+			},
+		});
+
+
+
+
 		this.sceneData.monkor = this.sceneData.monkor ?? { x:50, y:380 };
 		this.monkor = this.spriteFactory.create({
 			name: "monkor",
@@ -594,8 +708,14 @@ class GameCore extends GameBase {
 			anim: this.atlas.piano,
 		});
 
+
+
 		this.monkor.speed = 1;
 		this.monkor.setProperty("paused", false);
+
+		if (this.monkor.properties.joker_position) {
+			this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, this.engine.lastTime);
+		}		
 	}
 
 	async postInit() {
@@ -646,15 +766,19 @@ class GameCore extends GameBase {
 			this.setVoice(!engine.muteVoice);
 		});
 
-		document.getElementById("mute-toggle").addEventListener("click", () => {
+		if (!this.domListeners) {
+			this.domListeners = {};
+		}
+
+		document.getElementById("mute-toggle").addEventListener("click", this.domListeners["mute-toggle"] = () => {
 			this.setAudio(audio, audio.paused, .5);			
 		});
 
-		document.getElementById("voice-mute-toggle").addEventListener("click", () => {
+		document.getElementById("voice-mute-toggle").addEventListener("click", this.domListeners["voice-mute-toggle"] = () => {
 			this.setVoice(!engine.muteVoice);
 		});
 
-		document.getElementById("mouse").addEventListener("click", () => {
+		document.getElementById("mouse").addEventListener("click", this.domListeners["mouse"] = () => {
 			this.audio.mouse.play();
 		});
 
@@ -668,9 +792,16 @@ class GameCore extends GameBase {
 		});
 	}
 
+	isJokerRoom() {
+		return false;
+	}
 
 	removeListeners(engine) {
 		engine.keyboardHandler.clearListeners();
+		for (let d in this.domListeners) {
+			document.getElementById(d).removeEventListener("click", this.domListeners[d]);
+		}
+		this.domListeners = {};
 	}
 
 	onDropOnOverlay(e) {
@@ -1036,7 +1167,7 @@ class GameCore extends GameBase {
 		const { engine } = this;
 		const { lastTime, canvas } = engine;
 		const speechBubble = this.speechBubble || (this.speechBubble = document.getElementById("speech-bubble"));
-		const msg = msgOrNull ? msgOrNull.trim() : null;
+		const msg = typeof msgOrNull === "function" ? msgOrNull().trim() : (msgOrNull ? msgOrNull.trim() : null);
 		sprite = sprite || this.monkor;
 		if (sprite) {
 			sprite.speechStarted = 0;
@@ -1308,9 +1439,17 @@ class GameCore extends GameBase {
 		);
 		this.sceneData.monkor.x = monkor.x;
 		this.sceneData.monkor.y = monkor.y;
-		if (monkor.x > 850 && this.nextLevelRight) {
-			this.nextLevelRight();
-		}
+
+		if (monkor.x > 850) {
+			if (monkor.properties.jokerReturn) {
+				const nextRoom = monkor.properties.jokerReturn;
+				const classObj = this.engine.classes[this.monkor.properties.jokerReturn];
+				engine.setGame(new classObj());
+			} else if (this.nextLevelRight) {
+				this.nextLevelRight();
+			}
+		}							
+
 		if (monkor.x < -50 && this.nextLevelLeft) {
 			this.nextLevelLeft();
 		}
@@ -1320,8 +1459,7 @@ class GameCore extends GameBase {
 
 	}
 
-	openRight() {
-		
+	setRightOpened(opened) {
 	}
 
 	canRunRight() {
