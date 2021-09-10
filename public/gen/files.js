@@ -19,10 +19,12 @@ const globalFiles=[
 			"entrance.png",
 			"ground-entrance.png",
 			"gum.png",
+			"idols.png",
 			"invitation-check-collision.png",
 			"invitation-check.png",
 			"invitation.png",
 			"joker.png",
+			"letters.png",
 			"lobby-collision.png",
 			"lobby.png",
 			"mat-collision.png",
@@ -56,7 +58,17 @@ const globalFiles=[
 			"twin-shake.png",
 			"twin-shit.png",
 			"twin.png",
-			"water-faucet-collision.png"
+			"water-faucet-collision.png",
+			"word-bird.png",
+			"word-cat.png",
+			"word-dog.png",
+			"word-horse.png",
+			"word-koala.png",
+			"word-lion.png",
+			"word-panda.png",
+			"word-pig.png",
+			"word-snake.png",
+			"word-turtle.png"
 		]
 	},
 	{
@@ -100,6 +112,7 @@ const globalFiles=[
 			},
 			{
 				"the-impossible-room": [
+					"animal-room.js",
 					"entrance.js",
 					"game-core.js",
 					"game-title.js",
