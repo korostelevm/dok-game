@@ -6,7 +6,7 @@ class SpriteFactory {
 	}
 
 	create(data, attributes, initCallback) {
-		const id = data.name || this.index;
+		const id = (typeof(data.name) !== "function" ? data.name : null) || engine.game.constructor.name + this.index;
 		const properties = this.spriteData[id] || (this.spriteData[id] = {});
 		this.index++;
 		const sprite = this.spriteCollection.create(data, attributes, properties);

@@ -8,6 +8,7 @@ class TimeRoom extends GameCore {
 		const I = gender === "T" ? "We" : "I";
 		const my = gender === "T" ? "our" : "my";
 		const My = gender === "T" ? "Our" : "My";
+		const me = gender === "T" ? "us" : "me";
 
 		/* Load Audio */
 		this.audio = {
@@ -173,11 +174,11 @@ class TimeRoom extends GameCore {
 										topic: "push_for_me",
 									},
 									{
-										response: "How do I get out of this room?",
+										response: `How do ${I} get out of this room?`,
 										topic: "how_get_out",
 									},
 									{
-										response: "I'll be on my way",
+										response: `${I}'ll be on ${my} way`,
 									},
 								],
 							},
@@ -383,13 +384,13 @@ class TimeRoom extends GameCore {
 	}
 
 	async postInit() {
-		await super.postInit();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
 		this.walkingThrough = false;
 		document.getElementById("time-room-labels").style.display = "";
+		await super.postInit();
 	}
 
 	getWalkArea() {
@@ -407,6 +408,7 @@ class TimeRoom extends GameCore {
 		document.getElementById("im").style.display = "";
 		document.getElementById("time-room-clock").style.display = "none";
 		document.getElementById("time-room-labels").style.display = "none";
+		this.redButton.setProperty("pushed", null);
 		super.onExit(engine);
 	}
 
@@ -435,5 +437,6 @@ class TimeRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new AnimalRoom());
 	}
 }

@@ -13,6 +13,107 @@ class AnimalRoom extends GameCore {
 		this.atlas = {
 			...this.atlas,
 			letter: {},
+			idols: {
+				crab: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[0],
+				}),
+				koala: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[1],
+				}),
+				cat: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[2],
+				}),
+				bird: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[3],
+				}),
+				dog: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[4],
+				}),
+				pig: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[5],
+				}),
+				turtle: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[6],
+				}),
+				horse: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[7],
+				}),
+				snake: await engine.addTexture({
+					url: "assets/idols.png",
+					collision_url: "assets/idols.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .25,
+					texture_blend: "luminosity",
+					cols:3,rows:4,
+					range:[8],
+				}),
+			},
+			stand_up: await engine.addTexture({
+				url: "assets/idols.png",
+				collision_url: "assets/idols.png",
+				texture_url: "assets/backwall.jpg",
+				texture_alpha: .25,
+				texture_blend: "luminosity",
+				cols:3,rows:4,
+				range:[9],
+			}),
+			stand_down: await engine.addTexture({
+				url: "assets/idols.png",
+				collision_url: "assets/idols.png",
+				texture_url: "assets/backwall.jpg",
+				texture_alpha: .25,
+				texture_blend: "luminosity",
+				cols:3,rows:4,
+				range:[10],
+			}),
 		};
 
 		for (let i = 0; i < 28; i++) {
@@ -21,7 +122,7 @@ class AnimalRoom extends GameCore {
 				{
 					url: "assets/letters.png",
 					texture_url: "assets/backwall.jpg",
-					texture_alpha: .50,
+					texture_alpha: .40,
 					texture_blend: "source-atop",
 					cols:6,rows:5,
 					range:[i],
@@ -33,16 +134,35 @@ class AnimalRoom extends GameCore {
 			size: [800, 400],
 		});
 
-		const sentence = "CAT BIRD DOG KOALA TURTLE "
-		+ "CAT BIRD DOG KOALA TURTLE "
-		+ "CAT BIRD DOG KOALA TURTLE "
-		+ "CAT BIRD DOG KOALA TURTLE "
-		+ "CAT BIRD DOG";
-		for (let i = 0; i < sentence.length; i++) {
+		if (!this.properties.sentence) {
+			const idolOrder = ["cat"];
+			for (let id in this.atlas.idols) {
+				if (id !== "cat") {
+					idolOrder.push(id);
+				}
+			}
+			for (let i = 1; i < idolOrder.length; i++) {
+				const swapI = 1 + Math.floor(Math.random() * (idolOrder.length - 1));
+				const temp = idolOrder[i];
+				idolOrder[i] = idolOrder[swapI];
+				idolOrder[swapI] = temp;
+			}
+			const fiveIdols = idolOrder.slice(0, 5);
+			idolOrder.unshift(idolOrder.pop());
+			idolOrder.unshift(idolOrder.pop());
+
+			let sentence = idolOrder.slice(0, 5).join(" ").toUpperCase();
+
+			this.setProperty("sentence", sentence);
+		}
+
+		//	116
+		const cycle = this.properties.sentence + " ";
+		for (let i = 0; i < 144; i++) {
 			this.spriteFactory.create({
-				anim: this.atlas.letter[sentence.charAt(i)],
+				anim: this.atlas.letter[cycle.charAt(i % cycle.length)],
 				size: [5, 172],
-				x: 110 + i * 5, y: 72,
+				x: 110 + i * 4, y: 72,
 			});
 		}
 
@@ -57,24 +177,12 @@ class AnimalRoom extends GameCore {
 		}, {
 		});
 
-		this.doorForwardOpened = this.spriteFactory.create({
-			name: "Next Room",
-			anim: this.atlas.right_door_opened,
-			size: [800, 400],
-			opacity: 0,			
-		}, {
-			actions: [
-				{ name: "walk through",
-					action: forward_door => {
-						this.monkor.setProperty("paused", engine.lastTime);
-						this.monkor.goal.x = 900;
-					},
-				},
-			],
-		});
-
 		const Messire = gender === "T" ? "Messires" : gender === "W" ? "Madame" : "Messire";
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
+		const I = gender === "T" ? "We" : "I";
+		const me = gender === "T" ? "us" : "me";
+		const my = gender === "T" ? "our" : "my";
+
 
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
@@ -101,13 +209,26 @@ class AnimalRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
-										response: "I'll be on my way",
+										response: `Can you give ${me} a hint?`,
+										topic: "hint",
+									},
+									{
+										response: `${I}'ll be on ${my} way`,
 									},
 								],
 							},
 							{
 								message: `Au revoir, ${messire}.`,
 								voiceName: "Thomas",
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "hint",
+								message: `I believe the animals must be in the right order, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 								exit: true,
@@ -125,7 +246,7 @@ class AnimalRoom extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Template Room. A placeholder room.",
+								message: "This is called the Animal Room. A room with a animal idols.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -158,9 +279,78 @@ class AnimalRoom extends GameCore {
 			size: [800, 400],
 		});
 
-		const I = gender === "T" ? "We" : "I";
+		this.idols = {};
+		let xpos = 270;
+		for (let i in this.atlas.idols) {
+			const name = i;
+			this.idols[i] = this.spriteFactory.create({
+				name,
+				anim: this.atlas.idols[i],
+				size: [50, 50],
+				hotspot: [25, 50],
+				x: xpos,
+				y: 320,
+				opacity: name === "cat" ? 0 : 1,
+			}, {
+				actions: [
+					{
+						name: "look",
+						message: `It's an idol of a ${name}.`,
+					},
+					{
+						name: "pick up", message: `It's pretty heavy. ${I} can only carry one at the time.`,
+						condition: () => !this.itemCarried.properties.item,
+						action: item => {
+							item.setProperty("pickedUp", true);
+							this.addToInventory(name);
+							this.audio.pickup.play();
+							this.showBubble(item.pendingMessage);
+							item.pendingMessage = null;
+							this.itemCarried.setProperty("item", name);
+						},
+					},
+				],
+				onChange: {
+					pickedUp: (item, pickedUp) => {
+						item.changeOpacity(pickedUp ? 0 : 1, engine.lastTime);
+					},
+				},
+			});
+			xpos += 45;
+		}
+
+		this.doorForwardOpened = this.spriteFactory.create({
+			name: "Next Room",
+			anim: this.atlas.right_door_opened,
+			size: [800, 400],
+			opacity: 0,			
+		}, {
+			actions: [
+				{ name: "walk through",
+					action: forward_door => {
+						this.monkor.setProperty("paused", engine.lastTime);
+						this.monkor.goal.x = 900;
+					},
+				},
+			],
+		});
+
+
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+	}
+
+	putItemBack(item) {
+		const idol = this.idols[item];
+		this.monkor.goal.x = idol.x;
+		this.monkor.goal.y = 350;
+		this.monkor.onStill = () => {
+			if (Math.abs(idol.x - this.monkor.x) < 10) {
+				idol.setProperty("pickedUp", false);
+				this.removeFromInventory(item);
+				this.itemCarried.setProperty("item", null);				
+			}
+		};
 	}
 
 	updateHost(time) {
@@ -208,30 +398,188 @@ class AnimalRoom extends GameCore {
 		}
 	}
 
+	addMonkor() {
+		super.addMonkor();
+		const { gender } = this.data;
+		const I = gender === "T" ? "We" : "I";
+		this.itemCarried = this.spriteFactory.create({
+			name: "itemCarried",
+			size: [50, 50],
+			hotspot: [25, 80],
+			anim: this.atlas.idols.crab,
+			opacity: 0,
+		}, {
+			onChange: {
+				item: (itemCarried, item) => {
+					if (!item) {
+						itemCarried.changeOpacity(0, this.engine.lastTime);
+					} else {
+						itemCarried.changeAnimation(this.atlas.idols[item], this.engine.lastTime);
+						itemCarried.changeOpacity(1, this.engine.lastTime);
+					}
+				},
+			},
+		});
+
+		const sentence = this.properties.sentence;
+		const audio = this.audio;
+		const game = this;
+
+		this.pedestals = [];
+		this.pedestalIdols = [];
+		let xpos = 200;
+		for (let i = 0; i < 5; i++) {
+			const actions = [
+				{
+					name: "look", condition: pedestal => !pedestal.properties.occupied,
+					message: `It's a pedestal.`,
+				},
+			];
+
+			for (let id in this.idols) {
+				const idol = id;
+				actions.push({ 
+					name: () => `put ${this.itemCarried.properties.item} on pedestal`,
+					condition: pedestal => (this.selectedItem === idol || this.itemCarried.properties.item === idol) && !pedestal.properties.occupied,
+					item: idol,
+					command: (item, target) => `put ${item.name} on the pedestal`,
+					action: pedestal => {
+						pedestal.setProperty("occupied", this.itemCarried.properties.item);
+						this.pedestalIdols[pedestal.index].setProperty("idol", this.itemCarried.properties.item);
+						this.removeFromInventory(this.itemCarried.properties.item);
+						this.itemCarried.setProperty("item", null);
+						this.audio.hit.play();
+					},
+				}, {
+					name: "put down on pedestal",
+					condition: pedestal => this.selectedItem === idol && pedestal.properties.occupied,
+					item: idol,
+					command: (item, target) => `put ${item.name} on the pedestal`,
+					message: (pedestal) => `The pedestal is already occupied by a ${pedestal.properties.occupied}.`,
+				});
+			}
+
+			this.pedestals[i] = this.spriteFactory.create({
+				name: "pedestal #" + (i + 1),
+				anim: this.atlas.stand_up,
+				size: [50, 50],
+				hotspot: [25, 50],
+				x: xpos,
+				y: 390,
+			}, {
+				index: i,
+				actions,
+				onChange: {
+					occupied: (pedestal, occupied) => {
+						pedestal.changeAnimation(occupied ? this.atlas.stand_down : this.atlas.stand_up, this.engine.lastTime);
+					},
+				},
+			});
+
+			const onChange = {
+				idol: (pedestalIdol, idol) => {
+					if (idol) {
+						pedestalIdol.changeAnimation(this.atlas.idols[idol], this.engine.lastTime);
+						pedestalIdol.changeOpacity(1, this.engine.lastTime);
+					} else {
+						pedestalIdol.changeOpacity(0, this.engine.lastTime);
+					}
+					const idolOrder = [];
+					for (let i = 0; i < 5; i++) {
+						if (this.pedestalIdols[i]) {
+							idolOrder.push(this.pedestalIdols[i].properties.idol);
+						}
+					}
+					const result = idolOrder.join(" ").toUpperCase();
+					if (result === sentence) {
+						setTimeout(() => {
+							game.setRightOpened(true);
+							audio.door.play();
+						}, 1000);
+					}
+				},
+			};
+			this.pedestalIdols[i] = this.spriteFactory.create({
+				name: item => `${item.properties.idol || "idol"} on the pedestal`,
+				anim: this.atlas.idols.crab,
+				size: [50, 50],
+				hotspot: [25, 50],
+				x: xpos,
+				y: 380,
+				opacity: 0,
+			}, {
+				index: i,
+				actions: [
+					{
+						name: "look",
+						message: item => `It's a ${item.properties.idol || "idol"} on the pedestal.`,
+					},
+					{
+						name: "pick up", condition: pedestalIdol => pedestalIdol.index === 2,
+						message: pedestalIdol => `${I} can't remove the ${pedestalIdol.properties.idol}. It's glued to the pedestal.`,
+					},
+					{
+						name: "pick up", condition: pedestalIdol => pedestalIdol.index !== 2,
+						action: pedestalIdol => {
+							const { index } = pedestalIdol;
+							const idol = pedestalIdol.properties.idol;
+							pedestalIdol.setProperty("idol", null);
+							this.pedestals[index].setProperty("occupied", null);
+							this.addToInventory(idol);
+							this.itemCarried.setProperty("item", idol);
+							this.audio.pickup.play();
+						},
+					},
+				],
+				onChange,
+			});
+			if (i === 2) {
+				this.pedestalIdols[i].setProperty("idol", "cat");
+				this.pedestals[i].setProperty("occupied", "cat");
+			}
+
+
+			xpos += 100;
+		}		
+	}
+
 	async postInit() {
-		await super.postInit();
+
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+		await super.postInit();
 	}
 
 	getWalkArea() {
 		return this.backwall.getCollisionBox(engine.lastTime);		
 	}
 
+	refreshIdol(time) {
+		const period = this.monkor.walking ? Math.sin(time / 30) * 2 : 0;
+		this.itemCarried.changePosition(this.monkor.x, this.monkor.y + period, time);
+	}
+
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
+		this.refreshIdol(time);
 	}	
 
 	openLeft() {
 
 	}
 
-	openRight() {
-		
+	setNextDoorOpened(opened) {
+		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
+		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
 	}
+
+	setRightOpened(opened) {
+		this.setNextDoorOpened(opened);
+	}
+
 
 	nextLevelLeft() {
 	}

@@ -2,6 +2,7 @@ const globalFiles=[
 	".DS_Store",
 	{
 		"assets": [
+			".DS_Store",
 			"background-door-collision.png",
 			"background-door.png",
 			"backwall.jpg",
@@ -58,17 +59,7 @@ const globalFiles=[
 			"twin-shake.png",
 			"twin-shit.png",
 			"twin.png",
-			"water-faucet-collision.png",
-			"word-bird.png",
-			"word-cat.png",
-			"word-dog.png",
-			"word-horse.png",
-			"word-koala.png",
-			"word-lion.png",
-			"word-panda.png",
-			"word-pig.png",
-			"word-snake.png",
-			"word-turtle.png"
+			"water-faucet-collision.png"
 		]
 	},
 	{

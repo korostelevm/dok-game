@@ -125,7 +125,8 @@ class Selection extends GameBase {
 	}
 
 	startGame() {
-		this.engine.setGame(new Menu());
+		const classObj = this.engine.lastGame ? this.engine.classes[this.engine.lastGame] : Menu;
+		this.engine.setGame(new classObj());
 	}
 
 	onChange(key, value) {

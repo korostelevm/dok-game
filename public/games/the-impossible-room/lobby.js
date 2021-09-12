@@ -245,7 +245,7 @@ class Lobby extends GameCore {
 		}, {
 			actions: [
 				{ name: "look", message: `It's a half chewed gum on the ground.` },
-				{ name: "pickup", message: `Sure, ${I}'ll pickup this chewing gum on the ground, half masticated by a random person.`,
+				{ name: "pick up", message: `Sure, ${I}'ll pick up this chewing gum on the ground, half masticated by a random person.`,
 					action: item => {
 						item.setProperty("pickedUp", true);
 						this.addToInventory("gum");
@@ -681,11 +681,11 @@ class Lobby extends GameCore {
 	}
 
 	async postInit() {
-		await super.postInit();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+		await super.postInit();
 	}
 
 	getWalkArea() {

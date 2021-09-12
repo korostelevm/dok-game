@@ -245,7 +245,7 @@ class Entrance extends GameCore {
 		}, {
 			actions: [
 				{ name: "look", message: `It's a half smoked cigarette butt on the ground.` },
-				{ name: "pickup", message: `Sure, ${I}'ll pickup this cigarette butt on the ground, half smoked by a random person.`,
+				{ name: "pick up", message: `Sure, ${I}'ll pick up this cigarette butt on the ground, half smoked by a random person.`,
 					action: item => {
 						item.setProperty("pickedUp", true);
 						this.addToInventory("cigarette");
@@ -278,7 +278,7 @@ class Entrance extends GameCore {
 						mat.changeAnimation(this.atlas.mat_pulling, engine.lastTime);
 					}
 				},
-				{ name: "pickup key", condition: mat => mat.properties.pulled && !mat.properties.pickedKey, message: () => this.entrance.properties.unlockedOnce ? `It's the key that unlocks the entrance to ${this.title.innerText}` : `I wonder where that key fits...`,
+				{ name: "pick up key", condition: mat => mat.properties.pulled && !mat.properties.pickedKey, message: () => this.entrance.properties.unlockedOnce ? `It's the key that unlocks the entrance to ${this.title.innerText}` : `I wonder where that key fits...`,
 					action: mat => {
 						mat.setProperty("pickedKey", true);
 						mat.changeAnimation(this.atlas.mat_picked_key, engine.lastTime);
@@ -332,10 +332,6 @@ class Entrance extends GameCore {
 		this.title.style.opacity = .5;
 		document.getElementById("im").style.display = "";
 		document.getElementById("im").innerText = this.properties.title || "THE IMPOSSIBLE ROOM";
-
-		if (!this.inventory.contains("note")) {
-			this.addToInventory("note");
-		}
 
 		engine.chrono.tick("done entrance initialization");		
 	}

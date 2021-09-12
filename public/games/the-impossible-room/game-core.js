@@ -1,6 +1,7 @@
 class GameCore extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
+		console.log(this.sceneData.properties);
 		const { gl, config } = this.engine;
 
 		const { gender } = this.data;
@@ -78,7 +79,7 @@ class GameCore extends GameBase {
 				{
 					...spritesheet,
 					frameRate:10,
-					range: gender === 'T' ? [13, 16] : [9, 12],
+					range: gender === 'T' ? [9, 12] : [9, 12],
 				}),
 			monkor_stand_left: await engine.addTexture(
 				{
@@ -383,6 +384,12 @@ class GameCore extends GameBase {
 					{ name: "read", message: () => `It's a letter. It says: "You've been invited to the IMPOSSIBLE ROOM! A room that's impossible to escape."`,
 						default: true,
 					},
+					{
+						name: "look",
+						action: () => {
+							this.engine.setGame(new Selection());
+						},
+					},
 				],
 			},
 			key_turd: {
@@ -547,7 +554,102 @@ class GameCore extends GameBase {
 						},
 					},
 				],
-			},			
+			},
+			crab: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+					{
+						name: "look",
+						message: item => `It's an idol of a ${item.name}.`,
+
+					},
+				],
+			},
+			koala: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			cat: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			bird: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			dog: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			pig: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			turtle: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			horse: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
+			snake: {
+				actions: [
+					{
+						name: "put it back",
+						action: item => {
+							this.putItemBack(item.name);
+						},
+					},
+				],
+			},
 		};
 
 		this.defaultCommand = (item, target) => `use ${item.name} on ${target.name}`;
@@ -566,9 +668,27 @@ class GameCore extends GameBase {
 			gum: "🧠",
 			joker_card: "🃏",
 			joker: "🤪",
+			crab: "🦀",
+			koala: "🐨",
+			cat: "🐈",
+			bird: "🐦",
+			dog: "🐕",
+			pig: "🐖",
+			turtle: "🐢",
+			horse: "🐴",
+			snake: "🐍",
 		};
 
 		this.showVoices();
+
+		if (!this.inventory.contains("note")) {
+			this.addToInventory("note");
+		}
+		console.log(this.sceneData.properties);
+	}
+
+	putItemBack(item) {
+		
 	}
 
 	canUseJoker() {
@@ -1023,7 +1143,7 @@ class GameCore extends GameBase {
 		if (!this.subjectNameDiv) {
 			this.subjectNameDiv = document.getElementById("subject-name");
 		}
-		const subjectText = subject ? subject.name : "";
+		const subjectText = !subject ? "" : typeof(subject.name) === "function" ? subject.name(subject) : subject.name;
 		if (this.subjectText !== subjectText) {
 			this.subjectText = subjectText;
 			this.subjectNameDiv.innerText = this.subjectText;
@@ -1112,7 +1232,6 @@ class GameCore extends GameBase {
 				return false;
 			}
 			const actionItems = Array.isArray(action.item) ? action.item : [action.item];
-			console.log(actionItems, item.name);
 			return actionItems.contains(item.id);
 		})[0] || this.itemActionOnTarget(item, target);
 	}
@@ -1136,7 +1255,7 @@ class GameCore extends GameBase {
 		if (highlight) {
 			div.classList.add("selected");
 		}
-		div.innerText = messageOverride || action.name;
+		div.textContent = messageOverride || (typeof(action.name)==="function" ? action.name(action) : action.name);
 		div.addEventListener("click", e => {
 			this.performAction(action, target);
 		});
@@ -1410,6 +1529,10 @@ class GameCore extends GameBase {
 				anim = this.atlas.monkor_stand_left;
 			} else if (monkor.lookRight) {
 				anim = this.atlas.monkor_stand_right;
+			} else if (monkor.onStill) {
+				const onStill = monkor.onStill;
+				monkor.onStill = null;
+				onStill(monkor);
 			}
 		}
 
@@ -1428,6 +1551,9 @@ class GameCore extends GameBase {
 			if (Math.abs(dist) < 5) {
 				monkor.goal.x = monkor.x;
 			}
+		}
+		if (this.joker.x > 50 && this.isCarpetRolling()) {
+			this.joker.changePosition(this.joker.x - 3.86, this.joker.y, time);
 		}
 
 

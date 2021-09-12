@@ -238,6 +238,7 @@ class Engine {
 		if (this.game) {
 			this.game.ready = false;
 			this.game.onExit(engine);
+			this.lastGame = this.game.constructor.name;
 		}
 		if (this.spriteCollection) {
 			this.spriteCollection.clear();

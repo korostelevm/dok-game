@@ -207,7 +207,7 @@ class Restroom extends GameCore {
 						door.pendingMessage = null;
 					},
 				},
-				{ name: "pickup key", condition: door => door.properties.opened && !this.monkor_shit.properties.sit && this.monkor_shit.properties.saw_key && this.monkor_shit.properties.has_shit === "key",
+				{ name: "pick up key", condition: door => door.properties.opened && !this.monkor_shit.properties.sit && this.monkor_shit.properties.saw_key && this.monkor_shit.properties.has_shit === "key",
 					lookup: 500,
 					action: door => {
 						const seat = this.monkor_shit;

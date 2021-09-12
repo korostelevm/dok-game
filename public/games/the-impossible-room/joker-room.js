@@ -47,6 +47,8 @@ class JokerRoom extends GameCore {
 
 		const Messire = gender === "T" ? "Messires" : gender === "W" ? "Madame" : "Messire";
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
+		const me = gender === "T" ? "us" : "me";
+		const my = gender === "T" ? "our" : "my";
 
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
@@ -73,13 +75,26 @@ class JokerRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
-										response: "I'll be on my way",
+										response: `Can you give ${me} a hint?`,
+										topic: "hint",
+									},
+									{
+										response: `${I}'ll be on ${my} way`,
 									},
 								],
 							},
 							{
 								message: `Au revoir, ${messire}.`,
 								voiceName: "Thomas",
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "hint",
+								message: `Why not talk to the Joker? ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 								exit: true,
@@ -186,12 +201,12 @@ class JokerRoom extends GameCore {
 	}
 
 	async postInit() {
-		await super.postInit();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
 		this.joker.changeOpacity(1, engine.lastTime);
+		await super.postInit();
 	}
 
 	getWalkArea() {

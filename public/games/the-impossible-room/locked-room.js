@@ -912,11 +912,11 @@ class LockedRoom extends GameCore {
 	}
 
 	async postInit() {
-		await super.postInit();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+		await super.postInit();
 	}
 
 	getWalkArea() {
