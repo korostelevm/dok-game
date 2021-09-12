@@ -500,7 +500,7 @@ class AnimalRoom extends GameCore {
 				},
 			};
 			this.pedestalIdols[i] = this.spriteFactory.create({
-				name: item => `${item.properties.idol || "idol"} on the pedestal`,
+				name: item => `${item.properties.idol || "idol"} on a pedestal`,
 				anim: this.atlas.idols.crab,
 				size: [50, 50],
 				hotspot: [25, 50],
@@ -512,7 +512,7 @@ class AnimalRoom extends GameCore {
 				actions: [
 					{
 						name: "look",
-						message: item => `It's a ${item.properties.idol || "idol"} on the pedestal.`,
+						message: item => `It's a ${item.properties.idol || "idol"} on a pedestal.`,
 					},
 					{
 						name: "pick up", condition: pedestalIdol => pedestalIdol.index === 2,

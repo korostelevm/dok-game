@@ -200,12 +200,16 @@ class JokerRoom extends GameCore {
 		}
 	}
 
+	addMonkor() {
+		super.addMonkor();
+		this.joker.changeOpacity(1, engine.lastTime);
+	}
+
 	async postInit() {
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
-		this.joker.changeOpacity(1, engine.lastTime);
 		await super.postInit();
 	}
 

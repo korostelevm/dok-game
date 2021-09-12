@@ -405,7 +405,7 @@ class TimeRoom extends GameCore {
 	}	
 
 	onExit(engine) {
-		document.getElementById("im").style.display = "";
+		document.getElementById("im").style.display = "none";
 		document.getElementById("time-room-clock").style.display = "none";
 		document.getElementById("time-room-labels").style.display = "none";
 		this.redButton.setProperty("pushed", null);
