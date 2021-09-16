@@ -911,12 +911,12 @@ class LockedRoom extends GameCore {
 		}
 	}
 
-	async postInit() {
+	addMonkor() {
+		super.addMonkor();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
-		await super.postInit();
 	}
 
 	getWalkArea() {

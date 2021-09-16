@@ -376,6 +376,12 @@ class Restroom extends GameCore {
 		return songs[Math.floor(Math.random()*songs.length)];
 	}
 
+	canRunLeft() {
+		return true;
+	}
+
+
+
 	getWalkArea() {
 		return this.ground.getCollisionBox(engine.lastTime);		
 	}

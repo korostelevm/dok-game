@@ -349,6 +349,10 @@ class Entrance extends GameCore {
 		super.onExit(engine);
 	}
 
+	canRunLeft() {
+		return true;
+	}
+
 	canRunRight() {
 		return true;
 	}

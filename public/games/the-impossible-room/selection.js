@@ -180,6 +180,8 @@ class Selection extends GameBase {
 
 		localStorage.setItem("playerName", this.data.name);
 		localStorage.setItem("playerGender", this.data.gender);
+		document.getElementById("player-name").textContent =
+			this.data.name.toUpperCase().startsWith("MONKOR") ? "Monkor" : this.data.name;
 	}
 
 	handleMouse(e) {

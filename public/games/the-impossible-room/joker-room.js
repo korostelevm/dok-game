@@ -38,8 +38,7 @@ class JokerRoom extends GameCore {
 			actions: [
 				{ name: "walk through",
 					action: forward_door => {
-						this.monkor.setProperty("paused", engine.lastTime);
-						this.monkor.goal.x = 900;
+						this.walkThrough();
 					},
 				},
 			],
@@ -203,14 +202,10 @@ class JokerRoom extends GameCore {
 	addMonkor() {
 		super.addMonkor();
 		this.joker.changeOpacity(1, engine.lastTime);
-	}
-
-	async postInit() {
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
-		await super.postInit();
 	}
 
 	getWalkArea() {

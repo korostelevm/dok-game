@@ -83,9 +83,8 @@ class TimeRoom extends GameCore {
 				{ name: "walk through", condition: () => this.canGoThrough(),
 					action: forward_door => {
 						if (this.canGoThrough()) {
-							this.monkor.setProperty("paused", this.engine.lastTime);
-							this.monkor.goal.x = 900;
-							this.walkingThrough = true;
+							this.walkThrough();
+							this.redButton.setProperty("pushed", null);
 						} else {
 							this.showBubble(`${I} can't go through. The door is now closed.`, () => {
 							});							
@@ -383,11 +382,15 @@ class TimeRoom extends GameCore {
 		}
 	}
 
-	async postInit() {
+	addMonkor() {
+		super.addMonkor();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+	}
+
+	async postInit() {
 		this.walkingThrough = false;
 		document.getElementById("time-room-labels").style.display = "";
 		await super.postInit();
@@ -408,7 +411,9 @@ class TimeRoom extends GameCore {
 		document.getElementById("im").style.display = "none";
 		document.getElementById("time-room-clock").style.display = "none";
 		document.getElementById("time-room-labels").style.display = "none";
-		this.redButton.setProperty("pushed", null);
+		if (this.redButton) {
+			this.redButton.setProperty("pushed", null);
+		}
 		super.onExit(engine);
 	}
 
@@ -421,7 +426,7 @@ class TimeRoom extends GameCore {
 		const animation = rolling ? this.atlas.rolling_carpet_rolling : this.atlas.rolling_carpet_still;
 		this.rollingCarpet.changeAnimation(animation, time);
 		document.getElementById("time-room-clock").style.display = rolling ? "" : "none";
-		this.setNextDoorOpened(rolling && !this.walkingThrough);
+		this.setRightOpened(rolling || this.walkingThrough);
 		if (!rolling) {
 			this.redButton.setProperty("pushed", null);
 			document.getElementById("clock-1").classList.remove("blink_me");

@@ -169,7 +169,7 @@ class Lobby extends GameCore {
 							},
 							{
 								message: "What if a player finds your downloaded image in the developer tools. They will see your indecently exposed bottom half!",
-								speaker: "monkor",
+								speaker: this.monkor,
 								lookup: 600,
 							},
 							{
@@ -680,12 +680,12 @@ class Lobby extends GameCore {
 		}
 	}
 
-	async postInit() {
+	addMonkor() {
+		super.addMonkor();
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
-		});
-		await super.postInit();
+		});		
 	}
 
 	getWalkArea() {

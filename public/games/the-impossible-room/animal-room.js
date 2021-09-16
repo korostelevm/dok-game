@@ -158,11 +158,11 @@ class AnimalRoom extends GameCore {
 
 		//	116
 		const cycle = this.properties.sentence + " ";
-		for (let i = 0; i < 144; i++) {
+		for (let i = 0; i < 116; i++) {
 			this.spriteFactory.create({
 				anim: this.atlas.letter[cycle.charAt(i % cycle.length)],
 				size: [5, 172],
-				x: 110 + i * 4, y: 72,
+				x: 110 + i * 5, y: 72,
 			});
 		}
 
@@ -328,8 +328,7 @@ class AnimalRoom extends GameCore {
 			actions: [
 				{ name: "walk through",
 					action: forward_door => {
-						this.monkor.setProperty("paused", engine.lastTime);
-						this.monkor.goal.x = 900;
+						this.walkThrough();
 					},
 				},
 			],
@@ -541,15 +540,10 @@ class AnimalRoom extends GameCore {
 
 			xpos += 100;
 		}		
-	}
-
-	async postInit() {
-
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
-		await super.postInit();
 	}
 
 	getWalkArea() {
@@ -566,6 +560,11 @@ class AnimalRoom extends GameCore {
 		this.updateHost(time);
 		this.refreshIdol(time);
 	}	
+
+	canUseJoker() {
+		return true;
+	}
+
 
 	openLeft() {
 
@@ -585,5 +584,6 @@ class AnimalRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new GandalfRoom());
 	}
 }

@@ -24,7 +24,7 @@ class GameBase {
 
 	async postInit() {
 		for (let key in this.properties) {
-			this.onChange(key, this.properties[key]);
+			this.onChange(key, this.properties[key], true);
 		}
 		this.spriteFactory.postCreate();
 	}

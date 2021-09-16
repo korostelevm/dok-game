@@ -1,7 +1,6 @@
 class GameCore extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
-		console.log(this.sceneData.properties);
 		const { gl, config } = this.engine;
 
 		const { gender } = this.data;
@@ -257,48 +256,48 @@ class GameCore extends GameBase {
 			butler: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [0],
 				}),
 			butler_still_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [17],
 					frameRate: 5,
 				}),
 			butler_walk_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [5, 8],
 					frameRate: 5,
 				}),
 			butler_talk_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [17,20],
 					frameRate: 5,
 				}),
 			butler_shake_hands_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [21,22],
 					frameRate: 5,
 				}),
 			butler_shake_hands_talk_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [22,25],
 					frameRate: 5,
 				}),
 			butler_still_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [17],
 					direction: -1,
 					frameRate: 5,
@@ -306,7 +305,7 @@ class GameCore extends GameBase {
 			butler_walk_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [5, 8],
 					direction: -1,
 					frameRate: 5,
@@ -314,7 +313,7 @@ class GameCore extends GameBase {
 			butler_talk_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [17,20],
 					direction: -1,
 					frameRate: 5,
@@ -322,7 +321,7 @@ class GameCore extends GameBase {
 			butler_shake_hands_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [21,22],
 					direction: -1,
 					frameRate: 5,
@@ -330,7 +329,7 @@ class GameCore extends GameBase {
 			butler_shake_hands_talk_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [22,25],
 					direction: -1,
 					frameRate: 5,
@@ -338,20 +337,20 @@ class GameCore extends GameBase {
 			butler_angry_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [41],
 					direction: -1,
 				}),
 			butler_angry_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [41],
 				}),
 			butler_talk_angry_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [41,44],
 					direction: -1,
 					frameRate: 5,
@@ -359,9 +358,37 @@ class GameCore extends GameBase {
 			butler_talk_angry_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [41,44],
 					frameRate: 5,
+				}),
+			butler_kick_right: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [45],
+					frameRate: 5,
+				}),
+			butler_kick_left: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [45],
+					direction: -1,
+					frameRate: 5,
+				}),
+			butler_kick_right_still: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [46],
+				}),
+			butler_kick_left_still: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [46],
+					direction: -1,
 				}),
 			joker: await engine.addTexture({
 				url: "assets/joker.png",
@@ -526,7 +553,9 @@ class GameCore extends GameBase {
 							this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, engine.lastTime);
 							this.joker.setProperty("pickedUp", false);
 							this.audio.hit.play();
-							this.showBubble(`Interesting. I can put down the joker to exit a room.`);
+							setTimeout(() => {
+								this.showBubble(`Interesting. I can put down the joker to exit a room.`);
+							}, 500);
 						},
 					},
 				],
@@ -684,7 +713,11 @@ class GameCore extends GameBase {
 		if (!this.inventory.contains("note")) {
 			this.addToInventory("note");
 		}
-		console.log(this.sceneData.properties);
+
+		const playerName = localStorage.getItem("playerName");
+		document.getElementById("player-name").textContent =
+			!playerName || playerName.toUpperCase().startsWith("MONKOR") ? "Monkor" : playerName;
+
 	}
 
 	putItemBack(item) {
@@ -769,11 +802,16 @@ class GameCore extends GameBase {
 					name: "take", message: `Alright, ${Iam} taking you with ${me}.`,
 					condition: joker => joker.properties.canTake,
 					action: item => {
-						item.setProperty("pickedUp", true);
-						this.removeFromInventory("joker_card");
-						this.addToInventory("joker");
-						this.audio.pickup.play();
-						this.showBubble(item.pendingMessage);
+						this.showBubble(item.pendingMessage, () => {
+							setTimeout(() => {
+								item.setProperty("pickedUp", true);
+								this.setRightOpened(this.isJokerRoom());
+								this.removeFromInventory("joker_card");
+								this.addToInventory("joker");
+								this.monkor.setProperty("joker", null);
+								this.audio.pickup.play();
+							}, 500);
+						});
 						item.pendingMessage = null;
 					},
 				},
@@ -781,7 +819,6 @@ class GameCore extends GameBase {
 			onChange: {
 				pickedUp: (joker, pickedUp) => {
 					joker.changeOpacity(pickedUp || this.monkor.properties.joker !== this.constructor.name ? 0 : 1, engine.lastTime);
-					this.setRightOpened(pickedUp === this.isJokerRoom());
 				},
 			},
 		});
@@ -802,6 +839,9 @@ class GameCore extends GameBase {
 				paused: (monkor, paused) => {
 					this.setInventoryVisibility(!paused);
 					this.setControlVisibility(!paused);
+				},
+				joker: (monkor, joker) => {
+					this.onJoker(joker);
 				},
 			},
 			goal: {
@@ -831,7 +871,20 @@ class GameCore extends GameBase {
 
 
 		this.monkor.speed = 1;
-		this.monkor.setProperty("paused", false);
+
+		if (this.monkor.x > 850 && this.monkor.goal.x < 850) {
+			this.walkingThrough = true;
+			this.monkor.setProperty("paused", true);
+			this.setRightOpened(true);
+			this.monkor.onStill = monkor => {
+				this.walkingThrough = false;
+				monkor.setProperty("paused", false);
+				this.setRightOpened(this.monkor.properties.joker === this.constructor.name);
+			};
+
+		} else {
+			this.monkor.setProperty("paused", false);
+		}
 
 		if (this.monkor.properties.joker_position) {
 			this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, this.engine.lastTime);
@@ -854,6 +907,9 @@ class GameCore extends GameBase {
 		}
 		this.updateInventory();
 		await super.postInit();
+	}
+
+	onJoker(putDown) {
 	}
 
 	onExit(engine) {
@@ -948,7 +1004,7 @@ class GameCore extends GameBase {
 
 	updateMouse(time) {
 		if (this.mouse && this.mouse.alive) {
-			const walkArea = this.getWalkArea();
+			const walkArea = this.savedWalkArea || (this.savedWalkArea = this.getWalkArea());
 			const top = walkArea.top || 0;
 			const bottom = walkArea.bottom || 400;
 			const falling = this.mouse.y < top ? (time - this.mouse.alive) / 100 : 0;
@@ -1453,13 +1509,30 @@ class GameCore extends GameBase {
 			} else {
 				const dx = this.canRunRight() ? -(mouse.x - monkor.x) : -1;
 				monkor.changeAnimation(dx < 0 ? this.atlas.monkor_run_left : this.atlas.monkor_run_right, time);
-				monkor.changePosition(monkor.x + (dx < 0 ? -5 : 5), monkor.y, time);
-				if (!monkor.running_away) {
+				monkor.changePosition(monkor.x + (dx < 0 ? -4 : 4), monkor.y, time);
+				if (monkor.x < 50 && !this.canRunLeft()) {
+					monkor.changePosition(monkor.x + 20, monkor.y, time);
+				}
+				if (!monkor.running_away && this.canRunLeft()) {
 					if (dx < 0) {
 						this.openLeft();
 					}
 					monkor.running_away = time;
 					setTimeout(() => this.gameOver(), 6000);					
+				}
+				if (!this.canRunLeft() && !mouse.putBack) {
+					mouse.putBack = true;
+					setTimeout(() => {
+						mouse.putBack = false;
+						mouse.alive = 0;
+						monkor.scared = 0;
+
+						mouse.changeOpacity(0, this.engine.lastTime);
+						const divMouse = document.getElementById("mouse");
+						divMouse.style.opacity = 1;
+						divMouse.setAttribute("draggable", "true");
+
+					}, 6000);
 				}
 			}
 
@@ -1566,18 +1639,35 @@ class GameCore extends GameBase {
 		this.sceneData.monkor.x = monkor.x;
 		this.sceneData.monkor.y = monkor.y;
 
-		if (monkor.x > 850) {
+		if (monkor.x > 850 && !this.changingLevel && monkor.goal.x === 900) {
+			this.changingLevel = true;
 			if (monkor.properties.jokerReturn) {
 				const nextRoom = monkor.properties.jokerReturn;
 				const classObj = this.engine.classes[this.monkor.properties.jokerReturn];
 				engine.setGame(new classObj());
 			} else if (this.nextLevelRight) {
-				this.nextLevelRight();
+				if (!this.butler || this.butler.x > 800) {
+					this.nextLevelRight();
+				} else {
+					setTimeout(() => {
+						this.nextLevelRight();
+					}, 2000);
+				}
 			}
 		}							
 
 		if (monkor.x < -50 && this.nextLevelLeft) {
 			this.nextLevelLeft();
+		}
+	}
+
+	walkThrough() {
+		this.walkingThrough = true;
+		this.monkor.setProperty("paused", this.engine.lastTime);
+		this.monkor.goal.x = 900;
+		if (this.butler) {
+			this.butler.goal.x = () => this.monkor.x + 50;
+			this.butler.goal.y = () => this.monkor.y;		
 		}
 	}
 
@@ -1589,6 +1679,10 @@ class GameCore extends GameBase {
 	}
 
 	canRunRight() {
+		return false;
+	}
+
+	canRunLeft() {
 		return false;
 	}
 
@@ -1724,7 +1818,7 @@ class GameCore extends GameBase {
 					div.style.display = "none";
 				} else {
 					div.style.display = "";
-					div.textContent = response;
+					div.textContent = typeof(response) === "function" ? response(response[i]) : response;
 					responseIndex++;
 				}
 			}
@@ -1899,7 +1993,7 @@ class GameCore extends GameBase {
 			return;
 		}
 		this.showSubject("");
-		const speaker = chitChat.speaker === "monkor" ? this.monkor : subject;
+		const speaker = (chitChat.speaker || subject);
 		this.dialogSubject = subject;
 		this.dialog = dialog;
 		this.previousIndex = this.dialogIndex;
