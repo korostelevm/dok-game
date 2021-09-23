@@ -274,7 +274,8 @@ class Engine {
 		gl.clearColor(.0, .0, .1, 1);
 
 		const viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
-		gl.uniformMatrix4fv(uniforms.view.location, false, viewMatrix);
+		this.viewMatrix = viewMatrix;
+		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 
 		const zNear = -1;
 		const zFar = 2000;
@@ -442,19 +443,38 @@ class Engine {
 
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
-			if (sprite.updated.sprite >= this.lastTime) {
+			const { crop:[cropX, cropY]} = sprite;
+			if (sprite.updated.sprite >= this.lastTime
+				|| sprite.updated.crop >= this.lastTime
+				|| sprite.updated.hotspot >= this.lastTime) {
 				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
-				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation);
+				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
 			}
 			if (sprite.updated.animation >= this.lastTime
 				|| sprite.updated.direction >= this.lastTime
-				|| sprite.updated.opacity >= this.lastTime) {
+				|| sprite.updated.opacity >= this.lastTime
+				|| sprite.updated.crop >= this.lastTime) {
 				const {direction, opacity} = sprite;
-				this.spriteRenderer.setAnimation(i, sprite.anim, direction, opacity);
+				this.spriteRenderer.setAnimation(i, sprite.anim, direction, opacity, cropX, cropY);
 			}
 			if (sprite.updated.updateTime >= this.lastTime) {
 				this.spriteRenderer.setUpdateTime(i, sprite);
 			}
+		}
+
+		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
+		if (shake) {
+			if (shake > 1) {
+				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, (Math.random() - .5) * shake, 0));
+				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+			} else {
+				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+			}
+		} else if (shake === null && this.shake) {
+			this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+			delete this.shake;
 		}
 
 		//	DRAW CALL

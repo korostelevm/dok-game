@@ -245,9 +245,9 @@ class TextureAtlas {
 		return this.tempMatrix;
 	}
 
-	getTextureCoordinates(direction, opacity) {
+	getTextureCoordinates(direction, opacity, cropX, cropY) {
 		const { x, y, spriteWidth, spriteHeight } = this;
-		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, direction, opacity);
+		return this.getTextureCoordinatesFromRect(x, y, spriteWidth * (cropX || 1), spriteHeight * (cropY || 1), direction, opacity);
 	}
 
 	getSpritesheetInfo() {

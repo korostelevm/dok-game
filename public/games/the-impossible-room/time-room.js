@@ -189,6 +189,19 @@ class TimeRoom extends GameCore {
 								exit: true,
 							},
 							{
+								topic: "unwanted-item",
+								message: `No thank you, ${messire}.`,
+								voiceName,
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+								next: previousIndex => previousIndex,
+							},
+							{
 								topic: "push_for_me",
 								message: `D'accord, ${messire}`,
 								voiceName: "Thomas",

@@ -153,6 +153,14 @@ class GandalfRoom extends GameCore {
 								exit: true,
 							},
 							{
+								topic: "unwanted-item",
+								message: `No thanks.`,
+								voiceName: "Ralph",
+								onStart: gandalf => gandalf.setProperty("talking", this.engine.lastTime),
+								onEnd: gandalf => gandalf.setProperty("talking", null),
+								next: previousIndex => previousIndex,
+							},
+							{
 								topic: "no_one",
 								message: `${localStorage.getItem("playerName")} shall pass.`,
 								voiceName: "Ralph",
@@ -402,6 +410,19 @@ class GandalfRoom extends GameCore {
 								exit: true,
 							},
 							{
+								topic: "unwanted-item",
+								message: `No thank you, ${messire}.`,
+								voiceName,
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+								next: previousIndex => previousIndex,
+							},
+							{
 								topic: "hint",
 								message: `No one can pass this room, ${messire}.`,
 								voiceName: "Thomas",
@@ -583,5 +604,8 @@ class GandalfRoom extends GameCore {
 
 	nextLevelRight(forReal) {
 		console.log("nextLevelRight()", forReal);
+		if (forReal) {
+			this.engine.setGame(new Restaurant());
+		}
 	}
 }

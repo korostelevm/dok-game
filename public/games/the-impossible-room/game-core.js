@@ -173,15 +173,22 @@ class GameCore extends GameBase {
 			mouse: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
-					cols:2,rows:2,
+					cols:2,rows:3,
 					range:[0],
 				}),
 			mouse_run: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
-					cols:2,rows:2,
+					cols:2,rows:3,
 					frameRate: 20,
 					range:[1, 2],
+				}),
+			mouse_eat: await engine.addTexture(
+				{
+					url: "assets/mouse.png",
+					cols:2,rows:3,
+					frameRate: 20,
+					range:[3, 5],
 				}),
 			monkor_shake_left: await engine.addTexture({
 					url: genderToShakeUrl[gender],
@@ -196,6 +203,21 @@ class GameCore extends GameBase {
 					collision_url: genderToShakeUrl[gender],
 					cols: 1, rows: 2,
 					range: [0,1],
+					frameRate: 5,
+				}),
+			monkor_knock_left: await engine.addTexture({
+					url: genderToShakeUrl[gender],
+					collision_url: genderToShakeUrl[gender],
+					cols: 1, rows: 2,
+					direction: -1,
+					range: [0],
+					frameRate: 5,
+				}),
+			monkor_knock_right: await engine.addTexture({
+					url: genderToShakeUrl[gender],
+					collision_url: genderToShakeUrl[gender],
+					cols: 1, rows: 2,
+					range: [0],
 					frameRate: 5,
 				}),
 			backwall: await engine.addTexture(
@@ -525,6 +547,12 @@ class GameCore extends GameBase {
 									message: `Ok.`,
 									voiceName: "Hysterical",
 									exit: true,
+								},
+								{
+									topic: "unwanted-item",
+									message: `No thanks.`,
+									voiceName: "Hysterical",
+									next: previousIndex => previousIndex,
 								},
 								{
 									topic: "funny",
@@ -879,7 +907,7 @@ class GameCore extends GameBase {
 			this.monkor.onStill = monkor => {
 				this.walkingThrough = false;
 				monkor.setProperty("paused", false);
-				this.setRightOpened(this.monkor.properties.joker === this.constructor.name);
+				this.setRightOpened(this.monkor.properties.joker === this.constructor.name || this.isRoomSolved());
 			};
 
 		} else {
@@ -907,6 +935,10 @@ class GameCore extends GameBase {
 		}
 		this.updateInventory();
 		await super.postInit();
+	}
+
+	isRoomSolved() {
+		return false;
 	}
 
 	onJoker(putDown) {
@@ -990,6 +1022,7 @@ class GameCore extends GameBase {
 		const divMouse = document.getElementById("mouse");
 		divMouse.style.opacity = 0;
 		divMouse.setAttribute("draggable", "");
+		divMouse.style.animation = "";
 	}
 
 	resetMouse() {
@@ -1004,14 +1037,16 @@ class GameCore extends GameBase {
 
 	updateMouse(time) {
 		if (this.mouse && this.mouse.alive) {
-			const walkArea = this.savedWalkArea || (this.savedWalkArea = this.getWalkArea());
+			const walkArea = this.mouse.eating ? {} : this.savedWalkArea || (this.savedWalkArea = this.getWalkArea());
 			const top = walkArea.top || 0;
 			const bottom = walkArea.bottom || 400;
 			const falling = this.mouse.y < top ? (time - this.mouse.alive) / 100 : 0;
 			if (!this.mouse.lastAction || time - this.mouse.lastAction > 1300) {
-				this.mouse.goal.x = 40 + 720 * Math.random();
-				this.mouse.goal.y = top + (bottom - top) * Math.random();
-				this.mouse.lastAction = time + Math.random() * 500;
+				if (!this.mouse.eating) {
+					this.mouse.goal.x = this.mouse.putBack && time - this.mouse.putBack > 4000 ? 0 : 40 + 720 * Math.random();
+					this.mouse.goal.y = this.mouse.putBack && time - this.mouse.putBack > 4000 ? 500 : top + (bottom - top) * Math.random();
+					this.mouse.lastAction = time + Math.random() * 500;
+				}
 			}
 			const dx = falling ? 0 : this.mouse.goal.x - this.mouse.x;
 			const dy = falling ? falling * falling : this.mouse.goal.y - this.mouse.y;
@@ -1019,10 +1054,15 @@ class GameCore extends GameBase {
 			const speed = falling ? dy : Math.min(dist, 5);
 			if (speed > .1) {
 				this.mouse.changeDirection(dx < 0 ? -1 : 1, time);
-				this.mouse.changeAnimation(this.atlas.mouse_run, time);
+				this.mouse.changeAnimation(this.mouse.eating ? this.atlas.mouse_eat : this.atlas.mouse_run, time);
 				this.mouse.changePosition(this.mouse.x + speed * dx / dist, Math.min(400, this.mouse.y + speed * dy / dist), time);
 			} else {
 				this.mouse.changeAnimation(this.atlas.mouse, time);
+				if (this.mouse.onStill) {
+					const onStill = this.mouse.onStill;
+					this.mouse.onStill = null;
+					onStill(this.mouse);
+				}
 			}
 		}
 	}
@@ -1504,7 +1544,7 @@ class GameCore extends GameBase {
 				if (!monkor.scared) {
 					monkor.scared = time;
 					this.audio.scream.play();
-					this.setAudio(audio, audio.paused, 0);
+					this.setAudio(audio, false, 0);
 				}
 			} else {
 				const dx = this.canRunRight() ? -(mouse.x - monkor.x) : -1;
@@ -1521,18 +1561,9 @@ class GameCore extends GameBase {
 					setTimeout(() => this.gameOver(), 6000);					
 				}
 				if (!this.canRunLeft() && !mouse.putBack) {
-					mouse.putBack = true;
-					setTimeout(() => {
-						mouse.putBack = false;
-						mouse.alive = 0;
-						monkor.scared = 0;
+					mouse.putBack = engine.lastTime;
+					this.onPutBack(mouse);
 
-						mouse.changeOpacity(0, this.engine.lastTime);
-						const divMouse = document.getElementById("mouse");
-						divMouse.style.opacity = 1;
-						divMouse.setAttribute("draggable", "true");
-
-					}, 6000);
 				}
 			}
 
@@ -1602,6 +1633,8 @@ class GameCore extends GameBase {
 				anim = this.atlas.monkor_stand_left;
 			} else if (monkor.lookRight) {
 				anim = this.atlas.monkor_stand_right;
+			} else if (monkor.knock) {
+				anim = dx < 0 ? this.atlas.monkor_knock_left : this.atlas.monkor_knock_right;
 			} else if (monkor.onStill) {
 				const onStill = monkor.onStill;
 				monkor.onStill = null;
@@ -1659,6 +1692,28 @@ class GameCore extends GameBase {
 		if (monkor.x < -50 && this.nextLevelLeft) {
 			this.nextLevelLeft();
 		}
+	}
+
+	onPutBack(mouse, timeout) {
+		setTimeout(() => {
+			mouse.putBack = 0;
+			mouse.alive = 0;
+			this.monkor.scared = 0;
+
+			this.restoreMouse(mouse);
+
+		}, timeout || 6000);
+	}
+
+	restoreMouse(mouse) {
+		mouse.changeOpacity(0, this.engine.lastTime);
+		const divMouse = document.getElementById("mouse");
+		divMouse.style.opacity = 1;
+		divMouse.setAttribute("draggable", "true");
+		divMouse.style.animation = "restoremouse .5s";
+		setTimeout(() => {
+			divMouse.style.animation = "";
+		}, 1000);
 	}
 
 	walkThrough() {

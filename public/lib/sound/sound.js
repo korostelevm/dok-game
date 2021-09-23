@@ -40,8 +40,10 @@ class Sound {
 
 	play(volume, callback) {
 		const audio = this.audios.pop();
-		audio.volume = volume ?? this.volume;
-		audio.play();
+		if (audio) {
+			audio.volume = volume ?? this.volume;
+			audio.play();
+		}
 		this.prepare();
 	}
 }

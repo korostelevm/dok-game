@@ -111,6 +111,19 @@ class JokerRoom extends GameCore {
 								},
 							},
 							{
+								topic: "unwanted-item",
+								message: `No thank you, ${messire}.`,
+								voiceName,
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+								next: previousIndex => previousIndex,
+							},
+							{
 								message: "This is called the Joker Room.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,

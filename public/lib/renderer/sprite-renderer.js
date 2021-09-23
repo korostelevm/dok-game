@@ -25,17 +25,17 @@ class SpriteRenderer {
 		);		
 	}
 
-	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, degreeRotation) {
+	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, degreeRotation, cropX, cropY) {
 		const attribute = this.attributes.matrix;
-		const mat = this.makeMatrix(x, y, z, width, height, hotX, hotY, degreeRotation);
+		const mat = this.makeMatrix(x, y, z, width * (cropX || 1), height * (cropY || 1), hotX, hotY, degreeRotation);
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
-	setAnimation(index, anim, direction, opacity) {
+	setAnimation(index, anim, direction, opacity, cropX, cropY) {
 		const { attributes } = this;
 		if (anim) {
 			this.bufferRenderer.setAttributeByte(attributes.textureIndex, index, anim.index);
-			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, opacity));
+			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, opacity, cropX, cropY));
 			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
 			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
 		}

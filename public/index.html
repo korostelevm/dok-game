@@ -71,6 +71,8 @@
 
 			.mouse {
 				user-select: text;
+				cursor:  pointer;
+				position: relative;
 			}
 
 			#overlay {
@@ -367,7 +369,28 @@
 			    opacity: 0;
 			  }
 			}
+
+			@keyframes restoremouse{
+			    from {top: -50px; left: 5px} 
+			    to{top:0px; left: 0px} 
+			}
 		</style>
+		<script>
+			addEventListener('error', function(event) {
+				const div = document.body.appendChild(document.createElement("div"));
+				div.id = "errorView";
+				div.style.position = "absolute";
+				div.style.top = "0px";
+				div.style.left = "0px";
+				div.style.userSelect = "none";
+				div.style.pointerEvents = "none";
+				div.style.color = "#FF0000cc";
+				div.style.backgroundColor = "#660000cc";
+				div.style.zIndex = 200;
+				div.textContent = event.error.stack;
+				div.style.op
+			});
+		</script>
 
 	</head>
 	<body>
@@ -394,7 +417,7 @@
 			<div id="inventory" style="position: absolute; top: 460px; left: 100px; z-index: 141; display: flex; flex-direction: horizontal">
 			</div>
 			<div id="controls" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none">
-				<div><span id="mouse" class="mouse" draggable="true" style="cursor: pointer">🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
+				<div><span id="mouse" class="mouse" draggable="true">🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
 				<div>
 					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🔇</span>: Press M to <span id="mute">unmute music</span></a>			</div>
 				<div>
@@ -435,6 +458,7 @@
 		<script type="text/javascript" src="games/the-impossible-room/joker-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/animal-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/gandalf-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/restaurant.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>

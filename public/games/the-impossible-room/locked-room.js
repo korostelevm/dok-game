@@ -272,6 +272,19 @@ class LockedRoom extends GameCore {
 									exit: true,
 								},
 								{
+									topic: "unwanted-item",
+									message: `No thank you, ${messire}.`,
+									voiceName,
+									secondsAfterEnd: 1,
+									onStart: butler => {
+										butler.talking = engine.lastTime;
+									},
+									onEnd: butler => {
+										butler.talking = 0;
+									},
+									next: previousIndex => previousIndex,
+								},
+								{
 									topic: "impossible",
 									message: `No ${messire}, this is not yet the impossible room.`,
 									voiceName: "Thomas",

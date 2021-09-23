@@ -17,6 +17,7 @@ class Sprite {
 		this.hotspot = data.hotspot || [0, 0];
 		this.rotation = data.rotation || 0;
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
+		this.crop = [1, 1];
 
 		this.direction = data.direction || 1;
 		this.anim = data.anim;
@@ -36,6 +37,7 @@ class Sprite {
 			updateTime: time,
 			direction: time,
 			opacity: time,
+			crop: time,
 		};
 	}
 
@@ -140,6 +142,26 @@ class Sprite {
 		return false;
 	}
 
+	changeCrop(x, y, time) {
+		if (this.crop[0] !== x || this.crop[1] !== y) {
+			this.crop[0] = x;
+			this.crop[1] = y;
+			this.updated.crop = time;
+			return true;
+		}
+		return false;
+	}
+
+	changeHotSpot(x, y, time) {
+		if (this.hotspot[0] !== x || this.hotspot[1] !== y) {
+			this.hotspot[0] = x;
+			this.hotspot[1] = y;
+			this.updated.hotspot = time;
+			return true;
+		}
+		return false;
+	}
+
 	resetAnimation(time) {
 		this.updated.animation = time;
 		this.updated.updateTime = time;
@@ -154,10 +176,10 @@ class Sprite {
 		const [ width, height ] = this.size;
 		const left = this.x - this.hotspot[0];
 		const top = this.y - this.hotspot[1];
-		this.collisionBox.left = left + rect.left * width - collisionPadding;
-		this.collisionBox.right = left + rect.right * width + collisionPadding;
-		this.collisionBox.top = top + rect.top * height - collisionPadding;
-		this.collisionBox.bottom = top + rect.bottom * height + collisionPadding;
+		this.collisionBox.left = left + rect.left * width * this.crop[0] - collisionPadding;
+		this.collisionBox.right = left + rect.right * width * this.crop[0] + collisionPadding;
+		this.collisionBox.top = top + rect.top * height * this.crop[1] - collisionPadding;
+		this.collisionBox.bottom = top + rect.bottom * height * this.crop[1] + collisionPadding;
 		return this.collisionBox;
 	}
 }

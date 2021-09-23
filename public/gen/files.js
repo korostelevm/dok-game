@@ -8,9 +8,11 @@ const globalFiles=[
 			"backwall.jpg",
 			"balloon-collision.png",
 			"balloon.png",
+			"burger.png",
 			"butler.png",
 			"candy-collision.png",
 			"candy.png",
+			"chef.png",
 			"cheoni-collision.png",
 			"cheoni.png",
 			"chocolate.png",
@@ -47,6 +49,7 @@ const globalFiles=[
 			"piano.png",
 			"pipe-collision.png",
 			"pipe.png",
+			"restaurant.png",
 			"sign.png",
 			"skin-texture.jpg",
 			"smoking-sign.png",
@@ -97,6 +100,7 @@ const globalFiles=[
 	"game-starter.js",
 	{
 		"games": [
+			".DS_Store",
 			{
 				"one-rule": [
 					"game-ring.js"
@@ -104,6 +108,7 @@ const globalFiles=[
 			},
 			{
 				"the-impossible-room": [
+					".DS_Store",
 					"animal-room.js",
 					"entrance.js",
 					"game-core.js",
@@ -113,6 +118,7 @@ const globalFiles=[
 					"lobby.js",
 					"locked-room.js",
 					"menu.js",
+					"restaurant.js",
 					"restroom.js",
 					"selection.js",
 					"template.js",
