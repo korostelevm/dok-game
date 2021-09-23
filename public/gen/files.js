@@ -3,6 +3,7 @@ const globalFiles=[
 	{
 		"assets": [
 			".DS_Store",
+			"2189123.png",
 			"background-door-collision.png",
 			"background-door.png",
 			"backwall.jpg",
@@ -17,12 +18,14 @@ const globalFiles=[
 			"cheoni.png",
 			"chocolate.png",
 			"cigarette.png",
+			"clue-lobby.png",
 			"dino-stupid.png",
 			"door-collision.png",
 			"entrance.png",
 			"gandalf.png",
 			"ground-entrance.png",
 			"gum.png",
+			"hand.png",
 			"idols.png",
 			"invitation-check-collision.png",
 			"invitation-check.png",
@@ -110,6 +113,7 @@ const globalFiles=[
 				"the-impossible-room": [
 					".DS_Store",
 					"animal-room.js",
+					"clue-room.js",
 					"entrance.js",
 					"game-core.js",
 					"game-title.js",

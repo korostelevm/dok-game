@@ -414,6 +414,12 @@ class Engine {
 		}
 	}
 
+	onDragOver(event) {
+		if (this.game) {
+			this.game.onDragOver(event);
+		}
+	}
+
 	refresh(time) {
 		const dt = time - this.lastTime;
 		if (!this.focusFixer.focused) {

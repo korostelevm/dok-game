@@ -1,9 +1,11 @@
-class Template extends GameCore {
+class ClueRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;
+		const I = gender === "T" ? "We" : "I";
+
 
 		/* Load Audio */
 		this.audio = {
@@ -12,11 +14,50 @@ class Template extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
+			cluewall: await engine.addTexture(
+				{
+					url: "assets/clue-lobby.png",
+					cols: 1, rows: 2,
+					range: [1],
+				}),
+			cluesign: await engine.addTexture(
+				{
+					url: "assets/clue-lobby.png",
+					collision_url: "assets/clue-lobby.png",
+					cols: 1, rows: 2,
+					range: [0],
+				}),
+			hand: await engine.addTexture(
+				{
+					url: "assets/hand.png",
+					collision_url: "assets/hand.png",
+					texture_url: "assets/skin-texture.jpg",
+					texture_alpha: .20,
+					texture_blend: "source-atop",
+				}),
 		};
 
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
 			size: [800, 400],
+		});
+		this.cluewall = this.spriteFactory.create({
+			anim: this.atlas.cluewall,
+			size: [800, 400],
+		});
+		this.cluesign = this.spriteFactory.create({
+			name: "graffiti",
+			anim: this.atlas.cluesign,
+			size: [800, 400],
+		}, {
+			actions: [
+				{
+					name: "look", message: `There's a message on the wall. It seems partially erased.`,
+				},
+				{
+					name: "read", message: `${I} read: "Need a clue? Email: ... plea... something."`,
+				},
+			],
 		});
 		this.spriteFactory.create({
 			anim: this.atlas.side_doors,
@@ -78,6 +119,10 @@ class Template extends GameCore {
 										topic: "hint",
 									},
 									{
+										response: `Can you read what's written on the wall?`,
+										topic: "read",
+									},
+									{
 										response: `${I}'ll be on ${my} way`,
 									},
 								],
@@ -91,7 +136,23 @@ class Template extends GameCore {
 							},
 							{
 								topic: "hint",
-								message: `I do not have any hint to give, ${messire}.`,
+								message: `I do not have a clue, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "read",
+								message: `It says. Need a clue? Email...`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: `The rest is not readable.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
@@ -124,7 +185,7 @@ class Template extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Template Room. A placeholder room.",
+								message: "This is called the Room with No Clue.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -135,7 +196,7 @@ class Template extends GameCore {
 								},
 							},
 							{
-								message: `You must complete this room in order to continue further to the next room, ${messire}.`,
+								message: `We cannot go further withouth a clue, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -152,14 +213,80 @@ class Template extends GameCore {
 		}, butler => {
 			butler.goal = {x: butler.x, y: butler.y};
 		});
+
 		this.doorForwardClosed = this.spriteFactory.create({
 			anim: this.atlas.right_door,
 			size: [800, 400],
 		});
 
-		const I = gender === "T" ? "We" : "I";
+		this.hand = this.spriteFactory.create({
+			name: "receiver",
+			anim: this.atlas.hand,
+			x: 600, y: 220,
+			size: [215, 100],
+		}, {
+			defaultCommand: (item, target) => `deposit ${item.name} on ${target.name}`,
+			actions: [
+				{ name: "look", condition: hand => !hand.properties.received,
+					message: "It's an open hand, waiting to receive something.",
+				},
+				{ name: "deposit", condition: hand => this.selectedItem === "file" && !hand.properties.received,
+					message: `Looks like the hand accepted it.`,
+					item: ["file"],
+					command: (item, target) => `deposit ${typeof(item.name)==="function"?item.name(item):item.name} on ${target.name}.`,
+					action: hand => {
+						if (this.file.properties.name.toLowerCase().indexOf("clue") >= 0) {
+							this.audio.dud.play();
+							hand.setProperty("received", this.engine.lastTime);
+							this.removeFromInventory("file");
+							setTimeout(() => {
+								this.showBubble(hand.pendingMessage);
+								hand.pendingMessage = null;
+							}, 500);
+						} else {
+							this.showBubble("The hand rejected it. Perhaps it's not the right clue.");
+						}
+					},
+				},
+			],
+			onChange: {
+				received: (hand, received) => {
+
+				},
+				stopped: (hand, stopped) => {
+					this.setRightOpened(stopped);
+				},
+			},
+		});
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+	}
+
+	isRoomSolved() {
+		return this.hand.properties.stopped;
+	}
+
+	setRightOpened(opened) {
+		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
+		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
+		if (this.doorNextLock) {
+			this.doorNextLock.changeOpacity(opened?0:1, engine.lastTime);
+		}		
+		if (opened) {
+			this.audio.door.play();
+		} else {
+			this.audio.hit.play();
+		}
+	}
+
+	updateHand(time) {
+		if (this.hand.properties.received && !this.hand.properties.stopped) {
+			const diff = time - this.hand.properties.received;
+			this.hand.changePosition(Math.min(900, 600 + diff / 10), this.hand.y, time);
+			if (diff > 5000) {
+				this.hand.setProperty("stopped", true);
+			}
+		}
 	}
 
 	updateHost(time) {
@@ -222,15 +349,8 @@ class Template extends GameCore {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
+		this.updateHand(time);
 	}	
-
-	openLeft() {
-
-	}
-
-	openRight() {
-		
-	}
 
 	nextLevelLeft() {
 	}

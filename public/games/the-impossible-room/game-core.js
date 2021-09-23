@@ -173,22 +173,29 @@ class GameCore extends GameBase {
 			mouse: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
-					cols:2,rows:3,
+					cols:3,rows:3,
 					range:[0],
 				}),
 			mouse_run: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
-					cols:2,rows:3,
+					cols:3,rows:3,
 					frameRate: 20,
 					range:[1, 2],
 				}),
 			mouse_eat: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
-					cols:2,rows:3,
+					cols:3,rows:3,
 					frameRate: 20,
 					range:[3, 5],
+				}),
+			file: await engine.addTexture(
+				{
+					url: "assets/mouse.png",
+					collision_url: "assets/mouse.png",
+					cols:3,rows:3,
+					range:[6],
 				}),
 			monkor_shake_left: await engine.addTexture({
 					url: genderToShakeUrl[gender],
@@ -502,6 +509,12 @@ class GameCore extends GameBase {
 					},
 				],
 			},	
+			file: {
+				name: () => this.file.properties.name,
+				actions: [
+					{ name: "look", message: () => `${I} found this ${this.file.properties.name} on the floor. ${I} have no idea how it got there.` },
+				],
+			},
 			joker_card: {
 				actions: [
 					{ name: "look", message: () => `It's a Joker card. The Joker left this in my pocket.` },
@@ -734,6 +747,7 @@ class GameCore extends GameBase {
 			turtle: "🐢",
 			horse: "🐴",
 			snake: "🐍",
+			file: "📄",
 		};
 
 		this.showVoices();
@@ -761,6 +775,7 @@ class GameCore extends GameBase {
 
 		const Iam = gender === "T" ? "We are" : "I am";
 		const me = gender === "T" ? "us" : "me";
+		const I = gender === "T" ? "We" : "I";
 
 		this.joker = this.spriteFactory.create({
 			name: "Joker",
@@ -888,6 +903,41 @@ class GameCore extends GameBase {
 			goal: { x:0, y:0 },
 		});
 
+		this.file = this.spriteFactory.create({
+			name: "file",
+			size: [40, 40],
+			hotspot: [20, 40],
+			anim: this.atlas.file,
+			opacity: 0,
+		}, {
+			actions: [
+				{
+					name: "look",
+					message: file => "It's a " + file.properties.name,
+				},
+				{ name: "pick up", message: file => `Cool, ${I} just found a ${this.file.properties.name}.`,
+					action: item => {
+						item.setProperty("pickedUp", true);
+						this.addToInventory("file");
+						this.audio.pickup.play();
+						this.showBubble(item.pendingMessage);
+						item.pendingMessage = null;
+					},
+				}
+			],
+			onChange: {
+				pickedUp: (file, pickedUp) => {
+					file.changeOpacity(file.properties.dropped && !pickedUp ? 1 : 0, this.engine.lastTime);
+				},
+				dropped: (file, dropped) => {
+					file.changeOpacity(dropped && !file.properties.pickedUp ? 1 : 0, this.engine.lastTime);
+					if (dropped) {
+						this.removeFromInventory("file");
+					}
+				},
+			},
+		});
+
 		this.piano = this.spriteFactory.create({
 			name: "piano",
 			opacity: 0,
@@ -1012,17 +1062,37 @@ class GameCore extends GameBase {
 		this.domListeners = {};
 	}
 
+	onDragOver(e) {
+	}
+
 	onDropOnOverlay(e) {
+		const item = e.dataTransfer.getData("item");
 		const { lastTime, canvas } = this.engine;
 		const { pageX, pageY, buttons } = e;
 		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
-		this.mouse.changePosition(x, y, lastTime);
-		this.mouse.changeOpacity(1, lastTime);
-		this.mouse.alive = lastTime;
-		const divMouse = document.getElementById("mouse");
-		divMouse.style.opacity = 0;
-		divMouse.setAttribute("draggable", "");
-		divMouse.style.animation = "";
+		if (item === "mouse") {
+			const divMouse = document.getElementById("mouse");
+			if (x < 0 || x > 800 || y < 0 || y > 400) {
+				divMouse.style.opacity = 1;
+				return;
+			}
+			this.mouse.changePosition(x, y, lastTime);
+			this.mouse.changeOpacity(1, lastTime);
+			this.mouse.alive = lastTime;
+			divMouse.style.opacity = 0;
+			divMouse.setAttribute("draggable", "");
+			divMouse.style.animation = "";
+		}
+		if (e.dataTransfer.files.length > 0) {
+			if (x < 0 || x > 800 || y < 0 || y > 400) {
+				return;
+			}
+			this.file.changePosition(x, y, lastTime);
+			this.file.setProperty("name", e.dataTransfer.files[0].name.split(".")[0]);
+			this.file.setProperty("dropped", lastTime);
+			this.file.setProperty("pickedUp", null);
+			console.log(e.dataTransfer.files[0].name);
+		}
 	}
 
 	resetMouse() {
@@ -1033,6 +1103,22 @@ class GameCore extends GameBase {
 
 	resetGame() {
 		this.engine.resetGame();
+	}
+
+	updateFile(time) {
+		if (this.file && this.file.properties.dropped) {
+			const walkArea = this.savedWalkArea || (this.savedWalkArea = this.getWalkArea());
+			const top = walkArea.top || 0;
+			const bottom = walkArea.bottom || 400;
+			const falling = this.file.y < top ? (time - this.file.properties.dropped) / 100 : 0;
+			const dx = 0;
+			const dy = falling ? falling * falling : 0;
+			const dist = Math.sqrt(dx * dx + dy * dy);
+			const speed = falling ? dy : Math.min(dist, 5);
+			if (speed > .1) {
+				this.file.changePosition(this.file.x + speed * dx / dist, Math.min(400, this.file.y + speed * dy / dist), time);
+			}
+		}
 	}
 
 	updateMouse(time) {
@@ -1239,7 +1325,7 @@ class GameCore extends GameBase {
 		if (!this.subjectNameDiv) {
 			this.subjectNameDiv = document.getElementById("subject-name");
 		}
-		const subjectText = !subject ? "" : typeof(subject.name) === "function" ? subject.name(subject) : subject.name;
+		const subjectText = !subject ? "" : subject.properties && subject.properties.name ? subject.properties.name : typeof(subject.name) === "function" ? subject.name(subject) : subject.name;
 		if (this.subjectText !== subjectText) {
 			this.subjectText = subjectText;
 			this.subjectNameDiv.innerText = this.subjectText;
@@ -1893,7 +1979,8 @@ class GameCore extends GameBase {
 			const k = div.appendChild(document.createElement("div"));
 			k.classList.add("inventory-item");
 			const itemDetails = this.inventoryDetails[item];
-			k.innerText = this.inventoryIcons[item] + " " + itemDetails.name;
+			const name = typeof(itemDetails.name) === "function" ? itemDetails.name(itemDetails) : itemDetails.name;
+			k.innerText = this.inventoryIcons[item] + " " + name;
 			k.addEventListener("mouseover", e => {
 				this.checkItem(itemDetails);
 			});
@@ -1944,7 +2031,8 @@ class GameCore extends GameBase {
 			this.checkCollisions(time);
 			this.updateSpeechForSprites(time, dt);
 			this.updatePiano(time, dt);
-			this.updateMouse(time);		
+			this.updateMouse(time);
+			this.updateFile(time);
 		}
 	}
 

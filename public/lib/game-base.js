@@ -42,6 +42,9 @@ class GameBase {
 	onDropOnOverlay(e) {
 	}
 
+	onDragOver(e) {
+	}
+
 	refresh(time, dt) {
 	}
 

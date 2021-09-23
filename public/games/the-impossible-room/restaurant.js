@@ -1216,7 +1216,7 @@ class Restaurant extends GameCore {
 		this.butler.talking = true;
 		this.monkor.paused = true;
 		this.monkor.goal.x = 200;
-		this.showBubble(`${Messire}, what is it with you and rodents?`, () => {
+		this.showBubble(`${Messire}, what is it with you and mouses?`, () => {
 			this.butler.talking = false;
 			setTimeout(() => {
 				this.showBubble(`${I} have always been scared of mice, since ${Iam} young.`, () => {
@@ -1335,6 +1335,7 @@ class Restaurant extends GameCore {
 	}
 
 	nextLevelLeft() {
+		this.engine.setGame(new ClueRoom());
 	}
 
 	nextLevelRight() {

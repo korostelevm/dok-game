@@ -398,7 +398,7 @@
 		<div id="container" class="container">
 			<!-- https://www.beepbox.co/#8n31sbk0l00e0ft3em0a7g0fj07i0r1o3210T5v0L4u50q1d5f8y1z6C1c0h0H-JJAArrqiih999T6v1L4u77q1d1f7y4z1C1c2W79T1v0L4u55q1d1f9y0z6C1c0A4F2B4V1Q40c0Pd73bE0111T3v3L4u03q0d1f8y0z1C2S-JIAArrrrrqiiiib4x8Qd18ilBoi4zgR4x8Qd14h8Och4icz4h4h414h4h0p23dFE-y-y38X2eQzEF8W2eH04t17hihO97ghQkRkRqGa2e2FKI8W2eyMzG8Zd517rj8Op7ghQkRkQWiewzEAieIzEbWyeAzRlmSng5dlJJJtBJd9jpvhSqq_3FU2tDwdv9ePMaDmt_v9YEUeEUckR_52qfiwcEWv2koz0phvgnQp2z4rsGwUY5Cz0K8WkkQpk0hQklAt17mhQ4o0 -->
 			<div id="title" class="title" style="user-select: text; position: absolute; top: 80px; left:310px; z-index: 300; font-size: 40pt"><span id="im" spellcheck="false" contenteditable="true" style="display:none">THE IMPOSSIBLE ROOM</span></div>
-			<div id="overlay" ondrop="engine.onDropOnOverlay(event)" ondragover="(event.preventDefault())"></div>
+			<div id="overlay" ondrop="engine.onDropOnOverlay(event)" ondragover="event.preventDefault(); engine.onDragOver(event)"></div>
 			<div id="game-over"></div>
 			<div class="centered" id="game-over-message"></div>
 			<button id="restart" class="centered restart">restart</button>
@@ -417,7 +417,13 @@
 			<div id="inventory" style="position: absolute; top: 460px; left: 100px; z-index: 141; display: flex; flex-direction: horizontal">
 			</div>
 			<div id="controls" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none">
-				<div><span id="mouse" class="mouse" draggable="true">🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
+				<div><span id="mouse" class="mouse" draggable="true"
+					ondragstart="event.dataTransfer.setData('item', 'mouse'); event.dataTransfer.effectAllowed = 'move'; setTimeout(() => event.srcElement.style.opacity = 0, 1)" ondragend="setTimeout(() => {
+							if (!engine.game.mouse.alive) {
+								event.srcElement.style.opacity = 1;
+							}
+					}, 1)"
+					>🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
 				<div>
 					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🔇</span>: Press M to <span id="mute">unmute music</span></a>			</div>
 				<div>
@@ -459,6 +465,7 @@
 		<script type="text/javascript" src="games/the-impossible-room/animal-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/gandalf-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/restaurant.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/clue-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>
@@ -482,5 +489,24 @@
 		<script type="text/javascript" src="lib/ui/debug-view.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
+		<script type="text/javascript">
+			function handlerFunction(e) {
+				// console.log(e.type, e);
+				// let dt = e.dataTransfer
+  		// 		let files = dt.files
+  		// 		console.log(files);
+  		// 		console.log(dt.items);
+  				e.preventDefault();
+				e.stopPropagation();
+			}
+			
+let dropArea = document.body;
+
+//  dropArea.addEventListener('dragenter', handlerFunction, false)
+//  dropArea.addEventListener('dragleave', handlerFunction, false)
+  dropArea.addEventListener('dragover', handlerFunction, false);
+ dropArea.addEventListener('drop', handlerFunction, false)
+
+		</script>
 	</body>
 </html>
