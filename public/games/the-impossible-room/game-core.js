@@ -1355,6 +1355,9 @@ class GameCore extends GameBase {
 				this.audio.beep.play();
 				this.showSubject(this.monkor.target);
 				this.subjectDiv.classList.add("selected");
+				if (this.monkor.target.reachable) {
+					this.showActions(this.monkor.target);
+				}
 			} else {
 				this.subjectDiv.classList.remove("selected");
 			}

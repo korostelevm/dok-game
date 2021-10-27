@@ -1,11 +1,9 @@
-class ClueRoom extends GameCore {
+class DesertRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;
-		const I = gender === "T" ? "We" : "I";
-
 
 		/* Load Audio */
 		this.audio = {
@@ -14,50 +12,49 @@ class ClueRoom extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
-			cluewall: await engine.addTexture(
+			desert_back: await engine.addTexture(
 				{
-					url: "assets/clue-lobby.png",
-					cols: 1, rows: 2,
-					range: [1],
-				}),
-			cluesign: await engine.addTexture(
-				{
-					url: "assets/clue-lobby.png",
-					collision_url: "assets/clue-lobby.png",
-					cols: 1, rows: 2,
+					url: "assets/desert-room.png",
+					cols: 1, rows: 4,
 					range: [0],
 				}),
-			hand: await engine.addTexture(
+			desert_wall: await engine.addTexture(
 				{
-					url: "assets/hand.png",
-					collision_url: "assets/hand.png",
-					texture_url: "assets/skin-texture.jpg",
-					texture_alpha: .20,
-					texture_blend: "source-atop",
+					url: "assets/desert-room.png",
+					collision_url: "assets/desert-room-collision.png",
+					cols: 1, rows: 4,
+					range: [1],
+				}),
+			desert_front: await engine.addTexture(
+				{
+					url: "assets/desert-room.png",
+					cols: 1, rows: 4,
+					range: [2],
+				}),
+			desert_cloud: await engine.addTexture(
+				{
+					url: "assets/desert-room.png",
+					cols: 1, rows: 4,
+					range: [3],
 				}),
 		};
 
+		this.background = this.spriteFactory.create({
+			anim: this.atlas.desert_back,
+			size: [800, 400],
+		});
+		this.cloud = this.spriteFactory.create({
+			anim: this.atlas.desert_cloud,
+			size: [800, 400],
+		});
+		this.cloud2 = this.spriteFactory.create({
+			anim: this.atlas.desert_cloud,
+			x: 800,
+			size: [800, 400],
+		});
 		this.backwall = this.spriteFactory.create({
-			anim: this.atlas.backwall,
+			anim: this.atlas.desert_wall,
 			size: [800, 400],
-		});
-		this.cluewall = this.spriteFactory.create({
-			anim: this.atlas.cluewall,
-			size: [800, 400],
-		});
-		this.cluesign = this.spriteFactory.create({
-			name: "graffiti",
-			anim: this.atlas.cluesign,
-			size: [800, 400],
-		}, {
-			actions: [
-				{
-					name: "look", message: `There's a message on the wall. It seems partially erased.`,
-				},
-				{
-					name: "read", message: `${I} read: "Need a clue? Email: ... plea... something."`,
-				},
-			],
 		});
 		this.spriteFactory.create({
 			anim: this.atlas.side_doors,
@@ -119,10 +116,6 @@ class ClueRoom extends GameCore {
 										topic: "hint",
 									},
 									{
-										response: `Can you read what's written on the wall?`,
-										topic: "read",
-									},
-									{
 										response: `${I}'ll be on ${my} way`,
 									},
 								],
@@ -136,23 +129,14 @@ class ClueRoom extends GameCore {
 							},
 							{
 								topic: "hint",
-								message: `I do not have a clue, ${messire}.`,
-								voiceName: "Thomas",
-								secondsAfterEnd: 1,
-								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
-								exit: true,
-							},
-							{
-								topic: "read",
-								message: `It says. Need a clue? Email...`,
+								message: () => this.monkor.properties.stuck ? `It seems you are stuck in quicksand. I would be careful.` : `I do not have any hint for this room, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 							},
 							{
-								message: `The rest is not readable.`,
+								message: () => this.monkor.properties.stuck ? `If you move too much, you might sink deeper.` : `This is just a room full of sand.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
@@ -185,7 +169,7 @@ class ClueRoom extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Room with No Clue.",
+								message: "This is called the Desert Room.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -196,7 +180,7 @@ class ClueRoom extends GameCore {
 								},
 							},
 							{
-								message: `We cannot go further withouth a clue, ${messire}.`,
+								message: `I'm guessing it's because it's full of sand.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -213,80 +197,15 @@ class ClueRoom extends GameCore {
 		}, butler => {
 			butler.goal = {x: butler.x, y: butler.y};
 		});
-
 		this.doorForwardClosed = this.spriteFactory.create({
 			anim: this.atlas.right_door,
 			size: [800, 400],
 		});
 
-		this.hand = this.spriteFactory.create({
-			name: "receiver",
-			anim: this.atlas.hand,
-			x: 600, y: 220,
-			size: [215, 100],
-		}, {
-			defaultCommand: (item, target) => `deposit ${item.name} on ${target.name}`,
-			actions: [
-				{ name: "look", condition: hand => !hand.properties.received,
-					message: "It's an open hand, waiting to receive something.",
-				},
-				{ name: "deposit", condition: hand => this.selectedItem === "file" && !hand.properties.received,
-					message: `Looks like the hand accepted it.`,
-					item: ["file"],
-					command: (item, target) => `deposit ${typeof(item.name)==="function"?item.name(item):item.name} on ${target.name}.`,
-					action: hand => {
-						if (this.file.properties.name.toLowerCase().indexOf("clue") >= 0) {
-							this.audio.dud.play();
-							hand.setProperty("received", this.engine.lastTime);
-							this.removeFromInventory("file");
-							setTimeout(() => {
-								this.showBubble(hand.pendingMessage);
-								hand.pendingMessage = null;
-							}, 500);
-						} else {
-							this.showBubble("The hand rejected it. Perhaps it's not the right clue.");
-						}
-					},
-				},
-			],
-			onChange: {
-				received: (hand, received) => {
-
-				},
-				stopped: (hand, stopped) => {
-					this.setRightOpened(stopped);
-				},
-			},
-		});
+		const I = gender === "T" ? "We" : "I";
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
-	}
-
-	isRoomSolved() {
-		return this.hand.properties.stopped;
-	}
-
-	setRightOpened(opened) {
-		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
-		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
-		if (this.doorNextLock) {
-			this.doorNextLock.changeOpacity(opened?0:1, engine.lastTime);
-		}		
-		if (opened) {
-			this.audio.door.play();
-		} else {
-			this.audio.hit.play();
-		}
-	}
-
-	updateHand(time) {
-		if (this.hand.properties.received && !this.hand.properties.stopped) {
-			const diff = time - this.hand.properties.received;
-			this.hand.changePosition(Math.min(900, 600 + diff / 10), this.hand.y, time);
-			if (diff > 5000) {
-				this.hand.setProperty("stopped", true);
-			}
-		}
+		this.butler.reachable = true;
 	}
 
 	updateHost(time) {
@@ -342,6 +261,14 @@ class ClueRoom extends GameCore {
 		});
 	}
 
+	addMonkor() {
+		super.addMonkor();
+		this.desertFront = this.spriteFactory.create({
+			anim: this.atlas.desert_front,
+			size: [800, 400],
+		});
+	}
+
 	getWalkArea() {
 		return this.backwall.getCollisionBox(engine.lastTime);		
 	}
@@ -349,13 +276,53 @@ class ClueRoom extends GameCore {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
-		this.updateHand(time);
-	}	
+		this.updateMonkor(time);
+	}
+
+	updateMonkor(time) {
+		if (this.monkor.x > 400 || this.monkor.properties.stuck) {
+			this.monkor.changePosition(400, this.monkor.y, time);
+			if (!this.monkor.properties.stuck) {
+				this.monkor.setProperty("stuck", time);
+			}
+		}
+		if (this.monkor.properties.stuck) {
+			if (this.monkor.y < 400) {
+				this.monkor.changePosition(this.monkor.x, this.monkor.y + 4, time);
+			}
+			if (this.monkor.anim === this.atlas.monkor_run_left || this.monkor.anim === this.atlas.monkor_run_right || this.monkor.y > 450) {
+				this.monkor.changePosition(this.monkor.x, this.monkor.y + .5, time);
+			}
+			if (this.monkor.y >= 550 && !this.changingScene) {
+				this.changingScene = true;
+				console.log("FALL FROM SKY");
+			}
+			if ((this.monkor.x !== this.monkor.goal.x || this.monkor.y !== this.monkor.goal.y) && !this.monkor.willStop) {
+				this.monkor.willStop = time + 1000;
+			}
+			if (this.monkor.willStop && time > this.monkor.willStop) {
+				this.monkor.willStop = 0;
+				this.monkor.goal.x = this.monkor.x;
+				this.monkor.goal.y = this.monkor.y;
+			}
+		}
+	}
+
+	canRunRight() {
+		return this.monkor.properties.stuck;
+	}
+
+	openLeft() {
+
+	}
+
+	openRight() {
+		
+	}
 
 	nextLevelLeft() {
 	}
 
 	nextLevelRight() {
-		this.engine.setGame(new DesertRoom());
 	}
 }
