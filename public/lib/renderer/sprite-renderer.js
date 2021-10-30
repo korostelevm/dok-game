@@ -31,11 +31,11 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
-	setAnimation(index, anim, direction, opacity, cropX, cropY) {
+	setAnimation(index, anim, direction, vdirection, opacity, cropX, cropY) {
 		const { attributes } = this;
 		if (anim) {
 			this.bufferRenderer.setAttributeByte(attributes.textureIndex, index, anim.index);
-			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, opacity, cropX, cropY));
+			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, vdirection, opacity, cropX, cropY));
 			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
 			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
 		}

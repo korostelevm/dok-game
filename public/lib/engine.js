@@ -460,8 +460,8 @@ class Engine {
 				|| sprite.updated.direction >= this.lastTime
 				|| sprite.updated.opacity >= this.lastTime
 				|| sprite.updated.crop >= this.lastTime) {
-				const {direction, opacity} = sprite;
-				this.spriteRenderer.setAnimation(i, sprite.anim, direction, opacity, cropX, cropY);
+				const {direction, vdirection, opacity} = sprite;
+				this.spriteRenderer.setAnimation(i, sprite.anim, direction, vdirection, opacity, cropX, cropY);
 			}
 			if (sprite.updated.updateTime >= this.lastTime) {
 				this.spriteRenderer.setUpdateTime(i, sprite);

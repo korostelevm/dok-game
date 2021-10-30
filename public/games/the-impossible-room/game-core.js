@@ -1263,7 +1263,7 @@ class GameCore extends GameBase {
 			if (sprite.opacity <= 0) {
 				continue;
 			}
-			if (sprite.actions || sprite.self && this.selectedItem) {
+			if (sprite.actions || sprite.onMouseDown || sprite.self && this.selectedItem) {
 				const collisionBox = sprite.getCollisionBox(lastTime);
 				if (collisionBox && engine.pointContains(x, y, collisionBox)) {
 					hovering = sprite;
@@ -1287,6 +1287,12 @@ class GameCore extends GameBase {
 			} else {
 				this.monkor.pendingAction = null;
 			}
+			if (hovering && hovering.onMouseDown) {
+				hovering.onMouseDown(hovering, e);
+			}
+			if (this.onMouseDown) {
+				this.onMouseDown(e);
+			}
 		} else if (e.type === "mouseup") {
 			let newTarget = null;
 			if (this.monkor.touched === hovering) {
@@ -1297,6 +1303,19 @@ class GameCore extends GameBase {
 			}
 			this.selectTarget(newTarget);
 			this.monkor.touched = null;
+			if (hovering && hovering.onMouseUp) {
+				hovering.onMouseUp(hovering, e);
+			}
+			if (this.onMouseUp) {
+				this.onMouseUp(e);
+			}
+		} else if (e.type === "mousemove") {
+			if (hovering && hovering.onMouseMove) {
+				hovering.onMouseMove(hovering, e);
+			}
+			if (this.onMouseMove) {
+				this.onMouseMove(e);
+			}
 		}
 		this.showSubject(this.monkor.target || hovering);
 
@@ -1810,8 +1829,12 @@ class GameCore extends GameBase {
 		this.monkor.setProperty("paused", this.engine.lastTime);
 		this.monkor.goal.x = 900;
 		if (this.butler) {
-			this.butler.goal.x = () => this.monkor.x + 50;
-			this.butler.goal.y = () => this.monkor.y;		
+			this.butler.goal.x = () => this.butler.x + 50;
+			this.butler.goal.y = () => this.monkor.y;
+			this.butler.onStill = () => {
+				this.butler.goal.x = () => this.monkor.x + 50;
+				this.butler.goal.y = () => this.monkor.y;
+			};
 		}
 	}
 

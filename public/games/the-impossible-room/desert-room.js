@@ -116,6 +116,11 @@ class DesertRoom extends GameCore {
 										topic: "hint",
 									},
 									{
+										response: `Can you help ${me} get out of the quicksand?`,
+										topic: "quicksand",
+										condition: () => this.monkor.properties.stuck,
+									},
+									{
 										response: `${I}'ll be on ${my} way`,
 									},
 								],
@@ -137,6 +142,22 @@ class DesertRoom extends GameCore {
 							},
 							{
 								message: () => this.monkor.properties.stuck ? `If you move too much, you might sink deeper.` : `This is just a room full of sand.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "quicksand",
+								message: () => `I would love to help, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: () => `But I could become stuck in the quicksand as well.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
@@ -286,6 +307,8 @@ class DesertRoom extends GameCore {
 				this.monkor.setProperty("stuck", time);
 			}
 		}
+		const { gender } = this.data;
+		const I = gender === "T" ? "We" : "I";
 		if (this.monkor.properties.stuck) {
 			if (this.monkor.y < 400) {
 				this.monkor.changePosition(this.monkor.x, this.monkor.y + 4, time);
@@ -295,7 +318,7 @@ class DesertRoom extends GameCore {
 			}
 			if (this.monkor.y >= 550 && !this.changingScene) {
 				this.changingScene = true;
-				console.log("FALL FROM SKY");
+				this.engine.setGame(new DesertFar());
 			}
 			if ((this.monkor.x !== this.monkor.goal.x || this.monkor.y !== this.monkor.goal.y) && !this.monkor.willStop) {
 				this.monkor.willStop = time + 1000;
@@ -304,6 +327,16 @@ class DesertRoom extends GameCore {
 				this.monkor.willStop = 0;
 				this.monkor.goal.x = this.monkor.x;
 				this.monkor.goal.y = this.monkor.y;
+
+				if (!this.noticedStuck) {
+					this.noticedStuck = true;
+					this.monkor.paused = true;
+					setTimeout(() => {
+						this.showBubble(`It look's like ${I}'m stuck.`, () => {
+							this.monkor.paused = false;
+						});
+					}, 1000);
+				}				
 			}
 		}
 	}

@@ -20,6 +20,7 @@ class Sprite {
 		this.crop = [1, 1];
 
 		this.direction = data.direction || 1;
+		this.vdirection = data.vdirection || 1;
 		this.anim = data.anim;
 		this.collisionBox = {
 			top:0,
@@ -122,6 +123,15 @@ class Sprite {
 	changeDirection(direction, time) {
 		if (this.direction !== direction) {
 			this.direction = direction;
+			this.updated.direction = time;
+			return true;
+		}
+		return false;
+	}
+
+	changeVDirection(vdirection, time) {
+		if (this.vdirection !== vdirection) {
+			this.vdirection = vdirection;
 			this.updated.direction = time;
 			return true;
 		}

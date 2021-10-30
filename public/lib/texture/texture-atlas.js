@@ -215,7 +215,7 @@ class TextureAtlas {
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = image ? image.naturalWidth : 0;
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
-		const { cols, rows, frameRate, range, firstFrame, direction } = animationData;
+		const { cols, rows, frameRate, range, firstFrame, direction, vdirection } = animationData;
 		this.frameRate = frameRate || 1;
 		this.cols = cols || 1;
 		this.rows = rows || 1;
@@ -225,9 +225,10 @@ class TextureAtlas {
 		this.endFrame = (range ? range[1] : 0) || this.startFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 		this.direction = direction || 1;
+		this.vdirection = vdirection || 1;
 	}
 
-	getTextureCoordinatesFromRect(x, y, width, height, direction, opacity) {
+	getTextureCoordinatesFromRect(x, y, width, height, direction, vdirection, opacity) {
 		let x0 = x;
 		let x1 = x + width;
 		if (direction * this.direction < 0) {
@@ -235,19 +236,26 @@ class TextureAtlas {
 			x1 = x;
 		}
 
+		let y0 = y;
+		let y1 = y + height;
+		if (vdirection * this.vdirection < 0) {
+			y0 = y + height;
+			y1 = y;
+		}
+
 		const { tempMatrix } = this;
-		tempMatrix[0]  = x0; tempMatrix[1]  = y + height;
-		tempMatrix[4]  = x1; tempMatrix[5]  = y + height;
-		tempMatrix[8]  = x0; tempMatrix[9]  = y;
-		tempMatrix[12] = x1; tempMatrix[13] = y;
+		tempMatrix[0]  = x0; tempMatrix[1]  = y1;
+		tempMatrix[4]  = x1; tempMatrix[5]  = y1;
+		tempMatrix[8]  = x0; tempMatrix[9]  = y0;
+		tempMatrix[12] = x1; tempMatrix[13] = y0;
 
 		tempMatrix[2] = tempMatrix[6] = tempMatrix[10] = tempMatrix[14] = opacity * 1000;
 		return this.tempMatrix;
 	}
 
-	getTextureCoordinates(direction, opacity, cropX, cropY) {
+	getTextureCoordinates(direction, vdirection, opacity, cropX, cropY) {
 		const { x, y, spriteWidth, spriteHeight } = this;
-		return this.getTextureCoordinatesFromRect(x, y, spriteWidth * (cropX || 1), spriteHeight * (cropY || 1), direction, opacity);
+		return this.getTextureCoordinatesFromRect(x, y, spriteWidth * (cropX || 1), spriteHeight * (cropY || 1), direction, vdirection, opacity);
 	}
 
 	getSpritesheetInfo() {
