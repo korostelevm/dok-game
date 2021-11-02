@@ -588,15 +588,19 @@ class GameCore extends GameBase {
 						action: item => {
 							this.setRightOpened(true);
 							this.removeFromInventory("joker");
-							this.addToInventory("joker_card");
+							if (!this.isBatmanRoom()) {
+								this.addToInventory("joker_card");
+							}
 							this.monkor.setProperty("joker", this.constructor.name);
 							this.monkor.setProperty("joker_position", this.monkor.x);
 							this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, engine.lastTime);
 							this.joker.setProperty("pickedUp", false);
 							this.audio.hit.play();
-							setTimeout(() => {
-								this.showBubble(`Interesting. I can put down the joker to exit a room.`);
-							}, 500);
+							if (!this.isBatmanRoom()) {
+								setTimeout(() => {
+									this.showBubble(`Interesting. I can put down the joker to exit a room.`);
+								}, 500);
+							}
 						},
 					},
 				],
@@ -762,6 +766,10 @@ class GameCore extends GameBase {
 
 	}
 
+	isBatmanRoom() {
+		return false;
+	}
+
 	putItemBack(item) {
 		
 	}
@@ -848,7 +856,7 @@ class GameCore extends GameBase {
 						this.showBubble(item.pendingMessage, () => {
 							setTimeout(() => {
 								item.setProperty("pickedUp", true);
-								this.setRightOpened(this.isJokerRoom());
+								this.setRightOpened(this.isJokerRoom() || this.isRoomSolved());
 								this.removeFromInventory("joker_card");
 								this.addToInventory("joker");
 								this.monkor.setProperty("joker", null);
@@ -861,6 +869,10 @@ class GameCore extends GameBase {
 			],			
 			onChange: {
 				pickedUp: (joker, pickedUp) => {
+					if (!this.joker.properties.canTake) {
+						joker.changeOpacity(0, engine.lastTime);
+						return;
+					}
 					joker.changeOpacity(pickedUp || this.monkor.properties.joker !== this.constructor.name ? 0 : 1, engine.lastTime);
 				},
 			},
@@ -1003,6 +1015,9 @@ class GameCore extends GameBase {
 		}
 		window.speechSynthesis.cancel();
 		this.showBubble(null);
+		this.setInventoryVisibility(false);
+		this.setControlVisibility(false);
+		this.setDialogVisibility(false);
 		super.onExit(engine);
 	}
 
@@ -1069,7 +1084,9 @@ class GameCore extends GameBase {
 		const item = e.dataTransfer.getData("item");
 		const { lastTime, canvas } = this.engine;
 		const { pageX, pageY, buttons } = e;
-		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
+		const rect = canvas.getBoundingClientRect();
+		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
+			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (item === "mouse") {
 			const divMouse = document.getElementById("mouse");
 			if (x < 0 || x > 800 || y < 0 || y > 400) {
@@ -1226,7 +1243,11 @@ class GameCore extends GameBase {
 		const { engine } = this;
 		const { canvas, lastTime, overlay } = engine;
 		const { pageX, pageY, buttons } = e;
-		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
+		const rect = canvas.getBoundingClientRect();
+
+//		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
+		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
+			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
 			return;
 		}
@@ -1743,6 +1764,8 @@ class GameCore extends GameBase {
 				anim = this.atlas.monkor_stand_right;
 			} else if (monkor.knock) {
 				anim = dx < 0 ? this.atlas.monkor_knock_left : this.atlas.monkor_knock_right;
+			} else if (monkor.punched) {
+				anim = this.atlas.monkor_scared_right;
 			} else if (monkor.onStill) {
 				const onStill = monkor.onStill;
 				monkor.onStill = null;

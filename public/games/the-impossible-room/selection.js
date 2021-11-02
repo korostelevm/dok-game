@@ -164,15 +164,19 @@ class Selection extends GameBase {
 		switch(this.properties.check) {
 			case "he":
 				this.data.gender = "M";
+				engine.changeCharacter("monkor");
 				break;
 			case "she":
 				this.data.gender = "W";
+				engine.changeCharacter("nuna");
 				break;
 			case "they":
 				this.data.gender = "T";
+				engine.changeCharacter("twin");
 				break;
 			default:
 				this.data.gender = "M";
+				engine.changeCharacter("monkor");
 				break;					
 		}
 		this.data.name = this.playerNameInput.value;
@@ -186,8 +190,12 @@ class Selection extends GameBase {
 
 	handleMouse(e) {
 		super.handleMouse(e);
+		const { engine } = this;
 		const { pageX, pageY, buttons } = e;
-		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
+		const { canvas } = engine;
+		const rect = canvas.getBoundingClientRect();
+		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
+			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
 			return;
 		}

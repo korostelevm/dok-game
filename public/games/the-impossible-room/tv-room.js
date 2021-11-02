@@ -1,4 +1,4 @@
-class DesertExit extends GameCore {
+class TvRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
@@ -12,19 +12,6 @@ class DesertExit extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
-			out_chain_foreground: await engine.addTexture({
-				url: "assets/out-chain.png",
-				cols: 1, rows: 2,
-				range: [0],
-				texture_url: "assets/backwall.jpg",
-				texture_alpha: .15,
-				texture_blend: "source-atop",
-			}),
-			out_chain: await engine.addTexture({
-				url: "assets/out-chain.png",
-				cols: 1, rows: 2,
-				range: [1],
-			}),
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -62,11 +49,6 @@ class DesertExit extends GameCore {
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
 
-		this.spriteFactory.create({
-			anim: this.atlas.out_chain,
-			size: [800, 400],
-		});
-
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -74,6 +56,99 @@ class DesertExit extends GameCore {
 			size: [96,192],
 			hotspot: [24,192],
 		}, {
+			actions: [
+				{ name: "talk",
+					action: butler => {
+						this.monkor.goal.x = this.butler.x < this.monkor.x ? this.butler.x - 20 : this.butler.x + 20;
+						this.startDialog(butler, [
+							{
+								message: `Yes, ${messire}?`,
+								voiceName: "Thomas",
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+							},
+							{
+								responses: [
+									{
+										response: "Is this the impossible room?",
+										topic: "impossible",
+									},
+									{
+										response: `Can you give ${me} a hint?`,
+										topic: "hint",
+									},
+									{
+										response: `${I}'ll be on ${my} way`,
+									},
+								],
+							},
+							{
+								message: `Au revoir, ${messire}.`,
+								voiceName: "Thomas",
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "hint",
+								message: `I do not have any hint to give, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
+							},
+							{
+								topic: "unwanted-item",
+								message: `No thank you, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+								next: previousIndex => previousIndex,
+							},
+							{
+								topic: "impossible",
+								message: `No ${messire}, this is not yet the impossible room.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+							},
+							{
+								message: "This is called the Template Room. A placeholder room.",
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+							},
+							{
+								message: `You must complete this room in order to continue further to the next room, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
+							},
+						]);
+					},
+				},
+			],
 		}, butler => {
 			butler.goal = {x: butler.x, y: butler.y};
 		});
@@ -85,6 +160,23 @@ class DesertExit extends GameCore {
 		const I = gender === "T" ? "We" : "I";
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+
+
+		const video = this.video = document.body.appendChild(document.createElement("video"));
+		video.width = 120;
+		video.height = 90;
+		video.src = "video/gulliver.mp4";
+		video.style.position = "absolute";
+		video.style.left = `${440}px`;
+		video.style.top = `${100}px`;
+		video.play();
+		video.volume = .5;
+//		document.getElementById("container").style.opacity = .5;
+	}
+
+	onExit(engine) {
+		this.video.pause();
+		document.body.removeChild(this.video);
 	}
 
 	updateHost(time) {
@@ -134,53 +226,10 @@ class DesertExit extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
-
-		const { gender } = this.data;
-		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
-
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
-		const foreChain = this.spriteFactory.create({
-			anim: this.atlas.out_chain_foreground,
-			size: [800, 400],
-		});
-		this.monkor.changePosition(400, 500, this.engine.lastTime);
-		this.monkor.setProperty("paused", true);
-		this.monkor.goal.x = this.monkor.x;
-		this.monkor.goal.y = 360;
-		this.monkor.onStill = () => {
-			foreChain.changeOpacity(0, this.engine.lastTime);
-			this.monkor.goal.y = 380;
-			this.monkor.onStill = () => {
-				this.butler.talking = true;
-				this.showBubble(`Ah, there you are, ${messire}.`, () => {
-					this.butler.talking = false;
-					setTimeout(() => {
-						this.butler.talking = true;
-						this.showBubble(`Glad you made it.`, () => {
-							this.butler.talking = false;
-							this.monkor.setProperty("paused", false);
-						}, "Thomas", this.butler);
-					}, 2000);
-				}, "Thomas", this.butler);				
-			};
-		};
-		this.setRightOpened(true);
-	}
-
-	setRightOpened(opened) {
-		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
-		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
-		if (this.doorNextLock) {
-			this.doorNextLock.changeOpacity(opened?0:1, engine.lastTime);
-		}		
-		if (opened) {
-			this.audio.door.play();
-		} else {
-			this.audio.hit.play();
-		}
 	}
 
 	getWalkArea() {
@@ -204,6 +253,5 @@ class DesertExit extends GameCore {
 	}
 
 	nextLevelRight() {
-		this.engine.setGame(new BatmanRoom());
 	}
 }

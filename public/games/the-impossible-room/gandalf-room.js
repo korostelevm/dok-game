@@ -357,7 +357,8 @@ class GandalfRoom extends GameCore {
 
 	canPass() {
 		const playerName = (localStorage.getItem("playerName") || "").toUpperCase();
-		return playerName === "NO ONE" || playerName.startsWith("NO ONE ");
+		return playerName === "NO ONE" || playerName.startsWith("NO ONE ")
+			|| playerName === "NOONE" || playerName.startsWith("NOONE ");
 	}
 
 	addMonkor() {

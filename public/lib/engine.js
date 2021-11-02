@@ -265,7 +265,9 @@ class Engine {
 			return this.indexOf(str) >= 0;
 		};
 		Array.prototype.remove = function(str) {
-			this.splice(this.indexOf(str), 1);
+			if (this.indexOf(str) >= 0) {
+				this.splice(this.indexOf(str), 1);
+			}
 		};		
 	}
 
@@ -406,6 +408,26 @@ class Engine {
 		const utterance = this.utterrances[voice.name];
 		utterance.text = msg;
 		return utterance;
+	}
+
+	setInception(inception) {
+		this.inception = inception;
+		const temp = this.swapData || {};
+		this.swapData = this.data;
+		this.data = temp;
+
+		const TempScene = this.SwapScene || GameTitle;
+		this.SwapScene = engine.game.constructor;
+		this.setGame(new TempScene())
+
+
+		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";
+		document.getElementById("player-overlay").style.display = inception ? "" : "none";
+		document.getElementById("back-button").style.display = inception ? "" : "none";
+	}
+
+	changeCharacter(character) {
+		document.getElementById("player-overlay").src = `assets/${character}-overlay.png`;
 	}
 
 	onDropOnOverlay(event) {

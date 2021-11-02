@@ -226,12 +226,12 @@ class Restaurant extends GameCore {
 			opacity: 0,			
 		}, {
 			actions: [
-				{ name: "walk through", condition: () => this.burger.properties.eaten,
+				{ name: "walk through", condition: () => this.burger.properties.eaten || this.monkor.properties.joker === this.constructor.name,
 					action: forward_door => {
 						this.walkThrough();
 					},
 				},
-				{ name: "walk through", condition: () => !this.burger.properties.eaten,
+				{ name: "walk through", condition: () => !this.burger.properties.eaten && !this.monkor.properties.joker === this.constructor.name,
 					message: `${Iam} in no hurry. Let's check out the menu first before tackling the next room.`,
 				},
 			],
@@ -1243,6 +1243,10 @@ class Restaurant extends GameCore {
 		}, "Thomas", this.butler);
 	}
 
+	canUseJoker() {
+		return this.burger.properties.served;
+	}
+
 	onPutBack(mouse) {
 		if (this.burger.properties.served && !this.burger.properties.eaten) {
 			if (!this.mouse.eating) {
@@ -1335,9 +1339,9 @@ class Restaurant extends GameCore {
 	}
 
 	nextLevelLeft() {
-		this.engine.setGame(new ClueRoom());
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new ClueRoom());
 	}
 }

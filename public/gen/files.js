@@ -3,12 +3,16 @@ const globalFiles=[
 	{
 		"assets": [
 			".DS_Store",
+			"1570015905422-scanlines.png",
 			"2189123.png",
+			"Scanline_320x240x4.png",
+			"back-button.png",
 			"background-door-collision.png",
 			"background-door.png",
 			"backwall.jpg",
 			"balloon-collision.png",
 			"balloon.png",
+			"batman.png",
 			"burger.png",
 			"butler.png",
 			"candy-collision.png",
@@ -44,11 +48,14 @@ const globalFiles=[
 			"menu.png",
 			"metal.jpg",
 			"monkor-collision.png",
+			"monkor-overlay.png",
 			"monkor-shake.png",
 			"monkor-shit.png",
 			"monkor.png",
+			"mouse-cursor.png",
 			"mouse.png",
 			"next-button.png",
+			"nuna-overlay.png",
 			"nuna-shake.png",
 			"nuna-shit.png",
 			"nuna.png",
@@ -67,10 +74,12 @@ const globalFiles=[
 			"toilet-exit-collision.png",
 			"toilet-room-ground.png",
 			"toilet-room.png",
+			"twin-overlay.png",
 			"twin-shake.png",
 			"twin-shit.png",
 			"twin.png",
-			"water-faucet-collision.png"
+			"water-faucet-collision.png",
+			"windows-10-logo.jpeg"
 		]
 	},
 	{
@@ -84,6 +93,8 @@ const globalFiles=[
 			"eat.mp3",
 			"hit-land.mp3",
 			"hit.mp3",
+			"im-batman.mp3",
+			"joker.mp3",
 			"om.mp3",
 			"piano.mp3",
 			"pickup.mp3",
@@ -117,6 +128,7 @@ const globalFiles=[
 				"the-impossible-room": [
 					".DS_Store",
 					"animal-room.js",
+					"batman-room.js",
 					"clue-room.js",
 					"desert-exit.js",
 					"desert-far.js",
@@ -133,7 +145,8 @@ const globalFiles=[
 					"restroom.js",
 					"selection.js",
 					"template.js",
-					"time-room.js"
+					"time-room.js",
+					"tv-room.js"
 				]
 			}
 		]
@@ -209,5 +222,8 @@ const globalFiles=[
 			}
 		]
 	},
-	"package.json"
+	"package.json",
+	{
+		"video": []
+	}
 ];

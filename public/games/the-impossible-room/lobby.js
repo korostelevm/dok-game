@@ -395,6 +395,11 @@ class Lobby extends GameCore {
 		});
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+
+		this.removeFromInventory("key_turd");
+		this.removeFromInventory("key");
+		this.removeFromInventory("cigarette");
+
 	}
 
 	onChange(key, value) {

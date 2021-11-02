@@ -84,6 +84,7 @@
 				opacity: 0;
 				z-index: 100;
 				user-select: none;
+				/*cursor: none;*/
 			}
 
 			#canvas {
@@ -374,6 +375,11 @@
 			    from {top: -50px; left: 5px} 
 			    to{top:0px; left: 0px} 
 			}
+
+		.glow {
+			  -webkit-filter: drop-shadow(0 0 1rem white);
+			  filter: drop-shadow(0 0 1rem white);
+		}			
 		</style>
 		<script>
 			addEventListener('error', function(event) {
@@ -395,6 +401,31 @@
 	</head>
 	<body>
 		<div id="game-tab"></div>
+			<img id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
+			<img id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px; cursor: pointer" src="assets/back-button.png"></img>
+			<script type="text/javascript">
+				const backButton = document.getElementById("back-button");
+				backButton.addEventListener("mouseover", () => {
+					backButton.classList.add("glow");
+				});
+				backButton.addEventListener("mouseout", () => {
+					backButton.classList.remove("glow");
+				});
+				backButton.addEventListener("click", () => {
+					engine.setInception(false);
+				});
+			</script>
+
+<!-- 			<img id="mouse-cursor" class="shadowed" style="z-index: 150; position: absolute; touch-action: none; pointer-events: none; height: 25px; width: 15px" src="assets/mouse-cursor.png">
+			<script type="text/javascript">
+				const mouseCursor = document.getElementById("mouse-cursor");
+				document.addEventListener("mousemove", e => {
+						mouseCursor.style.top = `${e.pageY}px`;
+						mouseCursor.style.left = `${e.pageX}px`;
+				});
+			</script>
+ -->
+
 		<div id="container" class="container">
 			<!-- https://www.beepbox.co/#8n31sbk0l00e0ft3em0a7g0fj07i0r1o3210T5v0L4u50q1d5f8y1z6C1c0h0H-JJAArrqiih999T6v1L4u77q1d1f7y4z1C1c2W79T1v0L4u55q1d1f9y0z6C1c0A4F2B4V1Q40c0Pd73bE0111T3v3L4u03q0d1f8y0z1C2S-JIAArrrrrqiiiib4x8Qd18ilBoi4zgR4x8Qd14h8Och4icz4h4h414h4h0p23dFE-y-y38X2eQzEF8W2eH04t17hihO97ghQkRkRqGa2e2FKI8W2eyMzG8Zd517rj8Op7ghQkRkQWiewzEAieIzEbWyeAzRlmSng5dlJJJtBJd9jpvhSqq_3FU2tDwdv9ePMaDmt_v9YEUeEUckR_52qfiwcEWv2koz0phvgnQp2z4rsGwUY5Cz0K8WkkQpk0hQklAt17mhQ4o0 -->
 			<div id="title" class="title" style="user-select: text; position: absolute; top: 80px; left:310px; z-index: 300; font-size: 40pt"><span id="im" spellcheck="false" contenteditable="true" style="display:none">THE IMPOSSIBLE ROOM</span></div>
@@ -469,6 +500,8 @@
 		<script type="text/javascript" src="games/the-impossible-room/desert-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/desert-far.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/desert-exit.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/tv-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/batman-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>

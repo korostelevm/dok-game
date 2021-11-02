@@ -108,8 +108,12 @@ class Menu extends GameBase {
 		if (!this.ready) {
 			return;
 		}
+		const { engine } = this;
 		const { pageX, pageY, buttons } = e;
-		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
+		const { canvas } = engine;
+		const rect = canvas.getBoundingClientRect();
+		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
+			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
 			return;
 		}
