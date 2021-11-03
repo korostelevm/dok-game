@@ -16,6 +16,10 @@ class Engine {
 		if (this.debug) {
 			document.getElementById("info-box").style.display = "";
 		}
+
+		const gender = localStorage.getItem("playerGender") || "M";
+		this.changeCharacter(gender === "W" ? "nuna" : gender === "T" ? "twin" : "monkor");
+
 	}
 
 	setupEmojiCursors() {
@@ -424,6 +428,7 @@ class Engine {
 		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";
 		document.getElementById("player-overlay").style.display = inception ? "" : "none";
 		document.getElementById("back-button").style.display = inception ? "" : "none";
+		doResize();
 	}
 
 	changeCharacter(character) {

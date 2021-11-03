@@ -9,7 +9,9 @@ class GameBase {
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
 		this.audio = {};
-		this.data.gender = (localStorage.getItem("playerGender") || "M");
+		if (!this.data.gender) {
+			this.data.gender = ((this.engine.inception ? null : localStorage.getItem("playerGender")) || "M");
+		}
 	}
 
 	setProperty(key, value) {

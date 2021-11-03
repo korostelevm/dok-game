@@ -115,7 +115,7 @@ class Selection extends GameBase {
 		input.style.borderStyle = "hidden";
 		input.setAttribute("spellcheck", false);
 		input.style.color = "#3634d6";
-		input.value = this.data.name || localStorage.getItem("playerName") || "Monkor Bakaru";
+		input.value = this.data.name || (this.engine.inception ? null : localStorage.getItem("playerName")) || "Monkor Bakaru";
 		input.size = 55;
 		input.style.background = "none";
 		input.style.fontFamily = "handwriting";
@@ -161,31 +161,35 @@ class Selection extends GameBase {
 	}
 
 	onExit(engine) {
+		let character = "monkor";
 		switch(this.properties.check) {
 			case "he":
 				this.data.gender = "M";
-				engine.changeCharacter("monkor");
+				character = "monkor";
 				break;
 			case "she":
 				this.data.gender = "W";
-				engine.changeCharacter("nuna");
+				character = "nuna";
 				break;
 			case "they":
 				this.data.gender = "T";
-				engine.changeCharacter("twin");
+				character = "twin";
 				break;
 			default:
 				this.data.gender = "M";
-				engine.changeCharacter("monkor");
+				character = "monkor";
 				break;					
 		}
 		this.data.name = this.playerNameInput.value;
 		this.overContainer.innerText = "";
 
-		localStorage.setItem("playerName", this.data.name);
-		localStorage.setItem("playerGender", this.data.gender);
-		document.getElementById("player-name").textContent =
-			this.data.name.toUpperCase().startsWith("MONKOR") ? "Monkor" : this.data.name;
+		if (!this.engine.inception) {
+			engine.changeCharacter(character);
+			localStorage.setItem("playerName", this.data.name);
+			localStorage.setItem("playerGender", this.data.gender);
+			document.getElementById("player-name").textContent =
+				this.data.name.toUpperCase().startsWith("MONKOR") ? "Monkor" : this.data.name;
+		}
 	}
 
 	handleMouse(e) {

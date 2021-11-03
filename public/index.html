@@ -401,8 +401,8 @@
 	</head>
 	<body>
 		<div id="game-tab"></div>
-			<img id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
-			<img id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px; cursor: pointer" src="assets/back-button.png"></img>
+			<img class="incept" id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
+			<img class="incept" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px; cursor: pointer" src="assets/back-button.png"></img>
 			<script type="text/javascript">
 				const backButton = document.getElementById("back-button");
 				backButton.addEventListener("mouseover", () => {
@@ -414,6 +414,13 @@
 				backButton.addEventListener("click", () => {
 					engine.setInception(false);
 				});
+				function doResize() {
+					const rect = document.getElementById("canvas").getBoundingClientRect();
+					const shift = -200;
+					document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
+					document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
+				}
+				window.addEventListener("resize", doResize);
 			</script>
 
 <!-- 			<img id="mouse-cursor" class="shadowed" style="z-index: 150; position: absolute; touch-action: none; pointer-events: none; height: 25px; width: 15px" src="assets/mouse-cursor.png">
@@ -461,7 +468,7 @@
 					<a id="voice-mute-toggle" style="cursor: pointer"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span></a>					
 				</div>
 
-				<div>🔁: <span id="pressing-r">R to start over.</span></div>
+				<div style="display: none">🔁: <span id="pressing-r">R to start over.</span></div>
 			</div>
 			<div id="conversation" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none;">
 				<div class="chat-selection" id="conversation-1">Option 1</div>

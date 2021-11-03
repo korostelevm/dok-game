@@ -760,7 +760,7 @@ class GameCore extends GameBase {
 			this.addToInventory("note");
 		}
 
-		const playerName = localStorage.getItem("playerName");
+		const playerName = (this.engine.inception ? null : localStorage.getItem("playerName"));
 		document.getElementById("player-name").textContent =
 			!playerName || playerName.toUpperCase().startsWith("MONKOR") ? "Monkor" : playerName;
 
