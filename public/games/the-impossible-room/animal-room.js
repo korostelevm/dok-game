@@ -135,6 +135,10 @@ class AnimalRoom extends GameCore {
 		});
 
 		if (!this.properties.sentence) {
+			this.setProperty("sentence", localStorage.getItem("sentence"));
+		}
+
+		if (!this.properties.sentence) {
 			const idolOrder = ["cat"];
 			for (let id in this.atlas.idols) {
 				if (id !== "cat") {
@@ -154,6 +158,7 @@ class AnimalRoom extends GameCore {
 			let sentence = idolOrder.slice(0, 5).join(" ").toUpperCase();
 
 			this.setProperty("sentence", sentence);
+			localStorage.setItem("sentence", sentence);
 		}
 
 		//	116

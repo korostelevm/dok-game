@@ -46,42 +46,42 @@ class LockedRoom extends GameCore {
 			butler_stinky: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [26,27],
 					frameRate: 10,
 				}),
 			butler_smell_left: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [28,29],
 					frameRate: 10,
 				}),
 			butler_smell_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [30,31],
 					frameRate: 10,
 				}),
 			butler_smell_right_arm: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [32,33],
 					frameRate: 10,
 				}),
 			butler_smell_left_arm: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [34,35],
 					frameRate: 10,
 				}),
 			butler_foul: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
-					cols: 9, rows: 5,
+					cols: 10, rows: 5,
 					range: [36],
 				}),
 		};
@@ -223,6 +223,7 @@ class LockedRoom extends GameCore {
 								//
 							}, "Thomas", this.butler);
 						} else {
+							const voiceName = "Thomas";
 
 							this.startDialog(butler, [
 								{

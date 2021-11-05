@@ -229,9 +229,16 @@ class DesertFar extends GameCore {
 			],
 			onMouseDown: (you_are_here, e) => {
 				you_are_here.changeAnimation(this.atlas.you_are_here_lifted, this.engine.lastTime);
+
+				const { canvas } = this.engine;
+				const { pageX, pageY, buttons } = e;
+				const rect = canvas.getBoundingClientRect();
+				const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
+					  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
+
 				you_are_here.lastLift = {
-					x: e.pageX,
-					y: e.pageY,
+					x,
+					y,
 				};
 			},
 		});
@@ -240,9 +247,14 @@ class DesertFar extends GameCore {
 	onMouseMove(e) {
 		const { you_are_here } = this;
 		if (you_are_here.anim === this.atlas.you_are_here_lifted) {
-			const { pageX, pageY } = e;
-			const dx = pageX - you_are_here.lastLift.x;
-			const dy = pageY - you_are_here.lastLift.y;
+			const { canvas } = this.engine;
+			const { pageX, pageY, buttons } = e;
+			const rect = canvas.getBoundingClientRect();
+			const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
+				  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
+
+			const dx = x - you_are_here.lastLift.x;
+			const dy = y - you_are_here.lastLift.y;
 
 			you_are_here.changePosition(
 				Math.min(257, Math.max(-332, you_are_here.x + dx)),
@@ -257,8 +269,8 @@ class DesertFar extends GameCore {
 				this.hideChain(this.engine.lastTime);
 			}
 
-			you_are_here.lastLift.x = pageX;
-			you_are_here.lastLift.y = pageY;
+			you_are_here.lastLift.x = x;
+			you_are_here.lastLift.y = y;
 		}
 	}
 

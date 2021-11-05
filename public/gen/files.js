@@ -1,8 +1,6 @@
 const globalFiles=[
-	".DS_Store",
 	{
 		"assets": [
-			".DS_Store",
 			"1570015905422-scanlines.png",
 			"2189123.png",
 			"Scanline_320x240x4.png",
@@ -118,7 +116,6 @@ const globalFiles=[
 	"game-starter.js",
 	{
 		"games": [
-			".DS_Store",
 			{
 				"one-rule": [
 					"game-ring.js"
@@ -126,7 +123,6 @@ const globalFiles=[
 			},
 			{
 				"the-impossible-room": [
-					".DS_Store",
 					"animal-room.js",
 					"batman-room.js",
 					"clue-room.js",
@@ -222,8 +218,5 @@ const globalFiles=[
 			}
 		]
 	},
-	"package.json",
-	{
-		"video": []
-	}
+	"package.json"
 ];

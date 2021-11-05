@@ -117,6 +117,12 @@ class GandalfRoom extends GameCore {
 									{
 										response: `Can you just let ${me} pass?`,
 										topic: "let_me_pass",
+										condition: () => !this.canPass(),
+									},
+									{
+										response: `Can you just let ${me} pass?`,
+										topic: "let_me_pass_2",
+										condition: () => this.canPass(),
 									},
 									{
 										response: `Why do you let no one pass?`,
@@ -130,12 +136,12 @@ class GandalfRoom extends GameCore {
 										},
 									},
 									{
-										response: () => `${My} name is ${localStorage.getItem("playerName")}, and you will let ${me} pass!`,
+										response: () => `${My} name is ${this.data.name}, and you will let ${me} pass!`,
 										topic: "no_one",
 										condition: () => this.canPass(),
 									},
 									{
-										response: () => `${My} name is ${localStorage.getItem("playerName")}, and you will let ${me} pass!`,
+										response: () => `${My} name is ${this.data.name}, and you will let ${me} pass!`,
 										topic: "my_name",
 										condition: () => !this.canPass(),
 									},
@@ -162,7 +168,7 @@ class GandalfRoom extends GameCore {
 							},
 							{
 								topic: "no_one",
-								message: `${localStorage.getItem("playerName")} shall pass.`,
+								message: `${this.data.name} shall pass.`,
 								voiceName: "Ralph",
 								secondsAfterEnd: 1,
 								onStart: gandalf => gandalf.setProperty("talking", this.engine.lastTime),
@@ -174,7 +180,7 @@ class GandalfRoom extends GameCore {
 							},
 							{
 								topic: "my_name",
-								message: `${localStorage.getItem("playerName")}, you shall not pass.`,
+								message: `${this.data.name}, you shall not pass.`,
 								voiceName: "Ralph",
 								secondsAfterEnd: 1,
 								onStart: gandalf => gandalf.setProperty("talking", this.engine.lastTime),
@@ -202,6 +208,15 @@ class GandalfRoom extends GameCore {
 								onEnd: gandalf => gandalf.setProperty("talking", null),
 							},
 							{
+								message: `No one shall pass.`,
+								voiceName: "Ralph",
+								secondsAfterEnd: 1,
+								onStart: gandalf => gandalf.setProperty("talking", this.engine.lastTime),
+								onEnd: gandalf => gandalf.setProperty("talking", null),
+								exit: true,
+							},
+							{
+								topic: "let_me_pass_2",
 								message: `No one shall pass.`,
 								voiceName: "Ralph",
 								secondsAfterEnd: 1,
@@ -356,7 +371,7 @@ class GandalfRoom extends GameCore {
 	}
 
 	canPass() {
-		const playerName = (localStorage.getItem("playerName") || "").toUpperCase();
+		const playerName = (this.data.name || "").toUpperCase();
 		return playerName === "NO ONE" || playerName.startsWith("NO ONE ")
 			|| playerName === "NOONE" || playerName.startsWith("NOONE ");
 	}

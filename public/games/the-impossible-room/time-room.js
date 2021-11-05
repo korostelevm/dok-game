@@ -147,6 +147,7 @@ class TimeRoom extends GameCore {
 			actions: [
 				{ name: "talk",
 					action: butler => {
+						const voiceName = "Thomas";
 						this.monkor.goal.x = this.butler.x < this.monkor.x ? this.butler.x - 20 : this.butler.x + 20;
 						this.startDialog(butler, [
 							{
@@ -294,11 +295,11 @@ class TimeRoom extends GameCore {
 			size: [800, 400],
 		});
 
-		this.title = document.getElementById("title");
-		this.title.style.display = "";
-		this.title.style.opacity = .5;
-		document.getElementById("im").style.display = "";
-		document.getElementById("im").textContent = "";
+		// this.title = document.getElementById("title");
+		// this.title.style.display = "";
+		// this.title.style.opacity = .5;
+		// document.getElementById("im").style.display = "";
+		// document.getElementById("im").textContent = "";
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
@@ -334,7 +335,7 @@ class TimeRoom extends GameCore {
 			return;
 		}
 		this.sec = seconds;
-		document.getElementById("im").textContent = seconds;
+//		document.getElementById("im").textContent = seconds;
 		document.getElementById("clock-1").textContent = seconds;
 	}
 
