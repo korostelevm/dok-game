@@ -764,6 +764,9 @@ class GameCore extends GameBase {
 		document.getElementById("player-name").textContent =
 			!playerName || playerName.toUpperCase().startsWith("MONKOR") ? "Monkor" : playerName;
 
+		if (!this.data.name) {
+			this.data.name = localStorage.getItem("playerName");
+		}
 	}
 
 	isBatmanRoom() {

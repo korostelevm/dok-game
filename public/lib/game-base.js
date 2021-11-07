@@ -12,6 +12,7 @@ class GameBase {
 		if (!this.data.gender) {
 			this.data.gender = ((this.engine.inception ? null : localStorage.getItem("playerGender")) || "M");
 		}
+		this.data.sceneName = this.sceneName;
 	}
 
 	isFirstTime() {

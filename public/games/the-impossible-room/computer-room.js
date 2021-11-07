@@ -36,6 +36,28 @@ class ComputerRoom extends GameCore {
 				cols:1,rows:4,
 				range:[3],
 			}),
+
+			other_monkor: await engine.addTexture({
+				url: "assets/monkor.png",
+				collision_url: "assets/monkor.png",
+				cols:5,
+				rows:5,
+				range:[0],
+			}),
+			other_nuna: await engine.addTexture({
+				url: "assets/nuna.png",
+				collision_url: "assets/nuna.png",
+				cols:5,
+				rows:5,
+				range:[0],
+			}),
+			other_twin: await engine.addTexture({
+				url: "assets/twin.png",
+				collision_url: "assets/twin.png",
+				cols:6,
+				rows:6,
+				range:[0],
+			}),
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -145,7 +167,7 @@ class ComputerRoom extends GameCore {
 							setTimeout(() => {
 								this.monkor.alwaysLookup = false;
 								this.showBubble(`${He_doesnt} seem to react. ${He_is} very focused on the game.`);
-							}, 5000);
+							}, 3000);
 						});
 					},
 				},
@@ -209,6 +231,42 @@ class ComputerRoom extends GameCore {
 
 
 	addMonkor() {
+		if (!this.engine.inception
+			&& this?.engine?.swapData?.TheImpossibleRoom?.sceneName === this.constructor.name
+			&& this?.engine?.swapData?.TheImpossibleRoom?.ComputerRoom?.monkor) {
+			const { x, y } = this.engine.swapData.TheImpossibleRoom.ComputerRoom.monkor;
+			const { gender, name } = this.engine.swapData["TheImpossibleRoom"];
+			this.otherMonkor = this.spriteFactory.create({
+				name,
+				x, y,
+				size: [128, 128],
+				hotspot: [64,128],
+				anim: gender === "M" ? this.atlas.other_monkor : gender === "W" ? this.atlas.other_nuna : this.atlas.other_twin,
+			}, {
+				actions: [
+					{ name: "talk",
+						action: computer_desk => {
+							const { gender } = this.engine.swapData["TheImpossibleRoom"];
+							const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
+							const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
+							const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";
+							const Someone_is = gender === "M" ? "Someone is" : gender === "W" ? "Someone is" : "Two dudes are";
+							this.monkor.goal.x = this.otherMonkor.x - 100;
+							this.monkor.setProperty("paused", true);
+							this.monkor.onStill = () => {
+								this.monkor.setProperty("paused", false);
+								this.showBubble(`Hello ${sir}. Have you seen the host, Nicolas Debossin?`, () => {
+									setTimeout(() => {
+										this.showBubble(`${He_doesnt} seem to react. ${He_is} very focused on the game.`);
+									}, 3000);
+								});
+							};
+						},
+					},
+				],
+			});;
+		}
+
 		super.addMonkor();
 
 		const { gender } = this.data;
@@ -234,6 +292,7 @@ class ComputerRoom extends GameCore {
 		} else {
 			this.monkor.goal.x = this.monkor.x;
 		}
+
 		this.setRightOpened(true);
 	}
 
