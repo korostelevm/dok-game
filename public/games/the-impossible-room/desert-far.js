@@ -180,6 +180,8 @@ class DesertFar extends GameCore {
 				},
 			],
 		});
+
+		this.removeFromInventory("note");
 	}
 
 	addMonkor() {
@@ -384,9 +386,9 @@ class DesertFar extends GameCore {
 				} else {
 					const { gender } = this.data;
 					const I = gender === "T" ? "We" : "I";
-					this.monkor.paused = true;
+					this.monkor.setProperty("paused", true);
 					this.showBubble(`Incredible. ${I} landed in the middle of the desert.`, () => {
-						this.monkor.paused = false;
+						this.monkor.setProperty("paused", false);
 					});
 				}
 

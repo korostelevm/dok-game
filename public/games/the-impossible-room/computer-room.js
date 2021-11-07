@@ -1,4 +1,4 @@
-class DesertExit extends GameCore {
+class ComputerRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
@@ -12,18 +12,29 @@ class DesertExit extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
-			out_chain_foreground: await engine.addTexture({
-				url: "assets/out-chain.png",
-				cols: 1, rows: 2,
-				range: [0],
-				texture_url: "assets/backwall.jpg",
-				texture_alpha: .15,
-				texture_blend: "source-atop",
+			computer_desk: await engine.addTexture({
+				url: "assets/computer-desk.png",
+				collision_url: "assets/computer-desk.png",
+				cols:1,rows:4,
+				range:[0],
 			}),
-			out_chain: await engine.addTexture({
-				url: "assets/out-chain.png",
-				cols: 1, rows: 2,
-				range: [1],
+			computer_desk_monkor: await engine.addTexture({
+				url: "assets/computer-desk.png",
+				collision_url: "assets/computer-desk.png",
+				cols:1,rows:4,
+				range:[1],
+			}),
+			computer_desk_nuna: await engine.addTexture({
+				url: "assets/computer-desk.png",
+				collision_url: "assets/computer-desk.png",
+				cols:1,rows:4,
+				range:[2],
+			}),
+			computer_desk_twin: await engine.addTexture({
+				url: "assets/computer-desk.png",
+				collision_url: "assets/computer-desk.png",
+				cols:1,rows:4,
+				range:[3],
 			}),
 		};
 
@@ -61,22 +72,86 @@ class DesertExit extends GameCore {
 		const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
+		const Sir = gender === "M" ? "Sir" : gender === "W" ? "Madam" : "Guys";
+		const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
+		const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
+		const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";
+		const Someone_is = gender === "M" ? "Someone is" : gender === "W" ? "Someone is" : "Two dudes are";
 
-		this.spriteFactory.create({
-			anim: this.atlas.out_chain,
-			size: [800, 400],
-		});
 
-		this.butler = this.spriteFactory.create({
-			name: "Nicolas",
-			anim: this.atlas.butler,
-			x: 200, y: 340,
-			size: [96,192],
-			hotspot: [24,192],
+
+		let computerAnim = this.atlas.computer_desk;
+		if (this.engine.inception) {
+			switch (this.engine.swapData["TheImpossibleRoom"].gender) {
+				case "":
+					computerAnim = this.atlas.computer_desk;
+					break;
+				case "M":
+					computerAnim = this.atlas.computer_desk_monkor;
+					break;
+				case "W":
+					computerAnim = this.atlas.computer_desk_nuna;
+					break;
+				case "T":
+					computerAnim = this.atlas.computer_desk_twin;
+					break;
+				default:
+					throw new Error("Invalid gender: " + this.engine.swapData["TheImpossibleRoom"].gender);
+					break;
+			}
+		}
+
+
+		this.computer_desk = this.spriteFactory.create({
+			name: "Computer Desk",
+			anim: computerAnim,
+			size: [400, 200],
+			x: 300, y: 170,
 		}, {
-		}, butler => {
-			butler.goal = {x: butler.x, y: butler.y};
+			actions: [
+				{ name: "look", condition: () => this.engine.inception,
+					message: () => {
+						const { gender } = this.engine.swapData["TheImpossibleRoom"];
+						const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
+						const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
+						const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";
+						const Someone_is = gender === "M" ? "Someone is" : gender === "W" ? "Someone is" : "Two dudes are";
+						return `${Someone_is} using the computer. ${He_is} playing a game that looks pretty familiar.`;
+					},
+					lookup: 1000,
+				},
+				{ name: "look", condition: () => !this.engine.inception,
+					message: "It's a computer desk in the middle of the room. I wonder what it's for.",
+					lookup: 1000,
+				},
+				{ name: "sit", condition: () => !this.engine.inception,
+					action: computer_desk => {
+						const { gender } = this.data;
+						this.engine.setInception(true, {
+							computerGender: gender,
+						});
+					},
+				},
+				{ name: "talk", condition: () => this.engine.inception,
+					lookup: 1000,
+					action: computer_desk => {
+						const { gender } = this.engine.swapData["TheImpossibleRoom"];
+						const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
+						const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
+						const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";
+						const Someone_is = gender === "M" ? "Someone is" : gender === "W" ? "Someone is" : "Two dudes are";
+						this.monkor.alwaysLookup = true;
+						this.showBubble(`Hello ${sir}.`, () => {
+							setTimeout(() => {
+								this.monkor.alwaysLookup = false;
+								this.showBubble(`${He_doesnt} seem to react. ${He_is} very focused on the game.`);
+							}, 5000);
+						});
+					},
+				},
+			],
 		});
+
 		this.doorForwardClosed = this.spriteFactory.create({
 			anim: this.atlas.right_door,
 			size: [800, 400],
@@ -132,6 +207,7 @@ class DesertExit extends GameCore {
 		}
 	}
 
+
 	addMonkor() {
 		super.addMonkor();
 
@@ -142,36 +218,21 @@ class DesertExit extends GameCore {
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
-		const foreChain = this.spriteFactory.create({
-			anim: this.atlas.out_chain_foreground,
-			size: [800, 400],
-		});
 		if (this.isFirstTime()) {
-			this.monkor.changePosition(400, 500, this.engine.lastTime);
+			this.monkor.changePosition(100, 360, this.engine.lastTime);
 			this.monkor.setProperty("paused", true);
-			this.monkor.goal.x = this.monkor.x;
-			this.monkor.goal.y = 360;
+			this.monkor.goal.x = 250;
 			this.monkor.onStill = () => {
-				foreChain.changeOpacity(0, this.engine.lastTime);
-				this.monkor.goal.y = 380;
-				this.monkor.onStill = () => {
-					this.butler.talking = true;
-					this.showBubble(`Ah, there you are, ${messire}.`, () => {
-						this.butler.talking = false;
-						setTimeout(() => {
-							this.butler.talking = true;
-							this.showBubble(`Glad you made it.`, () => {
-								this.butler.talking = false;
-								this.monkor.setProperty("paused", false);
-							}, "Thomas", this.butler);
-						}, 2000);
-					}, "Thomas", this.butler);				
-				};
+				this.monkor.lookLeft = true;
+				setTimeout(() => {
+					this.monkor.lookLeft = false;
+					this.showBubble(`Where did Nicolas Debossin go?`, () => {
+						this.monkor.setProperty("paused", false);
+					});			
+				}, 1000);
 			};
 		} else {
-			foreChain.changeOpacity(0, this.engine.lastTime);
 			this.monkor.goal.x = this.monkor.x;
-			this.monkor.goal.y = this.monkor.y;
 		}
 		this.setRightOpened(true);
 	}
@@ -195,7 +256,6 @@ class DesertExit extends GameCore {
 
 	refresh(time, dt) {
 		super.refresh(time, dt);
-		this.updateHost(time);
 	}	
 
 	openLeft() {
@@ -210,6 +270,5 @@ class DesertExit extends GameCore {
 	}
 
 	nextLevelRight() {
-		this.engine.setGame(new BatmanRoom());
 	}
 }

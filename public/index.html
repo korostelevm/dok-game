@@ -47,7 +47,9 @@
 
 			html, body {
 			    margin: 0;
-			    height: 100%;
+			    width:  1080px;
+			    height:  580px;
+			    /*height: 100%;*/
 				background-image:
 				  linear-gradient(27deg, rgba(55,50,100,.3), rgba(55,50,100,0) 70.71%),
 				  linear-gradient(117deg, rgba(55,55,100,.3), rgba(55,55,100) 70.71%),
@@ -376,10 +378,14 @@
 			    to{top:0px; left: 0px} 
 			}
 
-		.glow {
-			  -webkit-filter: drop-shadow(0 0 1rem white);
-			  filter: drop-shadow(0 0 1rem white);
-		}			
+			.glow {
+				  -webkit-filter: drop-shadow(0 0 1rem white);
+				  filter: drop-shadow(0 0 1rem white);
+			}
+
+			.inception {
+				transform: translate(-71px, -70px) scale(.5);
+			}
 		</style>
 		<script>
 			addEventListener('error', function(event) {
@@ -419,6 +425,8 @@
 					const shift = -200;
 					document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
 					document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
+					document.getElementById("player-overlay").style.top = `${rect.y + shift + 150}px`;
+					document.getElementById("back-button").style.top = `${rect.y + shift + 450}px`;
 				}
 				window.addEventListener("resize", doResize);
 			</script>
@@ -509,6 +517,7 @@
 		<script type="text/javascript" src="games/the-impossible-room/desert-exit.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/tv-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/batman-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/computer-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>

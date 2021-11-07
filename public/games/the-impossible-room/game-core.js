@@ -1730,7 +1730,7 @@ class GameCore extends GameBase {
 		const dy = (monkor.goal.y - monkor.y);
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		const actualSpeed = Math.min(dist, speed);
-		const lookup = this.monkor.lookupUntil && this.monkor.lookupUntil > time;
+		const lookup = this.monkor.lookupUntil && this.monkor.lookupUntil > time || this.monkor.alwaysLookup;
 		let anim = lookup ? this.atlas.monkor_back_still : this.atlas.monkor_still;
 		if (dist) {
 			monkor.changePosition(monkor.x + actualSpeed * dx / dist, monkor.y + actualSpeed * dy / dist, time);

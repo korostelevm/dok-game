@@ -455,5 +455,6 @@ class BatmanRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new ComputerRoom());
 	}
 }

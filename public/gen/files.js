@@ -1,4 +1,5 @@
 const globalFiles=[
+	".DS_Store",
 	{
 		"assets": [
 			"1570015905422-scanlines.png",
@@ -21,6 +22,7 @@ const globalFiles=[
 			"chocolate.png",
 			"cigarette.png",
 			"clue-lobby.png",
+			"computer-desk.png",
 			"desert-far.png",
 			"desert-room-collision.png",
 			"desert-room.png",
@@ -126,6 +128,7 @@ const globalFiles=[
 					"animal-room.js",
 					"batman-room.js",
 					"clue-room.js",
+					"computer-room.js",
 					"desert-exit.js",
 					"desert-far.js",
 					"desert-room.js",

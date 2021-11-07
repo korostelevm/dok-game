@@ -13,6 +13,8 @@ class Engine {
 
 		this.init(config);
 
+		this.seenGame = {};
+
 		if (this.debug) {
 			document.getElementById("info-box").style.display = "";
 		}
@@ -207,10 +209,14 @@ class Engine {
 	}
 
 	async initGame(game) {
-		this.chrono.tick("game init " + this.game.sceneName);
-		await this.game.init(this, this.classToGame[this.game.sceneName]);
-		await this.game.postInit();
-		this.game.ready = true;
+		const firstTime = !this.seenGame[game.sceneName];
+		this.seenGame[game.sceneName] = true;
+		game.firstTime = firstTime;
+
+		this.chrono.tick("game init " + game.sceneName);
+		await game.init(this, this.classToGame[game.sceneName]);
+		await game.postInit();
+		game.ready = true;
 		this.chrono.tick("game init done");
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
@@ -414,18 +420,29 @@ class Engine {
 		return utterance;
 	}
 
-	setInception(inception) {
+	setInception(inception, extraData) {
 		this.inception = inception;
 		const temp = this.swapData || {};
 		this.swapData = this.data;
 		this.data = temp;
+		if (extraData) {
+			for (let i in extraData) {
+				this.data[i] = extraData[i];
+			}
+		}
 
 		const TempScene = this.SwapScene || GameTitle;
 		this.SwapScene = engine.game.constructor;
 		this.setGame(new TempScene())
 
+		if (inception) {
+			this.canvas.parentElement.classList.add("inception");
+		} else {
+			this.canvas.parentElement.classList.remove("inception");			
+		}
 
-		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";
+
+//		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";
 		document.getElementById("player-overlay").style.display = inception ? "" : "none";
 		document.getElementById("back-button").style.display = inception ? "" : "none";
 		doResize();

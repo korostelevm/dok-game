@@ -14,6 +14,10 @@ class GameBase {
 		}
 	}
 
+	isFirstTime() {
+		return this.firstTime;
+	}
+
 	setProperty(key, value) {
 		if (this.properties[key] !== value) {
 			this.properties[key] = value;
