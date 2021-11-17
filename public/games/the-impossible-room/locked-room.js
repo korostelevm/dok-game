@@ -465,7 +465,7 @@ class LockedRoom extends GameCore {
 											topic: "intro",
 										},
 										{
-											response: "Ok, I'll try to find an way to escape. Sounds like fun!",
+											response: "Ok, I'll try to find a way to escape. Sounds like fun!",
 											topic: "exit",
 										},
 									],
@@ -899,7 +899,7 @@ class LockedRoom extends GameCore {
 				this.setDoorOpened(false);
 				const { gender } = this.data;
 				const messire = gender === "T" ? "messires" : gender === "W" ? "madame" : "messire";
-				this.showBubble(`Thank you for your patience, ${messire}. Feel free to resume your search for way to escape this room.`, () => {
+				this.showBubble(`Thank you for your patience, ${messire}. Feel free to resume your search for ways to escape this room.`, () => {
 					this.butler.talking = 0;
 					this.monkor.lookLeft = 0;
 				}, "Thomas", this.butler);

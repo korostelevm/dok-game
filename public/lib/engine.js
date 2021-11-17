@@ -22,6 +22,178 @@ class Engine {
 		const gender = localStorage.getItem("playerGender") || "M";
 		this.changeCharacter(gender === "W" ? "nuna" : gender === "T" ? "twin" : "monkor");
 
+		this.sidebars = [
+			{
+				name: "main menu",
+				game: "Menu",
+				onClick: engine => {
+					confirmRestart();
+				},
+				hideSidebar: (engine) => {
+					return engine.countUnlocked() === 1;
+				},
+			},
+			{
+				name: "entrance",
+				game: "Entrance",
+				disabled: (engine) => {
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "restroom",
+				game: "Restroom",
+				disabled: (engine) => {
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "lobby",
+				game: "Lobby",
+				disabled: (engine) => {
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "first room",
+				game: "LockedRoom",
+				disabled: (engine) => {
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "joker",
+				game: "JokerRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "time",
+				game: "TimeRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "animal",
+				game: "AnimalRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "gandalf",
+				game: "GandalfRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "restaurant",
+				game: "Restaurant",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "no clue",
+				game: "ClueRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "desert",
+				game: "DesertRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "batman",
+				game: "BatmanRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "computer",
+				game: "ComputerRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "impossible",
+				game: "ImpossibleRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+		];
+	}
+
+	countUnlocked() {
+		let count = 0;
+		this.sidebars.forEach(({ game, name, disabled, hideSidebar }, index) => {
+			if (this.roomUnlocked(game)) {
+				count++;
+			}
+		});
+		return count;
+	}
+
+	roomUnlocked(game) {
+		return localStorage.getItem(game + "-unlocked");
+	}
+
+	updateSidebar(selected, joker) {
+		const sidebar = document.getElementById("sidebar");
+		sidebar.innerText = "";
+		let foundSelected = false;
+		let doHideSidebar = false;
+		this.sidebars.forEach(({ game, name, disabled, hideSidebar, onClick }, index) => {
+			const classObj = eval(game);
+			const row = sidebar.appendChild(document.createElement("div"));
+			row.classList.add("sidebar-room");
+//			console.log(joker, game);
+			row.innerText = `${name}${joker === game ? " 🤪" : ""}`;
+			if (!this.roomUnlocked(game)) {
+				row.classList.add("locked");
+			} else if (selected !== game && disabled && disabled(this)) {
+				row.classList.add("disabled");
+			} else {
+				if (selected !== game) {
+					row.addEventListener("click", () => {
+						if (onClick) {
+							onClick(this);
+						} else {
+							this.setGame(new classObj());
+						}
+					});
+				}
+			}
+
+			if (selected === game) {
+				row.classList.add("selected");
+				foundSelected = true;
+				if (hideSidebar && hideSidebar(this)) {
+					doHideSidebar = true;
+				}
+			}
+		});
+		sidebar.style.display = !doHideSidebar && foundSelected ? "flex" : "none";
 	}
 
 	setupEmojiCursors() {
@@ -209,18 +381,18 @@ class Engine {
 	}
 
 	async initGame(game) {
-		const firstTime = !this.seenGame[game.sceneName];
-		this.seenGame[game.sceneName] = true;
-		game.firstTime = firstTime;
+		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
 		this.chrono.tick("game init " + game.sceneName);
 		await game.init(this, this.classToGame[game.sceneName]);
+
 		await game.postInit();
 		game.ready = true;
 		this.chrono.tick("game init done");
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
+		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
 	}
 
 	handleMouse(e) {
@@ -416,7 +588,7 @@ class Engine {
 			console.log(voice);
 		}
 		const utterance = this.utterrances[voice.name];
-		utterance.text = msg;
+		utterance.text = getPhoneme(msg, voice.name);
 		return utterance;
 	}
 

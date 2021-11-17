@@ -189,6 +189,51 @@ class AnimalRoom extends GameCore {
 		const my = gender === "T" ? "our" : "my";
 
 
+		this.doorForwardClosed = this.spriteFactory.create({
+			anim: this.atlas.right_door,
+			size: [800, 400],
+		});
+
+		this.idols = {};
+		let xpos = 270;
+		for (let i in this.atlas.idols) {
+			const name = i;
+			this.idols[i] = this.spriteFactory.create({
+				name,
+				anim: this.atlas.idols[i],
+				size: [50, 50],
+				hotspot: [25, 50],
+				x: xpos,
+				y: 320,
+				opacity: name === "cat" ? 0 : 1,
+			}, {
+				actions: [
+					{
+						name: "look",
+						message: `It's an idol of a ${name}.`,
+					},
+					{
+						name: "pick up", message: `It's pretty heavy. ${I} can only carry one at the time.`,
+						condition: () => !this.itemCarried.properties.item,
+						action: item => {
+							item.setProperty("pickedUp", true);
+							this.addToInventory(name);
+							this.audio.pickup.play();
+							this.showBubble(item.pendingMessage);
+							item.pendingMessage = null;
+							this.itemCarried.setProperty("item", name);
+						},
+					},
+				],
+				onChange: {
+					pickedUp: (item, pickedUp) => {
+						item.changeOpacity(pickedUp ? 0 : 1, engine.lastTime);
+					},
+				},
+			});
+			xpos += 45;
+		}
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -279,50 +324,7 @@ class AnimalRoom extends GameCore {
 		}, butler => {
 			butler.goal = {x: butler.x, y: butler.y};
 		});
-		this.doorForwardClosed = this.spriteFactory.create({
-			anim: this.atlas.right_door,
-			size: [800, 400],
-		});
 
-		this.idols = {};
-		let xpos = 270;
-		for (let i in this.atlas.idols) {
-			const name = i;
-			this.idols[i] = this.spriteFactory.create({
-				name,
-				anim: this.atlas.idols[i],
-				size: [50, 50],
-				hotspot: [25, 50],
-				x: xpos,
-				y: 320,
-				opacity: name === "cat" ? 0 : 1,
-			}, {
-				actions: [
-					{
-						name: "look",
-						message: `It's an idol of a ${name}.`,
-					},
-					{
-						name: "pick up", message: `It's pretty heavy. ${I} can only carry one at the time.`,
-						condition: () => !this.itemCarried.properties.item,
-						action: item => {
-							item.setProperty("pickedUp", true);
-							this.addToInventory(name);
-							this.audio.pickup.play();
-							this.showBubble(item.pendingMessage);
-							item.pendingMessage = null;
-							this.itemCarried.setProperty("item", name);
-						},
-					},
-				],
-				onChange: {
-					pickedUp: (item, pickedUp) => {
-						item.changeOpacity(pickedUp ? 0 : 1, engine.lastTime);
-					},
-				},
-			});
-			xpos += 45;
-		}
 
 		this.doorForwardOpened = this.spriteFactory.create({
 			name: "Next Room",
@@ -342,6 +344,17 @@ class AnimalRoom extends GameCore {
 
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+	}
+
+	isRoomSolved() {
+		const idolOrder = [];
+		for (let i = 0; i < 5; i++) {
+			if (this.pedestalIdols[i]) {
+				idolOrder.push(this.pedestalIdols[i].properties.idol);
+			}
+		}
+		const result = idolOrder.join(" ").toUpperCase();
+		return this.properties.sentence === result;
 	}
 
 	putItemBack(item) {

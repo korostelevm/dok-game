@@ -34,6 +34,7 @@ const globalFiles=[
 			"gum.png",
 			"hand.png",
 			"idols.png",
+			"impossible-room.png",
 			"invitation-check-collision.png",
 			"invitation-check.png",
 			"invitation.png",
@@ -86,6 +87,7 @@ const globalFiles=[
 		"audio": [
 			"animal-cry.mp3",
 			"beep.mp3",
+			"blinkpong-loop.mp3",
 			"diving.mp3",
 			"door.mp3",
 			"drink.mp3",
@@ -136,6 +138,7 @@ const globalFiles=[
 					"game-core.js",
 					"game-title.js",
 					"gandalf-room.js",
+					"impossible-room.js",
 					"joker-room.js",
 					"lobby.js",
 					"locked-room.js",
@@ -143,6 +146,7 @@ const globalFiles=[
 					"restaurant.js",
 					"restroom.js",
 					"selection.js",
+					"sound-room.js",
 					"template.js",
 					"time-room.js",
 					"tv-room.js"
@@ -205,6 +209,7 @@ const globalFiles=[
 					"texture-manager.js"
 				]
 			},
+			"translate-voice.js",
 			{
 				"ui": [
 					"debug-view.js",

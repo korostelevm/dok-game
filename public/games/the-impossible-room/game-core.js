@@ -419,6 +419,32 @@ class GameCore extends GameBase {
 					range: [46],
 					direction: -1,
 				}),
+			butler_surprised_right_still: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [47],
+				}),
+			butler_surprised_left_still: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [47],
+					direction: -1,
+				}),
+			butler_surprised_right_talk: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [47,48],
+				}),
+			butler_surprised_left_talk: await engine.addTexture({
+					url: "assets/butler.png",
+					collision_url: "assets/butler.png",
+					cols: 10, rows: 5,
+					range: [47,48],
+					direction: -1,
+				}),
 			joker: await engine.addTexture({
 				url: "assets/joker.png",
 				collision_url: "assets/joker.png",
@@ -480,6 +506,7 @@ class GameCore extends GameBase {
 							key.pendingMessage = null;
 							setTimeout(() => this.gameOver(), 6000);
 							this.data.ateKey = true;
+							this.onDead();
 						},
 					},
 					{ name: "eat", condition: () => !this.entrance || this.entrance.properties.unlocked, message: () => `${I} swallowed the key. Tasted like metal.`, 
@@ -984,6 +1011,33 @@ class GameCore extends GameBase {
 		}		
 	}
 
+	moveMonkor(monkor, path, onDone) {
+		let index = 0;
+		const onStill = monkor => {
+			const nextGoal = path[index];
+			if (!nextGoal) {
+				onDone(monkor);
+				return;
+			}
+
+			const x = nextGoal[0] || monkor.x;
+			const y = nextGoal[1] || monkor.y;
+
+			const dx = (x - monkor.x);
+			const dy = (y - monkor.y);
+			const dist = Math.sqrt(dx * dx + dy * dy);
+			if (dist) {
+				monkor.goal.x = x;
+				monkor.goal.y = y;
+				monkor.onStill = onStill;
+			} else {
+				index++;
+				onStill(monkor);
+			}
+		};
+		onStill(monkor);
+	}
+
 	async postInit() {
 		this.sceneData.monkorGoal = this.sceneData.monkorGoal || {... this.sceneData.monkor};
 		this.addMonkor();
@@ -999,7 +1053,26 @@ class GameCore extends GameBase {
 			this.engine.addEmojiRule(id, this.inventoryIcons[id]);
 		}
 		this.updateInventory();
+
+		if (localStorage.getItem("joker")) {
+			this.joker.setProperty("canTake", true);
+			this.monkor.setProperty("joker", localStorage.getItem("joker"));
+			this.joker.setProperty("pickedUp", false);
+			this.addToInventory("joker_card");
+			this.removeFromInventory("joker");
+			if (this.isJokerRoom() || this.monkor.properties.joker === this.constructor.name) {
+				this.setRightOpened(true);
+			}
+		}
+
 		await super.postInit();
+	}
+
+	putBackJoker() {
+		if (this.inventory.indexOf("joker") >= 0) {
+			this.removeFromInventory("joker");
+			this.batman.setProperty("liftJoker", true);
+		}
 	}
 
 	isRoomSolved() {
@@ -1010,9 +1083,14 @@ class GameCore extends GameBase {
 	}
 
 	onExit(engine) {
+		if (this.f) {
+			this.antiGameOver();
+		}
 		document.getElementById("controls").style.display = "none";
 		this.removeListeners(engine);
 		this.clearActions();
+		this.showSubject(null);
+
 		for (let a in this.audio) {
 			this.audio[a].stop();
 		}
@@ -1046,9 +1124,10 @@ class GameCore extends GameBase {
 			this.domListeners = {};
 		}
 
-		document.getElementById("mute-toggle").addEventListener("click", this.domListeners["mute-toggle"] = () => {
-			this.setAudio(audio, audio.paused, .5);			
-		});
+		// document.getElementById("mute-toggle").addEventListener("click", this.domListeners["mute-toggle"] = () => {
+		// 	this.setAudio(audio, audio.paused, .5);
+		// 	this.setVoice(!audio.paused);
+		// });
 
 		document.getElementById("voice-mute-toggle").addEventListener("click", this.domListeners["voice-mute-toggle"] = () => {
 			this.setVoice(!engine.muteVoice);
@@ -1058,14 +1137,14 @@ class GameCore extends GameBase {
 			this.audio.mouse.play();
 		});
 
-		engine.keyboardHandler.addKeyDownListener("r", e => {
-			const msg = "Actually I lied. Pressing R does nothing.";
-			if (window.speechSynthesis) {
-				const utterance = engine.getUterrance(msg, ["Mei-Jia", "Google UK English Female"]);
-				window.speechSynthesis.speak(utterance);			
-			}
-			document.getElementById("pressing-r").innerText = msg;
-		});
+		// engine.keyboardHandler.addKeyDownListener("r", e => {
+		// 	const msg = "Actually I lied. Pressing R does nothing.";
+		// 	if (window.speechSynthesis) {
+		// 		const utterance = engine.getUterrance(msg, ["Mei-Jia", "Google UK English Female"]);
+		// 		window.speechSynthesis.speak(utterance);			
+		// 	}
+		// 	document.getElementById("pressing-r").innerText = msg;
+		// });
 	}
 
 	isJokerRoom() {
@@ -1173,13 +1252,23 @@ class GameCore extends GameBase {
 		}
 	}
 
+	antiGameOver() {
+		document.getElementById("restart").removeEventListener("click", this.f);
+		this.f = null;
+		document.getElementById("restart").style.display = "none";
+		document.getElementById("game-over").style.display = "none";
+		document.getElementById("game-over-message").style.display = "none";
+	}
+
 	gameOver() {
 		this.paused = true;
+		const sidebar = document.getElementById("sidebar");
+		sidebar.style.display = "none";
+
 		document.getElementById("restart").style.display = "block";
 		document.getElementById("game-over").style.display = "block";
-		let f;
-		document.getElementById("restart").addEventListener("click", f = e => {
-			document.getElementById("restart").removeEventListener("click", f);
+		document.getElementById("restart").addEventListener("click", this.f = e => {
+			document.getElementById("restart").removeEventListener("click", this.f);
 			document.getElementById("restart").style.display = "none";
 			document.getElementById("game-over").style.display = "none";
 			document.getElementById("game-over-message").style.display = "none";
@@ -1372,6 +1461,7 @@ class GameCore extends GameBase {
 		if (this.subjectText !== subjectText) {
 			this.subjectText = subjectText;
 			this.subjectNameDiv.innerText = this.subjectText;
+			this.subjectNameDiv.style.display = subjectText !== "" ? "" : "none";
 		}
 	}
 
@@ -1612,7 +1702,7 @@ class GameCore extends GameBase {
 		const topY = !collisionBox ? sprite.y - sprite.size[1] : collisionBox.top;
 
 		speechBubble.style.left = `${canvas.offsetLeft + midX - speechBubble.offsetWidth/2 - 20}px`;
-		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + topY - (sprite.bubbleTop || 60))}px`;
+		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + topY - (sprite.bubbleTop || 0))}px`;
 	}
 
 	updateSpeech(time, dt, sprite) {
@@ -1691,6 +1781,7 @@ class GameCore extends GameBase {
 					}
 					monkor.running_away = time;
 					setTimeout(() => this.gameOver(), 6000);					
+					this.onDead();
 				}
 				if (!this.canRunLeft() && !mouse.putBack) {
 					mouse.putBack = engine.lastTime;
@@ -1814,9 +1905,11 @@ class GameCore extends GameBase {
 				engine.setGame(new classObj());
 			} else if (this.nextLevelRight) {
 				if (!this.butler || this.butler.x > 800) {
+					this.updateJokerLocalStorage();
 					this.nextLevelRight();
 				} else {
 					setTimeout(() => {
+						this.updateJokerLocalStorage();
 						this.nextLevelRight();
 					}, 2000);
 				}
@@ -1826,6 +1919,18 @@ class GameCore extends GameBase {
 		if (monkor.x < -50 && this.nextLevelLeft) {
 			this.nextLevelLeft();
 		}
+	}
+
+	updateJokerLocalStorage() {
+		const joker = !this.isBatmanRoom() && this.monkor.properties.joker === this.constructor.name ? this.constructor.name : null;
+		if (joker) {
+			localStorage.setItem("joker", joker);
+		} else {
+			if (localStorage.getItem("joker") === this.constructor.name) {
+				localStorage.removeItem("joker");
+			}
+		}
+		this.engine.updateSidebar(this.constructor.name, localStorage.getItem("joker"));
 	}
 
 	onPutBack(mouse, timeout) {
@@ -1904,7 +2009,13 @@ class GameCore extends GameBase {
 			const audio = document.getElementById("audio");
 			this.setAudio(audio, audio.paused, 0);
 			setTimeout(() => this.gameOver(), 5000);
+			this.onDead();
 		}
+	}
+
+	onDead() {
+		const sidebar = document.getElementById("sidebar");
+		sidebar.style.display = "none";		
 	}
 
 	setAudio(audio, value, volume, ignore) {
@@ -1968,8 +2079,10 @@ class GameCore extends GameBase {
 	}
 
 	addToInventory(item) {
-		this.inventory.push(item);
-		this.updateInventory();
+		if (this.inventory.indexOf(item) < 0) {
+			this.inventory.push(item);
+			this.updateInventory();
+		}
 	}
 
 	removeFromInventory(item) {

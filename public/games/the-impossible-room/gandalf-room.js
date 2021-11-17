@@ -94,6 +94,7 @@ class GandalfRoom extends GameCore {
 			anim: this.atlas.gandalf,
 			size: [800, 400],
 		}, {
+			bubbleTop: -50,
 			actions: [
 				{
 					name: "look",

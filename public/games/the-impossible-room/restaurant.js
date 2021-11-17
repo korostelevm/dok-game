@@ -543,6 +543,11 @@ class Restaurant extends GameCore {
 										topic: "menu",
 									},
 									{
+										condition: () => localStorage.getItem("ordered-burger"),
+										response: `${I}'d like to have the impossible burger.`,
+										topic: "get_burger",
+									},
+									{
 										response: `How do ${I} exit this room`,
 										topic: "exit",
 									},
@@ -819,7 +824,20 @@ class Restaurant extends GameCore {
 									chef.setProperty("talking", null);
 									this.getBurger();
 								},
+								exit: true,
 							},
+							{
+								topic: "get_burger",
+								message: `Sure. Please allow me some time to prepare your dish, ${sir}.`,
+								voiceName,
+								secondsAfterEnd: 1,
+								onStart: chef => chef.setProperty("talking", this.engine.lastTime),
+								onEnd: chef => {
+									chef.setProperty("talking", null);
+									this.getBurger();
+								},								
+								exit: true,
+							}
 						]);
 					},
 				}
@@ -1024,6 +1042,7 @@ class Restaurant extends GameCore {
 	}
 
 	getBurger() {
+		localStorage.setItem("ordered-burger", true);
 		const { gender } = this.data;
 		const Sir = gender === "T" ? "Sirs" : gender === "W" ? "Madam" : "Sir";
 		const sir = gender === "T" ? "sirs" : gender === "W" ? "madam" : "sir";

@@ -48,7 +48,7 @@
 			html, body {
 			    margin: 0;
 			    width:  1080px;
-			    height:  580px;
+			    height:  600px;
 			    /*height: 100%;*/
 				background-image:
 				  linear-gradient(27deg, rgba(55,50,100,.3), rgba(55,50,100,0) 70.71%),
@@ -203,7 +203,7 @@
 				position: absolute;
 				background-color: #ffffff;
 				border-radius: .4em;
-				z-index: 99;
+				z-index: 399;
 				width: 200px;
 				/*height: 60px;*/
 				padding: 10px;
@@ -293,9 +293,27 @@
 				display: none;
 			}
 
+			.button {
+  				width: 150px;
+				height: 50px;
+				font-size: 20pt;
+				border: 2px solid gray;
+				color: silver;
+				border-radius: 25px;
+				background: rgb(2,100,136);
+				cursor:  pointer;
+			}
+
+			.button:hover {
+				border: 2px solid white;
+				color: white;
+				border-radius: 25px;
+				background: rgb(2,200,236);
+			}
+
 			.restart {
-				  margin-top: -50px;
-				  margin-left: -100px;
+				margin-top: -100px;
+				margin-left: -150px;
   				width: 200px;
 				height: 100px;
 				font-size: 30pt;
@@ -305,7 +323,13 @@
 				border-radius: 25px;
 				background: rgb(2,0,36);
 				background: linear-gradient(0deg, rgba(2,0,36,1) 0%, rgba(78,40,47,1) 35%, rgba(150,63,63,1) 100%);
-				}
+			}
+
+			.restart:hover {
+				color: white;
+				border: 2px solid yellow;
+				background: linear-gradient(0deg, rgba(102,100,136,1) 0%, rgba(178,140,147,1) 35%, rgba(250,163,163,1) 100%);
+			}
 
 			#game-over-message {
 				width: 600px;
@@ -384,7 +408,50 @@
 			}
 
 			.inception {
-				transform: translate(-71px, -70px) scale(.5);
+				transform: translate(-71px, -75px) scale(.5);
+			}
+
+			.sidebar-room {
+			  height: 16px;
+			  width: 60px;
+			  margin: 1px;
+			  padding-left:  4px;
+			  padding-top:  2px;
+			  background-color: #55f;
+			  border-radius: 10px;
+			  display: inline-block;
+			  color: #ccc;
+			  font-weight: bold;
+			}
+
+			.sidebar-room:hover:not(.disabled):not(.selected):not(.locked) {
+				background-color: #8af;
+			}
+
+			.sidebar-room:active:not(.disabled):not(.selected):not(.locked) {
+				background-color: #f8a;
+			}
+
+			.sidebar-room.disabled {
+				background-color: #76a;
+				color: #aaa;
+			}
+
+			.sidebar-room.selected {
+				outline: 2px solid yellow;
+				color: #fff;
+			}
+
+			.sidebar-room.locked {
+				background-color: #76a;
+				color: #66a;
+			}
+
+			.sidebar-room:not(.disabled):not(.selected):not(.locked) {
+			  cursor: pointer;
+			}
+			.restart {
+				cursor:  pointer;
 			}
 		</style>
 		<script>
@@ -406,7 +473,7 @@
 
 	</head>
 	<body>
-		<div id="game-tab"></div>
+		<div id="game-tab" style="margin-left: 80px;"></div>
 			<img class="incept" id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
 			<img class="incept" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px; cursor: pointer" src="assets/back-button.png"></img>
 			<script type="text/javascript">
@@ -423,6 +490,7 @@
 				function doResize() {
 					const rect = document.getElementById("canvas").getBoundingClientRect();
 					const shift = -200;
+					const sidebarShift = -220;
 					document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
 					document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
 					document.getElementById("player-overlay").style.top = `${rect.y + shift + 150}px`;
@@ -441,15 +509,62 @@
 			</script>
  -->
 
+		<div style="position: absolute; left: 5px; top: 50px; z-index: 100; font-size: 8pt;">
+			<div id="sidebar" style="flex-direction: column; display: flex; display: none">
+				<div class="sidebar-room">1</div>
+				<div class="sidebar-room">2</div>
+			</div>
+		</div>
+
+			<div class="speech-bubble" id="speech-bubble" style="left: 50px;"></div>
+
+
 		<div id="container" class="container">
+
 			<!-- https://www.beepbox.co/#8n31sbk0l00e0ft3em0a7g0fj07i0r1o3210T5v0L4u50q1d5f8y1z6C1c0h0H-JJAArrqiih999T6v1L4u77q1d1f7y4z1C1c2W79T1v0L4u55q1d1f9y0z6C1c0A4F2B4V1Q40c0Pd73bE0111T3v3L4u03q0d1f8y0z1C2S-JIAArrrrrqiiiib4x8Qd18ilBoi4zgR4x8Qd14h8Och4icz4h4h414h4h0p23dFE-y-y38X2eQzEF8W2eH04t17hihO97ghQkRkRqGa2e2FKI8W2eyMzG8Zd517rj8Op7ghQkRkQWiewzEAieIzEbWyeAzRlmSng5dlJJJtBJd9jpvhSqq_3FU2tDwdv9ePMaDmt_v9YEUeEUckR_52qfiwcEWv2koz0phvgnQp2z4rsGwUY5Cz0K8WkkQpk0hQklAt17mhQ4o0 -->
 			<div id="title" class="title" style="user-select: text; position: absolute; top: 80px; left:310px; z-index: 300; font-size: 40pt"><span id="im" spellcheck="false" contenteditable="true" style="display:none">THE IMPOSSIBLE ROOM</span></div>
 			<div id="overlay" ondrop="engine.onDropOnOverlay(event)" ondragover="event.preventDefault(); engine.onDragOver(event)"></div>
 			<div id="game-over"></div>
 			<div class="centered" id="game-over-message"></div>
 			<button id="restart" class="centered restart">restart</button>
-			<div class="speech-bubble" id="speech-bubble" style="left: 50px;"></div>
+
+			<div id="confirm-dialog" class="centered" style="margin-top: -150px; margin-left: -250px; display: none">
+				<div id="confirm-text" style="margin-bottom: 20px; font-size: 15pt;">Are you sure you want to restart the game?</div>
+				<button id="ok-button" class="button">ok</button>
+				<button id="cancel-button" class="button">cancel</button>
+				<script type="text/javascript">
+					document.getElementById("cancel-button").addEventListener("mousedown", e => {
+						e.stopPropagation();
+					});
+					document.getElementById("cancel-button").addEventListener("mouseup", e => {
+						e.stopPropagation();
+					});
+					document.getElementById("cancel-button").addEventListener("click", e => {
+						document.getElementById("confirm-dialog").style.display = "none";
+						document.getElementById("game-over").style.display = "none";
+						const sidebar = document.getElementById("sidebar");
+						sidebar.style.display = "flex";						
+					});
+					document.getElementById("ok-button").addEventListener("click", e => {
+						document.getElementById("confirm-dialog").style.display = "none";
+						document.getElementById("game-over").style.display = "none";
+						const sidebar = document.getElementById("sidebar");
+						sidebar.style.display = "flex";
+						engine.setGame(new Menu());
+						engine.resetGame();
+					});
+					function confirmRestart() {
+						document.getElementById("confirm-dialog").style.display = "";
+						document.getElementById("game-over").style.display = "block";
+						const sidebar = document.getElementById("sidebar");
+						sidebar.style.display = "none";
+					}
+				</script>
+			</div>
+
 			<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
+			<audio id="blinkpong" src="audio/blinkpong-loop.mp3" style="position: absolute; display: none" loop></audio>
+			
 			<input id="info-box" style="border:  0; box-outline:  0;right: 10px; top: 4px; width: 60px; position: absolute; z-index: 10; display: none"></input>
 			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 100px">
 			</div>
@@ -471,11 +586,11 @@
 					}, 1)"
 					>🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
 				<div>
-					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🔇</span>: Press M to <span id="mute">unmute music</span></a>			</div>
-				<div>
-					<a id="voice-mute-toggle" style="cursor: pointer"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span></a>					
+					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🔇</span>: Press M to <span id="mute">unmute music</span></a>
 				</div>
-
+				<div>
+					<a id="voice-mute-toggle" style="cursor: pointer"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span></a>
+				</div>
 				<div style="display: none">🔁: <span id="pressing-r">R to start over.</span></div>
 			</div>
 			<div id="conversation" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none;">
@@ -518,8 +633,9 @@
 		<script type="text/javascript" src="games/the-impossible-room/tv-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/batman-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/computer-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/impossible-room.js"></script>
+		<script type="text/javascript" src="games/the-impossible-room/sound-room.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
-		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono.js"></script>
 		<script type="text/javascript" src="lib/utils/string.js"></script>
@@ -534,6 +650,7 @@
 		<script type="text/javascript" src="lib/sprite/sprite.js"></script>
 		<script type="text/javascript" src="lib/sprite/sprite-collection.js"></script>
 		<script type="text/javascript" src="lib/sprite/sprite-factory.js"></script>
+		<script type="text/javascript" src="lib/translate-voice.js"></script>
 		<script type="text/javascript" src="lib/engine.js"></script>
 		<script type="text/javascript" src="lib/ui/keyboard-handler.js"></script>
 		<script type="text/javascript" src="lib/ui/focus-fixer.js"></script>
@@ -541,6 +658,7 @@
 		<script type="text/javascript" src="lib/ui/debug-view.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
+		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript">
 			function handlerFunction(e) {
 				// console.log(e.type, e);

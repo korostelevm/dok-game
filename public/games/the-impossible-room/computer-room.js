@@ -293,6 +293,7 @@ class ComputerRoom extends GameCore {
 			this.monkor.goal.x = this.monkor.x;
 		}
 
+		this.putBackJoker();
 		this.setRightOpened(true);
 	}
 
@@ -329,5 +330,6 @@ class ComputerRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new ImpossibleRoom());
 	}
 }

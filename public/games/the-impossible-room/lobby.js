@@ -198,7 +198,7 @@ class Lobby extends GameCore {
 								],
 							},
 							{
-								message: "Very well. I'll call the host, and he will lead you to the impossible room.",
+								message: "Very well. I will call the host, and he will lead you to the impossible room.",
 								voiceName: "Ralph",
 								onStart: dick => dick.changeAnimation(this.atlas.lobby_dude_talking, engine.lastTime),
 								onEnd: dick => dick.changeAnimation(this.atlas.lobby_dude, engine.lastTime),								
@@ -504,7 +504,19 @@ class Lobby extends GameCore {
 				},
 			},
 			{
-				message: "I was named after my grand-mother. Her name is Nicole. But since I was born a boy, they chose the name Nicolas.",
+				message: "I was named after my grand-mother, Nicole.",
+				voiceName: "Thomas",
+				secondsAfterEnd: 2,
+				onStart: butler => {
+					butler.talking = engine.lastTime;
+				},
+				onEnd: butler => {
+					butler.talking = 0;
+				},
+				next: "pre_inquiry",
+			},
+			{
+				message: "Since I was born a boy, I was named Nicolas.",
 				voiceName: "Thomas",
 				secondsAfterEnd: 2,
 				onStart: butler => {
@@ -570,7 +582,18 @@ class Lobby extends GameCore {
 			},
 			{
 				topic: "why_impossible",
-				message: "I did not make the impossible room. Nobody knows who made it. I am just your host.",
+				message: "I did not make the impossible room.",
+				voiceName: "Thomas",
+				secondsAfterEnd: 2,
+				onStart: butler => {
+					butler.talking = engine.lastTime;
+				},
+				onEnd: butler => {
+					butler.talking = 0;
+				},
+			},
+			{
+				message: "I am just your host.",
 				voiceName: "Thomas",
 				secondsAfterEnd: 2,
 				onStart: butler => {

@@ -1,4 +1,6 @@
-class DesertRoom extends GameCore {
+//	1110-132
+
+class SoundRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
@@ -12,48 +14,10 @@ class DesertRoom extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
-			desert_back: await engine.addTexture(
-				{
-					url: "assets/desert-room.png",
-					cols: 1, rows: 4,
-					range: [0],
-				}),
-			desert_wall: await engine.addTexture(
-				{
-					url: "assets/desert-room.png",
-					collision_url: "assets/desert-room-collision.png",
-					cols: 1, rows: 4,
-					range: [1],
-				}),
-			desert_front: await engine.addTexture(
-				{
-					url: "assets/desert-room.png",
-					cols: 1, rows: 4,
-					range: [2],
-				}),
-			desert_cloud: await engine.addTexture(
-				{
-					url: "assets/desert-room.png",
-					cols: 1, rows: 4,
-					range: [3],
-				}),
 		};
 
-		this.background = this.spriteFactory.create({
-			anim: this.atlas.desert_back,
-			size: [800, 400],
-		});
-		this.cloud = this.spriteFactory.create({
-			anim: this.atlas.desert_cloud,
-			size: [800, 400],
-		});
-		this.cloud2 = this.spriteFactory.create({
-			anim: this.atlas.desert_cloud,
-			x: 800,
-			size: [800, 400],
-		});
 		this.backwall = this.spriteFactory.create({
-			anim: this.atlas.desert_wall,
+			anim: this.atlas.backwall,
 			size: [800, 400],
 		});
 		this.spriteFactory.create({
@@ -97,6 +61,7 @@ class DesertRoom extends GameCore {
 			actions: [
 				{ name: "talk",
 					action: butler => {
+						this.monkor.goal.x = this.butler.x < this.monkor.x ? this.butler.x - 20 : this.butler.x + 20;
 						this.startDialog(butler, [
 							{
 								message: `Yes, ${messire}?`,
@@ -115,11 +80,6 @@ class DesertRoom extends GameCore {
 										topic: "hint",
 									},
 									{
-										response: `Can you help ${me} get out of the quicksand?`,
-										topic: "quicksand",
-										condition: () => this.monkor.properties.stuck,
-									},
-									{
 										response: `${I}'ll be on ${my} way`,
 									},
 								],
@@ -133,30 +93,7 @@ class DesertRoom extends GameCore {
 							},
 							{
 								topic: "hint",
-								message: () => this.monkor.properties.stuck ? `It seems you are stuck in quicksand. I would be careful.` : `I do not have any hint for this room, ${messire}.`,
-								voiceName: "Thomas",
-								secondsAfterEnd: 1,
-								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
-							},
-							{
-								message: () => this.monkor.properties.stuck ? `If you move too much, you might sink deeper.` : `This is just a room full of sand.`,
-								voiceName: "Thomas",
-								secondsAfterEnd: 1,
-								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
-								exit: true,
-							},
-							{
-								topic: "quicksand",
-								message: () => `I would love to help, ${messire}.`,
-								voiceName: "Thomas",
-								secondsAfterEnd: 1,
-								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
-							},
-							{
-								message: () => `But I could become stuck in the quicksand as well.`,
+								message: `I do not have any hint to give, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
@@ -189,7 +126,7 @@ class DesertRoom extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Desert Room.",
+								message: "This is called the Template Room. A placeholder room.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -200,7 +137,7 @@ class DesertRoom extends GameCore {
 								},
 							},
 							{
-								message: `I'm guessing it's because it's full of sand.`,
+								message: `You must complete this room in order to continue further to the next room, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -225,7 +162,6 @@ class DesertRoom extends GameCore {
 		const I = gender === "T" ? "We" : "I";
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
-		this.butler.reachable = true;
 	}
 
 	updateHost(time) {
@@ -281,14 +217,6 @@ class DesertRoom extends GameCore {
 		});
 	}
 
-	addMonkor() {
-		super.addMonkor();
-		this.desertFront = this.spriteFactory.create({
-			anim: this.atlas.desert_front,
-			size: [800, 400],
-		});
-	}
-
 	getWalkArea() {
 		return this.backwall.getCollisionBox(engine.lastTime);		
 	}
@@ -296,53 +224,7 @@ class DesertRoom extends GameCore {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
-		this.updateMonkor(time);
-	}
-
-	updateMonkor(time) {
-		if (this.monkor.x > 400 || this.monkor.properties.stuck) {
-			this.monkor.changePosition(400, this.monkor.y, time);
-			if (!this.monkor.properties.stuck) {
-				this.monkor.setProperty("stuck", time);
-			}
-		}
-		const { gender } = this.data;
-		const I = gender === "T" ? "We" : "I";
-		if (this.monkor.properties.stuck) {
-			if (this.monkor.y < 400) {
-				this.monkor.changePosition(this.monkor.x, this.monkor.y + 4, time);
-			}
-			if (this.monkor.anim === this.atlas.monkor_run_left || this.monkor.anim === this.atlas.monkor_run_right || this.monkor.y > 450) {
-				this.monkor.changePosition(this.monkor.x, this.monkor.y + .5, time);
-			}
-			if (this.monkor.y >= 550 && !this.changingScene) {
-				this.changingScene = true;
-				this.engine.setGame(new DesertFar());
-			}
-			if ((this.monkor.x !== this.monkor.goal.x || this.monkor.y !== this.monkor.goal.y) && !this.monkor.willStop) {
-				this.monkor.willStop = time + 1000;
-			}
-			if (this.monkor.willStop && time > this.monkor.willStop) {
-				this.monkor.willStop = 0;
-				this.monkor.goal.x = this.monkor.x;
-				this.monkor.goal.y = this.monkor.y;
-
-				if (!this.noticedStuck) {
-					this.noticedStuck = true;
-					this.monkor.paused = true;
-					setTimeout(() => {
-						this.showBubble(`It look's like ${I}'m stuck.`, () => {
-							this.monkor.paused = false;
-						});
-					}, 1000);
-				}				
-			}
-		}
-	}
-
-	canRunRight() {
-		return this.monkor.properties.stuck;
-	}
+	}	
 
 	openLeft() {
 
