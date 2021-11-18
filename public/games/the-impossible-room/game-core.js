@@ -550,10 +550,12 @@ class GameCore extends GameBase {
 					{
 						name: "use", condition: () => this.constructor.name !== this.monkor.properties.joker,
 						action: item => {
-							this.audio.drink.play();
-							const classObj = this.engine.classes[this.monkor.properties.joker];
-							this.monkor.setProperty("jokerReturn", this.constructor.name);
-							engine.setGame(new classObj());
+							if (this.monkor.properties.joker) {
+								this.audio.drink.play();
+								const classObj = eval(this.monkor.properties.joker);
+								this.monkor.setProperty("jokerReturn", this.constructor.name);
+								engine.setGame(new classObj());
+							}
 						},
 					},
 				],
@@ -1328,7 +1330,7 @@ class GameCore extends GameBase {
 						return false;
 					}
 					return action.default;
-				})[0] || this.itemActionOnTarget(item, this.lastHovering);
+				})[0] || this.itemActionOnTarget(this.selectedItem, this.lastHovering);
 
 				if (action) {
 					this.performAction(action, this.lastHovering);
@@ -1661,7 +1663,7 @@ class GameCore extends GameBase {
 		const utterance = engine.getUterrance(msg, voiceName);
 		sprite = sprite || this.monkor;
 		if (ignoreSpeechBoundary) {
-			console.log("ignore speech boundary.");
+//			console.log("ignore speech boundary.");
 		} else if (utterance && utterance.voice.name === voiceName) {
 			sprite.speechPause++;
 		} else if (utterance && utterance.voice.name.startsWith("Microsoft")) {
@@ -2265,7 +2267,7 @@ class GameCore extends GameBase {
 	}
 
 	getDialogIndexFromTopic(passedTopic) {
-		for (let i = 0; i < this.dialog.length; i++) {
+		for (let i = 0; i < (this?.dialog?.length || 0); i++) {
 			const dialogItem = this.dialog[i];
 			if (dialogItem.topic === passedTopic) {
 				return i;

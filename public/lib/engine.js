@@ -167,7 +167,6 @@ class Engine {
 			const classObj = eval(game);
 			const row = sidebar.appendChild(document.createElement("div"));
 			row.classList.add("sidebar-room");
-//			console.log(joker, game);
 			row.innerText = `${name}${joker === game ? " 🤪" : ""}`;
 			if (!this.roomUnlocked(game)) {
 				row.classList.add("locked");
@@ -612,7 +611,6 @@ class Engine {
 		} else {
 			this.canvas.parentElement.classList.remove("inception");			
 		}
-
 
 //		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";
 		document.getElementById("player-overlay").style.display = inception ? "" : "none";

@@ -545,6 +545,12 @@
 						const sidebar = document.getElementById("sidebar");
 						sidebar.style.display = "flex";						
 					});
+					document.getElementById("ok-button").addEventListener("mousedown", e => {
+						e.stopPropagation();
+					});
+					document.getElementById("ok-button").addEventListener("mouseup", e => {
+						e.stopPropagation();
+					});
 					document.getElementById("ok-button").addEventListener("click", e => {
 						document.getElementById("confirm-dialog").style.display = "none";
 						document.getElementById("game-over").style.display = "none";

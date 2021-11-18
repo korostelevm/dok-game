@@ -219,8 +219,11 @@ class AnimalRoom extends GameCore {
 							item.setProperty("pickedUp", true);
 							this.addToInventory(name);
 							this.audio.pickup.play();
-							this.showBubble(item.pendingMessage);
-							item.pendingMessage = null;
+							if (!this.prettyHeavy) {
+								this.prettyHeavy = true;
+								this.showBubble(item.pendingMessage);
+								item.pendingMessage = null;
+							}
 							this.itemCarried.setProperty("item", name);
 						},
 					},

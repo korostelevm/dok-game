@@ -659,6 +659,11 @@ class Restaurant extends GameCore {
 								topic: "choice_1",
 								responses: [
 									{
+										condition: () => localStorage.getItem("ordered-burger"),
+										response: `Let's cut to the chase. I want the impossible burger.`,
+										topic: "get_burger",
+									},
+									{
 										response: `Ok, ${I}'ll have the caprese salad.`,
 										condition: response => !response.discussed,
 									},
@@ -726,6 +731,11 @@ class Restaurant extends GameCore {
 							{
 								topic: "choice_2",
 								responses: [
+									{
+										condition: () => localStorage.getItem("ordered-burger"),
+										response: `Let's cut to the chase. I want the impossible burger.`,
+										topic: "get_burger",
+									},
 									{
 										response: `Ok, ${I}'ll have the cerviche de pescado.`,
 										condition: response => !response.discussed,
