@@ -126,7 +126,7 @@ class GandalfRoom extends GameCore {
 										condition: () => this.canPass(),
 									},
 									{
-										response: `Why do you let no one pass?`,
+										response: `Why do you let nobody pass?`,
 										topic: "why",
 									},
 									{
