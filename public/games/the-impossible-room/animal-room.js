@@ -284,6 +284,13 @@ class AnimalRoom extends GameCore {
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: `Sometimes, the solution is in plain sight.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
 								exit: true,
 							},
 							{
@@ -299,7 +306,7 @@ class AnimalRoom extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Animal Room. A room with a animal idols.",
+								message: "This is called the Animal Room. A room with animal idols.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {

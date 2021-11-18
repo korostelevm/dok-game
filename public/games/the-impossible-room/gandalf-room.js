@@ -397,6 +397,7 @@ class GandalfRoom extends GameCore {
 				{ name: "talk",
 					action: butler => {
 						this.monkor.goal.x = this.butler.x < this.monkor.x ? this.butler.x - 20 : this.butler.x + 20;
+						const voiceName = "Thomas";
 						this.startDialog(butler, [
 							{
 								message: `Yes, ${messire}?`,

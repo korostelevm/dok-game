@@ -344,7 +344,7 @@ class BatmanRoom extends GameCore {
 	}
 
 	onJoker(putDown) {
-		if (putDown && !this.batman.properties.liftJoker) {
+		if (putDown && this.monkor.properties.joker === "BatmanRoom" && !this.batman.properties.liftJoker) {
 			this.monkor.setProperty("paused", true);
 			this.monkor.goal.x = Math.max(80, this.monkor.x - 100);
 			setTimeout(() => {

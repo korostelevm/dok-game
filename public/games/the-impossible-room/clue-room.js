@@ -136,11 +136,22 @@ class ClueRoom extends GameCore {
 							},
 							{
 								topic: "hint",
-								message: `I do not have a clue, ${messire}.`,
+								message: `I do not have a clue.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: `Perhaps the writing on the wall might help, ${messire}.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},
 								exit: true,
 							},
 							{
@@ -196,7 +207,7 @@ class ClueRoom extends GameCore {
 								},
 							},
 							{
-								message: `We cannot go further withouth a clue, ${messire}.`,
+								message: `We cannot go further without a clue, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {

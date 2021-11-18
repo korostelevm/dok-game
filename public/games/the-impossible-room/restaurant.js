@@ -370,6 +370,13 @@ class Restaurant extends GameCore {
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: `Perhaps you need to drag someone in to help.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
 								exit: true,
 							},
 							{
@@ -427,7 +434,7 @@ class Restaurant extends GameCore {
 									} else if (this.burger.properties.eaten) {
 										return "If you are done, we can continue further.";
 									} else {
-										return "It's impossible to get exit without finishing this giant burger.";
+										return "It's impossible to exit without finishing this giant burger.";
 									}
 								},
 								voiceName: "Thomas",
@@ -1245,7 +1252,7 @@ class Restaurant extends GameCore {
 		this.butler.talking = true;
 		this.monkor.paused = true;
 		this.monkor.goal.x = 200;
-		this.showBubble(`${Messire}, what is it with you and mouses?`, () => {
+		this.showBubble(`${Messire}, what is it with you and mice?`, () => {
 			this.butler.talking = false;
 			setTimeout(() => {
 				this.showBubble(`${I} have always been scared of mice, since ${Iam} young.`, () => {

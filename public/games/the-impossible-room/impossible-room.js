@@ -744,7 +744,7 @@ class ImpossibleRoom extends GameCore {
 						onEnd: butler => butler.talking = 0,
 					},
 					{
-						message: `therefore, I setup that door to leads to certain death.`,
+						message: `therefore, I setup that door to lead to certain death.`,
 						voiceName: "Thomas",
 						secondsAfterEnd: 1,
 						onStart: butler => butler.talking = engine.lastTime,

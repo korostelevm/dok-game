@@ -1934,6 +1934,7 @@ class GameCore extends GameBase {
 
 	updateJokerLocalStorage() {
 		const joker = !this.isBatmanRoom() && this.monkor.properties.joker === this.constructor.name ? this.constructor.name : null;
+		console.log("update joker: " + joker);
 		if (joker) {
 			localStorage.setItem("joker", joker);
 		} else {
