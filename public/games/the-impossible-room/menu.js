@@ -92,12 +92,12 @@ class Menu extends GameBase {
 
 	setAudio(audio, value, volume, ignore) {
 		if (value) {
-			document.getElementById("speaker").innerText = "🔊";
+			document.getElementById("speaker").innerText = "🎵";
 			document.getElementById("mute").innerText = "mute music";
 			audio.play();
 		} else {
 			audio.pause();
-			document.getElementById("speaker").innerText = "🔇";
+			document.getElementById("speaker").innerText = "🚫🎵";
 			document.getElementById("mute").innerText = "unmute music";
 		}
 		audio.volume = volume;

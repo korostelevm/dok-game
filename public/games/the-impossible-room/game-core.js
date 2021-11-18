@@ -38,6 +38,7 @@ class GameCore extends GameBase {
 			pickup: new Sound("audio/pickup.mp3", .3),
 			drink: new Sound("audio/drink.mp3", 1),
 			mouse: new Sound("audio/animal-cry.mp3", 1),
+			jingle: new Sound("audio/jingle.mp3", 1),
 		};
 
 
@@ -1120,14 +1121,22 @@ class GameCore extends GameBase {
 			this.setVoice(!engine.muteVoice);
 		});
 
+		engine.keyboardHandler.addKeyUpListener("s", e => {
+			this.setSFX(!engine.muteSFX);
+		});
+
 		if (!this.domListeners) {
 			this.domListeners = {};
 		}
 
-		// document.getElementById("mute-toggle").addEventListener("click", this.domListeners["mute-toggle"] = () => {
-		// 	this.setAudio(audio, audio.paused, .5);
-		// 	this.setVoice(!audio.paused);
-		// });
+		document.getElementById("mute-toggle").addEventListener("click", this.domListeners["mute-toggle"] = () => {
+			this.setAudio(audio, audio.paused, .5);
+//			this.setVoice(!audio.paused, true);
+		});
+
+		document.getElementById("sfx-toggle").addEventListener("click", this.domListeners["sfx-toggle"] = () => {
+			this.setSFX(!engine.muteSFX);
+		});
 
 		document.getElementById("voice-mute-toggle").addEventListener("click", this.domListeners["voice-mute-toggle"] = () => {
 			this.setVoice(!engine.muteVoice);
@@ -2023,7 +2032,7 @@ class GameCore extends GameBase {
 		const I = gender === "T" ? "We" : "I";
 		audio.volume = volume;
 		if (value) {
-			document.getElementById("speaker").innerText = "🔊";
+			document.getElementById("speaker").innerText = "🎵";
 			document.getElementById("mute").innerText = "mute music";
 			audio.play();
 			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
@@ -2031,7 +2040,7 @@ class GameCore extends GameBase {
 			}
 		} else {
 			audio.pause();
-			document.getElementById("speaker").innerText = "🔇";
+			document.getElementById("speaker").innerText = "🚫🎵";
 			document.getElementById("mute").innerText = "unmute music";
 			if (!this.monkor.dead && !this.monkor.scared && !ignore) {
 				this.showBubble(`${I} don't like this music.`);
@@ -2055,6 +2064,23 @@ class GameCore extends GameBase {
 			if (!this.monkor.dead && !ignore) {
 				this.showBubble(`Ok, ${I} will be quiet.`);
 			}
+		}
+	}
+
+	setSFX(value, ignore) {
+		engine.muteSFX = value;
+		if (!engine.muteSFX) {
+			Sound.mute = engine.muteSFX;
+			document.getElementById("sfx-speaker").innerText = "🔊";
+			document.getElementById("sfx-mute").innerText = "mute SFX";
+			this.audio.jingle.play();
+			this.showBubble(`You will now hear sound effects.`);
+		} else {
+			document.getElementById("sfx-speaker").innerText = "🔇";
+			document.getElementById("sfx-mute").innerText = "unmute SFX";
+			this.audio.hit.play(1);
+			this.showBubble(`No more sound effect.`);
+			Sound.mute = engine.muteSFX;
 		}
 	}
 

@@ -57,6 +57,7 @@ const PHONEME = {
 		"longer": "longueure",
 		"can": "canne",
 		"forever": "foreveur!",
+		"I'm": "aïme",
 	},
 };
 

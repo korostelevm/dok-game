@@ -96,6 +96,7 @@ const globalFiles=[
 			"hit-land.mp3",
 			"hit.mp3",
 			"im-batman.mp3",
+			"jingle.mp3",
 			"joker.mp3",
 			"om.mp3",
 			"piano.mp3",

@@ -19,6 +19,9 @@ class Sound {
 	}
 
 	loop(volume) {
+		if (Sound.mute) {
+			return;
+		}
 		if (!this.looper) {
 			const audio = this.audios.pop();
 			audio.loop = true;
@@ -39,6 +42,9 @@ class Sound {
 	}
 
 	play(volume, callback) {
+		if (Sound.mute) {
+			return;
+		}
 		const audio = this.audios.pop();
 		if (audio) {
 			audio.volume = volume ?? this.volume;
