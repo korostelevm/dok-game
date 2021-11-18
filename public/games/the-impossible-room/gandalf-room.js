@@ -126,7 +126,7 @@ class GandalfRoom extends GameCore {
 										condition: () => this.canPass(),
 									},
 									{
-										response: `Why do you let nobody pass?`,
+										response: `Why do you let no one pass?`,
 										topic: "why",
 									},
 									{
@@ -137,12 +137,12 @@ class GandalfRoom extends GameCore {
 										},
 									},
 									{
-										response: () => `${My} name is NoOne, and you will let ${me} pass!`,
+										response: () => `${My} name is ${this.data.name}, and you will let ${me} pass!`,
 										topic: "no_one",
 										condition: () => this.canPass(),
 									},
 									{
-										response: () => `${My} name is NoOne, and you will let ${me} pass!`,
+										response: () => `${My} name is ${this.data.name}, and you will let ${me} pass!`,
 										topic: "my_name",
 										condition: () => !this.canPass(),
 									},

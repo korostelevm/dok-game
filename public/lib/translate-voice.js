@@ -1,4 +1,8 @@
 const PHONEME = {
+	"Daniel": {
+		"No": "noh",
+		"no": "noh",
+	},
 	"Thomas": {
 		"I": "aille",
 		"pleasure": "plésure",

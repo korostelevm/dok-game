@@ -1912,7 +1912,7 @@ class GameCore extends GameBase {
 			this.changingLevel = true;
 			if (monkor.properties.jokerReturn) {
 				const nextRoom = monkor.properties.jokerReturn;
-				const classObj = this.engine.classes[this.monkor.properties.jokerReturn];
+				const classObj = eval(nextRoom);
 				engine.setGame(new classObj());
 			} else if (this.nextLevelRight) {
 				if (!this.butler || this.butler.x > 800) {
