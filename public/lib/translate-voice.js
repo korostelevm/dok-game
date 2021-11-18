@@ -162,7 +162,7 @@ const PHONEME = {
 		"being": "bïïngue",
 		"predict": "prédict",
 		"future.": "fiutueure.",
-		"indeed,": "innedide,"
+		"indeed,": "innedide,",
 		"such": "seuch",
 		"front": "fronte",
 		"doors.": "doorze.",
