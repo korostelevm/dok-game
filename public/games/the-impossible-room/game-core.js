@@ -438,6 +438,7 @@ class GameCore extends GameBase {
 					collision_url: "assets/butler.png",
 					cols: 10, rows: 5,
 					range: [47,48],
+					frameRate: 8,
 				}),
 			butler_surprised_left_talk: await engine.addTexture({
 					url: "assets/butler.png",
@@ -445,6 +446,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 5,
 					range: [47,48],
 					direction: -1,
+					frameRate: 8,
 				}),
 			joker: await engine.addTexture({
 				url: "assets/joker.png",
@@ -1273,6 +1275,10 @@ class GameCore extends GameBase {
 
 	gameOver() {
 		this.paused = true;
+		if (this.engine.inception) {
+			return;
+		}
+
 		const sidebar = document.getElementById("sidebar");
 		sidebar.style.display = "none";
 
@@ -1818,12 +1824,14 @@ class GameCore extends GameBase {
 				}
 
 				monkor.changeAnimation(this.atlas.monkor_back, time);
-				monkor.changePosition(400, 350 - 30 * (elapsed / 2000), time);
+				if (!this.properties.impossibleRoomSolved) {
+					monkor.changePosition(400, 350 - 30 * (elapsed / 2000), time);
+				}
 				monkor.changeOpacity(Math.max(0, 1 - (elapsed / 2000)), time);
 				if (elapsed > 3000 && !monkor.levelup) {
 					this.monkor.levelup = lastTime;
 					if (this.upperLevel) {
-						this.upperLevel();
+						this.upperLevel(this);
 					}
 				}
 			}
@@ -2136,6 +2144,7 @@ class GameCore extends GameBase {
 		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
 		const div = document.getElementById("controls");
 		div.style.display = actualVisibilty ? "" : "none";
+		this.engine.enableSidebar(visible);
 	}
 
 	setDialogVisibility(visible, responses) {

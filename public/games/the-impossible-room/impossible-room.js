@@ -56,6 +56,7 @@ class ImpossibleRoom extends GameCore {
 			impossible_room_exit_light: await engine.addTexture(
 				{
 					url: "assets/impossible-room.png",
+					collision_url: "assets/impossible-room.png",				
 					texture_url: "assets/backwall.jpg",
 					texture_alpha: .2,
 					texture_blend: "source-atop",
@@ -156,9 +157,19 @@ class ImpossibleRoom extends GameCore {
 		});
 
 		this.left_exit = this.spriteFactory.create({
+			name: "exit",
 			anim: this.atlas.impossible_room_door,
 			size: [800, 400],
 			x: 100,
+		}, {
+			actions: [
+				{
+					name: "exit impossible room",
+					action: exit => {
+						this.exitImpossibleRoom();
+					},
+				},
+			],
 		});
 		this.left_door = this.spriteFactory.create({
 			name: "the left door",
@@ -180,7 +191,11 @@ class ImpossibleRoom extends GameCore {
 								this.butler.goal.x = 550;
 								this.monkor.alwaysLookup = true;
 								this.butler.onStill = () => {
-									this.confirmDoor();
+									if (this.properties.impossibleRoomSolved) {
+										this.openFinalDoor(this.engine.lastTime);
+									} else {
+										this.confirmDoor();
+									}
 								};
 							});
 					},
@@ -206,10 +221,19 @@ class ImpossibleRoom extends GameCore {
 		});
 
 		this.right_exit = this.spriteFactory.create({
+			name: "exit",
 			anim: this.atlas.impossible_room_door,
 			size: [800, 400],
 			x: 400,
 		}, {
+			actions: [
+				{
+					name: "exit impossible room",
+					action: exit => {
+						this.exitImpossibleRoom();
+					},
+				},
+			],
 		});
 		this.right_door = this.spriteFactory.create({
 			name: "the right door",
@@ -416,10 +440,11 @@ class ImpossibleRoom extends GameCore {
 				},
 				onEnd: butler => {
 					butler.talking = 0;
+					this.monkor.setProperty("paused", true);
 					this.monkor.alwaysLookup = true;
 					setTimeout(() => {
 						this.openFinalDoor(this.engine.lastTime);
-					}, 5000);
+					}, 3000);
 				},
 			},
 			{
@@ -471,6 +496,8 @@ class ImpossibleRoom extends GameCore {
 		this.audio.door.play();
 
 		if (this.data.doorChosen === wrongDoor) {
+			this[`${wrongDoor}_monster`].changeAnimation(this.atlas.monster_back_still, time);
+			this[`${wrongDoor}_monster_front`].changeAnimation(this.atlas.monster_front_still, time);
 			this[`${wrongDoor}_monster`].changeOpacity(1, time);
 			this[`${wrongDoor}_monster_front`].changeOpacity(1, time);
 			setTimeout(() => {
@@ -486,6 +513,62 @@ class ImpossibleRoom extends GameCore {
 					setTimeout(() => this.gameOver(), 5000);
 				}, 2000);
 			}, 1500);
+		} else {
+			setTimeout(() => {
+				this.butler.surprised = true;
+				setTimeout(() => {
+					this.butler.talking = engine.lastTime;
+					this.showBubble(`Wait ... you opened the correct door?`, () => {
+						this.butler.talking = 0;
+						setTimeout(() => {
+							this.showBubble(`C'EST IMPOSSIBLE!!!`, () => {
+								this.butler.talking = 0;
+								setTimeout(() => {
+									this.showBubble(`C'EST IMPOSSIBLE!!!`, () => {
+										this[`${wrongDoor}_door`].changeAnimation(this.atlas.impossible_room_door_opening, this.engine.lastTime);
+										this.audio.door.play();
+
+										this.butler.talking = 0;
+
+										this[`${wrongDoor}_monster`].changeOpacity(1, time);
+										this[`${wrongDoor}_monster_front`].changeOpacity(1, time);
+										setTimeout(() => {
+											this[`${wrongDoor}_monster`].changeAnimation(this.atlas.monster_back, this.engine.lastTime);
+											this[`${wrongDoor}_monster_front`].changeAnimation(this.atlas.monster_front, this.engine.lastTime);
+											this.audio.scream.play();
+											setTimeout(() => {
+												this.butler.changeOpacity(0, this.engine.lastTime);
+												this[`${wrongDoor}_monster`].changeOpacity(0, this.engine.lastTime);
+												this[`${wrongDoor}_monster_front`].changeOpacity(0, this.engine.lastTime);
+												this[`${wrongDoor}_door`].changeAnimation(this.atlas.impossible_room_door, this.engine.lastTime);
+												this.audio.eat.play();
+
+
+												this.monkor.lookLeft = "left" === wrongDoor;
+												this.monkor.lookRight = "right" === wrongDoor;
+												this.monkor.alwaysLookup = false;
+
+												setTimeout(() => {
+													this.monkor.lookLeft = false;
+													this.monkor.lookRight = false;
+													this.monkor.alwaysLookup = false;
+													setTimeout(() => {
+														this.showBubble(`Where did Nicolas Debossin go?`, () => {
+															this.monkor.setProperty("paused", false);
+															this.setProperty("impossibleRoomSolved", new Date().getTime());
+														});			
+													}, 500);
+												}, 3000);
+											}, 2000);
+										}, 1500);
+
+									}, "Thomas", this.butler);
+								}, 300);
+							}, "Thomas", this.butler);
+						}, 1500);
+					}, "Thomas", this.butler);
+				}, 1000);
+			}, 500);
 		}
 	}
 
@@ -618,7 +701,7 @@ class ImpossibleRoom extends GameCore {
 					{
 						responses: [
 							{
-								condition: () => this?.swapData?.doorChosen,
+								condition: () => this?.swapData?.doorChosen || localStorage.getItem("cut_to_the_chase"),
 								response: `Let's just cut to the chase, ${i}'ll pick a door`,
 								topic: "cut_to_the_chase",
 							},
@@ -695,7 +778,7 @@ class ImpossibleRoom extends GameCore {
 						],
 					},
 					{
-						message: `I don't think you undesrtand the implications of determinism, ${messire}.`,
+						message: `I don't think you understand the implications of determinism, ${messire}.`,
 						voiceName: "Thomas",
 						secondsAfterEnd: 1,
 						onStart: butler => butler.talking = engine.lastTime,
@@ -769,7 +852,10 @@ class ImpossibleRoom extends GameCore {
 						voiceName: "Thomas",
 						secondsAfterEnd: 1,
 						onStart: butler => butler.talking = engine.lastTime,
-						onEnd: butler => butler.talking = 0,
+						onEnd: butler => {
+							butler.talking = 0;
+							localStorage.setItem("cut_to_the_chase", true);
+						},
 						exit: true,
 					},
 					{
@@ -785,8 +871,13 @@ class ImpossibleRoom extends GameCore {
 			};
 		} else {
 			this.monkor.goal.x = this.monkor.x;
+			this.monkor.goal.y = this.monkor.y;
 		}
 		this.putBackJoker();
+	}
+
+	exitImpossibleRoom() {
+		this.monkor.goingup = this.engine.lastTime;
 	}
 
 	getWalkArea() {
@@ -797,6 +888,10 @@ class ImpossibleRoom extends GameCore {
 		super.refresh(time, dt);
 		this.updateHost(time);
 	}	
+
+	upperLevel() {
+		
+	}
 
 	openLeft() {
 

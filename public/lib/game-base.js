@@ -1,6 +1,7 @@
 class GameBase {
 	async init(engine, gameName) {
 		this.engine = engine;
+		this.engine.enableSidebar(false);
 		this.imageLoader = engine.imageLoader;
 		engine.data = engine.data || (engine.data = {});
 		const gameData = engine.data[gameName] || (engine.data[gameName] = {});
@@ -36,6 +37,7 @@ class GameBase {
 			this.onChange(key, this.properties[key], true);
 		}
 		this.spriteFactory.postCreate();
+		this.engine.enableSidebar(true);
 	}
 
 	get sceneName() {

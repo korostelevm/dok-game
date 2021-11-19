@@ -151,6 +151,7 @@ class Menu extends GameBase {
 	}
 
 	async postInit() {
+		await super.postInit();
 		const audio = document.getElementById("audio");
 		audio.currentTime = 0;
 		this.setAudio(audio, true, .5);

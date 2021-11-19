@@ -158,6 +158,15 @@ class Engine {
 		return localStorage.getItem(game + "-unlocked");
 	}
 
+	enableSidebar(enabled) {
+		const sidebar = document.getElementById("sidebar");
+		if (enabled) {
+			sidebar.classList.remove("blocked");
+		} else {
+			sidebar.classList.add("blocked");
+		}
+	}
+
 	updateSidebar(selected, joker) {
 		const sidebar = document.getElementById("sidebar");
 		sidebar.innerText = "";
@@ -584,7 +593,7 @@ class Engine {
 		if (!this.utterrances[voice.name]) {
 			this.utterrances[voice.name] = new SpeechSynthesisUtterance();
 			this.utterrances[voice.name].voice = voice;
-			console.log(voice);
+			// console.log(voice);
 		}
 		const utterance = this.utterrances[voice.name];
 		utterance.text = getPhoneme(msg, voice.name);
