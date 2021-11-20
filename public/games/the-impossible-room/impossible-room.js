@@ -292,7 +292,7 @@ class ImpossibleRoom extends GameCore {
 			size: [96,192],
 			hotspot: [24,192],
 		}, {
-			bubbleTop: -50,
+			bubbleTop: 30,
 			reachable: true,
 			actions: [
 				{ name: "talk",
@@ -521,9 +521,11 @@ class ImpossibleRoom extends GameCore {
 					this.showBubble(`Wait ... you opened the correct door?`, () => {
 						this.butler.talking = 0;
 						setTimeout(() => {
+							this.butler.talking = engine.lastTime;
 							this.showBubble(`C'EST IMPOSSIBLE!!!`, () => {
 								this.butler.talking = 0;
 								setTimeout(() => {
+									this.butler.talking = engine.lastTime;
 									this.showBubble(`C'EST IMPOSSIBLE!!!`, () => {
 										this[`${wrongDoor}_door`].changeAnimation(this.atlas.impossible_room_door_opening, this.engine.lastTime);
 										this.audio.door.play();
@@ -625,6 +627,7 @@ class ImpossibleRoom extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
+		this.monkor.bubbleTop = 50;
 
 		this.left_monster_front = this.spriteFactory.create({
 			anim: this.atlas.monster_front_still,
@@ -692,7 +695,7 @@ class ImpossibleRoom extends GameCore {
 						onEnd: butler => butler.talking = 0,
 					},
 					{
-						message: `I am, in fact, the author of the Impossible Room.`,
+						message: `I am, in fact, the creator of the Impossible Room.`,
 						voiceName: "Thomas",
 						secondsAfterEnd: 1,
 						onStart: butler => butler.talking = engine.lastTime,
@@ -890,7 +893,7 @@ class ImpossibleRoom extends GameCore {
 	}	
 
 	upperLevel() {
-
+		this.engine.setGame(new Mall());
 	}
 
 	openLeft() {

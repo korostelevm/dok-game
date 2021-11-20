@@ -180,6 +180,7 @@ const PHONEME = {
 		"someone": "someouanne",
 		"sure,": "chure,",
 		"ahead,": "euhède",
+		"ahead.": "euhède.",
 		"irellevant": "irellévènte",
 	},
 	"Fred": {

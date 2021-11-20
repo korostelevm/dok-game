@@ -2084,13 +2084,17 @@ class GameCore extends GameBase {
 			Sound.mute = engine.muteSFX;
 			document.getElementById("sfx-speaker").innerText = "🔊";
 			document.getElementById("sfx-mute").innerText = "mute SFX";
-			this.audio.jingle.play();
-			this.showBubble(`You will now hear sound effects.`);
+			if (!ignore) {
+				this.audio.jingle.play();
+				this.showBubble(`You will now hear sound effects.`);
+			}
 		} else {
 			document.getElementById("sfx-speaker").innerText = "🔇";
 			document.getElementById("sfx-mute").innerText = "unmute SFX";
-			this.audio.hit.play(1);
-			this.showBubble(`No more sound effect.`);
+			if (!ignore) {
+				this.audio.hit.play(1);
+				this.showBubble(`No more sound effect.`);
+			}
 			Sound.mute = engine.muteSFX;
 		}
 	}
