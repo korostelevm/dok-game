@@ -344,7 +344,7 @@ class ImpossibleRoom extends GameCore {
 								topic: "how",
 								message: `My superior intellect allows me to predict your choice, ${messire}.`,
 								voiceName: "Thomas",
-								secondsAfterEnd: 1,
+								secondsAfterEnd: 2,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 							},
@@ -890,7 +890,7 @@ class ImpossibleRoom extends GameCore {
 	}	
 
 	upperLevel() {
-		
+
 	}
 
 	openLeft() {

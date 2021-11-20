@@ -54,6 +54,8 @@ const globalFiles=[
 			"monkor-shit.png",
 			"monkor.png",
 			"mouse-cursor.png",
+			"mouse-right.png",
+			"mouse.gif",
 			"mouse.png",
 			"next-button.png",
 			"nuna-overlay.png",

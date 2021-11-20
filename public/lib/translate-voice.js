@@ -171,6 +171,7 @@ const PHONEME = {
 		"certain": "certeune",
 		"As": "Aze",
 		"choose.": "chouse.",
+		"choose": "chouse",
 		"lead": "lid",
 		"choice,": "choïce,",
 		"allows": "allowze",
@@ -179,6 +180,7 @@ const PHONEME = {
 		"someone": "someouanne",
 		"sure,": "chure,",
 		"ahead,": "euhède",
+		"irellevant": "irellévènte",
 	},
 	"Fred": {
 		"Bon": "Bonnn",

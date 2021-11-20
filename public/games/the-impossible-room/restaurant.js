@@ -267,6 +267,7 @@ class Restaurant extends GameCore {
 						this.table.changeAnimation(this.atlas.table_broke, this.engine.lastTime);
 						burger.changePosition(burger.x, 280, this.engine.lastTime);
 						setTimeout(() => {
+							this.haveMouseCheckBurger();
 							burger.changePosition(burger.x, 350, this.engine.lastTime);
 							this.table.changeAnimation(this.atlas.table_completely_broke, this.engine.lastTime);
 							if (this.audio && this.audio.hit) {
@@ -873,6 +874,24 @@ class Restaurant extends GameCore {
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
 
+	haveMouseCheckBurger(check) {
+		const mouseDom = document.getElementById("mouse");
+		mouseDom.style.transform = "scale(-1, 1)";
+	}
+
+	nudgeMouse(time) {
+		if (!this.burger.properties.served) {
+			return;
+		}
+		if (!this.nextNudge || time > this.nextNudge) {
+			this.nextNudge = time + Math.random() * 30000;
+		}
+		const mouseDom = document.getElementById("mouse");
+		const value = (this.nextNudge - time < 800) ? Math.floor(Math.random() * 5) : 0;
+		mouseDom.style.marginTop = `${-value}px`;
+		mouseDom.style.marginBottom = `${value}px`;
+	}
+
 	chefReturn() {
 		const { gender } = this.data;
 
@@ -1355,6 +1374,7 @@ class Restaurant extends GameCore {
 		this.updateHost(time);
 		this.updateChef(time);
 		this.updateBurger(time);
+		this.nudgeMouse(time);
 	}	
 
 	setRightOpened(opened) {

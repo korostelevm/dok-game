@@ -456,6 +456,9 @@
 			.blocked {
 				pointer-events: none;
 			}
+			.flip_H {
+				transform: scale(-1, 1);
+			}
 		</style>
 		<script>
 			addEventListener('error', function(event) {
@@ -587,13 +590,16 @@
 			<div id="inventory" style="position: absolute; top: 460px; left: 100px; z-index: 141; display: flex; flex-direction: horizontal">
 			</div>
 			<div id="controls" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none">
-				<div><span id="mouse" class="mouse" draggable="true"
+				<div style="display: flex; flex-direction: row">
+					<div id="mouse" class="mouse" style="width: 20px; height: 20px" draggable="true"
 					ondragstart="event.dataTransfer.setData('item', 'mouse'); event.dataTransfer.effectAllowed = 'move'; setTimeout(() => event.srcElement.style.opacity = 0, 1)" ondragend="setTimeout(() => {
 							if (!engine.game.mouse.alive) {
 								event.srcElement.style.opacity = 1;
 							}
 					}, 1)"
-					>🐁</span>: Use mouse to move <span id="player-name">Monkor</span>.</div>
+					>🐁</div>
+					<div>: Use mouse to move <span id="player-name">Monkor</span>.</div>
+				</div>
 				<div>
 					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🚫🎵</span>: Press M to <span id="mute">unmute music</span></a>
 				</div>
