@@ -1,6 +1,4 @@
-//	1110-132
-
-class SoundRoom extends GameCore {
+class MathRoom extends GameCore {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
@@ -217,24 +215,8 @@ class SoundRoom extends GameCore {
 		});
 	}
 
-	async postInit() {
-		await super.postInit();
-
-		const audio = document.getElementById("audio");
-		audio.currentTime = 0;
-		this.setAudio(audio, 0, .5, true);
-	}
-
-	getMusic() {
-		return "blinkpong";
-	}
-
 	getWalkArea() {
 		return this.backwall.getCollisionBox(engine.lastTime);		
-	}
-
-	shouldResetAudio() {
-		return true;
 	}
 
 	refresh(time, dt) {

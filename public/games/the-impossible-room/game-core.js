@@ -1114,10 +1114,21 @@ class GameCore extends GameBase {
 		}
 	}
 
+	getMusic() {
+		return "audio";
+	}
+
+	shouldResetAudio() {
+		return false;
+	}
+
 	addListeners(engine) {
+		const audio = document.getElementById(this.getMusic());
 		/* Addd audio listener */
 		engine.keyboardHandler.addKeyUpListener("m", e => {
-			const audio = document.getElementById("audio");
+			if (this.shouldResetAudio()) {
+				audio.currentTime = 0;
+			}
 			this.setAudio(audio, audio.paused, .5);
 		});
 
@@ -1134,6 +1145,9 @@ class GameCore extends GameBase {
 		}
 
 		document.getElementById("mute-toggle").addEventListener("click", this.domListeners["mute-toggle"] = () => {
+			if (this.shouldResetAudio()) {
+				audio.currentTime = 0;
+			}
 			this.setAudio(audio, audio.paused, .5);
 //			this.setVoice(!audio.paused, true);
 		});

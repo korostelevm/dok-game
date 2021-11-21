@@ -277,6 +277,8 @@ class Engine {
 		if (!canvas) {
 			console.error("You need a canvas with id 'canvas'.");
 		}
+		const writeCanvas = document.getElementById("write-canvas");
+		this.writeCanvas = writeCanvas;
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
@@ -510,6 +512,11 @@ class Engine {
 		canvas.style.opacity = 1;
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 		this.initialize(gl, this.shader.uniforms, config);
+
+		this.writeCanvas.width = canvas.width;
+		this.writeCanvas.height = canvas.height;
+		this.writeCanvas.style.width = canvas.style.width;
+		this.writeCanvas.style.height = canvas.style.height;
 	}
 
 	static start(engine) {

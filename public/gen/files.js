@@ -146,6 +146,7 @@ const globalFiles=[
 					"lobby.js",
 					"locked-room.js",
 					"mall.js",
+					"math-room.js",
 					"menu.js",
 					"restaurant.js",
 					"restroom.js",
