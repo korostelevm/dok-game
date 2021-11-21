@@ -350,6 +350,7 @@ class ClueRoom extends GameCore {
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
+			x: 2,
 		});
 	}
 

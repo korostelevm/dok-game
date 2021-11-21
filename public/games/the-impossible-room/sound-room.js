@@ -466,7 +466,7 @@ class SoundRoom extends GameCore {
 			actions: [
 				{
 					name: "look",
-					message: monkey => this.engine.lastTime - monkey.dancing > 2000 ? "That monkey's got some moves!" : "The monkey seems to be waiting for something.",
+					message: monkey => monkey.dancing && this.engine.lastTime - monkey.dancing > 2000 ? "That monkey's got some moves!" : "The monkey seems to be waiting for something.",
 				},
 			],
 		});
@@ -481,7 +481,7 @@ class SoundRoom extends GameCore {
 			actions: [
 				{
 					name: "look",
-					message: monkey => this.engine.lastTime - monkey.dancing > 2000 ? "That monkey's got some moves!" : "The monkey seems to be waiting for something.",
+					message: monkey => monkey.dancing && this.engine.lastTime - monkey.dancing > 2000 ? "That monkey's got some moves!" : "The monkey seems to be waiting for something.",
 				},
 			],
 		});
@@ -507,7 +507,6 @@ class SoundRoom extends GameCore {
 
 	getWalkArea() {
 		const {left, right, top, bottom} = this.backwall.getCollisionBox(engine.lastTime);		
-		console.log(left, right, top, bottom);
 		return {left, right, top: top - 15, bottom: bottom - 25};
 	}
 
