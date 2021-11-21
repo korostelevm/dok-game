@@ -182,6 +182,12 @@ const PHONEME = {
 		"ahead,": "euhède",
 		"ahead.": "euhède.",
 		"irellevant": "irellévènte",
+		"has": "haze",
+		"boombox": "boumbox",
+		"listen": "lisseun",
+		"sounds": "saondze",
+		"better": "betteur",
+		"headphones.": "headphônz.",
 	},
 	"Fred": {
 		"Bon": "Bonnn",

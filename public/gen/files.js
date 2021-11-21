@@ -69,6 +69,7 @@ const globalFiles=[
 			"sign.png",
 			"skin-texture.jpg",
 			"smoking-sign.png",
+			"sound-room.png",
 			"sparkle.png",
 			"thank-you.gif",
 			"time-room.png",

@@ -65,7 +65,7 @@ class Engine {
 				name: "joker",
 				game: "JokerRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -81,7 +81,7 @@ class Engine {
 				name: "animal",
 				game: "AnimalRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -89,7 +89,7 @@ class Engine {
 				name: "gandalf",
 				game: "GandalfRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -97,7 +97,15 @@ class Engine {
 				name: "restaurant",
 				game: "Restaurant",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "music",
+				game: "SoundRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -105,7 +113,7 @@ class Engine {
 				name: "no clue",
 				game: "ClueRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -113,7 +121,7 @@ class Engine {
 				name: "desert",
 				game: "DesertRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -121,7 +129,7 @@ class Engine {
 				name: "batman",
 				game: "BatmanRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -129,7 +137,7 @@ class Engine {
 				name: "computer",
 				game: "ComputerRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -137,7 +145,7 @@ class Engine {
 				name: "impossible",
 				game: "ImpossibleRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},

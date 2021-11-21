@@ -1398,6 +1398,6 @@ class Restaurant extends GameCore {
 	}
 
 	nextLevelRight() {
-		this.engine.setGame(new ClueRoom());
+		this.engine.setGame(new SoundRoom());
 	}
 }

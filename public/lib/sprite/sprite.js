@@ -177,8 +177,22 @@ class Sprite {
 		this.updated.updateTime = time;
 	}
 
+	flipRect(rect, flipH, flipV) {
+		if (!rect) {
+			return null;
+		}
+		return {
+			left: flipH ? 1 - rect.right : rect.left,
+			right: flipH ? 1 - rect.left : rect.right,
+			top: flipV ? 1 - rect.bottom : rect.top,
+			bottom: flipV ? 1 - rect.top : rect.bottom,
+		};
+	}
+
 	getCollisionBox(time) {
-		const rect = this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time));
+		const flipH = this.direction < 0;
+		const flipV = this.vdirection < 0;
+		const rect = this.flipRect(this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time)), flipH, flipV);
 		if (!rect) {
 			return null;
 		}
@@ -190,6 +204,7 @@ class Sprite {
 		this.collisionBox.right = left + rect.right * width * this.crop[0] + collisionPadding;
 		this.collisionBox.top = top + rect.top * height * this.crop[1] - collisionPadding;
 		this.collisionBox.bottom = top + rect.bottom * height * this.crop[1] + collisionPadding;
+
 		return this.collisionBox;
 	}
 }
