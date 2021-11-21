@@ -17,6 +17,9 @@ class ClueRoom extends GameCore {
 			cluewall: await engine.addTexture(
 				{
 					url: "assets/clue-lobby.png",
+					texture_url: "assets/backwall.jpg",
+					texture_alpha: .15,
+					texture_blend: "source-atop",
 					cols: 1, rows: 2,
 					range: [1],
 				}),
