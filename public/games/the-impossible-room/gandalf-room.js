@@ -623,7 +623,7 @@ class GandalfRoom extends GameCore {
 	nextLevelRight(forReal) {
 		console.log("nextLevelRight()", forReal);
 		if (forReal) {
-			this.engine.setGame(new Restaurant());
+			this.engine.setGame(new MathRoom());
 		}
 	}
 }

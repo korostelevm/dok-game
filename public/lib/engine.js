@@ -65,7 +65,7 @@ class Engine {
 				name: "joker",
 				game: "JokerRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -73,7 +73,7 @@ class Engine {
 				name: "time",
 				game: "TimeRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -81,7 +81,7 @@ class Engine {
 				name: "animal",
 				game: "AnimalRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -89,7 +89,15 @@ class Engine {
 				name: "gandalf",
 				game: "GandalfRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+				},
+			},
+			{
+				name: "math",
+				game: "MathRoom",
+				disabled: (engine) => {
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -97,7 +105,7 @@ class Engine {
 				name: "restaurant",
 				game: "Restaurant",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -105,7 +113,7 @@ class Engine {
 				name: "music",
 				game: "SoundRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -113,7 +121,7 @@ class Engine {
 				name: "no clue",
 				game: "ClueRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -121,7 +129,7 @@ class Engine {
 				name: "desert",
 				game: "DesertRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -129,7 +137,7 @@ class Engine {
 				name: "batman",
 				game: "BatmanRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -137,7 +145,7 @@ class Engine {
 				name: "computer",
 				game: "ComputerRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -145,7 +153,7 @@ class Engine {
 				name: "impossible",
 				game: "ImpossibleRoom",
 				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom",
+					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
 						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
 				},
 			},
@@ -285,8 +293,8 @@ class Engine {
 		if (!canvas) {
 			console.error("You need a canvas with id 'canvas'.");
 		}
-		const writeCanvas = document.getElementById("write-canvas");
-		this.writeCanvas = writeCanvas;
+		// const writeCanvas = document.getElementById("write-canvas");
+		// this.writeCanvas = writeCanvas;
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
@@ -521,10 +529,10 @@ class Engine {
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 		this.initialize(gl, this.shader.uniforms, config);
 
-		this.writeCanvas.width = canvas.width;
-		this.writeCanvas.height = canvas.height;
-		this.writeCanvas.style.width = canvas.style.width;
-		this.writeCanvas.style.height = canvas.style.height;
+		// this.writeCanvas.width = canvas.width;
+		// this.writeCanvas.height = canvas.height;
+		// this.writeCanvas.style.width = canvas.style.width;
+		// this.writeCanvas.style.height = canvas.style.height;
 	}
 
 	static start(engine) {

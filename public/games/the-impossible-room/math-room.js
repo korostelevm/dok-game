@@ -12,6 +12,14 @@ class MathRoom extends GameCore {
 
 		this.atlas = {
 			...this.atlas,
+			chalkboard: await engine.addTexture(
+				{
+					url: "assets/chalkboard.png",
+					collision_url: "assets/chalkboard.png",
+					texture_url: "assets/skin-texture.jpg",
+					texture_alpha: .20,
+					texture_blend: "source-atop",
+				}),
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -22,6 +30,21 @@ class MathRoom extends GameCore {
 			anim: this.atlas.side_doors,
 			size: [800, 400],
 		});
+		this.chalkboard = this.spriteFactory.create({
+			name: "chalkboard",
+			anim: this.atlas.chalkboard,
+			size: [800, 400],
+		}, {
+			reachable: true,
+			actions: [
+				{ name: "look", message: "There's a math formula on the chalkboard, but it keeps changing.",
+				},
+			],			
+		});
+
+
+
+
 		this.doorBack = this.spriteFactory.create({
 			name: "Exit",
 			anim: this.atlas.left_door,
@@ -79,10 +102,12 @@ class MathRoom extends GameCore {
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
+										topic: "au-revoir",
 									},
 								],
 							},
 							{
+								topic: "au-revoir",
 								message: `Au revoir, ${messire}.`,
 								voiceName: "Thomas",
 								onStart: butler => butler.talking = engine.lastTime,
@@ -91,7 +116,14 @@ class MathRoom extends GameCore {
 							},
 							{
 								topic: "hint",
-								message: `I do not have any hint to give, ${messire}.`,
+								message: `The formula changes every 100 milliseconds, so you must calculate faster than that.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 2,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: `Unless you can stop time, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
@@ -124,7 +156,7 @@ class MathRoom extends GameCore {
 								},
 							},
 							{
-								message: "This is called the Template Room. A placeholder room.",
+								message: "This is called the Math Room.",
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -135,7 +167,7 @@ class MathRoom extends GameCore {
 								},
 							},
 							{
-								message: `You must complete this room in order to continue further to the next room, ${messire}.`,
+								message: `You must solve the quantum formula written on the chalkboard to pass this room, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => {
@@ -144,6 +176,47 @@ class MathRoom extends GameCore {
 								onEnd: butler => {
 									butler.talking = 0;
 								},
+							},
+							{
+								responses: [
+									{
+										response: `How can ${I} do that? The formula keeps changing.`,
+										topic: "how",
+									},
+									{
+										response: `What is a quantum formula?`,
+									},
+									{
+										response: `Ok, ${I} better start calculating.`,
+										topic: "au-revoir",
+									},
+								],
+							},
+							{
+								topic: "quantum",
+								message: `A quantum formula is a math formula that's different in every parallel universe.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},								
+								exit: true,
+							},
+							{
+								topic: "how",
+								message: `You can't, ${messire}. That's why this room is impossible.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => {
+									butler.talking = engine.lastTime;
+								},
+								onEnd: butler => {
+									butler.talking = 0;
+								},								
+								exit: true,
 							},
 						]);
 					},
@@ -160,6 +233,12 @@ class MathRoom extends GameCore {
 		const I = gender === "T" ? "We" : "I";
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+
+		this.mathBoard = document.getElementById("math-board");
+		this.mathX = Math.floor(Math.random() * 1000);
+		this.mathY = Math.floor(Math.random() * 100);
+
+		this.mathResult = document.getElementById("math-result");
 	}
 
 	updateHost(time) {
@@ -222,7 +301,51 @@ class MathRoom extends GameCore {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.updateHost(time);
-	}	
+		this.updateMathBoard(time);
+	}
+
+	async postInit() {
+		await super.postInit();
+		document.getElementById("math-group").style.display = "block";
+	}
+
+	onExit(engine) {
+		document.getElementById("math-group").style.display = "none";		
+		super.onExit(engine);
+	}
+
+	updateMathBoard(time) {
+		if (time < this.nextUpdate || this.openingDoor && this.mathResult.value == this.mathX) {
+			return;
+		}
+		this.nextUpdate = time + Math.random() * 100;
+		const coefX = Math.ceil(40 * (Math.random() - .5)) || 1;
+		const coefY = Math.ceil(40 * (Math.random() - .5)) || 1;
+		const result = coefX * this.mathX + coefY * this.mathY;
+		this.mathBoard.innerText = `${coefX}x ${coefY<0?"-":"+"} ${Math.abs(coefY)}y = ${result}\n`;
+		if (this.mathResult.value == this.mathX && !this.openingDoor) {
+			this.openingDoor = true;
+			setTimeout(() => {
+				if (this.mathResult.value == this.mathX) {
+					this.setRightOpened(true);
+				} else {
+					this.setRightOpened(false);
+					this.openingDoor = false;
+				}
+			}, 2000);
+		} else {
+			this.setRightOpened(false);			
+		}
+	}
+
+	setNextDoorOpened(opened) {
+		this.doorForwardOpened.changeOpacity(opened?1:0, engine.lastTime);										
+		this.doorForwardClosed.changeOpacity(opened?0:1, engine.lastTime);
+	}
+
+	setRightOpened(opened) {
+		this.setNextDoorOpened(opened);
+	}
 
 	openLeft() {
 
@@ -236,5 +359,6 @@ class MathRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		this.engine.setGame(new Restaurant());
 	}
 }

@@ -1823,7 +1823,7 @@ class GameCore extends GameBase {
 
 			const rolling = monkor.x > 50 && monkor.x < 700 && this.isCarpetRolling();
 			if (rolling) {
-				monkor.changePosition(monkor.x - 3.86, monkor.y, time);
+				monkor.changePosition(monkor.x - 3.8, monkor.y, time);
 			}
 			return;
 		}

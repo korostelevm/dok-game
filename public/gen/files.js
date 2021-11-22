@@ -16,6 +16,7 @@ const globalFiles=[
 			"butler.png",
 			"candy-collision.png",
 			"candy.png",
+			"chalkboard.png",
 			"chef.png",
 			"cheoni-collision.png",
 			"cheoni.png",
@@ -118,7 +119,8 @@ const globalFiles=[
 			"american-captain.otf",
 			"cartoon-script.ttf",
 			"demode.ttf",
-			"grotto.ttf"
+			"grotto.ttf",
+			"math-font.ttf"
 		]
 	},
 	"game-starter.js",
