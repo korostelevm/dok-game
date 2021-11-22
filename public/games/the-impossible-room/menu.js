@@ -86,7 +86,7 @@ class Menu extends GameBase {
 			onClick: () => {
 				this.aboutPage.changeOpacity(1, this.engine.lastTime);
 				if (!this.audio.paused) {
-					this.setAudio(audio, audio.paused, .2);					
+					this.setAudio(audio, true, .15);					
 				}
 				this.aboutPage.disabled = false;
 			},
@@ -106,12 +106,14 @@ class Menu extends GameBase {
 			size: [800, 400],
 		}, {
 			disabled: true,
+			cursor: "url(assets/next-cursor.png), auto",
 			onClick: () => {
 				this.aboutPage.changeOpacity(0, this.engine.lastTime);
 				if (!this.audio.paused) {
-					this.setAudio(audio, audio.paused, .5);					
+					this.setAudio(audio, true, .5);					
 				}
 				this.aboutPage.disabled = true;
+				getMedal("About Me", this.onUnlockMedal);
 			},
 		});
 	}
@@ -141,6 +143,11 @@ class Menu extends GameBase {
 		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
 			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
+			const cursor = "url(assets/mouse-cursor.png), auto";
+			if (this.cursor !== cursor) {
+				this.cursor = cursor;
+				overlay.style.cursor = cursor;
+			}
 			return;
 		}
 
@@ -169,7 +176,7 @@ class Menu extends GameBase {
 		this.about.changeOpacity(hovering===this.about?1:0, this.engine.lastTime);
 		this.start.changeOpacity(hovering===this.start?1:0, this.engine.lastTime);
 
-		const cursor = !this.selectedItem && hovering ? "pointer" : "";
+		const cursor = !this.selectedItem && hovering ? ((hovering.opacity <= 0 ? null : hovering.cursor) || this.getMouseCursor()) : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
 			overlay.style.cursor = cursor;

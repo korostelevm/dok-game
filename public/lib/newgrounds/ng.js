@@ -54,7 +54,8 @@ window.addEventListener("DOMContentLoaded", () => {
                  button.addEventListener('click', e => {
                     requestLogin();
                  });
-                 button.style.display = "none";
+                 // To login into newgrounds, show the button below
+//                 button.style.display = "none";
             }
 
         });
@@ -140,12 +141,15 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function getMedal(medal_name) {
+    function getMedal(medal_name, callback) {
         unlockMedal(ngio, medal_name, (medal, unlocked) => {
             if (unlocked) {
                 console.log("Unlock:" + medal.name);
                 const audio = new Audio('lib/newgrounds/sound.mp3');
                 audio.play();
+                if (callback) {
+                    callback(medal.name);
+                }
             }
         });
     }

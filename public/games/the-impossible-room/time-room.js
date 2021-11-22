@@ -456,6 +456,9 @@ class TimeRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		if (!this.monkor.properties.joker) {
+			getMedal("The Time Room", this.onUnlockMedal);
+		}
 		this.engine.setGame(new AnimalRoom());
 	}
 }

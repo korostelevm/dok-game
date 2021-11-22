@@ -291,6 +291,10 @@ class GandalfRoom extends GameCore {
 				{
 					name: "pass",
 					action: exit => {
+						if (!this.monkor.properties.joker) {
+							getMedal("Gandalf", this.onUnlockMedal);
+						}
+						
 						this.monkor.setProperty("paused", engine.lastTime);
 						this.monkor.goal.x = 900;
 						this.gandalf.setProperty("pass", null);
@@ -621,7 +625,7 @@ class GandalfRoom extends GameCore {
 	}
 
 	nextLevelRight(forReal) {
-		console.log("nextLevelRight()", forReal);
+//		console.log("nextLevelRight()", forReal);
 		if (forReal) {
 			this.engine.setGame(new MathRoom());
 		}

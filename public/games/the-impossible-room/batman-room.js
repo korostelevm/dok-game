@@ -220,6 +220,10 @@ class BatmanRoom extends GameCore {
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
 
+	butlerKeepStill() {
+		return false;
+	}
+
 	updateHost(time) {
 		const goalX = typeof(this.butler.goal.x) == "function" ? this.butler.goal.x(this.butler) : this.butler.goal.x;
 		const goalY = typeof(this.butler.goal.y) == "function" ? this.butler.goal.y(this.butler) : this.butler.goal.y;
@@ -455,6 +459,7 @@ class BatmanRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		getMedal("Batman", this.onUnlockMedal);
 		this.engine.setGame(new ComputerRoom());
 	}
 }

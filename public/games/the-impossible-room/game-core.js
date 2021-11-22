@@ -1463,7 +1463,7 @@ class GameCore extends GameBase {
 		}
 		this.showSubject(this.monkor.target || hovering);
 
-		const cursor = !this.selectedItem && hovering ? "pointer" : "";
+		const cursor = !this.selectedItem && hovering ? (hovering.cursor || this.getMouseCursor()) : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
 			overlay.style.cursor = cursor;
@@ -1733,7 +1733,7 @@ class GameCore extends GameBase {
 		const topY = !collisionBox ? sprite.y - sprite.size[1] : collisionBox.top;
 
 		speechBubble.style.left = `${canvas.offsetLeft + midX - speechBubble.offsetWidth/2 - 20}px`;
-		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + topY - (sprite.bubbleTop || 0))}px`;
+		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + topY - (sprite.bubbleTop || 50))}px`;
 	}
 
 	updateSpeech(time, dt, sprite) {
@@ -1811,8 +1811,12 @@ class GameCore extends GameBase {
 						this.openLeft();
 					}
 					monkor.running_away = time;
-					setTimeout(() => this.gameOver(), 6000);					
-					this.onDead();
+					if (this.runAwayToPreviousRoom()) {
+						setTimeout(() => this.nextLevelLeft(), 3000);					
+					} else {
+						setTimeout(() => this.gameOver(), 6000);					
+						this.onDead();
+					}
 				}
 				if (!this.canRunLeft() && !mouse.putBack) {
 					mouse.putBack = engine.lastTime;
@@ -1967,6 +1971,10 @@ class GameCore extends GameBase {
 		this.engine.updateSidebar(this.constructor.name, localStorage.getItem("joker"));
 	}
 
+	runAwayToPreviousRoom() {
+		return false;
+	}
+
 	onPutBack(mouse, timeout) {
 		setTimeout(() => {
 			mouse.putBack = 0;
@@ -1993,7 +2001,7 @@ class GameCore extends GameBase {
 		this.walkingThrough = true;
 		this.monkor.setProperty("paused", this.engine.lastTime);
 		this.monkor.goal.x = 900;
-		if (this.butler) {
+		if (this.butler && !this.butlerKeepStill()) {
 			this.butler.goal.x = () => this.butler.x + 50;
 			this.butler.goal.y = () => this.monkor.y;
 			this.butler.onStill = () => {
@@ -2001,6 +2009,10 @@ class GameCore extends GameBase {
 				this.butler.goal.y = () => this.monkor.y;
 			};
 		}
+	}
+
+	butlerKeepStill() {
+		return false;
 	}
 
 	openLeft() {

@@ -73,11 +73,13 @@
 			    overflow: hidden;
 			    user-select: none;
 			    font-family: lato;
+			    cursor: url(assets/mouse-cursor.png), auto;
 			}
 
 			.mouse {
 				user-select: text;
-				cursor:  pointer;
+				/*cursor:  pointer;*/
+				cursor:url(assets/pointer-cursor.png), auto;
 				position: relative;
 			}
 
@@ -90,6 +92,7 @@
 				opacity: 0;
 				z-index: 100;
 				user-select: none;
+				cursor:url(assets/mouse-cursor.png), auto;
 				/*cursor: none;*/
 			}
 
@@ -118,6 +121,7 @@
   				white-space:nowrap;
 				text-shadow: 2px 2px darkgreen;
 				font-family: title-font;
+				cursor: auto;
   			}
 
 			.container {
@@ -183,7 +187,8 @@
 				color: white;
 			    padding: 5px;
 			    margin: 1px;
-			    cursor: pointer;
+				cursor:url(assets/pointer-cursor.png), auto;
+			    /*cursor: pointer;*/
 			    display: flex;
 			    flex-direction: horizontal;
 			}
@@ -204,6 +209,7 @@
 			}
 
 			.speech-bubble {
+				pointer-events: none;
 				position: absolute;
 				background-color: #ffffff;
 				border-radius: .4em;
@@ -220,6 +226,7 @@
 
   				transition-property: opacity;
   				transition-duration: 1s;
+  				cursor:url(assets/pointer-cursor.png), auto;
 			}
 
 			.speech-bubble:after {
@@ -238,7 +245,8 @@
 			}
 
 			.inventory-item {
-				cursor: pointer;
+				cursor:url(assets/pointer-cursor.png), auto;
+				/*cursor: pointer;*/
 				padding: 2px 5px;
 				margin: 1px 5px;
 			}
@@ -305,7 +313,8 @@
 				color: silver;
 				border-radius: 25px;
 				background: rgb(2,100,136);
-				cursor:  pointer;
+				cursor:url(assets/pointer-cursor.png), auto;
+				/*cursor:  pointer;*/
 			}
 
 			.button:hover {
@@ -352,7 +361,9 @@
 			}
 			.scene-button {
 				border-radius: 8pt;
-				cursor: pointer;
+				cursor:url(assets/select-cursor.png), auto;
+				/*cursor:url(assets/pointer-cursor.png), auto;*/
+				/*cursor: pointer;*/
 			}
 			.scene-button.first {
 				border: 2px solid yellow;
@@ -370,7 +381,9 @@
 				font-size: 10pt;
 				padding: 2px;
 				margin-bottom: 2px;
-				cursor: pointer;
+				cursor:url(assets/select-cursor.png), auto;
+				/*cursor:url(assets/pointer-cursor.png), auto;*/
+				/*cursor: pointer;*/
 				width: 750px;
 			    font-family: speech-font;
 			}
@@ -452,10 +465,12 @@
 			}
 
 			.sidebar-room:not(.disabled):not(.selected):not(.locked) {
-			  cursor: pointer;
+				cursor:url(assets/pointer-cursor.png), auto;
+			  /*cursor: pointer;*/
 			}
 			.restart {
-				cursor:  pointer;
+				cursor:url(assets/pointer-cursor.png), auto;
+				/*cursor:  pointer;*/
 			}
 			.blocked {
 				pointer-events: none;
@@ -491,15 +506,36 @@
 				div.style.backgroundColor = "#660000cc";
 				div.style.zIndex = 200;
 				div.textContent = event.error.stack;
-				div.style.op
 			});
+		</script>
+		<script>
+			function showUnlockedMedal(medal) {
+				const div = document.getElementById("medalView") || document.body.appendChild(document.createElement("div"));
+				div.style.display = "";
+				div.id = "medalView";
+				div.style.position = "absolute";
+				div.style.top = "0px";
+				div.style.left = "0px";
+				div.style.width = "100%";
+				div.style.textAlign = "center";
+				div.style.userSelect = "none";
+				div.style.pointerEvents = "none";
+				div.style.color = "#eeFF00cc";
+				div.style.backgroundColor = "#666600cc";
+				div.style.zIndex = 200;
+				div.textContent = `🥇 You unlocked a new medal: ${medal}`;
+				setTimeout(() => {
+					div.style.display = "none";
+				}, 5000);
+			}
 		</script>
 
 	</head>
 	<body>
 		<div id="game-tab" style="margin-left: 80px;"></div>
 			<img class="incept" id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
-			<img class="incept" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px; cursor: pointer" src="assets/back-button.png"></img>
+			<img class="incept" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px;
+				cursor:url(assets/pointer-cursor.png), auto;" src="assets/back-button.png"></img>
 			<script type="text/javascript">
 				const backButton = document.getElementById("back-button");
 				backButton.addEventListener("mouseover", () => {
@@ -512,13 +548,15 @@
 					engine.setInception(false);
 				});
 				function doResize() {
-					const rect = document.getElementById("canvas").getBoundingClientRect();
-					const shift = -200;
-					const sidebarShift = -220;
-					document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
-					document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
-					document.getElementById("player-overlay").style.top = `${rect.y + shift + 150}px`;
-					document.getElementById("back-button").style.top = `${rect.y + shift + 450}px`;
+					if (document.getElementById("canvas")) {
+						const rect = document.getElementById("canvas").getBoundingClientRect();
+						const shift = -200;
+						const sidebarShift = -220;
+						document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
+						document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
+						document.getElementById("player-overlay").style.top = `${rect.y + shift + 150}px`;
+						document.getElementById("back-button").style.top = `${rect.y + shift + 450}px`;
+					}
 				}
 				window.addEventListener("resize", doResize);
 			</script>
@@ -534,7 +572,7 @@
  -->
 
 		<div style="position: absolute; left: 5px; top: 60px; z-index: 100; font-size: 8pt;">
-			<div id="sidebar" style="flex-direction: column; display: flex; display: none">
+			<div id="sidebar" style="flex-direction: column; display: flex; display: none; 			  cursor:url(assets/mouse-cursor.png), auto;">
 				<div class="sidebar-room">1</div>
 				<div class="sidebar-room">2</div>
 			</div>
@@ -632,13 +670,13 @@
 					<div>: Use mouse to move <span id="player-name">Monkor</span>.</div>
 				</div>
 				<div>
-					<a id="mute-toggle" style="cursor: pointer"><span id="speaker">🚫🎵</span>: Press M to <span id="mute">unmute music</span></a>
+					<a id="mute-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="speaker">🚫🎵</span>: Press M to <span id="mute">unmute music</span></a>
 				</div>
 				<div>
-					<a id="sfx-toggle" style="cursor: pointer"><span id="sfx-speaker">🔊</span>: Press S to <span id="sfx-mute">mute SFX</span></a>
+					<a id="sfx-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="sfx-speaker">🔊</span>: Press S to <span id="sfx-mute">mute SFX</span></a>
 				</div>
 				<div>
-					<a id="voice-mute-toggle" style="cursor: pointer"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span></a>
+					<a id="voice-mute-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span></a>
 				</div>
 				<div style="display: none">🔁: <span id="pressing-r">R to start over.</span></div>
 			</div>

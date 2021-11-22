@@ -383,6 +383,7 @@ class Entrance extends GameCore {
 	}
 
 	upperLevel() {
+		getMedal("The Entrance", this.onUnlockMedal);
 		this.engine.setGame(new Restroom());
 	}
 }

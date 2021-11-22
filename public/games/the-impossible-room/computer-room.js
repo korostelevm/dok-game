@@ -148,6 +148,8 @@ class ComputerRoom extends GameCore {
 				},
 				{ name: "sit", condition: () => !this.engine.inception,
 					action: computer_desk => {
+						getMedal("The Computer", this.onUnlockMedal);
+
 						const { gender } = this.data;
 						this.engine.setInception(true, {
 							computerGender: gender,

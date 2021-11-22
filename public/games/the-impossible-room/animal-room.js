@@ -612,6 +612,9 @@ class AnimalRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		if (!this.monkor.properties.joker) {
+			getMedal("The Animal Room", this.onUnlockMedal);
+		}
 		this.engine.setGame(new GandalfRoom());
 	}
 }

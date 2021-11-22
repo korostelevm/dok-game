@@ -880,7 +880,7 @@ class Restaurant extends GameCore {
 	}
 
 	nudgeMouse(time) {
-		if (!this.burger.properties.served) {
+		if (!this.burger.properties.served || this.burger.properties.eaten) {
 			return;
 		}
 		if (!this.nextNudge || time > this.nextNudge) {
@@ -1398,6 +1398,9 @@ class Restaurant extends GameCore {
 	}
 
 	nextLevelRight() {
+		if (!this.monkor.properties.joker) {
+			getMedal("The Restaurant", this.onUnlockMedal);
+		}
 		this.engine.setGame(new SoundRoom());
 	}
 }

@@ -161,6 +161,7 @@ class Selection extends GameBase {
 	}
 
 	onExit(engine) {
+		const previousGender = this.data.gender;
 		let character = "monkor";
 		switch(this.properties.check) {
 			case "he":
@@ -179,6 +180,9 @@ class Selection extends GameBase {
 				this.data.gender = "M";
 				character = "monkor";
 				break;					
+		}
+		if (this.data.gender !== previousGender && this.engine.lastGame !== "Menu") {
+			getMedal("Gender Fluid", this.onUnlockMedal);
 		}
 		this.data.name = this.playerNameInput.value;
 		this.overContainer.innerText = "";
@@ -226,7 +230,7 @@ class Selection extends GameBase {
 			}
 		}
 
-		const cursor = !this.selectedItem && hovering ? "pointer" : "";
+		const cursor = !this.selectedItem && hovering ? this.getMouseCursor() : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
 			overlay.style.cursor = cursor;

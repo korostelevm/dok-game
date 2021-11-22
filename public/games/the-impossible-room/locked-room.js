@@ -947,6 +947,7 @@ class LockedRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		getMedal("The First Room", this.onUnlockMedal);
 		this.engine.setGame(new JokerRoom());
 	}
 }

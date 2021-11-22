@@ -18,6 +18,14 @@ class GameBase {
 		this.swapData = engine?.swapData?.TheImpossibleRoom;
 	}
 
+	onUnlockMedal(medal) {
+		showUnlockedMedal(medal);
+	}
+
+	getMouseCursor() {
+		return "url(assets/pointer-cursor.png), auto";
+	}
+
 	isFirstTime() {
 		return this.sceneData.seenTime === 1;
 	}

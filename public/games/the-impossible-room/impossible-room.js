@@ -893,6 +893,7 @@ class ImpossibleRoom extends GameCore {
 	}	
 
 	upperLevel() {
+		getMedal("The Impossible Room", this.onUnlockMedal);
 		this.engine.setGame(new Mall());
 	}
 

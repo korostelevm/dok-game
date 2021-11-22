@@ -708,6 +708,14 @@ class Lobby extends GameCore {
 		}
 	}
 
+	runAwayToPreviousRoom() {
+		return true;
+	}
+
+	canRunLeft() {
+		return true;
+	}
+
 	addMonkor() {
 		super.addMonkor();
 		this.spriteFactory.create({
@@ -731,5 +739,6 @@ class Lobby extends GameCore {
 
 	nextLevelRight() {
 		this.engine.setGame(new LockedRoom());
+		getMedal("The Lobby", this.onUnlockMedal);
 	}
 }

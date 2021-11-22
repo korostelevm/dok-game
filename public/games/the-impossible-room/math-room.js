@@ -315,7 +315,7 @@ class MathRoom extends GameCore {
 	}
 
 	updateMathBoard(time) {
-		if (time < this.nextUpdate || this.openingDoor && this.mathResult.value == this.mathX) {
+		if (time < this.nextUpdate) {
 			return;
 		}
 		this.nextUpdate = time + Math.random() * 100;
@@ -359,6 +359,9 @@ class MathRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		if (!this.monkor.properties.joker) {
+			getMedal("The Math Room", this.onUnlockMedal);
+		}
 		this.engine.setGame(new Restaurant());
 	}
 }

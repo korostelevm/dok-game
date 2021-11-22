@@ -593,6 +593,9 @@ class SoundRoom extends GameCore {
 	}
 
 	nextLevelRight() {
+		if (!this.monkor.properties.joker) {
+			getMedal("The Music Room", this.onUnlockMedal);
+		}
 		this.engine.setGame(new ClueRoom());
 	}
 }

@@ -148,6 +148,7 @@ class DesertFar extends GameCore {
 						this.monkor.goal.x = 400 + this.chain.x;
 						this.monkor.goal.y = -100;
 						this.monkor.onStill = () => {
+							getMedal("The Desert", this.onUnlockMedal);
 							this.engine.setGame(new DesertExit());
 						};
 					},

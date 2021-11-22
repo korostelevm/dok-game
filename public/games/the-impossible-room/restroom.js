@@ -306,6 +306,7 @@ class Restroom extends GameCore {
 						seat.changeAnimation(this.atlas.monkor_shit, engine.lastTime);
 						this.setInventoryVisibility(!sitting);
 						this.setControlVisibility(!sitting);
+						getMedal("The Restroom", this.onUnlockMedal);
 					}
 				},
 				dump: (seat, dump) => {
