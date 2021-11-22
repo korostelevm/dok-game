@@ -5,6 +5,7 @@ const globalFiles=[
 			"1570015905422-scanlines.png",
 			"2189123.png",
 			"Scanline_320x240x4.png",
+			"about.png",
 			"back-button.png",
 			"background-door-collision.png",
 			"background-door.png",

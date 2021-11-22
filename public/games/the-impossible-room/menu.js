@@ -17,6 +17,10 @@ class Menu extends GameBase {
 				// texture_blend: "luminosity",
 				// texture_alpha: .3,
 			}),
+			aboutPage: await engine.addTexture({
+				url: "assets/about.png",
+				collision_url: "assets/about.png",
+			}),
 			mute: await engine.addTexture({
 				url: "assets/menu-select.png",
 				collision_url: "assets/menu-select.png",
@@ -35,7 +39,7 @@ class Menu extends GameBase {
 				cols: 2, rows: 3,
 				range: [2],
 			}),
-			load: await engine.addTexture({
+			about: await engine.addTexture({
 				url: "assets/menu-select.png",
 				collision_url: "assets/menu-select.png",
 				cols: 2, rows: 3,
@@ -74,10 +78,18 @@ class Menu extends GameBase {
 				this.engine.setGame(new Selection());
 			},		
 		});
-		this.load = this.spriteFactory.create({
-			anim: this.atlas.load,
+		this.about = this.spriteFactory.create({
+			anim: this.atlas.about,
 			opacity: 0,
 			size: [800, 400],
+		}, {
+			onClick: () => {
+				this.aboutPage.changeOpacity(1, this.engine.lastTime);
+				if (!this.audio.paused) {
+					this.setAudio(audio, audio.paused, .2);					
+				}
+				this.aboutPage.disabled = false;
+			},
 		});
 		this.start = this.spriteFactory.create({
 			anim: this.atlas.start,
@@ -86,6 +98,20 @@ class Menu extends GameBase {
 		}, { 
 			onClick: () => {
 				this.engine.setGame(new Entrance());			
+			},
+		});
+		this.aboutPage = this.spriteFactory.create({
+			anim: this.atlas.aboutPage,
+			opacity: 0,
+			size: [800, 400],
+		}, {
+			disabled: true,
+			onClick: () => {
+				this.aboutPage.changeOpacity(0, this.engine.lastTime);
+				if (!this.audio.paused) {
+					this.setAudio(audio, audio.paused, .5);					
+				}
+				this.aboutPage.disabled = true;
 			},
 		});
 	}
@@ -140,7 +166,7 @@ class Menu extends GameBase {
 			}
 		}
 		this.customize.changeOpacity(hovering===this.customize?1:0, this.engine.lastTime);
-		this.load.changeOpacity(hovering===this.load?1:0, this.engine.lastTime);
+		this.about.changeOpacity(hovering===this.about?1:0, this.engine.lastTime);
 		this.start.changeOpacity(hovering===this.start?1:0, this.engine.lastTime);
 
 		const cursor = !this.selectedItem && hovering ? "pointer" : "";
