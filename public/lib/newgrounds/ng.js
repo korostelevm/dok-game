@@ -41,21 +41,26 @@ window.addEventListener("DOMContentLoaded", () => {
      */
     function initSession() {
         ngio.getValidSession(function() {
+             const button = document.body.appendChild(document.createElement('button'));
+             button.id = "newgrounds-login";
+             button.style.position = "absolute";
+             button.style.top = "5px";
+             button.style.left = "850px";
+             button.style.height = "24px";
+             button.style.fontSize = "10pt";
+             button.style.zIndex = 1000;
+             button.classList.add('button');
+             button.innerText = "login newgrounds";
+             button.addEventListener('click', e => {
+                requestLogin();
+             });
+
+
             if (ngio.user) {
+              button.style.display = "none";
                 onLoggedIn();
             } else {
-                 const button = document.body.appendChild(document.createElement('button'));
-                 button.style.position = "absolute";
-                 button.style.top = "5px";
-                 button.style.left = "5px";
-                 button.style.zIndex = 1000;
-                 button.classList.add('button');
-                 button.innerText = "login newgrounds";
-                 button.addEventListener('click', e => {
-                    requestLogin();
-                 });
-                 // To login into newgrounds, show the button below
-//                 button.style.display = "none";
+                console.log("Not logged in Newgrounds.");
             }
 
         });

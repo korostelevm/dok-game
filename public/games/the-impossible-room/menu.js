@@ -194,5 +194,8 @@ class Menu extends GameBase {
 		const audio = document.getElementById("audio");
 		this.setAudio(audio, false, .5);
 		engine.keyboardHandler.clearListeners();		
+		if (document.getElementById("newgrounds-login")) {
+			document.getElementById("newgrounds-login").style.display = "none";
+		}
 	}
 }
