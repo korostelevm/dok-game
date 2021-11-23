@@ -292,7 +292,6 @@ class ImpossibleRoom extends GameCore {
 			size: [96,192],
 			hotspot: [24,192],
 		}, {
-			bubbleTop: 30,
 			reachable: true,
 			actions: [
 				{ name: "talk",
@@ -627,7 +626,6 @@ class ImpossibleRoom extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
-		this.monkor.bubbleTop = 50;
 
 		this.left_monster_front = this.spriteFactory.create({
 			anim: this.atlas.monster_front_still,

@@ -105,7 +105,6 @@ class Lobby extends GameCore {
 			anim: this.atlas.lobby_dude,
 			size: [800, 400],
 		}, {
-			bubbleTop: 40,
 			actions: [
 				{ name: "look", message: "There's a man sitting behind the counter. He's not wearing any pants!",
 					lookup: 500,
@@ -718,6 +717,7 @@ class Lobby extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
+		this.monkor.bubbleTop = 20;
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],

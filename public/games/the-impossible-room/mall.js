@@ -188,7 +188,7 @@ class Mall extends GameCore {
 		const voiceName3 = genderToVoice[this.person3Gender];
 
 		this.monkor.setProperty("paused", true);
-		this.monkor.bubbleTop = 50;
+		this.monkor.bubbleTop = 20;
 
 		const { person2, person3 } = this;
 
