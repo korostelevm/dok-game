@@ -1790,7 +1790,7 @@ class GameCore extends GameBase {
 			return;
 		}
 
-		if (mouse && mouse.alive && mouse.y > 330) {
+		if (mouse && mouse.alive && (mouse.y > 330 || time - mouse.alive > 1000)) {
 			if (time - mouse.alive < 3000) {
 				const dx = mouse.x - monkor.x;
 				monkor.changeAnimation(dx < 0 ? this.atlas.monkor_scared_left : this.atlas.monkor_scared_right, time);
