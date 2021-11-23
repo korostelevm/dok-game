@@ -367,7 +367,7 @@ class Restroom extends GameCore {
 
 	randomSong() {
 		const songs = [
-			"I'm just sittin' on the dock of the bay. Wastin' time.",
+			"I'm just sitting on the dock of the bay. Wasting time.",
 			"My hump my hump my hump, my lovely little lumps.",
 			"Ah, push it. Ah, push it. Ooh, baby baby.",
 			"Wake up. Wake up and smell the roses.",

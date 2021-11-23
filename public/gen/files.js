@@ -79,6 +79,7 @@ const globalFiles=[
 			"sparkle.png",
 			"thank-you.gif",
 			"time-room.png",
+			"title-2.png",
 			"title.png",
 			"toilet-collision.png",
 			"toilet-exit-collision.png",
