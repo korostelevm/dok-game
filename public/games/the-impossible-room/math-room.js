@@ -323,18 +323,20 @@ class MathRoom extends GameCore {
 		const coefY = Math.ceil(40 * (Math.random() - .5)) || 1;
 		const result = coefX * this.mathX + coefY * this.mathY;
 		this.mathBoard.innerText = `${coefX}x ${coefY<0?"-":"+"} ${Math.abs(coefY)}y = ${result}\n`;
-		if (this.mathResult.value == this.mathX && !this.openingDoor) {
-			this.openingDoor = true;
-			setTimeout(() => {
-				if (this.mathResult.value == this.mathX) {
-					this.setRightOpened(true);
-				} else {
-					this.setRightOpened(false);
-					this.openingDoor = false;
-				}
-			}, 2000);
+		if (this.mathResult.value == this.mathX) {
+			if (!this.openingDoor) {
+				this.openingDoor = true;
+				setTimeout(() => {
+					if (this.mathResult.value == this.mathX) {
+						this.setRightOpened(true);
+					} else {
+						this.setRightOpened(false);
+						this.openingDoor = false;
+					}
+				}, 2000);
+			}
 		} else {
-			this.setRightOpened(false);			
+			this.setRightOpened(false);
 		}
 	}
 
