@@ -1732,7 +1732,7 @@ class GameCore extends GameBase {
 		const midX = !collisionBox ? sprite.x : (collisionBox.left + collisionBox.right)/2;
 		const topY = !collisionBox ? sprite.y - sprite.size[1] : collisionBox.top;
 
-		speechBubble.style.left = `${canvas.offsetLeft + midX - speechBubble.offsetWidth/2 - 20}px`;
+		speechBubble.style.left = `${Math.max(90, canvas.offsetLeft + midX - speechBubble.offsetWidth/2 - 20)}px`;
 		speechBubble.style.bottom = `${window.innerHeight - (canvas.offsetTop + topY - (sprite.bubbleTop || 0) - 30)}px`;
 	}
 
