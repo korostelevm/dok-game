@@ -181,8 +181,13 @@ class TimeRoom extends GameCore {
 										topic: "push_for_me",
 									},
 									{
+										condition: response => !response.discussed,
 										response: `How do ${I} get out of this room?`,
 										topic: "how_get_out",
+									},
+									{
+										response: `Can you give ${me} a hint?`,
+										topic: "hint",
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
@@ -255,6 +260,22 @@ class TimeRoom extends GameCore {
 									butler.talking = 0;
 								},
 								next: "questions",
+							},
+							{
+								topic: "hint",
+								message: `In this room, it's impossible to reach the door on time.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+							},
+							{
+								message: `Unless perhaps you could change time.`,
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => butler.talking = 0,
+								exit: true,
 							},
 							{
 								topic: "impossible",
