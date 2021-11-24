@@ -20,13 +20,13 @@ class TimeRoom extends GameCore {
 			rolling_carpet_still: await engine.addTexture(
 				{
 					url: "assets/time-room.png",
-					cols:2,rows:3,
+					cols:2,rows:4,
 					range:[0],
 				}),
 			rolling_carpet_rolling: await engine.addTexture(
 				{
 					url: "assets/time-room.png",
-					cols:2,rows:3,
+					cols:2,rows:4,
 					frameRate:11,
 					range:[0,2],
 				}),
@@ -34,21 +34,28 @@ class TimeRoom extends GameCore {
 				{
 					url: "assets/time-room.png",
 					collision_url: "assets/time-room.png",
-					cols:2,rows:3,
+					cols:2,rows:4,
 					range:[4],
 				}),
 			signs: await engine.addTexture(
 				{
 					url: "assets/time-room.png",
-					cols:2,rows:3,
+					cols:2,rows:4,
 					range:[3],
 				}),
 			one_minute: await engine.addTexture(
 				{
 					url: "assets/time-room.png",
 					collision_url: "assets/time-room.png",
-					cols:2,rows:3,
+					cols:2,rows:4,
 					range:[5],
+				}),
+			cancel_button: await engine.addTexture(
+				{
+					url: "assets/time-room.png",
+					collision_url: "assets/time-room.png",
+					cols:2,rows:4,
+					range:[6],
 				}),
 		};
 
@@ -398,6 +405,10 @@ class TimeRoom extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
+		this.cancel_button = this.spriteFactory.create({
+			anim: this.atlas.cancel_button,
+			size: [800, 400],
+		});
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],

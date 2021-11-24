@@ -1217,7 +1217,7 @@ class GameCore extends GameBase {
 			this.file.setProperty("name", e.dataTransfer.files[0].name.split(".")[0]);
 			this.file.setProperty("dropped", lastTime);
 			this.file.setProperty("pickedUp", null);
-			console.log(e.dataTransfer.files[0].name);
+//			console.log(e.dataTransfer.files[0].name);
 		}
 	}
 
@@ -1504,7 +1504,7 @@ class GameCore extends GameBase {
 	}
 
 	onClickWithItem(target, item) {
-		console.log(item, target);
+//		console.log(item, target);
 	}
 
 	selectTarget(target) {
@@ -1960,7 +1960,7 @@ class GameCore extends GameBase {
 
 	updateJokerLocalStorage() {
 		const joker = !this.isBatmanRoom() && this.monkor.properties.joker === this.constructor.name ? this.constructor.name : null;
-		console.log("update joker: " + joker);
+//		console.log("update joker: " + joker);
 		if (joker) {
 			localStorage.setItem("joker", joker);
 		} else {

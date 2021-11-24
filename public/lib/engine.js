@@ -379,7 +379,7 @@ class Engine {
 					for (let dirName in folder) {
 						if (Array.isArray(folder[dirName])) {
 							const gameName = StringUtil.kebabToClass(dirName);
-							console.log(`/games/${dirName}`);
+//							console.log(`/games/${dirName}`);
 
 							folder[dirName].forEach(sceneFile => {
 								const [ scene, extension ] = sceneFile.split(".");
@@ -394,7 +394,7 @@ class Engine {
 				});
 			}
 		});
-		console.log(globalFiles);
+		// console.log(globalFiles);
 	}
 
 	async setGame(game) {

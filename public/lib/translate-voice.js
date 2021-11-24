@@ -213,6 +213,6 @@ function getPhoneme(msg, voice) {
 	const m = msg.split(" ").map(word => {
 		return words[word] || word;
 	}).join(" ").replaceAll("' ", "'");
-	console.log(m);
+//	console.log(m);
 	return m;
 }
