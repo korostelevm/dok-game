@@ -67,4 +67,3 @@ class GameTitle extends GameBase {
 		}
 	}
 }
-GameTitle.start = true;

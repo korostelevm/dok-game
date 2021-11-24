@@ -2,10 +2,10 @@ const globalFiles=[
 	".DS_Store",
 	{
 		"assets": [
+			".DS_Store",
 			"1570015905422-scanlines.png",
 			"2189123.png",
 			"Scanline_320x240x4.png",
-			"about copy.png",
 			"about.png",
 			"back-button.png",
 			"background-door-collision.png",
@@ -43,6 +43,7 @@ const globalFiles=[
 			"invitation.png",
 			"joker.png",
 			"letters.png",
+			"loading.png",
 			"lobby-collision.png",
 			"lobby.png",
 			"mall.png",
@@ -77,6 +78,7 @@ const globalFiles=[
 			"smoking-sign.png",
 			"sound-room.png",
 			"sparkle.png",
+			"start-screen.png",
 			"thank-you.gif",
 			"time-room.png",
 			"title-2.png",
@@ -132,6 +134,7 @@ const globalFiles=[
 	"game-starter.js",
 	{
 		"games": [
+			".DS_Store",
 			{
 				"one-rule": [
 					"game-ring.js"
@@ -161,6 +164,7 @@ const globalFiles=[
 					"restroom.js",
 					"selection.js",
 					"sound-room.js",
+					"start-screen.js",
 					"template.js",
 					"time-room.js",
 					"tv-room.js"

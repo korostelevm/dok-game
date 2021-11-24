@@ -371,6 +371,34 @@ class Engine {
 		this.chrono.tick("engine started");
 	}
 
+	async preloadAssets(onProgress) {
+		return new Promise((resolve) => {
+			globalFiles.forEach(({assets}) => {
+				if (assets) {
+					let totalCount = 0;
+					let count = 0;
+					assets.forEach(image => {
+						const [ name, extension ] = image.split(".");
+						if (extension !== "png" && extension !== "jpg") {
+							return;
+						}
+						totalCount++;
+						this.imageLoader.loadImage(`assets/${image}`)
+							.then(img => {
+								count++;
+								if (onProgress) {
+									onProgress(count, totalCount);
+									if (count === totalCount) {
+										resolve(totalCount);
+									}
+								}
+							});
+					});
+				}
+			});
+		});
+	}
+
 	async setupGameName(globalFiles) {
 		this.classToGame = {};
 		globalFiles.forEach(({games}) => {
