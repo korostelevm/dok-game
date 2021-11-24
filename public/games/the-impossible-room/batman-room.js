@@ -458,6 +458,10 @@ class BatmanRoom extends GameCore {
 	nextLevelLeft() {
 	}
 
+	butlerKeepStill() {
+		return true;
+	}
+
 	nextLevelRight() {
 		getMedal("Batman", this.onUnlockMedal);
 		this.engine.setGame(new ComputerRoom());
