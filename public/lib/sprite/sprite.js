@@ -141,7 +141,7 @@ class Sprite {
 	changeAnimation(anim, time, updateTime) {
 		if (this.anim !== anim) {
 			if (!anim) {
-				console.warn("anim is null.");
+//				console.warn("anim is null.");
 				return false;
 			}
 			this.anim = anim;
