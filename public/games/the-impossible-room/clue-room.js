@@ -244,22 +244,22 @@ class ClueRoom extends GameCore {
 				{ name: "look", condition: hand => !hand.properties.received,
 					message: "It's an open hand, waiting to receive something.",
 				},
+				{
+					name: "browse",
+					action: hand => {
+						this.engine.changeCursor("wait").then(() => {
+							openFileDialog(e => {
+								this.handOverFile(e.currentTarget.files[0]?.name);
+								this.engine.changeCursor(null);
+							});
+						});
+					},
+				},
 				{ name: "deposit", condition: hand => this.selectedItem === "file" && !hand.properties.received,
-					message: `Looks like the hand accepted it.`,
 					item: ["file"],
 					command: (item, target) => `deposit ${typeof(item.name)==="function"?item.name(item):item.name} on ${target.name}.`,
 					action: hand => {
-						if (this.file.properties.name.toLowerCase().indexOf("clue") >= 0) {
-							this.audio.dud.play();
-							hand.setProperty("received", this.engine.lastTime);
-							this.removeFromInventory("file");
-							setTimeout(() => {
-								this.showBubble(hand.pendingMessage);
-								hand.pendingMessage = null;
-							}, 500);
-						} else {
-							this.showBubble("The hand rejected it. Perhaps it's not the right clue.");
-						}
+						this.handOverFile(this.file.properties.name);
 					},
 				},
 			],
@@ -274,6 +274,21 @@ class ClueRoom extends GameCore {
 		});
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
+	}
+
+	handOverFile(file) {
+		const hand = this.hand;
+		if (file && file.split(".")[0].toLowerCase().indexOf("clue") >= 0) {
+			this.audio.dud.play();
+			hand.setProperty("received", this.engine.lastTime);
+			this.removeFromInventory("file");
+			setTimeout(() => {
+				this.showBubble(`Looks like the hand accepted it.`);
+			}, 500);
+		} else {
+			this.showBubble("The hand rejected it. Perhaps it's not the right clue.");
+		}
+
 	}
 
 	isRoomSolved() {
@@ -376,4 +391,24 @@ class ClueRoom extends GameCore {
 		}
 		this.engine.setGame(new DesertRoom());
 	}
+}
+
+function openFileDialog (callback) {  // this function must be called from  a user
+                                              // activation event (ie an onclick event)
+    
+    // Create an input element
+    const inputElement = document.createElement("input");
+
+    // Set its type to file
+    inputElement.type = "file";
+
+    // Set accept to the file types you want the user to select. 
+    // Include both the file extension and the mime type
+    inputElement.accept = "*.*";
+
+    // set onchange event to call callback when user has selected file
+    inputElement.addEventListener("change", callback)
+    
+    // dispatch a click event to open the file dialog
+    inputElement.dispatchEvent(new MouseEvent("click")); 
 }
