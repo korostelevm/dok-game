@@ -256,9 +256,6 @@ class Mall extends GameCore {
 							this.fadeStart = this.engine.lastTime;
 							document.getElementById("thank-you").style.display = "";
 							this.monkor.setProperty("paused", false);
-							setTimeout(() => {
-								setGame(new StartScreen());
-							}, 10000);
 						}, 3000);
 					},
 				},

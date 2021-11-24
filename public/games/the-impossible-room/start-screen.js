@@ -27,16 +27,12 @@ class StartScreen extends GameBase {
 			size: [800, 400],
 		});
 
-		await this.engine.changeCursor("wait");
-		this.wait = true;
-
 		this.engine.preloadAssets((count, total) => {
 			this.backwall.changeOpacity((count / total) * .5, this.engine.lastTime); 			
 		}).then(totalCount => {
 			this.backwall.changeAnimation(this.atlas.start_screen, this.engine.lastTime);
 			this.backwall.changeOpacity(1, this.engine.lastTime); 
 			this.engine.changeCursor(null);
-			this.wait = false;
 		});
 	}
 
