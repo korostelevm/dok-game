@@ -405,13 +405,27 @@ class TimeRoom extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
-		this.cancel_button = this.spriteFactory.create({
-			anim: this.atlas.cancel_button,
-			size: [800, 400],
-		});
 		this.spriteFactory.create({
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
+		});
+		this.cancel_button = this.spriteFactory.create({
+			name: "Cancel Button",
+			anim: this.atlas.cancel_button,
+			size: [800, 400],
+		}, {
+			reachable: true,
+			actions: [
+				{
+					name: "look", message: "It's a button that says STOP on it.",
+				},
+				{ name: "push",
+					action: cancel_button => {
+						this.audio.beep.play();
+						this.redButton.setProperty("pushed", 0);
+					},
+				},
+			],
 		});
 	}
 
