@@ -78,6 +78,36 @@ class Mall extends GameCore {
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
 			}),
+			itchio: await engine.addTexture({
+				url: "assets/logos.png",
+				collision_url: "assets/logos.png",
+				cols: 2, rows: 3,
+				range: [4],
+			}),
+			ng: await engine.addTexture({
+				url: "assets/logos.png",
+				collision_url: "assets/logos.png",
+				cols: 2, rows: 3,
+				range: [0],
+			}),
+			twitter: await engine.addTexture({
+				url: "assets/logos.png",
+				collision_url: "assets/logos.png",
+				cols: 2, rows: 3,
+				range: [1],
+			}),
+			youtube: await engine.addTexture({
+				url: "assets/logos.png",
+				collision_url: "assets/logos.png",
+				cols: 2, rows: 3,
+				range: [2],
+			}),
+			github: await engine.addTexture({
+				url: "assets/logos.png",
+				collision_url: "assets/logos.png",
+				cols: 2, rows: 3,
+				range: [3],
+			}),
 		};
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
@@ -103,6 +133,7 @@ class Mall extends GameCore {
 			hotspot: [64,128],
 			anim: this.atlas.person3_still,
 		});
+		this.removeFromInventory("note");
 	}
 
 	refreshPerson2(time) {
@@ -143,6 +174,75 @@ class Mall extends GameCore {
 			opacity: 0,
 		});
 
+		this.ng = this.spriteFactory.create({
+			x: 100, y: 350,
+			size: [64, 64],
+			hotspot: [32,32],
+			anim: this.atlas.ng,
+//			opacity: 0,
+		}, {
+			reachable: true,
+			onMouseDown: () => {
+				window.open("https://jacklehamster.newgrounds.com", '_blank');
+			},
+		});
+		this.itchio = this.spriteFactory.create({
+			x: 700, y: 350,
+			size: [64, 64],
+			hotspot: [32,32],
+			anim: this.atlas.itchio,
+//			opacity: 0,
+		}, {
+			reachable: true,
+			onMouseDown: () => {
+				window.open("https://jacklehamster.itch.io", '_blank');
+			},
+		});
+		//https://www.flaticon.com/free-icon/twitter_124021
+		this.twitter = this.spriteFactory.create({
+			x: 250, y: 350,
+			size: [64, 64],
+			hotspot: [32,32],
+			anim: this.atlas.twitter,
+//			opacity: 0,
+		}, {
+			reachable: true,
+			onMouseDown: () => {
+				window.open("https://twitter.com/jacklehamster", '_blank');
+			},
+		});
+		this.youtube = this.spriteFactory.create({
+			x: 550, y: 350,
+			size: [64, 64],
+			hotspot: [32,32],
+			anim: this.atlas.youtube,
+//			opacity: 0,
+		}, {
+			reachable: true,
+			onMouseDown: () => {
+				window.open("https://www.youtube.com/user/vincentlequang2", '_blank');
+			},
+		});
+		this.github = this.spriteFactory.create({
+			x: 400, y: 350,
+			size: [64, 64],
+			hotspot: [32,32],
+			anim: this.atlas.github,
+//			opacity: 0,
+		}, {
+			reachable: true,
+			onMouseDown: () => {
+				window.open("https://github.com/jacklehamster", '_blank');
+			},
+		});
+		this.socialMediaButtons = [
+			this.ng, this.itchio, this.youtube, this.twitter, this.github,
+		];
+		this.socialMediaButtons.forEach(button => button.changeOpacity(0, this.engine.lastTime));
+
+
+
+//		https://github.com/jacklehamster
 	}
 
 	refresh(time, dt) {
@@ -175,7 +275,7 @@ class Mall extends GameCore {
 		this.setSFX(true, true);
 		const audio = document.getElementById("audio");
 		audio.currentTime = 0;
-		this.setAudio(audio, true, .1, true);
+		this.setAudio(audio, true, .15, true);
 
 		const { gender } = this.data;
 		const genderToVoice = {
@@ -256,6 +356,9 @@ class Mall extends GameCore {
 							this.fadeStart = this.engine.lastTime;
 							document.getElementById("thank-you").style.display = "";
 							this.monkor.setProperty("paused", false);
+							setTimeout(() => {
+								this.socialMediaButtons.forEach(button => button.changeOpacity(1, this.engine.lastTime));
+							}, 10000);
 						}, 3000);
 					},
 				},

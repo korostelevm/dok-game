@@ -21,6 +21,14 @@ class Menu extends GameBase {
 				url: "assets/about.png",
 				collision_url: "assets/about.png",
 			}),
+			aboutPage2: await engine.addTexture({
+				url: "assets/about-2.png",
+				collision_url: "assets/about-2.png",
+			}),
+			aboutPage3: await engine.addTexture({
+				url: "assets/about-3.png",
+				collision_url: "assets/about-3.png",
+			}),
 			mute: await engine.addTexture({
 				url: "assets/menu-select.png",
 				collision_url: "assets/menu-select.png",
@@ -85,10 +93,14 @@ class Menu extends GameBase {
 		}, {
 			onClick: () => {
 				this.aboutPage.changeOpacity(1, this.engine.lastTime);
+				this.aboutPage2.changeOpacity(1, this.engine.lastTime);
+				this.aboutPage3.changeOpacity(1, this.engine.lastTime);
 				if (!this.audio.paused) {
 					this.setAudio(audio, true, .15);					
 				}
 				this.aboutPage.disabled = false;
+				this.aboutPage2.disabled = false;
+				this.aboutPage3.disabled = false;
 			},
 		});
 		this.start = this.spriteFactory.create({
@@ -100,6 +112,34 @@ class Menu extends GameBase {
 				this.engine.setGame(new Entrance());			
 			},
 		});
+		this.aboutPage3 = this.spriteFactory.create({
+			anim: this.atlas.aboutPage3,
+			opacity: 0,
+			size: [800, 400],
+		}, {
+			disabled: true,
+			cursor: "url(assets/next-cursor.png), auto",
+			onClick: page => {
+				page.changeOpacity(0, this.engine.lastTime);
+				if (!this.audio.paused) {
+					this.setAudio(audio, true, .5);					
+				}
+				page.disabled = true;
+				getMedal("About Me", this.onUnlockMedal);
+			},
+		});			
+		this.aboutPage2 = this.spriteFactory.create({
+			anim: this.atlas.aboutPage2,
+			opacity: 0,
+			size: [800, 400],
+		}, {
+			disabled: true,
+			cursor: "url(assets/next-cursor.png), auto",
+			onClick: page => {
+				page.changeOpacity(0, this.engine.lastTime);
+				page.disabled = true;
+			},
+		});		
 		this.aboutPage = this.spriteFactory.create({
 			anim: this.atlas.aboutPage,
 			opacity: 0,
@@ -107,13 +147,9 @@ class Menu extends GameBase {
 		}, {
 			disabled: true,
 			cursor: "url(assets/next-cursor.png), auto",
-			onClick: () => {
-				this.aboutPage.changeOpacity(0, this.engine.lastTime);
-				if (!this.audio.paused) {
-					this.setAudio(audio, true, .5);					
-				}
-				this.aboutPage.disabled = true;
-				getMedal("About Me", this.onUnlockMedal);
+			onClick: page => {
+				page.changeOpacity(0, this.engine.lastTime);
+				page.disabled = true;
 			},
 		});
 	}
@@ -169,7 +205,7 @@ class Menu extends GameBase {
 				hovering.onMouseDown();
 			} 
 			if (e.type === "click" && hovering.onClick) {
-				hovering.onClick();
+				hovering.onClick(hovering);
 			}
 		}
 		this.customize.changeOpacity(hovering===this.customize?1:0, this.engine.lastTime);

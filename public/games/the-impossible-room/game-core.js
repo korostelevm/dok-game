@@ -1556,10 +1556,12 @@ class GameCore extends GameBase {
 					const command = this.monkor.pendingAction.command || hovering.defaultCommand || target.defaultCommand || this.defaultCommand;
 					this.addAction(hovering, this.monkor.pendingAction, true, command(target, hovering));
 				} else {
-					this.showingTarget.actions.forEach(action => {
-						const command = action.command || hovering && hovering.defaultCommand || target.defaultCommand;
-						this.addAction(target, action, action.default && hovering && hovering.self);//, command && hovering ? command(target, hovering) : null);
-					});
+					if (this.showingTarget.actions) {
+						this.showingTarget.actions.forEach(action => {
+							const command = action.command || hovering && hovering.defaultCommand || target.defaultCommand;
+							this.addAction(target, action, action.default && hovering && hovering.self);//, command && hovering ? command(target, hovering) : null);
+						});
+					}
 
 					if (hovering) {
 						this.checkActionsWithItem(hovering, target);
