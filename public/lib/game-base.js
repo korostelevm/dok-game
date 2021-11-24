@@ -46,6 +46,7 @@ class GameBase {
 		}
 		this.spriteFactory.postCreate();
 		this.engine.enableSidebar(true);
+		await this.engine.changeCursor(null);
 	}
 
 	get sceneName() {

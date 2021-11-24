@@ -255,6 +255,10 @@ class Mall extends GameCore {
 							this.monkor.goal.x = 1000;
 							this.fadeStart = this.engine.lastTime;
 							document.getElementById("thank-you").style.display = "";
+							this.monkor.setProperty("paused", false);
+							setTimeout(() => {
+								setGame(new StartScreen());
+							}, 10000);
 						}, 3000);
 					},
 				},
@@ -285,6 +289,11 @@ class Mall extends GameCore {
 			}
 		}, voice, person);
 
+	}
+
+	onExit(engine) {
+		super.onExit(engine);
+		document.getElementById("thank-you").style.display = "none";		
 	}
 
 	openLeft() {

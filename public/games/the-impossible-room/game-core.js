@@ -1315,8 +1315,9 @@ class GameCore extends GameBase {
 		}
 		if (!this.monkor || this.monkor.properties.paused
 			|| this.monkor.dead || this.mouse.alive
-			|| this.monkor.anim === this.atlas.monkor_talk
-			|| this.monkor.anim === this.atlas.monkor_talk_2) {
+			// || this.monkor.anim === this.atlas.monkor_talk
+			// || this.monkor.anim === this.atlas.monkor_talk_2
+			) {
 			return false;
 		}
 		return true;
@@ -1331,6 +1332,11 @@ class GameCore extends GameBase {
 			return;		
 		}
 		if (!this.active()) {
+			const cursor = "wait";
+			if (this.cursor !== cursor) {
+				this.cursor = cursor;
+				this.engine.changeCursor(cursor);
+			}
 			return;
 		}
 		if (e.type === "click") {
@@ -1364,7 +1370,7 @@ class GameCore extends GameBase {
 		}
 
 		const { engine } = this;
-		const { canvas, lastTime, overlay } = engine;
+		const { canvas, lastTime } = engine;
 		const { pageX, pageY, buttons } = e;
 		const rect = canvas.getBoundingClientRect();
 
@@ -1466,7 +1472,7 @@ class GameCore extends GameBase {
 		const cursor = !this.selectedItem && hovering ? (hovering.cursor || this.getMouseCursor()) : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
-			overlay.style.cursor = cursor;
+			this.engine.changeCursor(cursor);
 		}
 
 		if (this.selectedItem && e.type === "mousedown") {

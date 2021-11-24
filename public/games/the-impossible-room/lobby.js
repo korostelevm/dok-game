@@ -180,7 +180,7 @@ class Lobby extends GameCore {
 							},
 							{
 								topic: "impossible",
-								message: "You really want to enter the impossible room. You know you can't get out, right?",
+								message: "You really want to enter the impossible room. You know you cannot get out, right?",
 								voiceName: "Ralph",
 								onStart: dick => dick.changeAnimation(this.atlas.lobby_dude_talking, engine.lastTime),
 								onEnd: dick => dick.changeAnimation(this.atlas.lobby_dude, engine.lastTime),

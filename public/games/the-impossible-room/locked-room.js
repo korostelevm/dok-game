@@ -419,9 +419,9 @@ class LockedRoom extends GameCore {
 									],
 								},
 								{
-									message: `Ok ${Messire}, I will let you out, just this once time.`,
+									message: `Ok ${Messire}, I will let you out, just this one time.`,
 									voiceName: "Thomas",
-									secondsAfterEnd: 1,
+									secondsAfterEnd: 2,
 									onStart: butler => {
 										butler.talking = engine.lastTime;
 									},

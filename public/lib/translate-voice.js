@@ -198,6 +198,7 @@ const PHONEME = {
 		"faster": "fasteur",
 		"than": "dan",
 		"that.": "date.",
+		"opened": "opeunde",
 	},
 	"Fred": {
 		"Bon": "Bonnn",

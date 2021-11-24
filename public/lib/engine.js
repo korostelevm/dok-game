@@ -188,9 +188,11 @@ class Engine {
 		sidebar.innerText = "";
 		let foundSelected = false;
 		let doHideSidebar = false;
+		const allRows = [];
 		this.sidebars.forEach(({ game, name, disabled, hideSidebar, onClick }, index) => {
 			const classObj = eval(game);
 			const row = sidebar.appendChild(document.createElement("div"));
+			allRows.push(row);
 			row.classList.add("sidebar-room");
 			row.innerText = `${name}${joker === game ? " 🤪" : ""}`;
 			if (!this.roomUnlocked(game)) {
@@ -203,7 +205,14 @@ class Engine {
 						if (onClick) {
 							onClick(this);
 						} else {
-							this.setGame(new classObj());
+							allRows.forEach(row => {
+								row.classList.remove("selected");
+								row.classList.add("wait");
+							});
+							row.classList.add("selected");
+							this.setGame(new classObj()).then(() => {
+								allRows.forEach(row => row.classList.remove("wait"));
+							});
 						}
 					});
 				}
@@ -425,7 +434,18 @@ class Engine {
 		// console.log(globalFiles);
 	}
 
-	async setGame(game) {
+	async changeCursor(cursor) {
+		if (this.overlay && this.overlay.style.cursor !== cursor) {
+			this.chrono.tick("cursor: " + cursor);
+			this.overlay.style.cursor = cursor;
+			await this.wait(500);
+		}
+	}
+
+	async setGame(game, skipCursor) {
+		if (!skipCursor) {
+			await this.changeCursor("wait");
+		}
 		this.resetScene();
 
 		this.game = game;
@@ -434,10 +454,20 @@ class Engine {
 		}
 	}
 
+	async wait(ms) {
+		return new Promise(resolve => {
+			setTimeout(() => {
+				resolve();
+			}, ms);
+		});
+	}
+
 	async initGame(game) {
+		game.engine = this;
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
 		this.chrono.tick("game init " + game.sceneName);
+
 		await game.init(this, this.classToGame[game.sceneName]);
 
 		await game.postInit();
@@ -662,10 +692,10 @@ class Engine {
 			}
 		}
 
-		const TempScene = this.SwapScene || GameTitle;
+		const TempScene = this.SwapScene || StartScreen;
 		this.SwapScene = engine.game.constructor;
-		this.setGame(new TempScene())
-
+		this.setGame(new TempScene(), true).then(() => {
+		});
 		if (inception) {
 			this.canvas.parentElement.classList.add("inception");
 		} else {
