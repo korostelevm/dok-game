@@ -59,6 +59,7 @@ class JokerRoom extends GameCore {
 			actions: [
 				{ name: "talk",
 					action: butler => {
+						const voiceName = "Thomas";
 						this.monkor.goal.x = this.butler.x < this.monkor.x ? this.butler.x - 20 : this.butler.x + 20;
 						this.startDialog(butler, [
 							{
