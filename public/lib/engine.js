@@ -667,13 +667,13 @@ class Engine {
 			voice = this.bestVoice(this.voices, voiceNames[0]);
 			replacedVoice = true;
 		}
-		if (this.defaultVoiceReplacement && mainCharacter) {
+		if (this.defaultVoiceReplacement && this.defaultVoiceReplacement !== "default" && mainCharacter) {
 			voices.forEach(theVoice => {
 				if (theVoice.name === this.defaultVoiceReplacement && theVoice !== voice) {
 					voice = theVoice;
-					replacedVoice = true;
 				}
 			});
+			replacedVoice = true;
 		}
 		if (!voice) {
 			return null;
