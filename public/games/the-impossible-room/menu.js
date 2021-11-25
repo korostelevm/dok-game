@@ -152,6 +152,7 @@ class Menu extends GameBase {
 				page.disabled = true;
 			},
 		});
+		engine.postScore(0);
 	}
 
 	setAudio(audio, value, volume, ignore) {

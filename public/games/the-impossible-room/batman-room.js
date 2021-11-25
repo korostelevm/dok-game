@@ -463,7 +463,8 @@ class BatmanRoom extends GameCore {
 	}
 
 	nextLevelRight() {
-		getMedal("Batman", this.onUnlockMedal);
+		this.achieve("Batman");
+		// getMedal("Batman", this.onUnlockMedal);
 		this.engine.setGame(new ComputerRoom());
 	}
 }

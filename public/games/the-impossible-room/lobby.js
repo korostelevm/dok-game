@@ -739,6 +739,7 @@ class Lobby extends GameCore {
 
 	nextLevelRight() {
 		this.engine.setGame(new LockedRoom());
-		getMedal("The Lobby", this.onUnlockMedal);
+		this.achieve("The Lobby");
+		// getMedal("The Lobby", this.onUnlockMedal);
 	}
 }

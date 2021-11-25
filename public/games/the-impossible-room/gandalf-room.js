@@ -292,7 +292,8 @@ class GandalfRoom extends GameCore {
 					name: "pass",
 					action: exit => {
 						if (!this.monkor.properties.joker) {
-							getMedal("Gandalf", this.onUnlockMedal);
+							this.achieve("Gandalf");
+							// getMedal("Gandalf", this.onUnlockMedal);
 						}
 						
 						this.monkor.setProperty("paused", engine.lastTime);

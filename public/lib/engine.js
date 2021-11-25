@@ -159,6 +159,7 @@ class Engine {
 			},
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
+		this.score = localStorage.getItem("bestScore") || 0;
 	}
 
 	countUnlocked() {
@@ -169,6 +170,15 @@ class Engine {
 			}
 		});
 		return count;
+	}
+
+	getLevelFor(name) {
+		for (let i = 0; i < this.sidebars.length; i++) {
+			if (this.sidebars[i].game === name) {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	roomUnlocked(game) {
@@ -195,7 +205,8 @@ class Engine {
 			const row = sidebar.appendChild(document.createElement("div"));
 			allRows.push(row);
 			row.classList.add("sidebar-room");
-			row.innerText = `${name}${joker === game ? " 🤪" : ""}`;
+			const icon = joker === game ? " 🤪" : index && index <= this.score ? " ✔️" : "";
+			row.innerText = `${name}${icon}`;
 			if (!this.roomUnlocked(game)) {
 				row.classList.add("locked");
 			} else if (selected !== game && disabled && disabled(this)) {
@@ -822,6 +833,23 @@ class Engine {
 				document.getElementById("info-box").value = newFPS;
 			}
 		}
+	}
+
+	postScore(score, callback) {
+		if (score <= this.score) {
+			return;
+		}
+		postScore(score, result => {
+			if (result.success) {
+				this.score = result.score.value;
+				localStorage.setItem("bestScore", this.score);
+			} else {
+				console.log(result?.error?.message);
+			}
+			if (callback) {
+				callback(score);
+			}
+		});;
 	}
 }
 

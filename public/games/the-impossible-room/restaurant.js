@@ -1399,7 +1399,8 @@ class Restaurant extends GameCore {
 
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
-			getMedal("The Restaurant", this.onUnlockMedal);
+			this.achieve("The Restaurant");
+			// getMedal("The Restaurant", this.onUnlockMedal);
 		}
 		this.engine.setGame(new SoundRoom());
 	}

@@ -387,7 +387,8 @@ class ClueRoom extends GameCore {
 
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
-			getMedal("The Room with No Clue", this.onUnlockMedal);
+			this.achieve("The Room with No Clue");
+			// getMedal("The Room with No Clue", this.onUnlockMedal);
 		}
 		this.engine.setGame(new DesertRoom());
 	}

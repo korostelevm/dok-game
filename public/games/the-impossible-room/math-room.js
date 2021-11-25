@@ -362,7 +362,8 @@ class MathRoom extends GameCore {
 
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
-			getMedal("The Math Room", this.onUnlockMedal);
+			this.achieve("The Math Room");
+			// getMedal("The Math Room", this.onUnlockMedal);
 		}
 		this.engine.setGame(new Restaurant());
 	}

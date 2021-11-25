@@ -250,7 +250,8 @@ class JokerRoom extends GameCore {
 	}
 
 	nextLevelRight() {
-		getMedal("The Joker", this.onUnlockMedal);
+		this.achieve("The Joker");
+		// getMedal("The Joker", this.onUnlockMedal);
 		this.engine.setGame(new TimeRoom());
 	}
 }

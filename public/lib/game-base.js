@@ -22,6 +22,14 @@ class GameBase {
 		showUnlockedMedal(medal);
 	}
 
+	achieve(achievement, nameOverride) {
+		getMedal(achievement, this.onUnlockMedal);
+		const gameName = nameOverride || this.constructor.name;
+		const level = engine.getLevelFor(gameName);
+		console.log("Passed:", level, achievement);
+		this.engine.postScore(level);
+	}
+
 	getMouseCursor() {
 		return "url(assets/pointer-cursor.png), auto";
 	}

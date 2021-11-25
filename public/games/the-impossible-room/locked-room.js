@@ -136,8 +136,15 @@ class LockedRoom extends GameCore {
 							this.monkor.goal.x = 200;
 							this.butler.talking = engine.lastTime;
 							this.showBubble(`I'm sorry ${messire}, but you must escape through the other door.`, () => {
-								this.monkor.setProperty("paused", null);
 								this.butler.talking = 0;
+								setTimeout(() => {
+								this.monkor.goal.x = 300;
+									this.monkor.onStill = () => {
+										this.showBubble(`There should be a way to keep him busy...`, () => {
+											this.monkor.setProperty("paused", null);
+										});
+									};
+								}, 2000);
 							}, "Thomas", this.butler);
 						}
 					},
@@ -947,7 +954,8 @@ class LockedRoom extends GameCore {
 	}
 
 	nextLevelRight() {
-		getMedal("The First Room", this.onUnlockMedal);
+		this.achieve("The First Room");
+		// getMedal("The First Room", this.onUnlockMedal);
 		this.engine.setGame(new JokerRoom());
 	}
 }

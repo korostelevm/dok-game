@@ -24,6 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
         //  unlockMedal(ngio, action.medal, medal => console.log(medal.name, 'unlocked'));
         // });
         fetchMedals(ngio, () => {});
+        fetchScoreboards(ngio, () => {});
     }
 
     function onLoginFailed() {
@@ -124,6 +125,35 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     } 
 
+    let scoreboards = null;
+    let scoreBoardsCallback = null;
+    function fetchScoreboards(ngio, callback) {
+        if (scoreboards) {
+            callback(scoreboards);
+        } else if (scoreBoardsCallback) {
+            scoreBoardsCallback.push(callback);
+        } else {
+            scoreBoardsCallback = [callback];
+            ngio.callComponent("ScoreBoard.getBoards", {}, result => {
+                if (result.success) {
+                    scoreboards = result.scoreboards;
+                    scoreboards.forEach(scoreboard => console.log(scoreboard.name, scoreboard.id));
+                    scoreBoardsCallback.forEach(callback => {
+                        callback(scoreboards);
+                    });
+                    scoreBoardsCallback = null;
+                }
+            });
+        }
+    }
+
+    function postNGScore(ngio, value, callback) {
+        fetchScoreboards(ngio, scoreboards => {
+            const scoreboard = scoreboards[0];
+            ngio.callComponent('ScoreBoard.postScore', {id:scoreboard.id, value}, callback);
+        });
+    }
+
     function unlockMedal(ngio, medal_name, callback) {
         console.log("unlocking", medal_name, "for", ngio.user);
         /* If there is no user attached to our ngio object, it means the user isn't logged in and we can't unlock anything */
@@ -159,4 +189,22 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
     window.getMedal = getMedal;
+
+    function postScore(score, callback) {
+        postNGScore(ngio, score, result => {
+            console.log("post score result: ", result);
+            if (callback) {
+                callback(result);
+            }
+        });
+    }
+    window.postScore = postScore;
+
+    function getScore(callback) {
+        fetchScoreboards(ngio, scoreboards => {
+            const scoreboard = scoreboards[0];
+            console.log(scoreboard);
+        });
+    }
+    window.getScore = getScore;
 });
