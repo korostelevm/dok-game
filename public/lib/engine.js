@@ -675,6 +675,7 @@ class Engine {
 			});
 			replacedVoice = true;
 		}
+//		console.log(this.defaultVoiceReplacement, replacedVoice);
 		if (!voice) {
 			return null;
 		}
