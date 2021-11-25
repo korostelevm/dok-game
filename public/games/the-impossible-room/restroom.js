@@ -109,6 +109,11 @@ class Restroom extends GameCore {
 					frameRate: 8,
 					range: [5],
 				}),
+			no_smoking: await engine.addTexture(
+				{
+					url: "assets/no-smoking.png",
+					collision_url: "assets/no-smoking.png",
+				}),
 		};
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
@@ -362,6 +367,21 @@ class Restroom extends GameCore {
 				8: 5,
 			},
 		});
+
+		this.no_smoking = this.spriteFactory.create({
+			name: "no smoking sign",
+			anim: this.atlas.no_smoking,
+			size: [50, 75],
+			x: 50, y: 150,
+		}, {
+			actions: [
+				{ name: "look",
+					message: () => `It's a no smoking sign. It's ok, ${I} already disposed of my cigarette.`,
+					 lookup: 500,
+				},				
+			],
+		});
+
 		this.sceneData.monkor = this.sceneData.monkor || { x: 50, y: 300 };
 	}
 

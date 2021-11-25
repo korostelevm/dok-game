@@ -65,6 +65,7 @@ const globalFiles=[
 			"mouse.png",
 			"next-button.png",
 			"next-cursor.png",
+			"no-smoking.png",
 			"nuna-overlay.png",
 			"nuna-shake.png",
 			"nuna-shit.png",
