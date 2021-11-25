@@ -509,7 +509,9 @@ class ImpossibleRoom extends GameCore {
 					this[`${wrongDoor}_monster_front`].changeOpacity(0, this.engine.lastTime);
 					this[`${wrongDoor}_door`].changeAnimation(this.atlas.impossible_room_door, this.engine.lastTime);
 					this.audio.eat.play();
-					setTimeout(() => this.gameOver(), 5000);
+					if (!this.engine.inception) {
+						setTimeout(() => this.gameOver(), 5000);
+					}
 				}, 2000);
 			}, 1500);
 		} else {
@@ -707,17 +709,14 @@ class ImpossibleRoom extends GameCore {
 								topic: "cut_to_the_chase",
 							},
 							{
-								condition: () => !this?.swapData?.doorChosen,
 								response: `How amazing!`,
 								topic: "continue",
 							},
 							{
-								condition: () => !this?.swapData?.doorChosen,
 								response: `How surprising!`,
 								topic: "continue",
 							},
 							{
-								condition: () => !this?.swapData?.doorChosen,
 								response: `How interesting!`,
 								topic: "continue",
 							},
