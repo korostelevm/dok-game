@@ -158,6 +158,7 @@ class Engine {
 				},
 			},
 		];
+		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
 	}
 
 	countUnlocked() {
@@ -641,7 +642,7 @@ class Engine {
 		return this.voiceReplacements[voiceName] = voices[Math.floor(Math.random() * voices.length)];
 	}
 
-	getUterrance(msg, voiceName) {
+	getUterrance(msg, voiceName, mainCharacter) {
 		if (!window.speechSynthesis || this.muteVoice) {
 			return null;
 		}
@@ -661,8 +662,18 @@ class Engine {
 				lowestIndex = index;
 			}
 		}
+		let replacedVoice = false;
 		if (!voice) {
 			voice = this.bestVoice(this.voices, voiceNames[0]);
+			replacedVoice = true;
+		}
+		if (this.defaultVoiceReplacement && mainCharacter) {
+			voices.forEach(theVoice => {
+				if (theVoice.name === this.defaultVoiceReplacement) {
+					voice = theVoice;
+				}
+			});
+			replacedVoice = true;
 		}
 		if (!voice) {
 			return null;
@@ -678,7 +689,13 @@ class Engine {
 		}
 		const utterance = this.utterrances[voice.name];
 		utterance.text = getPhoneme(msg, voice.name);
+		utterance.replacedVoice = replacedVoice;
 		return utterance;
+	}
+
+	swapVoice(voice) {
+		this.defaultVoiceReplacement = voice;
+		localStorage.setItem("defaultVoiceReplacement", voice);
 	}
 
 	setInception(inception, extraData) {

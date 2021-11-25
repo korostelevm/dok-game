@@ -1681,16 +1681,36 @@ class GameCore extends GameBase {
 	}
 
 	showVoices() {
-		const voices = window.speechSynthesis.getVoices().map(voice=>voice.name);
-		console.log(voices);
+		if (!this.engine.showedVoices) {
+			const voices = window.speechSynthesis.getVoices().map(voice=>voice.name);
+			if (!voices || !voices.length) {
+				return;
+			}
+			console.log(voices);
+			this.engine.showedVoices = true;
+			const voiceDrop = document.getElementById("voice-drop");
+			voiceDrop.addEventListener("change",e => {
+				console.log(e.currentTarget.value);
+				engine.swapVoice(e.currentTarget.value);
+			});
+			voices.forEach(voice => {
+				const option = voiceDrop.appendChild(document.createElement("option"));
+				option.setAttribute("value", voice);
+				option.textContent = voice;
+			});
+			if (engine.defaultVoiceReplacement) {
+				voiceDrop.value = engine.defaultVoiceReplacement;
+			}
+		}
 	}
 
 	startSpeechSynthesis(msg, voiceName, callback, sprite, onStart, ignoreSpeechBoundary, secondsAfterEnd) {
 		const { engine } = this;
 		const { lastTime } = engine;
-		const utterance = engine.getUterrance(msg, voiceName);
 		sprite = sprite || this.monkor;
-		if (ignoreSpeechBoundary) {
+		const utterance = engine.getUterrance(msg, voiceName, sprite === this.monkor);
+		const reallyIgnoreSpeechBoundary = ignoreSpeechBoundary || utterance && utterance.replacedVoice;
+		if (reallyIgnoreSpeechBoundary) {
 //			console.log("ignore speech boundary.");
 		} else if (utterance && utterance.voice.name === voiceName) {
 			sprite.speechPause++;
@@ -1716,7 +1736,7 @@ class GameCore extends GameBase {
 				sprite.onEndSpeech = calllbackCaller;
 			};
 			utterance.onboundary = e => {
-				if (!ignoreSpeechBoundary && !sprite.speechHasBoundary) {
+				if (!reallyIgnoreSpeechBoundary && !sprite.speechHasBoundary) {
 					sprite.speechHasBoundary = true;
 				}
 				this.unblockText(sprite);
