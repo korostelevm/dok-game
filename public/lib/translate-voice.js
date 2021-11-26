@@ -241,6 +241,7 @@ const PHONEME = {
 		"run": "reune",
 		"already!": "olrédy!",
 		"Damn": "Dèm",
+		"key.": "ki.",
 	},
 	"Fred": {
 		"Bon": "Bonnn",

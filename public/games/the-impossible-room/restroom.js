@@ -377,7 +377,7 @@ class Restroom extends GameCore {
 		}, {
 			actions: [
 				{ name: "look",
-					message: () => `It's a no smoking sign. It's ok, ${I} already disposed of my cigarette.`,
+					message: () => `It's a no smoking sign. It's ok, ${I} will dispose of my cigarette.`,
 					 lookup: 500,
 				},				
 			],

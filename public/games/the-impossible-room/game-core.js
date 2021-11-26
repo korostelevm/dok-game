@@ -483,7 +483,7 @@ class GameCore extends GameBase {
 				actions: [
 					{ name: "look", message: () => "This is the entrance key. It has a distinct smell to it.",
 					},
-					{ name: "eat", condition: () => !this.entrance, message: () => `${I} swallowed the key. Tasted... ergh... very foul!...`, 
+					{ name: "eat", condition: () => !this.entrance, message: () => `${I} swallowed the key. Tasted like rotten eggs!...`, 
 						default: true,
 						action: key => {
 							this.removeFromInventory("key_turd");
@@ -653,7 +653,7 @@ class GameCore extends GameBase {
 									this.addToInventory("gum");
 									this.monkor.setProperty("paused", null);
 									delete this.monkor.chewing;
-									this.showBubble("It had no taste.");
+									this.showBubble("It tastes like a donkey's anus.");
 								}, 3000);
 							});
 							item.pendingMessage = null;
@@ -888,6 +888,7 @@ class GameCore extends GameBase {
 					name: "take", message: `Alright, ${Iam} taking you with ${me}.`,
 					condition: joker => joker.properties.canTake,
 					action: item => {
+						this.monkor.setProperty("paused", true);
 						this.showBubble(item.pendingMessage, () => {
 							setTimeout(() => {
 								item.setProperty("pickedUp", true);
@@ -896,6 +897,7 @@ class GameCore extends GameBase {
 								this.addToInventory("joker");
 								this.monkor.setProperty("joker", null);
 								this.audio.pickup.play();
+								this.monkor.setProperty("paused", false);
 							}, 500);
 						});
 						item.pendingMessage = null;
