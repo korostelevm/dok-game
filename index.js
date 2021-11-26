@@ -38,6 +38,11 @@ app.get('/', (req, res, next) => {
 
 		nw.build().then(function () {
 		   console.log('all done!');
+		   zipPublic("build/dok-game/linux32", "build/dok-game/linux32.zip")
+		   zipPublic("build/dok-game/linux64", "build/dok-game/linux64.zip")
+		   zipPublic("build/dok-game/osx64", "build/dok-game/mac-os.zip")
+		   zipPublic("build/dok-game/win32", "build/dok-game/win32.zip")
+		   zipPublic("build/dok-game/win64", "build/dok-game/win64.zip")
 		}).catch(function (error) {
 		    console.error(error);
 		});
