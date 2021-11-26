@@ -16,96 +16,13 @@ app.get('/', (req, res, next) => {
 	const queryObject = url.parse(req.url,true).query;
 	const isRelease = "release" in queryObject;
 
-	Promise.all([
-		fs.promises.readFile(`${__dirname}/public/index.html`),
-		generateData(),
-		listFiles(`${__dirname}/public`, "")
-			.then(data => fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${JSON.stringify(data,null,'\t')};`)),
-	]).then(([html]) => {
+	fs.promises.readFile(`${__dirname}/public/index.html`).then(html => {
 		res.write(html);
 		res.end();
-	}).then(() => zipPublic("public", "game.zip"))
-	.then(() => {
-		const NwBuilder = require('nw-builder');
-		const nw = new NwBuilder({
-		    files: './public/**/**', // use the glob format
-		    platforms: isRelease ? ['win', 'osx64', 'linux'] : [ 'osx64' ],
-		    flavor: "normal",
-//			    macIcns: "",
-		});
-
-		nw.on('log',  console.log);
-
-		nw.build().then(function () {
-		   console.log('all done!');
-		}).catch(function (error) {
-		    console.error(error);
-		});
-//			echo `sudo codesign --force --deep --verbose --sign "Vincent Le Quang" Eva.app`;
 	});
 });
 
 app.use(serve(`${__dirname}/public`));
-
-function tabToSpaces(string) {
-	return string.split("\t").join("    ");
-}
-
-function generateData() {
-	return fs.promises.readdir(`${__dirname}/data`)
-		.then(files => {
-			return Promise.all(files.map(filename => {
-				const {name, ext} = path.parse(filename);
-				return fs.promises.readFile(`${__dirname}/data/${filename}`, 'utf8').then(data => {
-					switch (ext) {
-						case ".json":
-							return [name, JSON.parse(data)];
-						case ".glsl":
-							return [name, tabToSpaces(data)];
-					}
-					return [name, null];
-				});
-			}));
-		})
-		.then(dataChunks => Object.fromEntries(dataChunks))
-		.then(data => fs.promises.writeFile(`${__dirname}/public/gen/data.js`, `const globalData=${JSON.stringify(data,null,'\t')};`));
-}
-
-function listFiles(root, path) {
-	return fs.promises.readdir(`${root}${path}`).then(files => {
-		return Promise.all(files.map(filename => {
-			if (fs.lstatSync(`${root}${path}/${filename}`).isDirectory()) {
-				return listFiles(root, `${path}/${filename}`).then(result => {
-					return {
-						[filename] : result,
-					};
-				});
-			} else {
-				return filename;
-			}
-
-			// return fs.lstatSync(`${root}${path}/${filename}`).isDirectory()
-			// 	? listFiles(root, `${path}/${filename}`)
-			// 	: `${path}/${filename}`;
-		}))
-	});
-}
-
-function zipPublic(source, out) {
-	const archive = archiver('zip', { zlib: { level: 9 }});
-	const stream = fs.createWriteStream(out);
-
-	return new Promise((resolve, reject) => {
-		archive
-		  .directory(source, false)
-		  .on('error', err => reject(err))
-		  .pipe(stream);
-
-		stream.on('close', () => resolve());
-		archive.finalize();
-	});
-}
-
 
 const server = app.listen(PORT, () => {
 	console.log('Server is running at %s', colors.green(server.address().port));
