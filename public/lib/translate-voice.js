@@ -242,6 +242,7 @@ const PHONEME = {
 		"already!": "olrédy!",
 		"Damn": "Dèm",
 		"key.": "ki.",
+		"being,": "bïïngue,",
 	},
 	"Fred": {
 		"Bon": "Bonnn",
