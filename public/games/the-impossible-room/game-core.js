@@ -1741,8 +1741,12 @@ class GameCore extends GameBase {
 				if (!reallyIgnoreSpeechBoundary && !sprite.speechHasBoundary) {
 					sprite.speechHasBoundary = true;
 				}
+				clearTimeout(timeout);
 				this.unblockText(sprite);
 			};
+			const timeout = setTimeout(() => {
+				this.unblockText(sprite);
+			}, 5000);
 		} else {
 			sprite.speechStarted = lastTime;
 			sprite.onEndSpeech = calllbackCaller;
