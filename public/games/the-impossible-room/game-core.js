@@ -1741,12 +1741,8 @@ class GameCore extends GameBase {
 				if (!reallyIgnoreSpeechBoundary && !sprite.speechHasBoundary) {
 					sprite.speechHasBoundary = true;
 				}
-				clearTimeout(timeout);
 				this.unblockText(sprite);
 			};
-			const timeout = setTimeout(() => {
-				this.unblockText(sprite);
-			}, 5000);
 		} else {
 			sprite.speechStarted = lastTime;
 			sprite.onEndSpeech = calllbackCaller;
@@ -1785,6 +1781,8 @@ class GameCore extends GameBase {
 
 		const { speech, speechStarted, lastCharacter } = sprite;
 		if (speech && speechStarted && (sprite.speechPause <= 0 || sprite.noVoice)) {
+			clearTimeout(sprite.timeout);
+			sprite.timeout = 0;
 			const textSpeed = (sprite.noVoice ? 50 : 20);
 			if (!lastCharacter || (time - lastCharacter) * Math.min(2, dt / 16) >= textSpeed) {
 				sprite.lastCharacter = time;
@@ -1805,6 +1803,12 @@ class GameCore extends GameBase {
 					sprite.finishedSpeech = time;
 				}
 			}
+		} else if (sprite.speechPause >= 1 && !sprite.timeout) {
+			sprite.timeout = setTimeout(() => {
+				sprite.speechHasBoundary = false;
+				sprite.speechPause = 0;
+				sprite.timeout = 0;
+			}, 1000);
 		}
 	}
 
