@@ -336,9 +336,11 @@ class ComputerRoom extends GameCore {
 		const { gender } = this.data;
 		const I = gender === "T" ? "We" : "I";
 		this.monkor.setProperty("paused", true);
-		this.showBubble(`This was a fun game! ${I} wish ${I} could give it a 5-star rating.`, () => {
-			this.monkor.setProperty("paused", false);
-		});			
+		if (!inception) {
+			this.showBubble(`This is a fun game! ${I} wish ${I} could give it a 5-star rating.`, () => {
+				this.monkor.setProperty("paused", false);
+			});
+		}
 	}
 
 	nextLevelRight() {
