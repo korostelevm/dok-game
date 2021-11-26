@@ -29,6 +29,25 @@ class Menu extends GameBase {
 				url: "assets/about-3.png",
 				collision_url: "assets/about-3.png",
 			}),
+			optionsPage: await engine.addTexture({
+				url: "assets/options.png",
+				collision_url: "assets/options.png",
+				texture_url: "assets/backwall.jpg",
+				texture_blend: "luminosity",
+				texture_alpha: .3,
+				cols: 1, rows: 3,
+				range: [0],
+			}),
+			option1: await engine.addTexture({
+				url: "assets/options.png",
+				cols: 1, rows: 3,
+				range: [1],
+			}),
+			option2: await engine.addTexture({
+				url: "assets/options.png",
+				cols: 1, rows: 3,
+				range: [2],
+			}),
 			mute: await engine.addTexture({
 				url: "assets/menu-select.png",
 				collision_url: "assets/menu-select.png",
@@ -58,6 +77,15 @@ class Menu extends GameBase {
 				collision_url: "assets/menu-select.png",
 				cols: 2, rows: 3,
 				range: [4],
+			}),
+			check: await engine.addTexture({
+				url: "assets/invitation-check.png",
+				collision_url: "assets/invitation-check-collision.png",
+				texture_url: "assets/skin-texture.jpg",
+				texture_blend: "source-atop",
+				texture_alpha: .9,
+				cols:1,rows:3,
+				range:[0],
 			}),
 		};
 
@@ -95,7 +123,8 @@ class Menu extends GameBase {
 				this.aboutPage.changeOpacity(1, this.engine.lastTime);
 				this.aboutPage2.changeOpacity(1, this.engine.lastTime);
 				this.aboutPage3.changeOpacity(1, this.engine.lastTime);
-				if (!this.audio.paused) {
+				const audio = document.getElementById("audio");
+				if (!audio.paused) {
 					this.setAudio(audio, true, .15);					
 				}
 				this.aboutPage.disabled = false;
@@ -112,6 +141,26 @@ class Menu extends GameBase {
 				this.engine.setGame(new Entrance());			
 			},
 		});
+		this.options = this.spriteFactory.create({
+			anim: this.atlas.start,
+			opacity: 0,
+			size: [800, 400],
+			x: -110,
+			y: -130,
+		}, { 
+			onClick: () => {
+				this.optionsPage.changeOpacity(1, this.engine.lastTime);
+				this.option1.changeOpacity(1, this.engine.lastTime);
+				this.option2.changeOpacity(1, this.engine.lastTime);
+				const audio = document.getElementById("audio");
+				if (!audio.paused) {
+					this.setAudio(audio, true, .15);					
+				}
+				this.optionsPage.disabled = false;
+				this.option1_check.setProperty("disabled", false);
+				this.option2_check.setProperty("disabled", false);
+			},
+		});
 		this.aboutPage3 = this.spriteFactory.create({
 			anim: this.atlas.aboutPage3,
 			opacity: 0,
@@ -121,7 +170,8 @@ class Menu extends GameBase {
 			cursor: "url(assets/next-cursor.png), auto",
 			onClick: page => {
 				page.changeOpacity(0, this.engine.lastTime);
-				if (!this.audio.paused) {
+				const audio = document.getElementById("audio");
+				if (!audio.paused) {
 					this.setAudio(audio, true, .5);					
 				}
 				page.disabled = true;
@@ -152,6 +202,108 @@ class Menu extends GameBase {
 				page.disabled = true;
 			},
 		});
+
+		this.optionsPage = this.spriteFactory.create({
+			anim: this.atlas.optionsPage,
+			opacity: 0,
+			size: [800, 400],
+		}, {
+			disabled: true,
+			cursor: "url(assets/next-cursor.png), auto",
+			onClick: page => {
+				page.changeOpacity(0, this.engine.lastTime);
+				page.disabled = true;
+				this.option1.changeOpacity(0, this.engine.lastTime);
+				this.option2.changeOpacity(0, this.engine.lastTime);
+				this.option1_check.setProperty("disabled", true);
+				this.option2_check.setProperty("disabled", true);
+
+				const audio = document.getElementById("audio");
+				if (!audio.paused) {
+					this.setAudio(audio, true, .5);					
+				}
+
+				const messages = [];
+				if (localStorage.getItem("extra_hints")) {
+					messages.push("The host will provide extra hints when asked.");
+				}
+				if (localStorage.getItem("alternate_voices")) {
+					messages.push("You can change the main player's default voice.");
+				}
+				if (messages.length) {
+					showNotice(messages.join("\n"), messages.length);
+				}
+			},
+		});
+		this.option1 = this.spriteFactory.create({
+			anim: this.atlas.option1,
+			opacity: 0,
+			size: [400, 200],
+		});
+		this.option2 = this.spriteFactory.create({
+			anim: this.atlas.option2,
+			opacity: 0,
+			y: 40,
+			size: [400, 200],
+		});
+		this.option1_check = this.spriteFactory.create({
+			anim: this.atlas.check,
+			x: -65, y: -115,
+			size: [275, 200],
+			opacity: 0,
+		}, {
+			disabled: true,
+			cursor: "url(assets/pointer-cursor.png), auto",
+			onClick: check => {
+				check.setProperty("checked", !check.properties.checked);
+			},
+			onChange: {
+				disabled: (check, disabled) => {
+					check.changeOpacity(check.properties.checked && !check.properties.disabled ? 1 : 0.01, this.engine.lastTime);
+					check.disabled = disabled;
+				},
+				checked: (check, checked) => {
+					check.changeOpacity(check.properties.checked && !check.properties.disabled ? 1 : 0.01, this.engine.lastTime);
+					if (checked) {
+						localStorage.setItem("extra_hints", true);
+					} else {
+						localStorage.removeItem("extra_hints");
+					}
+				},
+			},	
+		});
+		this.option1_check.setProperty("disabled", true);
+		this.option1_check.setProperty("checked", localStorage.getItem("extra_hints") || false);
+		this.option2_check = this.spriteFactory.create({
+			anim: this.atlas.check,
+			size: [275, 200],
+			x: -65, y: -115 + 40,
+			opacity: 0,
+		}, {
+			disabled: true,
+			cursor: "url(assets/pointer-cursor.png), auto",
+			onClick: check => {
+				check.setProperty("checked", !check.properties.checked);
+			},
+			onChange: {
+				disabled: (check, disabled) => {
+					check.changeOpacity(check.properties.checked && !check.properties.disabled ? 1 : 0.01, this.engine.lastTime);
+					check.disabled = disabled;
+				},
+				checked: (check, checked) => {
+					check.changeOpacity(check.properties.checked && !check.properties.disabled ? 1 : 0.01, this.engine.lastTime);
+					if (checked) {
+						localStorage.setItem("alternate_voices", true);
+					} else {
+						localStorage.removeItem("alternate_voices");
+					}
+					document.getElementById("voice-selector").style.display = checked ? "": "none";
+				},
+			},	
+		});
+		this.option2_check.setProperty("disabled", true);
+		this.option2_check.setProperty("checked", localStorage.getItem("alternate_voices") || false);
+
 		engine.postScore(0);
 	}
 
@@ -212,6 +364,7 @@ class Menu extends GameBase {
 		this.customize.changeOpacity(hovering===this.customize?1:0, this.engine.lastTime);
 		this.about.changeOpacity(hovering===this.about?1:0, this.engine.lastTime);
 		this.start.changeOpacity(hovering===this.start?1:0, this.engine.lastTime);
+		this.options.changeOpacity(hovering===this.options?1:0, this.engine.lastTime);
 
 		const cursor = !this.selectedItem && hovering ? ((hovering.opacity <= 0 ? null : hovering.cursor) || this.getMouseCursor()) : "";
 		if (this.cursor !== cursor) {

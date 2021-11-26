@@ -391,6 +391,13 @@ class GandalfRoom extends GameCore {
 		const my = gender === "T" ? "our" : "my";
 		const I = gender === "T" ? "We" : "I";
 
+		const moreHints = [
+			"",
+			`Gandalf does not just prevent anyone from passing, he lets no one pass.`,
+			`How can you pass, if no one can pass?`,
+			`Really, you are still stuck? Check the note inside your pocket.`,
+		];
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -417,8 +424,14 @@ class GandalfRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
@@ -451,7 +464,24 @@ class GandalfRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
 								exit: true,
 							},
 							{

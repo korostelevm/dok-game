@@ -299,6 +299,13 @@ class Restaurant extends GameCore {
 			],
 		});
 
+		const moreHints = [
+			"",
+			`Aside from you and me, who else could eat this burger?`,
+			`Look outside the box. Have you noticed something changing?`,
+			`Really, you are still stuck? Perhaps there's something outside the room that you can drag in.`,
+		];
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -331,7 +338,12 @@ class Restaurant extends GameCore {
 									{
 										response: `Can you give ${me} a hint?`,
 										topic: "hint2",
-										condition: () => this.burger.properties.served && !this.burger.properties.eaten,
+										condition: () => !this.hintIndex && this.burger.properties.served && !this.burger.properties.eaten,
+									},
+									{
+										condition: () => this.hintIndex && this.burger.properties.served && !this.burger.properties.eaten,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `You can have a piece of the impossible burger if you want.`,
@@ -368,7 +380,7 @@ class Restaurant extends GameCore {
 								topic: "hint2",
 								message: `You ordered that burger, ${messire}. Now who's going to eat it?`,
 								voiceName: "Thomas",
-								secondsAfterEnd: 1,
+								secondsAfterEnd: 2,
 								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => butler.talking = 0,
 							},
@@ -377,7 +389,24 @@ class Restaurant extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
 								exit: true,
 							},
 							{

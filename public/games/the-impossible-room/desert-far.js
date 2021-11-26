@@ -75,6 +75,12 @@ class DesertFar extends GameCore {
 				cols: 1, rows: 4,
 				range: [1],
 			}),
+			desert_skull: await engine.addTexture({
+				url: "assets/desert-far.png",
+				collision_url: "assets/desert-far.png",
+				cols: 2, rows: 6,
+				range: [11],
+			}),
 		};
 
 		this.backwall = this.spriteFactory.create({
@@ -179,6 +185,93 @@ class DesertFar extends GameCore {
 				},
 				{ name: "view", lookup: 1000,
 					action: () => this.viewMap(this.engine.lastTime),
+				},
+			],
+		});
+
+		const { gender } = this.data;
+		const I = gender === "T" ? "We" : "I";
+		const me = gender === "T" ? "us" : "me";
+		const my = gender === "T" ? "our" : "my";
+
+		const Iam = gender === "T" ? "We are" : "I am";
+		const amI = gender === "T" ? "are we" : "am I";
+		const moreHints = [
+			"",
+			`${I} think the map indicates where ${Iam}, which is in the middle of the desert. Thank you Skull.`,
+			`Can ${I} use the map to change ${my} location? I wonder Skull.`,
+			`Really, ${I} am still stuck? Why won't you help ${me} Skull? Why?!?!`,
+		];
+
+
+		this.desert_skull = this.spriteFactory.create({
+			name: "skull",
+			anim: this.atlas.desert_skull,
+			size: [400, 200],
+			x: 350, y: 150,
+			opacity: 0,
+		}, {
+			actions: [
+				{ name: "look",
+					message: () => `It's a skull in the middle of the desert!`,
+				},
+				{ name: "talk",
+					action: () => {
+						this.startDialog(this.monkor, [
+							{
+								responses: [
+									{
+										response: "Is this the impossible room?",
+										topic: "impossible",
+									},
+									{
+										condition: () => !this.hintIndex,
+										response: `Can you give ${me} a hint?`,
+										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
+									},
+									{
+										response: `${I}'ll be on ${my} way`,
+									},
+								],
+							},
+							{
+								message: `Why ${amI} talking to a dead skull?`,
+								exit: true,
+							},
+							{
+								topic: "hint",
+								message: `I guess ${I} should check out the map. Don't you think so Skull?`,
+								onEnd: butler => {
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								onEnd: butler => {
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
+								exit: true,
+							},
+							{
+								topic: "unwanted-item",
+								message: `The skull doesn't want it.`,
+								next: previousIndex => previousIndex,
+							},
+							{
+								topic: "impossible",
+								message: `Probably not.`,
+							},
+						]);
+					},
 				},
 			],
 		});
@@ -293,6 +386,27 @@ class DesertFar extends GameCore {
 		this.chain.changeOpacity(0, time);
 	}
 
+	canRunLeft() {
+		return true;
+	}
+
+	runAwayToPreviousRoom() {
+		return true;
+	}
+
+	shouldPutBack() {
+		return true;
+	}
+
+	nextLevelLeft()	{
+		this.monkor.changeOpacity(0, this.engine.lastTime);
+		setTimeout(() => {
+			this.startShrink = this.engine.lastTime;
+			this.desert_far.previousShrinkValue = 1;
+			this.nextScene = "W";
+		}, 1000);
+	}
+
 	viewMap(time) {
 		this.full_desert_map.changeOpacity(1, time);
 		this.you_are_here.changeOpacity(1, time);
@@ -384,6 +498,10 @@ class DesertFar extends GameCore {
 					if (this.changedSceneCount >= 3) {
 						this.changedSceneCount = 0;
 						this.desert_map.changeOpacity(1, time);
+						this.desert_skull.changeOpacity(1, time);
+					} else {
+						this.desert_map.changeOpacity(0, time);
+						this.desert_skull.changeOpacity(0, time);						
 					}
 				} else {
 					const { gender } = this.data;

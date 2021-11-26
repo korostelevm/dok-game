@@ -70,6 +70,7 @@ const globalFiles=[
 			"nuna-shake.png",
 			"nuna-shit.png",
 			"nuna.png",
+			"options.png",
 			"out-chain.png",
 			"piano.png",
 			"pipe-collision.png",
@@ -101,6 +102,7 @@ const globalFiles=[
 	},
 	{
 		"audio": [
+			".DS_Store",
 			"animal-cry.mp3",
 			"beep.mp3",
 			"blinkpong-loop.mp3",
@@ -185,6 +187,7 @@ const globalFiles=[
 	"index.html",
 	{
 		"lib": [
+			".DS_Store",
 			"engine.js",
 			"game-base.js",
 			"game-template.js",
@@ -195,6 +198,7 @@ const globalFiles=[
 			},
 			{
 				"newgrounds": [
+					".DS_Store",
 					"newgroundsio.min.js",
 					"ng.js",
 					"sound.mp3"

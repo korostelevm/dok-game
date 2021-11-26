@@ -93,6 +93,13 @@ class ClueRoom extends GameCore {
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
 
+		const moreHints = [
+			"",
+			`Perhaps there's a message hidden somewhere. You can uncover it with the right tool.`,
+			`Have you ever used lemon ink? You can write a secret message on paper.`,
+			`Really, you are still stuck? You must be colorblind like me. Sometimes, if I cannot see an image clearly, I fix it in photoshop.`,
+		];
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -118,8 +125,14 @@ class ClueRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `Can you read what's written on the wall?`,
@@ -154,6 +167,21 @@ class ClueRoom extends GameCore {
 								},
 								onEnd: butler => {
 									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
 								},
 								exit: true,
 							},

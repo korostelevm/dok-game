@@ -30,6 +30,9 @@ class GameBase {
 		this.engine.postScore(level);
 	}
 
+	onInception(inception) {		
+	}
+
 	getMouseCursor() {
 		return "url(assets/pointer-cursor.png), auto";
 	}

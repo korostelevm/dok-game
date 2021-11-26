@@ -252,6 +252,13 @@ class SoundRoom extends GameCore {
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
 
+		const moreHints = [
+			"",
+			`I really like the music in this room. It's different from the other rooms.`,
+			`There are four digits on the left, and three on the right. That must mean something.`,
+			`One, one, one, three, two, one, zero... Those are genius lyrics.`,
+		];
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -277,8 +284,14 @@ class SoundRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
@@ -305,7 +318,24 @@ class SoundRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
 								exit: true,
 							},
 							{

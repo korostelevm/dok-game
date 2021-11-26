@@ -188,6 +188,12 @@ class AnimalRoom extends GameCore {
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
 
+		const moreHints = [
+			"",
+			`Sometimes, you have to look at the problem from a different angle.`,
+			`What do you think about the strange pattern on the wall?`,
+			`Really, you are still stuck? Ok, the first two animals are ${this.properties.sentence.split(" ")[0]} and ${this.properties.sentence.split(" ")[1]}.`,
+		];
 
 		this.doorForwardClosed = this.spriteFactory.create({
 			anim: this.atlas.right_door,
@@ -262,8 +268,14 @@ class AnimalRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
@@ -290,7 +302,24 @@ class AnimalRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
 								exit: true,
 							},
 							{
@@ -613,7 +642,8 @@ class AnimalRoom extends GameCore {
 
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
-			getMedal("The Animal Room", this.onUnlockMedal);
+			this.achieve("The Animal Room");
+			// getMedal("The Animal Room", this.onUnlockMedal);
 		}
 		this.engine.setGame(new GandalfRoom());
 	}

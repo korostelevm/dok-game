@@ -72,6 +72,13 @@ class MathRoom extends GameCore {
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
 
+		const moreHints = [
+			"",
+			`The formula keeps changing, but not the result.`,
+			`You need two equations to solve two variables.`,
+			`Really, you are still stuck? What do you use to keep an image in your mind.`,
+		];
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -97,8 +104,14 @@ class MathRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
@@ -120,14 +133,33 @@ class MathRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 2,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+								},
 							},
 							{
 								message: `Unless you can stop time, ${messire}.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
 								exit: true,
 							},
 							{

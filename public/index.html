@@ -535,7 +535,27 @@
 				}, 5000);
 			}
 		</script>
-
+		<script>
+			function showNotice(message, time) {
+				const div = document.getElementById("messageView") || document.body.appendChild(document.createElement("div"));
+				div.style.display = "";
+				div.id = "messageView";
+				div.style.position = "absolute";
+				div.style.top = "0px";
+				div.style.left = "0px";
+				div.style.width = "100%";
+				div.style.textAlign = "center";
+				div.style.userSelect = "none";
+				div.style.pointerEvents = "none";
+				div.style.color = "#eeFFeecc";
+				div.style.backgroundColor = "#6600cc";
+				div.style.zIndex = 200;
+				div.innerText = `${message}`;
+				setTimeout(() => {
+					div.style.display = "none";
+				}, 5000 * time);
+			}
+		</script>
 	</head>
 	<body>
 		<div id="game-tab" style="margin-left: 80px;"></div>
@@ -684,10 +704,12 @@
 				<div>
 					<a id="voice-mute-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span>
 					</a>
-					/ Change voice:
-						<select id="voice-drop">
-						  <option value="default">default</option>
-						</select>
+					<span id="voice-selector">
+						/ <label for="voice-drop">Change voice:</label>
+							<select id="voice-drop">
+							  <option value="default">default</option>
+							</select>
+					</span>
 				</div>
 				<div style="display: none">🔁: <span id="pressing-r">R to start over.</span></div>
 			</div>

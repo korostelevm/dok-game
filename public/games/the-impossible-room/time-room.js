@@ -144,6 +144,14 @@ class TimeRoom extends GameCore {
 			],
 		});
 
+
+		const moreHints = [
+			"",
+			`Have you noticed something about the clock above the door?`,
+			`One minute is not enough to reach the room. Perhaps you can reverse time.`,
+			`Really, you are still stuck? How about check the time on your computer's clock.`,
+		];
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -186,8 +194,14 @@ class TimeRoom extends GameCore {
 										topic: "how_get_out",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `${I}'ll be on ${my} way`,
@@ -267,7 +281,25 @@ class TimeRoom extends GameCore {
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints()) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
+								exit: true,
 							},
 							{
 								message: `Unless perhaps you could change time.`,

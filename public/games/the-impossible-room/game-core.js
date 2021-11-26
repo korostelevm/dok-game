@@ -1690,7 +1690,7 @@ class GameCore extends GameBase {
 			this.engine.showedVoices = true;
 			const voiceDrop = document.getElementById("voice-drop");
 			voiceDrop.addEventListener("change",e => {
-				console.log(e.currentTarget.value);
+//				console.log(e.currentTarget.value);
 				engine.swapVoice(e.currentTarget.value);
 			});
 			voices.forEach(voice => {
@@ -1846,7 +1846,7 @@ class GameCore extends GameBase {
 						this.onDead();
 					}
 				}
-				if (!this.canRunLeft() && !mouse.putBack) {
+				if (!this.canRunLeft() && !mouse.putBack || this.shouldPutBack()) {
 					mouse.putBack = engine.lastTime;
 					this.onPutBack(mouse);
 
@@ -1984,6 +1984,10 @@ class GameCore extends GameBase {
 		if (monkor.x < -50 && this.nextLevelLeft) {
 			this.nextLevelLeft();
 		}
+	}
+
+	shouldPutBack() {
+		return false;
 	}
 
 	updateJokerLocalStorage() {
@@ -2378,6 +2382,10 @@ class GameCore extends GameBase {
 			this.setDialogVisibility(false);
 			this.selectDialog(null);
 		}
+	}
+
+	allowExtraHints() {
+		return localStorage.getItem("extra_hints");
 	}
 
 	startDialog(subject, dialog, index) {

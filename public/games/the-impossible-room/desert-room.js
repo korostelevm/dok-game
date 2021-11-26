@@ -87,6 +87,14 @@ class DesertRoom extends GameCore {
 		const me = gender === "T" ? "us" : "me";
 		const my = gender === "T" ? "our" : "my";
 
+		const moreHints = [
+			"",
+			`Whatever you do, you should remain calm.`,
+			`Do not try to walk or run around, the quicksand might swallow you.`,
+			`Really, you are still stuck? Damn it, just sink into the quicksand already!`,
+		];
+
+
 		this.butler = this.spriteFactory.create({
 			name: "Nicolas",
 			anim: this.atlas.butler,
@@ -111,8 +119,14 @@ class DesertRoom extends GameCore {
 										topic: "impossible",
 									},
 									{
+										condition: () => !this.hintIndex,
 										response: `Can you give ${me} a hint?`,
 										topic: "hint",
+									},
+									{
+										condition: () => this.hintIndex && this.monkor.properties.stuck,
+										response: () => this.hintIndex === moreHints.length - 1 ? `${I} suck at this. Just tell ${me} what to do!` : `Can you give ${me} another hint?`,
+										topic: "more_hint"
 									},
 									{
 										response: `Can you help ${me} get out of the quicksand?`,
@@ -143,8 +157,24 @@ class DesertRoom extends GameCore {
 								message: () => this.monkor.properties.stuck ? `If you move too much, you might sink deeper.` : `This is just a room full of sand.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
+								onEnd: butler => {
+									butler.talking = 0;
+									if (this.allowExtraHints() && this.monkor.properties.stuck) {
+										this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+									}
+								},
+								exit: true,
+							},
+							{
+								topic: "more_hint",
+								message: () => moreHints[this.hintIndex],
+								voiceName: "Thomas",
+								secondsAfterEnd: 1,
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
+								},
 								exit: true,
 							},
 							{

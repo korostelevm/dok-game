@@ -464,6 +464,7 @@ class Engine {
 		if (this.ready) {
 			await this.initGame(this.game);
 		}
+		return game;
 	}
 
 	async wait(ms) {
@@ -678,7 +679,7 @@ class Engine {
 			voice = this.bestVoice(this.voices, voiceNames[0]);
 			replacedVoice = true;
 		}
-		if (this.defaultVoiceReplacement && this.defaultVoiceReplacement !== "default" && mainCharacter) {
+		if (this.defaultVoiceReplacement && this.defaultVoiceReplacement !== "default" && mainCharacter && localStorage.getItem("alternate_voices")) {
 			voices.forEach(theVoice => {
 				if (theVoice.name === this.defaultVoiceReplacement && theVoice !== voice) {
 					voice = theVoice;
@@ -723,12 +724,13 @@ class Engine {
 
 		const TempScene = this.SwapScene || StartScreen;
 		this.SwapScene = engine.game.constructor;
-		this.setGame(new TempScene(), true).then(() => {
+		this.setGame(new TempScene(), true).then(game => {
+			game.onInception(inception);
 		});
 		if (inception) {
 			this.canvas.parentElement.classList.add("inception");
 		} else {
-			this.canvas.parentElement.classList.remove("inception");			
+			this.canvas.parentElement.classList.remove("inception");
 		}
 
 //		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";

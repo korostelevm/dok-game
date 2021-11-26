@@ -260,7 +260,7 @@ class ComputerRoom extends GameCore {
 								this.monkor.setProperty("paused", false);
 								this.showBubble(`Hello ${sir}. Have you seen the host, Nicolas Debossin?`, () => {
 									setTimeout(() => {
-										this.showBubble(`${He_doesnt} seem to react. ${He_is} very focused on the game.`);
+										this.showBubble(`${He_doesnt} seem to react. ${He_is} staring at the 4th wall.`);
 									}, 3000);
 								});
 							};
@@ -330,6 +330,15 @@ class ComputerRoom extends GameCore {
 	}
 
 	nextLevelLeft() {
+	}
+
+	onInception(inception) {		
+		const { gender } = this.data;
+		const I = gender === "T" ? "We" : "I";
+		this.monkor.setProperty("paused", true);
+		this.showBubble(`This was a fun game! ${I} wish ${I} could give it a 5-star rating.`, () => {
+			this.monkor.setProperty("paused", false);
+		});			
 	}
 
 	nextLevelRight() {

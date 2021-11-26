@@ -7,6 +7,7 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
     }
     const ngio = new Newgrounds.io.core(key, secret);
+    const audio = new Audio('lib/newgrounds/sound.mp3');
 
 
     function onLoggedIn() {
@@ -180,7 +181,6 @@ window.addEventListener("DOMContentLoaded", () => {
         unlockMedal(ngio, medal_name, (medal, unlocked) => {
             if (unlocked) {
                 console.log("Unlock:" + medal.name);
-                const audio = new Audio('lib/newgrounds/sound.mp3');
                 audio.play();
                 if (callback) {
                     callback(medal.name);
