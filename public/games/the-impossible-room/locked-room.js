@@ -938,6 +938,14 @@ class LockedRoom extends GameCore {
 			anim: this.atlas.backwallforeground,
 			size: [800, 400],
 		});
+		if (this.monkor.x < 0) {
+			this.monkor.setProperty("paused", true);
+			this.openLeft();
+			this.monkor.onStill = () => {
+				this.monkor.setProperty("paused", false);
+				this.setDoorOpened(false);
+			};
+		}
 	}
 
 	getWalkArea() {

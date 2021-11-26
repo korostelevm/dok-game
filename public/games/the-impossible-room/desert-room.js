@@ -110,7 +110,10 @@ class DesertRoom extends GameCore {
 								message: `Yes, ${messire}?`,
 								voiceName: "Thomas",
 								onStart: butler => butler.talking = engine.lastTime,
-								onEnd: butler => butler.talking = 0,
+								onEnd: butler => {
+									butler.talking = 0;
+									butler.angry = false;
+								},
 							},
 							{
 								responses: [
@@ -134,7 +137,7 @@ class DesertRoom extends GameCore {
 										condition: () => this.monkor.properties.stuck,
 									},
 									{
-										response: `${I}'ll be on ${my} way`,
+										response: () => this.monkor.properties.stuck ? `I guess ${I}'ll have to find a way out, since you won't help ${me}.` : `${I}'ll be on ${my} way`,
 									},
 								],
 							},
@@ -157,6 +160,7 @@ class DesertRoom extends GameCore {
 								message: () => this.monkor.properties.stuck ? `If you move too much, you might sink deeper.` : `This is just a room full of sand.`,
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
+								onStart: butler => butler.talking = engine.lastTime,
 								onEnd: butler => {
 									butler.talking = 0;
 									if (this.allowExtraHints() && this.monkor.properties.stuck) {
@@ -170,7 +174,12 @@ class DesertRoom extends GameCore {
 								message: () => moreHints[this.hintIndex],
 								voiceName: "Thomas",
 								secondsAfterEnd: 1,
-								onStart: butler => butler.talking = engine.lastTime,
+								onStart: butler => {
+									if (this.hintIndex === moreHints.length - 1) {
+										this.butler.angry = true;
+									}
+									butler.talking = engine.lastTime;
+								},
 								onEnd: butler => {
 									butler.talking = 0;
 									this.hintIndex = ((this.hintIndex || 0) + 1) % moreHints.length;
@@ -284,9 +293,17 @@ class DesertRoom extends GameCore {
 				const dyToMonkor = this.butler.y - this.monkor.y;
 				const distToMonkor = Math.sqrt(dxToMonkor * dxToMonkor + dyToMonkor * dyToMonkor);
 				if (this.butler.talking) {
-					this.butler.changeAnimation(this.monkor.x < this.butler.x ? this.atlas.butler_talk_left : this.atlas.butler_talk_right, time);
+					if (this.butler.angry) {
+						this.butler.changeAnimation(this.monkor.x < this.butler.x || this.butler.lookLeft ? this.atlas.butler_talk_angry_left : this.atlas.butler_talk_angry_right, time);
+					} else {
+						this.butler.changeAnimation(this.monkor.x < this.butler.x || this.butler.lookLeft ? this.atlas.butler_talk_left : this.atlas.butler_talk_right, time);						
+					}
 				} else if (this.dialog) {
-					this.butler.changeAnimation(this.monkor.x < this.butler.x ? this.atlas.butler_still_left : this.atlas.butler_still_right, time);
+					if (this.butler.angry) {
+						this.butler.changeAnimation(this.monkor.x < this.butler.x || this.butler.lookLeft ? this.atlas.butler_angry_left : this.atlas.butler_angry_right, time);
+					} else {
+						this.butler.changeAnimation(this.monkor.x < this.butler.x || this.butler.lookLeft ? this.atlas.butler_still_left : this.atlas.butler_still_right, time);						
+					}
 				} else {
 					this.butler.changeAnimation(this.atlas.butler, time);					
 				}
