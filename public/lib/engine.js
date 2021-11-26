@@ -159,7 +159,7 @@ class Engine {
 			},
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
-		this.score = localStorage.getItem("bestScore") || 0;
+		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
 	}
 
 	countUnlocked() {
@@ -845,6 +845,7 @@ class Engine {
 			if (result.success) {
 				this.score = result.score.value;
 				localStorage.setItem("bestScore", this.score);
+				this.updateSidebar(this.game.sceneName, localStorage.getItem("joker"));
 			} else {
 				console.log(result?.error?.message);
 			}
