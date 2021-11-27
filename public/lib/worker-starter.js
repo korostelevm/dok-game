@@ -12,10 +12,10 @@ function startWorker() {
 
       worker.postMessage(["test", uInt8Array.buffer], [uInt8Array.buffer]);
     }
-    worker.onmessage = function(event) {
+    worker.addEventListener("message", event => {
       console.log("main", event);
-      document.getElementById("result").innerHTML = event.data;
-    };
+      document.getElementById("result").innerHTML = event.data.byteLength;
+    });
   } else {
     document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Workers...";
   }
