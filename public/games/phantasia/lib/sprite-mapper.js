@@ -26,6 +26,9 @@ class SpriteMapper {
 						} else {
 							self.dx = 0;
 							self.changePosition(self.x + xPush, self.y);
+							if (self.dy < .1 && self.dy > 0 && self.collisionBox.top < sprite.collisionBox.top) {
+								self.climb = self.engine.lastTime;
+							}
 						}
 					},
 				});
