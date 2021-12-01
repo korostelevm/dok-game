@@ -1,21 +1,22 @@
 class Gravity extends PhysicsBase {
 	async init(sprites, game) {
 		this.sprites = sprites.filter(({gravity}) => gravity);
-		this.jump = 1;
-		this.onJump = e => {
-			this.jump = e.type === "keydown" ? 1 : 0;
+		this.floating = 1;
+		this.onUp = e => {
+			this.floating = e.type === "keydown" ? game.engine.lastTime : 0;
 		};
-		game.engine.keyboardHandler.addKeyDownListener('w', this.onJump);
-		game.engine.keyboardHandler.addKeyUpListener('w', this.onJump);
+		game.engine.keyboardHandler.addKeyDownListener('w', this.onUp);
+		game.engine.keyboardHandler.addKeyUpListener('w', this.onUp);
 	}
 
 	onExit(game) {
-		game.engine.keyboardHandler.removeListener(this.onJump);
+		game.engine.keyboardHandler.removeListener(this.onUp);
 	}
 
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
-			sprite.dy += sprite.gravity * (sprite.dy < 0 ? 1 : 1.5 - this.jump);
+			const floatFactor = this.floating && time - this.floating < 300 ? 1 : 0
+			sprite.dy += sprite.gravity * (sprite.dy < 0 ? 1 : 2 - floatFactor);
 		});
 	}
 }
