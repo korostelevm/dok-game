@@ -3,5 +3,5 @@
 
 
 document.addEventListener("DOMContentLoaded", () => {
-	engine.setGame(new StartScreen());
+	engine.setGame(new Home());
 });

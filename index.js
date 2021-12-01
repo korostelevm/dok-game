@@ -5,6 +5,9 @@ const colors 	= require('colors');
 const url 		= require('url');
 const path 		= require('path');
 const archiver 	= require('archiver');
+const md5File 	= require('md5-file');
+const getPixels = require("get-pixels");
+
 
 const PORT = 3000;
  
@@ -20,7 +23,59 @@ app.get('/', (req, res, next) => {
 		fs.promises.readFile(`${__dirname}/public/index.html`),
 		generateData(),
 		listFiles(`${__dirname}/public`, "")
-			.then(data => fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${JSON.stringify(data,null,'\t')};`)),
+			.then(data => {
+				return fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${JSON.stringify(data,null,'\t')};`)
+					.then(() => data);
+			})
+			.then(data => {
+				const map = {};
+				data.forEach(({assets}) => {
+					if (assets) {
+						assets.forEach(asset => {
+							const path = `${__dirname}/public/assets/${asset}`;
+							const hash = md5File.sync(path);
+							map[asset] = hash;
+						});
+					}
+				});
+				const assetProperties = {};
+				return fs.promises.readFile(`${__dirname}/public/gen/asset-property.json`)
+					.then(data => {
+						const properties = JSON.parse(data);
+						for (let asset in properties) {
+							assetProperties[asset] = properties[asset];
+						}
+					})
+					.catch(console.warn)
+					.then(() => {
+						return fs.promises.readFile(`${__dirname}/build/asset-md5.json`);
+					})
+					.then(data => {
+						const preData = JSON.parse(data);
+						const assetsToUpdate = [];
+						for (let asset in preData) {
+							if (preData[asset] !== map[asset] || !assetProperties[asset]) {
+								assetsToUpdate.push(asset);
+							}
+						}
+// 						assetsToUpdate.forEach(asset => {
+// 							console.log(`${asset} needs to update its data.`);
+// 							const path = `${__dirname}/public/assets/${asset}`;
+// 							getPixels(path, (err, pixels) => {
+// 							  if(err) {
+// 							    console.log("Bad image path")
+// 							    return
+// 							  }
+// 							  const [ width, height, byteSize ] = pixels.shape.slice();
+// //							  console.log("pixels:", pixels.data);
+// 							});
+// 						});
+					})
+					.catch(console.warn)
+					.then(() => {
+						return fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, JSON.stringify(map,null,'\t'));
+					});
+			}),
 	]).then(([html]) => {
 		res.write(html);
 		res.end();
@@ -88,10 +143,6 @@ function listFiles(root, path) {
 			} else {
 				return filename;
 			}
-
-			// return fs.lstatSync(`${root}${path}/${filename}`).isDirectory()
-			// 	? listFiles(root, `${path}/${filename}`)
-			// 	: `${path}/${filename}`;
 		}))
 	});
 }
@@ -111,6 +162,9 @@ function zipPublic(source, out) {
 	});
 }
 
+function getPixelsPromise(path) {
+
+}
 
 const server = app.listen(PORT, () => {
 	console.log('Server is running at %s', colors.green(server.address().port));

@@ -86,7 +86,7 @@ class Sprite {
 		if (this.x !== x || this.y !== y) {
 			this.x = x;
 			this.y = y;
-			this.updated.sprite = time;
+			this.updated.sprite = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -105,7 +105,7 @@ class Sprite {
 	changeRotation(rotation, time) {
 		if (this.rotation !== rotation) {
 			this.rotation = rotation;
-			this.updated.sprite = time;
+			this.updated.sprite = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -114,7 +114,7 @@ class Sprite {
 	changeOpacity(opacity, time) {
 		if (this.opacity !== opacity) {
 			this.opacity = opacity;
-			this.updated.opacity = time;
+			this.updated.opacity = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -123,7 +123,7 @@ class Sprite {
 	changeDirection(direction, time) {
 		if (this.direction !== direction) {
 			this.direction = direction;
-			this.updated.direction = time;
+			this.updated.direction = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -132,7 +132,7 @@ class Sprite {
 	changeVDirection(vdirection, time) {
 		if (this.vdirection !== vdirection) {
 			this.vdirection = vdirection;
-			this.updated.direction = time;
+			this.updated.direction = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -146,7 +146,7 @@ class Sprite {
 			}
 			this.anim = anim;
 			this.updated.animation = time;
-			this.updated.updateTime = updateTime || time;
+			this.updated.updateTime = updateTime || time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -156,7 +156,7 @@ class Sprite {
 		if (this.crop[0] !== x || this.crop[1] !== y) {
 			this.crop[0] = x;
 			this.crop[1] = y;
-			this.updated.crop = time;
+			this.updated.crop = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
@@ -166,44 +166,38 @@ class Sprite {
 		if (this.hotspot[0] !== x || this.hotspot[1] !== y) {
 			this.hotspot[0] = x;
 			this.hotspot[1] = y;
-			this.updated.hotspot = time;
+			this.updated.hotspot = time || this.engine.lastTime;
 			return true;
 		}
 		return false;
 	}
 
 	resetAnimation(time) {
-		this.updated.animation = time;
-		this.updated.updateTime = time;
-	}
-
-	flipRect(rect, flipH, flipV) {
-		if (!rect) {
-			return null;
-		}
-		return {
-			left: flipH ? 1 - rect.right : rect.left,
-			right: flipH ? 1 - rect.left : rect.right,
-			top: flipV ? 1 - rect.bottom : rect.top,
-			bottom: flipV ? 1 - rect.top : rect.bottom,
-		};
+		this.updated.animation = time || this.engine.lastTime;
+		this.updated.updateTime = time || this.engine.lastTime;
 	}
 
 	getCollisionBox(time) {
 		const flipH = this.direction < 0;
 		const flipV = this.vdirection < 0;
-		const rect = this.flipRect(this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time)), flipH, flipV);
+		const rect = this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time));
 		if (!rect) {
 			return null;
 		}
+		const rLeft = flipH ? 1 - rect.right : rect.left;
+		const rRight = flipH ? 1 - rect.left : rect.right;
+		const rTop = flipV ? 1 - rect.bottom : rect.top;
+		const rBottom = flipV ? 1 - rect.top : rect.bottom;
+
 		const collisionPadding = this.anim.collisionPadding ?? 0;
-		const [ width, height ] = this.size;
+		const width = this.size[0];
+		const height = this.size[1];
 		const left = this.x - this.hotspot[0];
 		const top = this.y - this.hotspot[1];
-		this.collisionBox.left = left + rect.left * width * this.crop[0] - collisionPadding;
-		this.collisionBox.right = left + rect.right * width * this.crop[0] + collisionPadding;
-		this.collisionBox.top = top + rect.top * height * this.crop[1] - collisionPadding;
-		this.collisionBox.bottom = top + rect.bottom * height * this.crop[1] + collisionPadding;
+		this.collisionBox.left = left + rLeft * width * this.crop[0] - collisionPadding;
+		this.collisionBox.right = left + rRight * width * this.crop[0] + collisionPadding;
+		this.collisionBox.top = top + rTop * height * this.crop[1] - collisionPadding;
+		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
 
 		return this.collisionBox;
 	}

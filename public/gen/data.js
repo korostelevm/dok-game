@@ -53,9 +53,12 @@ const globalData={
 			"desynchronized": true,
 			"premultipliedAlpha": true
 		},
+		"options": {
+			"isPerspective": 0
+		},
 		"newgrounds": {
-			"key": "53522:zs4SBILE",
-			"secret": "jq6s6DaxBvK3Thlr+cZ+bw=="
+			"key": "",
+			"secret": ""
 		},
 		"maxInstancesCount": 10000
 	},

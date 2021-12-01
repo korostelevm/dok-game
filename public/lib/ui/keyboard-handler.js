@@ -19,7 +19,7 @@ class KeyboardHandler {
 				keys[e.key] = true;
 				const listener = listeners[e.key] || listeners[null];
 				if (listener && listener["down"]) {
-					listener["down"](e);
+					listener["down"].forEach(f => f(e));
 				}
 			}
 		});
@@ -27,7 +27,7 @@ class KeyboardHandler {
 			this.keys[e.key] = false;
 			const listener = listeners[e.key] || listeners[null];
 			if (listener && listener["up"]) {
-				listener["up"](e);
+				listener["up"].forEach(f => f(e));
 			}
 		});
 		this.listeners = listeners;
@@ -36,7 +36,7 @@ class KeyboardHandler {
 
 	addKeyListener(key, type, onKey) {
 		this.listeners[key] = (this.listeners[key] || {});
-		this.listeners[key][type] = onKey;
+		this.listeners[key][type] = (this.listeners[key][type]||[]).concat(onKey);
 	}
 
 	addKeyDownListener(key, onKey) {
@@ -49,11 +49,11 @@ class KeyboardHandler {
 
 	removeListener(listener) {
 		for (let i in this.listeners) {
-			if (this.listeners[i]["up"] === listener) {
-				delete this.listeners[i]["up"];
+			if (this.listeners[i]["up"]) {
+				this.listeners[i]["up"] = this.listeners[i]["up"].filter(l => l !== listener);
 			}
-			if (this.listeners[i]["down"] === listener) {
-				delete this.listeners[i]["down"];
+			if (this.listeners[i]["down"]) {
+				this.listeners[i]["down"] = this.listeners[i]["down"].filter(l => l !== listener);
 			}
 		}
 	}

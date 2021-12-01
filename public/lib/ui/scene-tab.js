@@ -11,6 +11,9 @@ class SceneTab {
 								gameList[name] = [];
 							}
 							game[name].forEach(sceneFile => {
+								if (typeof(sceneFile) !== "string") {
+									return;
+								}
 								const [ scene, extension ] = sceneFile.split(".");
 								if (extension !== "js") {
 									return;

@@ -10,6 +10,8 @@ class SpriteFactory {
 		const properties = this.spriteData[id] || (this.spriteData[id] = {});
 		this.index++;
 		const sprite = this.spriteCollection.create(data, attributes, properties);
+		sprite.id = id;
+		sprite.engine = this.spriteCollection.engine;
 		if (initCallback) {
 			initCallback(sprite);
 		}

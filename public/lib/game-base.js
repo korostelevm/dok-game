@@ -1,4 +1,8 @@
 class GameBase {
+	constructor() {
+		this.physics = [];
+	}
+
 	async init(engine, gameName) {
 		this.engine = engine;
 		this.engine.enableSidebar(false);
@@ -16,6 +20,10 @@ class GameBase {
 		this.data.sceneName = this.sceneName;
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;
 		this.swapData = engine?.swapData?.TheImpossibleRoom;
+	}
+
+	addPhysics(physics) {
+		this.physics.push(physics);
 	}
 
 	onUnlockMedal(medal) {

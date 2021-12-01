@@ -22,6 +22,8 @@
     "colors": "^1.4.0",
     "express": "^4.17.1",
     "express-static": "^1.2.6",
+    "get-pixels": "^3.3.3",
+    "md5-file": "^5.0.0",
     "minify-all": "^1.2.2",
     "node-zip": "^1.0.1",
     "nw-builder": "^3.5.7",

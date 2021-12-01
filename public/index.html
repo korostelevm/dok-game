@@ -762,7 +762,10 @@
 		<script type="text/javascript" src="game-starter.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono.js"></script>
 		<script type="text/javascript" src="lib/utils/string.js"></script>
-		<script type="text/javascript" src="lib/math/gl-matrix.js"></script>
+		<script type="text/javascript" src="lib/math/gl-matrix-min.js"></script>
+		<script type="text/javascript">
+			    const {mat2, mat3, mat4, vec2, vec3, vec4, quat} = glMatrix;
+		</script>
 		<script type="text/javascript" src="lib/opengl/buffer-renderer.js"></script>
 		<script type="text/javascript" src="lib/opengl/shader.js"></script>
 		<script type="text/javascript" src="lib/opengl/utils.js"></script>
@@ -775,6 +778,13 @@
 		<script type="text/javascript" src="lib/sprite/sprite-factory.js"></script>
 		<script type="text/javascript" src="lib/translate-voice.js"></script>
 		<script type="text/javascript" src="lib/engine.js"></script>
+		<script type="text/javascript" src="lib/physics/physics-base.js"></script>
+		<script type="text/javascript" src="lib/physics/movement.js"></script>
+		<script type="text/javascript" src="lib/physics/gravity.js"></script>
+		<script type="text/javascript" src="lib/physics/collision.js"></script>
+		<script type="text/javascript" src="lib/physics/jump.js"></script>
+		<script type="text/javascript" src="lib/physics/control.js"></script>
+		<script type="text/javascript" src="lib/map/sprite-grid.js"></script>
 		<script type="text/javascript" src="lib/ui/keyboard-handler.js"></script>
 		<script type="text/javascript" src="lib/ui/focus-fixer.js"></script>
 		<script type="text/javascript" src="lib/ui/scene-tab.js"></script>
@@ -782,6 +792,8 @@
 		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
+		<script type="text/javascript" src="games/phantasia/home.js"></script>
+		<script type="text/javascript" src="games/phantasia/lib/sprite-mapper.js"></script>
 		<script type="text/javascript">
 			function handlerFunction(e) {
 				// console.log(e.type, e);

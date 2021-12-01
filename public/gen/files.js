@@ -28,6 +28,8 @@ const globalFiles=[
 			"cigarette.png",
 			"clue-lobby.png",
 			"computer-desk.png",
+			"debug-block.png",
+			"debug-player.png",
 			"desert-far.png",
 			"desert-room-collision.png",
 			"desert-room.png",
@@ -147,7 +149,19 @@ const globalFiles=[
 				]
 			},
 			{
+				"phantasia": [
+					".DS_Store",
+					"home.js",
+					{
+						"lib": [
+							"sprite-mapper.js"
+						]
+					}
+				]
+			},
+			{
 				"the-impossible-room": [
+					".DS_Store",
 					"animal-room.js",
 					"batman-room.js",
 					"clue-room.js",
@@ -192,13 +206,18 @@ const globalFiles=[
 			"game-base.js",
 			"game-template.js",
 			{
+				"map": [
+					"sprite-grid.js"
+				]
+			},
+			{
 				"math": [
+					"gl-matrix-min.js",
 					"gl-matrix.js"
 				]
 			},
 			{
 				"newgrounds": [
-					".DS_Store",
 					"newgroundsio.min.js",
 					"ng.js",
 					"sound.mp3"
@@ -209,6 +228,16 @@ const globalFiles=[
 					"buffer-renderer.js",
 					"shader.js",
 					"utils.js"
+				]
+			},
+			{
+				"physics": [
+					"collision.js",
+					"control.js",
+					"gravity.js",
+					"jump.js",
+					"movement.js",
+					"physics-base.js"
 				]
 			},
 			{
@@ -252,5 +281,8 @@ const globalFiles=[
 			}
 		]
 	},
-	"package.json"
+	"package.json",
+	{
+		"video": []
+	}
 ];

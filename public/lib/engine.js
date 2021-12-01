@@ -431,6 +431,10 @@ class Engine {
 //							console.log(`/games/${dirName}`);
 
 							folder[dirName].forEach(sceneFile => {
+								if (typeof(sceneFile) !== "string") {
+									return;
+								}
+								
 								const [ scene, extension ] = sceneFile.split(".");
 								if (extension !== "js") {
 									return;
@@ -484,6 +488,12 @@ class Engine {
 		await game.init(this, this.classToGame[game.sceneName]);
 
 		await game.postInit();
+
+		const sprites = game.engine.spriteCollection.sprites;
+		for (let i = 0; i < game.physics.length; i++) {
+			await game.physics[i].init(sprites, game);
+		}
+
 		game.ready = true;
 		this.chrono.tick("game init done");
 		if (this.sceneTab) {
@@ -516,7 +526,11 @@ class Engine {
 	resetScene() {
 		if (this.game) {
 			this.game.ready = false;
+			for (let i = 0; i < game.physics.length; i++) {
+				game.physics[i].onExit(game);
+			}
 			this.game.onExit(engine);
+
 			this.lastGame = this.game.constructor.name;
 		}
 		if (this.spriteCollection) {
@@ -550,7 +564,7 @@ class Engine {
 		};		
 	}
 
-	initialize(gl, uniforms, {webgl: {depth}, viewport: {viewAngle, pixelScale, size: [viewportWidth, viewportHeight]}}) {
+	initialize(gl, uniforms, {webgl: {depth}, viewport: {viewAngle, pixelScale, size: [viewportWidth, viewportHeight]}, options: {isPerspective}}) {
 		this.bufferRenderer.setAttribute(this.shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
@@ -569,7 +583,7 @@ class Engine {
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
-		gl.uniform1f(uniforms.isPerspective.location, 0);
+		gl.uniform1f(uniforms.isPerspective.location, isPerspective || 0);
 	}
 
 	pointContains(x, y, collisionBox) {
@@ -767,6 +781,10 @@ class Engine {
 			if (game.paused) {
 				return;
 			}
+			for (let i = 0; i < game.physics.length; i++) {
+				game.physics[i].refresh(time, dt);
+			}
+
 			game.refresh(time, dt);
 		}
 
@@ -782,6 +800,7 @@ class Engine {
 		//	Handle special frame actions
 		this.handleFrames(time);
 
+		let didUpdate = 0;
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
 			const { crop:[cropX, cropY]} = sprite;
@@ -790,6 +809,7 @@ class Engine {
 				|| sprite.updated.hotspot >= this.lastTime) {
 				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
 				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
+				didUpdate++;
 			}
 			if (sprite.updated.animation >= this.lastTime
 				|| sprite.updated.direction >= this.lastTime
@@ -797,9 +817,11 @@ class Engine {
 				|| sprite.updated.crop >= this.lastTime) {
 				const {direction, vdirection, opacity} = sprite;
 				this.spriteRenderer.setAnimation(i, sprite.anim, direction, vdirection, opacity, cropX, cropY);
+				didUpdate++;
 			}
 			if (sprite.updated.updateTime >= this.lastTime) {
 				this.spriteRenderer.setUpdateTime(i, sprite);
+				didUpdate++;
 			}
 		}
 
