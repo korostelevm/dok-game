@@ -86,6 +86,7 @@ const globalFiles=[
 			"sound-room.png",
 			"sparkle.png",
 			"start-screen.png",
+			"stick.png",
 			"thank-you.gif",
 			"time-room.png",
 			"title-2.png",

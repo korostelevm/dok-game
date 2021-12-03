@@ -160,6 +160,7 @@ class Engine {
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
+		this.shift = {x:0, y:0, goal:{x:0,y:0}, speed:dist => dist / 20};
 	}
 
 	countUnlocked() {
@@ -825,19 +826,34 @@ class Engine {
 			}
 		}
 
+		let xyChanged = false;
+		const shift = this.shift;
+		if (shift.x !== shift.goal.x || shift.y !== shift.goal.y) {
+			const dx = (shift.goal.x - shift.x);
+			const dy = (shift.goal.y - shift.y);
+			const dist = Math.sqrt(dx*dx + dy*dy);
+			const speed = shift.speed(dist);
+			shift.x += dx / dist * Math.min(speed, dist);
+			shift.y += dy / dist * Math.min(speed, dist);
+			xyChanged = true;
+		}
+
 		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
 		if (shake) {
 			if (shake > 1) {
-				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, (Math.random() - .5) * shake, 0));
+				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y + (Math.random() - .5) * shake, 0));
 				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			} else {
-				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y, 0));
 				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			}
 		} else if (shake === null && this.shake) {
-			this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+			this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y, 0));
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			delete this.shake;
+		} else if (xyChanged) {
+			this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y, 0));
+			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 		}
 
 		//	DRAW CALL

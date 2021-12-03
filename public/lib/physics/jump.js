@@ -19,7 +19,7 @@ class Jump extends PhysicsBase {
 		if (this.jump) {
 			let recordJump = false;
 			this.sprites.forEach(sprite => {
-				if (sprite.rest && time - sprite.rest < 200) {
+				if (sprite.rest && time - sprite.rest < 100) {
 					sprite.dy = -sprite.jump;
 					sprite.rest = 0;
 					recordJump = true;

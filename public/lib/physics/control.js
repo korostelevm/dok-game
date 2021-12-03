@@ -42,7 +42,7 @@ class Control extends PhysicsBase {
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
 			sprite.dx += this.dx * sprite.control;
-			sprite.dx *= sprite.rest ? .7 : .8;
+			sprite.dx *= sprite.rest ? .8 : .85;
 			if (Math.abs(sprite.dx) < .01) {
 				sprite.dx = 0;
 			}

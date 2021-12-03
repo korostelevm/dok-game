@@ -8,7 +8,7 @@ class SpriteMapper {
 				return this.spriteFactory.create({
 					name: "hero",
 					anim: this.atlas.debugPlayer,
-					size: [40, 40],
+					size: [30, 35],
 					x: 40 * col, y: 40 * row,
 				}, {
 					gravity: .2,
@@ -18,28 +18,36 @@ class SpriteMapper {
 					control: 1,
 					onCollide: (self, sprite, xPush, yPush) => {
 						if (Math.abs(yPush) < Math.abs(xPush)) {
-							self.dy = 0;
+							self.dy += yPush;
 							self.changePosition(self.x, self.y + yPush);
 							if (yPush < 0) {
 								self.rest = self.engine.lastTime;
 							}
 						} else {
-							self.dx = 0;
+							self.dx += xPush;
 							self.changePosition(self.x + xPush, self.y);
-							if (self.dy < .1 && self.dy > 0 && self.collisionBox.top < sprite.collisionBox.top) {
+							if (sprite.canClimb && self.dy < .1 && self.dy > 0 && self.collisionBox.top < sprite.collisionBox.top) {
 								self.climb = self.engine.lastTime;
+								self.climbSide = xPush < 0 ? 1 : -1;
 							}
 						}
 					},
 				});
 			},
-			'[': (col, row) => {
+			'[': (col, row, index) => {
 				return this.spriteFactory.create({
+					name: `block_${col}_${row}_${index}`,
 					anim: this.atlas.debugBlock,
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
 					collide: 1,
+					init: (self, col, row, grid) => {
+						if (!grid[row-1] || !grid[row-1][col]) {
+							self.canClimb = true;
+							self.changeOpacity(.7);
+						}
+					},
 				});
 			},
 		};
