@@ -37,7 +37,8 @@ class SpriteMapper {
 								}
 							}
 
-							self.dy += yPush;
+							//self.dy += yPush;
+							self.dy = 0;
 							self.changePosition(self.x, self.y + yPush);
 							if (yPush < 0) {
 								self.rest = self.engine.lastTime;
