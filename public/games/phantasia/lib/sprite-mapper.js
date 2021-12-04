@@ -11,7 +11,6 @@ class SpriteMapper {
 			const climbing = time - self.climbing < 100;
 			const climbingStill = climbing && dx === 0 && dy === 0;
 			const jumping = time - self.lastJump < 300;
-			console.log(climbingStill, climbing, jumping);
 			self.changeAnimation(climbingStill ? this.atlas.hero.climb_still
 				: climbing ? this.atlas.hero.climb
 				: jumping ? this.atlas.hero.jump
