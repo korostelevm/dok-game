@@ -47,6 +47,7 @@ class SpriteMapper {
 						onMotion(self, dx);
 					},
 					onJump: (self) => {
+						self.changePosition(self.x, self.y - self.jump);
 						self.lastJump = self.engine.lastTime;
 						onMotion(self, 0);
 					},

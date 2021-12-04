@@ -5,8 +5,8 @@ class Gravity extends PhysicsBase {
 		this.onUp = e => {
 			this.floating = e.type === "keydown" ? game.engine.lastTime : 0;
 		};
-		game.engine.keyboardHandler.addKeyDownListener('w', this.onUp);
-		game.engine.keyboardHandler.addKeyUpListener('w', this.onUp);
+		game.engine.keyboardHandler.addKeyDownListener(' ', this.onUp);
+		game.engine.keyboardHandler.addKeyUpListener(' ', this.onUp);
 	}
 
 	onExit(game) {
