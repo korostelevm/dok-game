@@ -145,7 +145,7 @@ class Sprite {
 				return false;
 			}
 			this.anim = anim;
-			this.updated.animation = time;
+			this.updated.animation = time || this.engine.lastTime;
 			this.updated.updateTime = updateTime || time || this.engine.lastTime;
 			return true;
 		}

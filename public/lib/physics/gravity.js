@@ -20,6 +20,7 @@ class Gravity extends PhysicsBase {
 				sprite.dy /= 2;
 			}
 			sprite.dy += sprite.gravity * (sprite.dy < 0 ? 1 : 2.5 - floatFactor);
+			sprite.dy = Math.min(sprite.dy, 10);
 		});
 	}
 }

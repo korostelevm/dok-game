@@ -860,7 +860,7 @@ class Engine {
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());
 		this.lastTime = time;
 		if (this.debug) {
-			this.debugView.showDebugCanvas(time, this.canvas);
+			this.debugView.showDebugCanvas(time, this.canvas, this.shift);
 		}
 
 		if (this.debug) {

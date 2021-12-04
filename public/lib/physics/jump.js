@@ -8,7 +8,7 @@ class Jump extends PhysicsBase {
 				this.jump = game.engine.lastTime;
 			}
 		};
-		game.engine.keyboardHandler.addKeyDownListener('w', this.onJump);
+		game.engine.keyboardHandler.addKeyDownListener(' ', this.onJump);
 	}
 
 	onExit(game) {
@@ -23,6 +23,7 @@ class Jump extends PhysicsBase {
 					sprite.dy = -sprite.jump;
 					sprite.rest = 0;
 					recordJump = true;
+					sprite.onJump(sprite);
 				}
 			});
 			if (recordJump || time - this.jump > 100) {

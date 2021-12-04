@@ -15,9 +15,48 @@ class Home extends GameBase {
 				url: "assets/debug-player.png",
 				collision_url: "assets/debug-player.png",
 			}),
+			hero: {
+				still: await engine.addTexture({
+					url: "assets/stick.png",
+					collision_url: "assets/stick-collision.png",
+					cols:5,rows:4,
+					frameRate: 10,
+					range:[0,3],
+				}),
+				run: await engine.addTexture({
+					url: "assets/stick.png",
+					collision_url: "assets/stick-collision.png",
+					cols:5,rows:4,
+					frameRate: 10,
+					range:[4,7],
+				}),
+				jump: await engine.addTexture({
+					url: "assets/stick.png",
+					collision_url: "assets/stick-collision.png",
+					cols:5,rows:4,
+					frameRate: 5,
+					range:[8,11],
+				}),
+				climb: await engine.addTexture({
+					url: "assets/stick.png",
+					collision_url: "assets/stick-collision.png",
+					cols:5,rows:4,
+					frameRate: 5,
+					range:[12,15],
+				}),
+				dead: await engine.addTexture({
+					url: "assets/stick.png",
+					collision_url: "assets/stick-collision.png",
+					cols:5,rows:4,
+					frameRate: 10,
+					range:[16,19],
+				}),
+			},
 		};
+		const spriteMapper = new SpriteMapper(this.spriteFactory, this.atlas);
+		await spriteMapper.init(engine);
 
-		const grid = new SpriteGrid(this, this.spriteFactory, new SpriteMapper(this.spriteFactory, this.atlas));
+		const grid = new SpriteGrid(this, this.spriteFactory, spriteMapper);
 		await grid.init();
 
 

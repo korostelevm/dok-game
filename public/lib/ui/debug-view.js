@@ -9,7 +9,7 @@ class DebugView {
 		this.debugCanvas.style.display = "none";
 	}
 
-	drawCollisionBox(ctx, sprite, time, zoom) {
+	drawCollisionBox(ctx, sprite, time, zoom, shift) {
 		const { config: { viewport: { pixelScale } } } = this.engine;
 		const rect = sprite.disabled ? null : sprite.getCollisionBox(time);
 		if (!rect) {
@@ -17,11 +17,11 @@ class DebugView {
 		}
 		ctx.beginPath();
 		ctx.globalAlpha = sprite.opacity > 0 ? 1 : .2;
-		ctx.rect(rect.left / pixelScale / zoom, rect.top / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
+		ctx.rect((rect.left + shift.x / 2) / pixelScale / zoom, (rect.top + shift.y / 2) / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
 		ctx.stroke();
 	}
 
-	showDebugCanvas(time, canvas) {
+	showDebugCanvas(time, canvas, shift) {
 		const { engine } = this;
 		const zoom = 4;
 		if (!this.debugCanvasInited) {
@@ -47,7 +47,7 @@ class DebugView {
 
 		for (let i = 0; i < engine.spriteCollection.size(); i++) {
 			const sprite = engine.spriteCollection.get(i);
-			this.drawCollisionBox(ctx, sprite, time, zoom);
+			this.drawCollisionBox(ctx, sprite, time, zoom, shift);
 		}
 
 		ctx.globalAlpha = "";
