@@ -53,9 +53,12 @@ class Control extends PhysicsBase {
 			if (time - this.lastControl < 50) {
 				sprite.onControl(sprite, this.dx);
 			}
-			if (sprite.climb && time - sprite.climb < 200) {
-				sprite.dy += this.dy * sprite.control;
-				sprite.dy *= .7;
+			if (!sprite.jump || time - sprite.jump > 500) {
+				if (sprite.climb && time - sprite.climb < 200) {
+					sprite.lastClimb = time;
+					sprite.dy += this.dy * sprite.control;
+					sprite.dy *= .7;
+				}
 			}
 		});
 	}

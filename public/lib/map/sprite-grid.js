@@ -24,7 +24,9 @@ class SpriteGrid {
 				const col = i / 2;
 				const piece = fixedLine.substr(i, 2);
 				grid[row][col] =  this.createBlock(col, row, piece.charAt(0), 0);
-				this.createBlock(col, row, piece.charAt(1), 1);
+				if (!grid[row][col]) {
+					this.createBlock(col, row, piece.charAt(1), 1);
+				}
 			}
 
 			row++;
