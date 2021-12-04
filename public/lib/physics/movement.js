@@ -9,8 +9,11 @@ class Movement extends PhysicsBase {
 
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
-			const px = sprite.x + sprite.dx * sprite.motion;
-			const py = sprite.y + sprite.dy * sprite.motion;
+			const px = Math.max(-30, sprite.x + sprite.dx * sprite.motion);
+			const py = Math.min(370, sprite.y + sprite.dy * sprite.motion);
+			if (py >= 370) {
+				sprite.rest = time;
+			}
 			sprite.changePosition(px, py);
 		});
 	}	

@@ -15,6 +15,10 @@ class Gravity extends PhysicsBase {
 
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
+			if (time - sprite.climbing < 100) {
+				return;
+			}
+
 			const floatFactor = this.floating && time - this.floating < 300 ? 1 : 0;
 			if (!this.floating && sprite.dy < 0) {
 				sprite.dy /= 2;

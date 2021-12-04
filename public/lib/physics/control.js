@@ -29,10 +29,22 @@ class Control extends PhysicsBase {
 			}			
 			this.lastControl = game.engine.lastTime;
 		}
+		this.onDown = e => {
+			if (e.type === "keydown") {
+				this.dy ++;
+			} else {
+				this.dy--;
+			}			
+			this.lastControl = game.engine.lastTime;
+		}
 		game.engine.keyboardHandler.addKeyDownListener('a', this.onLeft);
 		game.engine.keyboardHandler.addKeyUpListener('a', this.onLeft);
 		game.engine.keyboardHandler.addKeyDownListener('d', this.onRight);
 		game.engine.keyboardHandler.addKeyUpListener('d', this.onRight);
+		game.engine.keyboardHandler.addKeyDownListener('w', this.onUp);
+		game.engine.keyboardHandler.addKeyUpListener('w', this.onUp);
+		game.engine.keyboardHandler.addKeyDownListener('s', this.onDown);
+		game.engine.keyboardHandler.addKeyUpListener('s', this.onDown);
 		game.engine.keyboardHandler.addKeyDownListener(' ', this.onUp);
 		game.engine.keyboardHandler.addKeyUpListener(' ', this.onUp);
 	}
@@ -45,13 +57,30 @@ class Control extends PhysicsBase {
 
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
+			if (time - sprite.climbing < 100) {
+				sprite.dx += this.dx * sprite.control;
+				sprite.dx *= .8;
+				if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
+					sprite.dx = 0;
+				}
+				sprite.dy += this.dy * sprite.control;
+				sprite.dy *= .8;
+				if (Math.abs(sprite.dy) < .01 && sprite.dy !== 0) {
+					sprite.dy = 0;
+				}
+				if (time - this.lastControl < 50) {
+					sprite.onControl(sprite, this.dx, this.dy);
+				}
+				return;
+			}
+
 			sprite.dx += this.dx * sprite.control;
 			sprite.dx *= sprite.rest ? .8 : .85;
 			if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
 				sprite.dx = 0;
 			}
 			if (time - this.lastControl < 50) {
-				sprite.onControl(sprite, this.dx);
+				sprite.onControl(sprite, this.dx, this.dy);
 			}
 			if (!sprite.jump || time - sprite.jump > 500) {
 				if (sprite.climb && time - sprite.climb < 200) {

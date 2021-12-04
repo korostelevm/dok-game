@@ -33,35 +33,42 @@ class Home extends GameBase {
 				still: await engine.addTexture({
 					url: "assets/stick.png",
 					collision_url: "assets/stick-collision.png",
-					cols:5,rows:4,
+					cols:6,rows:5,
 					frameRate: 10,
 					range:[0,3],
 				}),
 				run: await engine.addTexture({
 					url: "assets/stick.png",
 					collision_url: "assets/stick-collision.png",
-					cols:5,rows:4,
+					cols:6,rows:5,
 					frameRate: 10,
 					range:[4,7],
 				}),
 				jump: await engine.addTexture({
 					url: "assets/stick.png",
 					collision_url: "assets/stick-collision.png",
-					cols:5,rows:4,
+					cols:6,rows:5,
 					frameRate: 5,
 					range:[8,11],
 				}),
 				climb: await engine.addTexture({
 					url: "assets/stick.png",
 					collision_url: "assets/stick-collision.png",
-					cols:5,rows:4,
+					cols:6,rows:5,
 					frameRate: 8,
-					range:[12,15],
+					range:[20,23],
+				}),
+				climb_still: await engine.addTexture({
+					url: "assets/stick.png",
+					collision_url: "assets/stick-collision.png",
+					cols:6,rows:5,
+					frameRate: 8,
+					range:[24,27],
 				}),
 				dead: await engine.addTexture({
 					url: "assets/stick.png",
 					collision_url: "assets/stick-collision.png",
-					cols:5,rows:4,
+					cols:6,rows:5,
 					frameRate: 10,
 					range:[16,19],
 				}),
@@ -89,7 +96,7 @@ class Home extends GameBase {
 		this.addPhysics(new Collision());
 
 		grid.generate(`
-				[][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]
+				[][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]  [][]
 				[]    [][]                [][][][]  [][][][]    [][][][][][][][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]
 				[]    []      8                       [][][]    [][][][][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]
 				[]    []                        [][]  [][][]    [][][][][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]
@@ -121,7 +128,7 @@ class Home extends GameBase {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.engine.shift.goal.x = Math.min(0, - this.hero.x * 2 + 800);
-		this.backwall.changePosition(-this.engine.shift.x/2, this.backwall.y, time);
-//		this.engine.shift.goal.y = this.hero.y * 2 - 400;
+		this.engine.shift.goal.y = Math.min(0, this.hero.y * 2 - 50);
+		this.backwall.changePosition(-this.engine.shift.x/2, this.engine.shift.y/2, time);
 	}
 }

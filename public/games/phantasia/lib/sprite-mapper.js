@@ -5,11 +5,18 @@ class SpriteMapper {
 	}
 
 	async init(engine) {
-		const onMotion = (self, dx) => {
+		const onMotion = (self, dx, dy) => {
 			const still = dx === 0;
 			const time = self.engine.lastTime;
+			const climbing = time - self.climbing < 100;
+			const climbingStill = climbing && dx === 0 && dy === 0;
 			const jumping = time - self.lastJump < 300;
-			self.changeAnimation(jumping ? this.atlas.hero.jump : still ? this.atlas.hero.still: this.atlas.hero.run);
+			console.log(climbingStill, climbing, jumping);
+			self.changeAnimation(climbingStill ? this.atlas.hero.climb_still
+				: climbing ? this.atlas.hero.climb
+				: jumping ? this.atlas.hero.jump
+				: still ? this.atlas.hero.still
+				: this.atlas.hero.run);
 			if (dx !== 0) {
 				self.changeDirection(dx < 0 ? -1 : 1);
 			}
@@ -22,7 +29,7 @@ class SpriteMapper {
 					name: "hero",
 					anim: this.atlas.debugPlayer,
 					size: [50, 75],
-					x: 40 * col, y: 40 * row,
+					x: 40 * col, y: 40 * row, z: -1,
 				}, {
 					gravity: .2,
 					motion: 1,
@@ -30,6 +37,17 @@ class SpriteMapper {
 					jump: 5,
 					control: 1,
 					onCollide: (self, sprite, xPush, yPush) => {
+						if (sprite.ladder && !self.climbing && self.dy > 0) {
+							self.climbing = self.engine.lastTime;
+							self.dy = 0;
+							onMotion(self, 0, 0);
+						}
+
+						if (self.climbing && sprite.ladder) {
+							self.climbing = self.engine.lastTime;
+							return;
+						}
+
 						if (Math.abs(yPush) < Math.abs(xPush)) {
 							if (sprite.ladder || sprite.crate) {
 								if (self.dy <= 0 || yPush > 0) {
@@ -41,6 +59,10 @@ class SpriteMapper {
 							self.dy = 0;
 							self.changePosition(self.x, self.y + yPush);
 							if (yPush < 0) {
+								self.lastJump = 0;
+								if (!self.rest) {
+									onMotion(self, self.dx, self.dy);
+								}
 								self.rest = self.engine.lastTime;
 							}
 						} else {
@@ -55,13 +77,13 @@ class SpriteMapper {
 							}
 						}
 					},
-					onControl: (self, dx) => {
-						onMotion(self, dx);
+					onControl: (self, dx, dy) => {
+						onMotion(self, dx, dy);
 					},
 					onJump: (self) => {
 						self.changePosition(self.x, self.y - self.jump);
 						self.lastJump = self.engine.lastTime;
-						onMotion(self, 0);
+						onMotion(self, 0, 0);
 					},
 				});
 			},
