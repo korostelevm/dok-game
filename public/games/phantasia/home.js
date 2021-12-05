@@ -47,6 +47,27 @@ class Home extends GameBase {
 				url: "assets/debug-player.png",
 				collision_url: "assets/debug-player.png",
 			}),
+			debugCoin: await engine.addTexture({
+				url: "assets/debug-coin.png",
+				collision_url: "assets/debug-coin.png",
+				spriteWidth: 32, spriteHeight: 32,
+				range: [0,3],
+				frameRate: 10,
+			}),
+			npc: {
+				still: await engine.addTexture({
+					url: "assets/debug-npc.png",
+					collision_url: "assets/debug-npc.png",
+					spriteWidth: 32, spriteHeight: 32,
+					range:[0, 3],
+				}),
+				talk: await engine.addTexture({
+					url: "assets/debug-npc.png",
+					collision_url: "assets/debug-npc.png",
+					spriteWidth: 32, spriteHeight: 32,
+					range:[4, 7],
+				}),
+			},
 			hero: {
 				still: await engine.addTexture({
 					url: "assets/stick.png",
@@ -106,13 +127,29 @@ class Home extends GameBase {
 				}),
 			},
 		};
+
+		this.audio = {
+			... this.audio,
+			scream: new Sound("audio/scream.mp3", 1),
+			piano: new Sound("audio/piano.mp3", 1),
+			beep: new Sound("audio/beep.mp3", .5,),
+			eat: new Sound("audio/eat.mp3", .5),
+			dud: new Sound("audio/dud.mp3", 1),
+			hit: new Sound("audio/hit.mp3", .5),
+			door: new Sound("audio/door.mp3", .5),
+			pickup: new Sound("audio/pickup.mp3", .3),
+			drink: new Sound("audio/drink.mp3", 1),
+			mouse: new Sound("audio/animal-cry.mp3", 1),
+			jingle: new Sound("audio/jingle.mp3", 1),
+		};
+
 		this.addPhysics(new Jump());
 		const control = this.addPhysics(new Control());
 		this.addPhysics(new Gravity());
 		this.addPhysics(new Movement());
 		this.addPhysics(new Collision());
 
-		const spriteMapper = new SpriteMapper(this.spriteFactory, this.atlas, control);
+		const spriteMapper = new SpriteMapper(this.spriteFactory, this.atlas, control, this.audio);
 		await spriteMapper.init(engine);
 
 		const grid = new SpriteGrid(this, this.spriteFactory, spriteMapper);
@@ -132,11 +169,11 @@ class Home extends GameBase {
 				..                      HH
 				..                      HH
 				..                      HH
-				..                      HH
+				..            ?0        HH
 				[][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][]VV[][][]  [][]  [][]
 				[]    [][]                [][][][]  [][][][]    [][][][][][][][][][][][][]HH[][][][]    [][][][]      [][][]  [][]  [][][][][][][]
 				[]    []      8                       [][][]    [][][][][]  [][][][][][][]HH[][][][]    [][][][]  [][][][][]  [][]  [][]          [][]
-				[]    []                        [][]  [][]      [][][][][]  [][][][][][][]HH[][][][]    [][][][]  ^^^^^^^^^^  [][]  [][]                    [][][][]
+				[]  $$[]                        [][]  [][]      [][][][][]  [][][][][][][]HH[][][][]    [][][][]  ^^^^^^^^^^  [][]  [][]                    [][][][]
 				[]    [][]    []      [][][][]    []  ..              [][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]                []
 				[]  [][]                  [][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]        -4    -3    -2
 				[]        [][]    [][][][]      [][][][][][] [] [][][]  []      VVVVVV          [][]                    [][]                                  

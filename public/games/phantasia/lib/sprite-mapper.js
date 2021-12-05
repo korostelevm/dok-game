@@ -1,8 +1,9 @@
 class SpriteMapper {
-	constructor(spriteFactory, atlas, control) {
+	constructor(spriteFactory, atlas, control, audio) {
 		this.spriteFactory = spriteFactory;
 		this.atlas = atlas;
 		this.control = control;
+		this.audio = audio;
 	}
 
 	async init(engine) {
@@ -48,6 +49,10 @@ class SpriteMapper {
 
 						if (self.climbing && sprite.ladder) {
 							self.climbing = self.engine.lastTime;
+							return;
+						}
+
+						if (sprite.noblock) {
 							return;
 						}
 
@@ -200,6 +205,42 @@ class SpriteMapper {
 						}
 					},
 				});				
+			},
+			'?': (col, row, option) => {
+				return this.spriteFactory.create({
+					name: `npc_${col}_${row}`,
+					anim: this.atlas.npc.still,
+					size: [40, 40],
+					x: 40 * col, y: 40 * row,
+				}, {
+					collide: 1, npc: 1, noblock: 1,
+					onCollide: (self, sprite, xPush, yPush) => {
+					},
+				});
+			},
+			'$': (col, row, option) => {
+				return this.spriteFactory.create({
+					name: `coin_${col}_${row}`,
+					anim: this.atlas.debugCoin,
+					size: [40, 40],
+					x: 40 * col, y: 40 * row,
+				}, {
+					collide: 1, coin: 1, noblock: 1,
+					onCollide: (self, sprite, xPush, yPush) => {
+						if (self.properties.pickedUp) {
+							return;
+						}
+						self.setProperty("pickedUp", self.engine.lastTime);
+					},
+					onChange: {
+						pickedUp: (coin, value) => {
+							if (value) {
+								this.audio.pickup.play();
+								coin.changeOpacity(0);
+							}
+						},
+					},
+				});
 			},
 		};
 	}

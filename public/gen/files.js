@@ -29,6 +29,8 @@ const globalFiles=[
 			"clue-lobby.png",
 			"computer-desk.png",
 			"debug-block.png",
+			"debug-coin.png",
+			"debug-npc.png",
 			"debug-player.png",
 			"desert-far.png",
 			"desert-room-collision.png",
