@@ -24,6 +24,7 @@ class GameBase {
 
 	addPhysics(physics) {
 		this.physics.push(physics);
+		return physics;
 	}
 
 	onUnlockMedal(medal) {

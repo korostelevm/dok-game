@@ -1,77 +1,105 @@
 class Collision extends PhysicsBase {
 	async init(sprites, game) {
 		this.game = game;
-		this.sprites = sprites.filter(({collide}) => collide);
+		const filteredSprites = sprites.filter(({collide}) => collide);
+		this.sprites = filteredSprites;
 		this.horizontal = [];
 		this.vertical = [];
+		this.axis = [
+			this.horizontal,
+			this.vertical,
+		];
+		this.openColliders = {};
 
-		this.sprites.forEach(sprite => {
+		const H = 1, V = 2;
+		const BOTH = H | V;
+
+		const countCollision = function(index, horizontal) {
+			if (!this.collisions[index]) {
+				this.colliders.push(index);
+			}
+			this.collisions[index] |= horizontal ? H : V; 
+		};
+		const collisionComponent = this;
+		const applyCollisions = function() {
+			const firstSprite = this;
+			for (let i = 0; i < this.colliders.length; i++) {
+				const index = this.colliders[i];
+				const secondSprite = filteredSprites[index];
+				if (this.collisions[secondSprite.colIndex] === BOTH) {
+					collisionComponent.accountForCollision(firstSprite, secondSprite);
+				}
+				firstSprite.collisions[secondSprite.colIndex] = 0;
+			}
+			this.colliders.length = 0;
+		};
+
+		this.sprites.forEach((sprite, index) => {
 			const topLeft = { sprite, topLeft: true };
 			const bottomRight = { sprite, bottomRight: true };
 			this.horizontal.push(topLeft, bottomRight);
 			this.vertical.push(topLeft, bottomRight);
+			sprite.colIndex = index;
+			sprite.colliders = [];
+			sprite.collisions = new Array(this.sprites.length).fill(null).map(() => 0);
+
+			sprite.countCollision = countCollision;
+			sprite.applyCollisions = applyCollisions;
 		});
 	}
 
 	refresh(time, dt) {
-		this.sprites.forEach(sprite => sprite.getCollisionBox(time));
+		for (let i = 0; i < this.sprites.length; i++) {
+			this.sprites[i].getCollisionBox(time);
+		}
 
 		this.horizontal.sort(this.compareHorizontal);
 		this.vertical.sort(this.compareVertical);
 
-		const collisionCount = {};
-
-		const hits = [
-			{}, {},
-		];
-		const axis = [
-			this.horizontal,
-			this.vertical,
-		];
-
-		for (let m = 0; m < axis.length; m++) {
-			let hitCount = 0;
-			const hit = hits[m];
-			const ax = axis[m];
+		for (let m = 0; m < this.axis.length; m++) {
+			const openColliders = this.openColliders;
+			const ax = this.axis[m];
 			for (let i = 0; i < ax.length; i++) {
 				const { sprite, topLeft, bottomRight } = ax[i];
+
+				//	Count new collisions with the open colliders
+				for (let id in openColliders) {
+					const openCollider = openColliders[id];
+					if (id !== sprite.id) {
+						if (openCollider.onCollide) {
+							openCollider.countCollision(sprite.colIndex, m === 0);
+						}
+						if (sprite.onCollide) {
+							sprite.countCollision(openCollider.colIndex, m === 0);
+						}
+					}
+				}
+
 				if (topLeft) {
-					hit[sprite.id] = sprite;
-					this.recordHit(sprite, hit, collisionCount, time);
+					//	Open the new colliders
+					openColliders[sprite.id] = sprite;
 				} else {
-					delete hit[sprite.id];
+					//	Close colliders
+					delete openColliders[sprite.id];
 				}
 			}
 		}
-		for (let touch in collisionCount) {
-			if (collisionCount[touch] >= 2) {
-				const [first,second] = touch.split("/");
-				const firstSprite = this.game[first];
-				if (firstSprite.onCollide) {
-					const secondSprite = this.game[second];
-					const leftPush = firstSprite.collisionBox.right - secondSprite.collisionBox.left;
-					const rightPush = secondSprite.collisionBox.right - firstSprite.collisionBox.left;
-					const xPush = leftPush < rightPush ? -leftPush : rightPush;
-					const topPush = firstSprite.collisionBox.bottom - secondSprite.collisionBox.top;
-					const bottomPush = secondSprite.collisionBox.bottom - firstSprite.collisionBox.top;
-					const yPush = topPush < bottomPush ? -topPush : bottomPush;
-					firstSprite.onCollide(firstSprite, secondSprite, xPush, yPush);
-				}
-			}
-		}
+		this.applyCollisions();
 	}
 
-	recordHit(sprite, hit, collisionCount, time) {
-		for (let i in hit) {
-			if (sprite.id === i) {
-				continue;
-			}
-			if (hit[i].onCollide) {
-				collisionCount[`${i}/${sprite.id}`] = (collisionCount[`${i}/${sprite.id}`] || 0) + 1;
-			}
-			if (sprite.onCollide) {
-				collisionCount[`${sprite.id}/${i}`] = (collisionCount[`${sprite.id}/${i}`] || 0) + 1;
-			}
+	accountForCollision(firstSprite, secondSprite) {
+		const leftPush = firstSprite.collisionBox.right - secondSprite.collisionBox.left;
+		const rightPush = secondSprite.collisionBox.right - firstSprite.collisionBox.left;
+		const xPush = leftPush < rightPush ? -leftPush : rightPush;
+		const topPush = firstSprite.collisionBox.bottom - secondSprite.collisionBox.top;
+		const bottomPush = secondSprite.collisionBox.bottom - firstSprite.collisionBox.top;
+		const yPush = topPush < bottomPush ? -topPush : bottomPush;
+		firstSprite.onCollide(firstSprite, secondSprite, xPush, yPush);
+	}
+
+	applyCollisions() {
+		for (let i = 0; i < this.sprites.length; i++) {
+			this.sprites[i].applyCollisions();
 		}
 	}
 

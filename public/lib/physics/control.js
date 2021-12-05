@@ -63,7 +63,7 @@ class Control extends PhysicsBase {
 				if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
 					sprite.dx = 0;
 				}
-				sprite.dy += this.dy * sprite.control;
+				sprite.dy += this.dy * sprite.control * .3;
 				sprite.dy *= .8;
 				if (Math.abs(sprite.dy) < .01 && sprite.dy !== 0) {
 					sprite.dy = 0;
@@ -74,13 +74,11 @@ class Control extends PhysicsBase {
 				return;
 			}
 
-			sprite.dx += this.dx * sprite.control;
-			sprite.dx *= sprite.rest ? .8 : .85;
+			const acceleration = Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
+			sprite.dx += this.dx * sprite.control * acceleration;
+			sprite.dx *= sprite.crouch ? .3 : sprite.rest ? (!this.dx ? .3 : .72) : sprite.dy < 0 ? .76 : .8;
 			if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
 				sprite.dx = 0;
-			}
-			if (time - this.lastControl < 50) {
-				sprite.onControl(sprite, this.dx, this.dy);
 			}
 			if (!sprite.jump || time - sprite.jump > 500) {
 				if (sprite.climb && time - sprite.climb < 200) {
@@ -88,6 +86,14 @@ class Control extends PhysicsBase {
 					sprite.dy += this.dy * sprite.control;
 					sprite.dy *= .7;
 				}
+			}
+			if (this.dy > 0 && sprite.rest) {
+				sprite.crouch = time;
+			} else {
+				sprite.crouch = 0;				
+			}
+			if (time - this.lastControl < 50) {
+				sprite.onControl(sprite, this.dx, this.dy);
 			}
 		});
 	}

@@ -17,7 +17,7 @@ class DebugView {
 		}
 		ctx.beginPath();
 		ctx.globalAlpha = sprite.opacity > 0 ? 1 : .2;
-		ctx.rect((rect.left + shift.x / 2) / pixelScale / zoom, (rect.top + shift.y / 2) / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
+		ctx.rect((rect.left + shift.x / 2) / pixelScale / zoom, (rect.top - shift.y / 2) / pixelScale / zoom, (rect.right - rect.left) / pixelScale / zoom - 1, (rect.bottom - rect.top) / pixelScale / zoom - 1);
 		ctx.stroke();
 	}
 

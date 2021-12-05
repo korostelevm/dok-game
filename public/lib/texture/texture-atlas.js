@@ -215,12 +215,12 @@ class TextureAtlas {
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = image ? image.naturalWidth : 0;
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
-		const { cols, rows, frameRate, range, firstFrame, direction, vdirection } = animationData;
+		const { cols, rows, spriteWidth, spriteHeight, frameRate, range, firstFrame, direction, vdirection } = animationData;
 		this.frameRate = frameRate || 1;
-		this.cols = cols || 1;
-		this.rows = rows || 1;
-		this.spriteWidth = this.spriteSheetWidth / this.cols;
-		this.spriteHeight = this.spriteSheetHeight / this.rows;
+		this.cols = cols || (spriteWidth ? Math.ceil(this.spriteSheetWidth / spriteWidth) : 1);
+		this.rows = rows || (spriteHeight ? Math.ceil(this.spriteSheetHeight / spriteHeight) : 1);
+		this.spriteWidth = spriteWidth || this.spriteSheetWidth / this.cols;
+		this.spriteHeight = spriteHeight || this.spriteSheetHeight / this.rows;
 		this.startFrame = (range ? range[0] : 0) || 0;
 		this.endFrame = (range ? range[1] : 0) || this.startFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));

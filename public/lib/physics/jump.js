@@ -22,6 +22,10 @@ class Jump extends PhysicsBase {
 				if (time - sprite.rest < 100 || time - sprite.climbing < 100) {
 					sprite.dy = -sprite.jump;
 					sprite.rest = 0;
+					if (sprite.platform && sprite.platform.onPlatform) {
+						sprite.platform.onPlatform(sprite.platform, null);
+					}
+					sprite.platform = null;
 					sprite.climbing = 0;
 					recordJump = true;
 					sprite.onJump(sprite);

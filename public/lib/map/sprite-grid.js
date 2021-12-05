@@ -23,10 +23,7 @@ class SpriteGrid {
 			for (let i = 0; i < fixedLine.length; i+= 2) {
 				const col = i / 2;
 				const piece = fixedLine.substr(i, 2);
-				grid[row][col] =  this.createBlock(col, row, piece.charAt(0), 0);
-				if (!grid[row][col]) {
-					this.createBlock(col, row, piece.charAt(1), 1);
-				}
+				grid[row][col] =  this.createBlock(col, row, piece.charAt(0), piece.charAt(1));
 			}
 
 			row++;
@@ -40,10 +37,12 @@ class SpriteGrid {
 				}
 			});
 		})
+
+		return grid;
 	}
 
-	createBlock(col, row, type, index) {
-		const block = this.spriteMapper.createBlock(col, row, type, index);
+	createBlock(col, row, type, option) {
+		const block = this.spriteMapper.createBlock(col, row, type, option);
 		if (block) {
 			this.game[block.id] = block;
 		}
