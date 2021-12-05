@@ -26,9 +26,6 @@ class SpriteMapper {
 			}
 		};
 
-
-
-
 		this.map = {
 			'8': (col, row, option) => {
 				return this.spriteFactory.create({
@@ -61,9 +58,7 @@ class SpriteMapper {
 								}
 							}
 
-							if (sprite.canLand && self.dy > 0) {
-								self.dy = 0;
-							} else if (self.dy < 0) {
+							if (sprite.canLand && self.dy > 0 || self.dy < 0) {
 								self.dy = 0;
 							}
 

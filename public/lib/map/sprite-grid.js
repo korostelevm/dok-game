@@ -13,7 +13,9 @@ class SpriteGrid {
 
 		const grid = [];
 		const lines = map.split("\n");
+
 		let row = 0;
+		const rowShift = 10 - lines.filter(line => line.trim().length).length;
 		lines.forEach(line => {
 			const fixedLine = line.trim();
 			if (!fixedLine.length && row === 0) {
@@ -23,7 +25,7 @@ class SpriteGrid {
 			for (let i = 0; i < fixedLine.length; i+= 2) {
 				const col = i / 2;
 				const piece = fixedLine.substr(i, 2);
-				grid[row][col] =  this.createBlock(col, row, piece.charAt(0), piece.charAt(1));
+				grid[row][col] =  this.createBlock(col, row + rowShift, piece.charAt(0), piece.charAt(1));
 			}
 
 			row++;
