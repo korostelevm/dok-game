@@ -54,6 +54,20 @@ class Home extends GameBase {
 				range: [0,3],
 				frameRate: 10,
 			}),
+			debugDoorBack: await engine.addTexture({
+				url: "assets/door.png",
+				collision_url: "assets/door.png",
+				spriteWidth: 64, spriteHeight: 128,
+				range: [0],
+				frameRate: 10,
+			}),
+			debugDoor: await engine.addTexture({
+				url: "assets/door.png",
+				collision_url: "assets/door.png",
+				spriteWidth: 64, spriteHeight: 128,
+				range: [1,4],
+				frameRate: 10,
+			}),
 			npc: {
 				still: await engine.addTexture({
 					url: "assets/debug-npc.png",
@@ -143,11 +157,11 @@ class Home extends GameBase {
 			jingle: new Sound("audio/jingle.mp3", 1),
 		};
 
-		this.addPhysics(new Jump());
+		const physics = this.addPhysics(new Jump());
 		const control = this.addPhysics(new Control());
-		this.addPhysics(new Gravity());
-		this.addPhysics(new Movement());
-		this.addPhysics(new Collision());
+		const gravity = this.addPhysics(new Gravity());
+		const movement = this.addPhysics(new Movement());
+		const collision = this.addPhysics(new Collision());
 
 		const spriteMapper = new SpriteMapper(this.spriteFactory, this.atlas, control, this.audio);
 		await spriteMapper.init(engine);
@@ -175,7 +189,7 @@ class Home extends GameBase {
 				[]    []      8                       [][][]    [][][][][]  [][][][][][][]HH[][][][]    [][][][]  [][][][][]  [][]  [][]          [][]
 				[]  $$[]                        [][]  [][]      [][][][][]  [][][][][][][]HH[][][][]    [][][][]  ^^^^^^^^^^  [][]  [][]                    [][][][]
 				[]    [][]    []      [][][][]    []  ..              [][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]                []
-				[]  [][]                  [][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]        -4    -3    -2
+				[]  [][]                ?1[][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]        -4    -3    -2
 				[]        [][]    [][][][]      [][][][][][] [] [][][]  []      VVVVVV          [][]                    [][]                                  
 				[][]    [][][][]        [][][][][][][][][][]    [][]        VVVVVV  [][][][]          [][][][][][][]          [][]        -0
 				....    [][][][][][][]            [][][][][]    [][][]  [][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]    []            -1

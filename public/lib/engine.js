@@ -160,7 +160,7 @@ class Engine {
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
-		this.shift = {x:0, y:0, goal:{x:0,y:0}, speed:dist => dist / 20};
+		this.shift = {x:0, y:0, goal:{x:0,y:0}, speed:dist => dist / 20, dirty: true};
 	}
 
 	countUnlocked() {
@@ -388,6 +388,8 @@ class Engine {
 		this.textureManager.generateAllMipMaps();
 		this.chrono.tick("mipmaps generated");
 
+		this.tipBox = new TipBox(this.canvas);
+
 		this.ready = true;
 		Engine.start(this);
 		this.chrono.tick("engine started");
@@ -525,14 +527,15 @@ class Engine {
 	}
 
 	resetScene() {
-		if (this.game) {
-			this.game.ready = false;
+		const { game } = this;
+		if (game) {
+			game.ready = false;
 			for (let i = 0; i < game.physics.length; i++) {
 				game.physics[i].onExit(game);
 			}
-			this.game.onExit(engine);
+			game.onExit(engine);
 
-			this.lastGame = this.game.constructor.name;
+			this.lastGame = game.constructor.name;
 		}
 		if (this.spriteCollection) {
 			this.spriteCollection.clear();
@@ -542,6 +545,11 @@ class Engine {
 		}
 		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
+		this.shift.x = 0;
+		this.shift.y = 0;
+		this.shift.goal.x = 0;
+		this.shift.goal.y = 0;
+		this.shift.dirty = true;
 	}
 
 	resetGame() {
@@ -828,13 +836,15 @@ class Engine {
 
 		let xyChanged = false;
 		const shift = this.shift;
-		if (shift.x !== shift.goal.x || shift.y !== shift.goal.y) {
+		if (shift.x !== shift.goal.x || shift.y !== shift.goal.y || shift.dirty) {
 			const dx = (shift.goal.x - shift.x);
 			const dy = (shift.goal.y - shift.y);
 			const dist = Math.sqrt(dx*dx + dy*dy);
 			const speed = shift.speed(dist);
-			shift.x += dx / dist * Math.min(speed, dist);
-			shift.y += dy / dist * Math.min(speed, dist);
+			const mul = Math.min(speed, dist) / (dist || 1);
+			shift.x += dx * mul;
+			shift.y += dy * mul;
+			shift.dirty = false;
 			xyChanged = true;
 		}
 
@@ -890,7 +900,15 @@ class Engine {
 			if (callback) {
 				callback(score);
 			}
-		});;
+		});
+	}
+
+	showMessage(id, message) {
+		this.tipBox.showMessage(id, message);
+	}
+
+	clearMessage(id) {
+		this.tipBox.clearMessage(id);
 	}
 }
 

@@ -18,6 +18,7 @@ const globalFiles=[
 			"batman.png",
 			"burger.png",
 			"butler.png",
+			"button_e.png",
 			"candy-collision.png",
 			"candy.png",
 			"chalkboard.png",
@@ -37,6 +38,7 @@ const globalFiles=[
 			"desert-room.png",
 			"dino-stupid.png",
 			"door-collision.png",
+			"door.png",
 			"entrance.png",
 			"gandalf.png",
 			"ground-entrance.png",
@@ -274,7 +276,8 @@ const globalFiles=[
 					"debug-view.js",
 					"focus-fixer.js",
 					"keyboard-handler.js",
-					"scene-tab.js"
+					"scene-tab.js",
+					"tip-box.js"
 				]
 			},
 			{

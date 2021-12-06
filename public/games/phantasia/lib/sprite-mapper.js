@@ -31,7 +31,7 @@ class SpriteMapper {
 			'8': (col, row, option) => {
 				return this.spriteFactory.create({
 					name: "hero",
-					anim: this.atlas.debugPlayer,
+					anim: this.atlas.hero.still,
 					size: [50, 75],
 					x: 40 * col, y: 40 * row, z: -1,
 				}, {
@@ -40,6 +40,16 @@ class SpriteMapper {
 					collide: 1,
 					jump: 4.8,
 					control: 1,
+					onEntering: (self, sprite) => {
+						if (sprite.npc) {
+							self.engine.showMessage(self.id, `press [E] to start dialog`);
+						}
+					},
+					onLeaving: (self, sprite) => {
+						if (sprite.npc) {
+							self.engine.clearMessage(self.id);
+						}
+					},
 					onCollide: (self, sprite, xPush, yPush) => {
 						if (sprite.ladder && !self.climbing && self.dy > 0) {
 							self.climbing = self.engine.lastTime;
@@ -233,10 +243,12 @@ class SpriteMapper {
 						self.setProperty("pickedUp", self.engine.lastTime);
 					},
 					onChange: {
-						pickedUp: (coin, value) => {
+						pickedUp: (coin, value, isInit) => {
 							if (value) {
-								this.audio.pickup.play();
-								coin.changeOpacity(0);
+								if (!isInit) {
+									this.audio.pickup.play();
+								}
+								coin.setActive(false);
 							}
 						},
 					},

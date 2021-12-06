@@ -18,6 +18,7 @@ class Sprite {
 		this.rotation = data.rotation || 0;
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.crop = [1, 1];
+		this.active = true;
 
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
@@ -200,5 +201,18 @@ class Sprite {
 		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
 
 		return this.collisionBox;
+	}
+
+	onDisable() {
+		this.changeOpacity(0);
+	}
+
+	setActive(active) {
+		if (this.active !== active) {
+			this.active = active ? this.engine.lastTime : 0;
+			if (!active) {
+				this.onDisable();
+			}
+		}
 	}
 }
