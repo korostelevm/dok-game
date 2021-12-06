@@ -2,6 +2,17 @@ class Control extends PhysicsBase {
 	async init(sprites, game) {
 		this.sprites = sprites.filter(({control}) => control);
 
+		this.onKeyActions = {
+			onLeft: [
+			],
+			onRight: [
+			],
+			onUp: [
+			],
+			onDown: [
+			],
+		};
+
 		this.dx = 0;
 		this.dy = 0;
 		this.lastControl = 0;
@@ -12,6 +23,7 @@ class Control extends PhysicsBase {
 				this.dx++;
 			}
 			this.lastControl = game.engine.lastTime;
+			this.forwardEvents("onLeft", e);
 		};
 		this.onRight = e => {
 			if (e.type === "keydown") {
@@ -20,6 +32,7 @@ class Control extends PhysicsBase {
 				this.dx--;
 			}
 			this.lastControl = game.engine.lastTime;
+			this.forwardEvents("onRight", e);
 		};
 		this.onUp = e => {
 			if (e.type === "keydown") {
@@ -28,6 +41,7 @@ class Control extends PhysicsBase {
 				this.dy++;
 			}			
 			this.lastControl = game.engine.lastTime;
+			this.forwardEvents("onUp", e);
 		}
 		this.onDown = e => {
 			if (e.type === "keydown") {
@@ -36,6 +50,7 @@ class Control extends PhysicsBase {
 				this.dy--;
 			}			
 			this.lastControl = game.engine.lastTime;
+			this.forwardEvents("onDown", e);
 		}
 		game.engine.keyboardHandler.addKeyDownListener('a', this.onLeft);
 		game.engine.keyboardHandler.addKeyUpListener('a', this.onLeft);
@@ -47,6 +62,28 @@ class Control extends PhysicsBase {
 		game.engine.keyboardHandler.addKeyUpListener('s', this.onDown);
 		game.engine.keyboardHandler.addKeyDownListener(' ', this.onUp);
 		game.engine.keyboardHandler.addKeyUpListener(' ', this.onUp);
+
+		this.sprites.forEach(sprite => {
+			if (sprite.onLeft) {
+				this.onKeyActions.onLeft.push(sprite);
+			}
+			if (sprite.onRight) {
+				this.onKeyActions.onRight.push(sprite);
+			}
+			if (sprite.onUp) {
+				this.onKeyActions.onUp.push(sprite);
+			}
+			if (sprite.onDown) {
+				this.onKeyActions.onDown.push(sprite);
+			}
+		});
+	}
+
+	forwardEvents(action, e) {
+		const sprites = this.onKeyActions[action];
+		for (let i = 0; i < sprites.length; i++) {
+			sprites[i][action](sprites[i], e);
+		}
 	}
 
 	onExit(game) {
@@ -76,7 +113,7 @@ class Control extends PhysicsBase {
 
 			const acceleration = Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
 			sprite.dx += this.dx * sprite.control * acceleration;
-			sprite.dx *= sprite.crouch ? .3 : sprite.rest ? (!this.dx ? .3 : .72) : sprite.dy < 0 ? .76 : .8;
+			sprite.dx *= sprite.rest ? (sprite.crouch || !this.dx ? .3 : .72) : sprite.dy < 0 ? .76 : .8;
 			if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
 				sprite.dx = 0;
 			}
@@ -86,11 +123,6 @@ class Control extends PhysicsBase {
 					sprite.dy += this.dy * sprite.control;
 					sprite.dy *= .7;
 				}
-			}
-			if (this.dy > 0 && sprite.rest) {
-				sprite.crouch = time;
-			} else {
-				sprite.crouch = 0;				
 			}
 			if (time - this.lastControl < 50) {
 				sprite.onControl(sprite, this.dx, this.dy);
