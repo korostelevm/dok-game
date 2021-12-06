@@ -11,7 +11,7 @@ class SpriteMapper {
 			const still = dx === 0;
 			const time = self.engine.lastTime;
 			const climbing = time - self.climbing < 100;
-			const climbingStill = climbing && dx === 0 && dy === 0;
+			const climbingStill = climbing && self.dx === 0 && self.dy === 0;
 			const jumping = time - self.lastJump < 300;
 			const crouching = self.crouch;
 			const crouchingStill = crouching && dx === 0;
@@ -43,6 +43,10 @@ class SpriteMapper {
 					onEnter: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.showMessage(self.id, `press [E] to start dialog`);
+						}
+						if (sprite.ladder) {
+							self.changePosition(sprite.x + sprite.size[0] / 2 - self.size[0] / 2, self.y);
+							self.dx = 0;
 						}
 					},
 					onLeave: (self, sprite) => {

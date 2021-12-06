@@ -7,8 +7,8 @@ class TextureAtlas {
 		this.x = 0;
 		this.y = 0;
 		this.textureSize = textureSize;
-		this.canvas = document.createElement("canvas");
 		this.imageLoader = imageLoader;
+		this.canvas = this.imageLoader.canvas;
 		this.spriteWidth = 0;
 		this.spriteHeight = 0;
 		this.startIndex = 0;
@@ -95,7 +95,7 @@ class TextureAtlas {
 
 		this.chrono.tick(`Done loading image: ${url}`);
 		if (collision_url) {
-			this.collisionBoxes = await this.calculateCollisionBoxes(collision_url);
+			this.collisionBoxes = await this.imageLoader.calculateCollisionBoxes(collision_url, this);
 			this.chrono.tick(`Done loading collision image: ${collision_url}`);
 		} else {
 			this.collisionBoxes = [];
@@ -106,39 +106,6 @@ class TextureAtlas {
 		this.collisionPadding = collision_padding;
 
 		return this;
-	}
-
-	async calculateCollisionBoxes(collision_url) {
-		const { canvas } = this;
-		const collisionBoxes = [];
-		const collisionImage = await this.imageLoader.loadImage(collision_url);
-		canvas.width = collisionImage.naturalWidth;
-		canvas.height = collisionImage.naturalHeight;
-		const context = canvas.getContext("2d");
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		context.drawImage(collisionImage, 0, 0);
-
-		for (let row = 0; row < this.rows; row++) {
-			for (let col = 0; col < this.cols; col++) {
-				const cellWidth = canvas.width / this.cols;
-				const cellHeight = canvas.height / this.rows;
-				const cellX = col * cellWidth;
-				const cellY = row * cellHeight;
-				const top = this.getTop(context, cellX, cellY, cellWidth, cellHeight) / cellHeight;
-				if (top < 0) {
-					continue;
-				}
-				const bottom = (this.getBottom(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellHeight;
-				const left = this.getLeft(context, cellX, cellY, cellWidth, cellHeight) / cellWidth;
-				const right = (this.getRight(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellWidth;
-				if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
-					collisionBoxes[row * this.cols + col] = {
-						top, left, bottom, right,
-					};
-				}
-			}
-		}
-		return collisionBoxes;
 	}
 
 	getCollisionBoxNormalized(frame) {
@@ -223,6 +190,7 @@ class TextureAtlas {
 		this.spriteHeight = spriteHeight || this.spriteSheetHeight / this.rows;
 		this.startFrame = (range ? range[0] : 0) || 0;
 		this.endFrame = (range ? range[1] : 0) || this.startFrame;
+		this.animated = this.startFrame !== this.endFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 		this.direction = direction || 1;
 		this.vdirection = vdirection || 1;

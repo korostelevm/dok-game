@@ -43,6 +43,11 @@ class TipBox {
 		}
 	}
 
+	clear() {
+		this.messages = {};
+		this.clearMessage(this.id);
+	}
+
 	#displayMessage(id, message) {
 		this.id = id;
 		if (message) {

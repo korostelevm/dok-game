@@ -16,8 +16,8 @@ class Collision extends PhysicsBase {
 		this.BOTH = this.H | this.V;
 
 		this.sprites.forEach((sprite, colIndex) => {
-			const topLeft = { sprite, topLeft: true };
-			const bottomRight = { sprite, bottomRight: true };
+			const topLeft = { sprite, topLeft: true, x: 0, y: 0 };
+			const bottomRight = { sprite, bottomRight: true, x: 0, y: 0 };
 			this.horizontal.push(topLeft, bottomRight);
 			this.vertical.push(topLeft, bottomRight);
 			sprite.collisionData = {
@@ -46,14 +46,24 @@ class Collision extends PhysicsBase {
 		collisions[colIndex] |= horizontal ? this.H : this.V; 
 	}
 
-	refresh(time, dt) {
+	calculateCollisionMarkers(time) {
 		for (let i = 0; i < this.sprites.length; i++) {
 			this.sprites[i].getCollisionBox(time);
 		}
-
+		for (let i = 0; i < this.horizontal.length; i++) {
+			const marker = this.horizontal[i];
+			marker.x = marker.topLeft ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right;
+		}
+		for (let i = 0; i < this.vertical.length; i++) {
+			const marker = this.vertical[i];
+			marker.y = marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom;
+		}
 		this.horizontal.sort(this.compareHorizontal);
 		this.vertical.sort(this.compareVertical);
+	}
 
+	refresh(time, dt) {
+		this.calculateCollisionMarkers(time);
 		for (let m = 0; m < this.axis.length; m++) {
 			const isHorizontal = m === 0;
 			const openColliders = this.openColliders;
@@ -142,14 +152,10 @@ class Collision extends PhysicsBase {
 	}
 
 	compareHorizontal(a, b) {
-		const aX = a.topLeft ? a.sprite.collisionBox.left : a.sprite.collisionBox.right;
-		const bX = b.topLeft ? b.sprite.collisionBox.left : b.sprite.collisionBox.right;
-		return aX - bX;
+		return a.x - b.x;
 	}
 
 	compareVertical(a, b) {
-		const aY = a.topLeft ? a.sprite.collisionBox.top : a.sprite.collisionBox.bottom;
-		const bY = b.topLeft ? b.sprite.collisionBox.top : b.sprite.collisionBox.bottom;
-		return aY - bY;
+		return a.y - b.y;
 	}
 }

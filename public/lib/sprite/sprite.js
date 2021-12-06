@@ -28,6 +28,7 @@ class Sprite {
 			left:0,
 			bottom:0,
 			right:0,
+			dirty: true,
 		};
 		this.properties = properties || {};
 		this.onChange = {};
@@ -88,6 +89,7 @@ class Sprite {
 			this.x = x;
 			this.y = y;
 			this.updated.sprite = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -98,6 +100,7 @@ class Sprite {
 			this.size[0] = width;
 			this.size[1] = height;
 			this.updated.sprite = time;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -107,6 +110,7 @@ class Sprite {
 		if (this.rotation !== rotation) {
 			this.rotation = rotation;
 			this.updated.sprite = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -125,6 +129,7 @@ class Sprite {
 		if (this.direction !== direction) {
 			this.direction = direction;
 			this.updated.direction = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -134,6 +139,7 @@ class Sprite {
 		if (this.vdirection !== vdirection) {
 			this.vdirection = vdirection;
 			this.updated.direction = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -148,6 +154,7 @@ class Sprite {
 			this.anim = anim;
 			this.updated.animation = time || this.engine.lastTime;
 			this.updated.updateTime = updateTime || time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -158,6 +165,7 @@ class Sprite {
 			this.crop[0] = x;
 			this.crop[1] = y;
 			this.updated.crop = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -168,6 +176,7 @@ class Sprite {
 			this.hotspot[0] = x;
 			this.hotspot[1] = y;
 			this.updated.hotspot = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -179,6 +188,9 @@ class Sprite {
 	}
 
 	getCollisionBox(time) {
+		if (!this.collisionBox.dirty) {
+			return this.collisionBox;
+		}
 		const flipH = this.direction < 0;
 		const flipV = this.vdirection < 0;
 		const rect = this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time));
@@ -199,7 +211,9 @@ class Sprite {
 		this.collisionBox.right = left + rRight * width * this.crop[0] + collisionPadding;
 		this.collisionBox.top = top + rTop * height * this.crop[1] - collisionPadding;
 		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
-
+		if (!this.anim.animated) {
+			this.collisionBox.dirty = false;
+		}
 		return this.collisionBox;
 	}
 

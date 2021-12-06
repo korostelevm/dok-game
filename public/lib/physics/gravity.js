@@ -7,6 +7,8 @@ class Gravity extends PhysicsBase {
 		};
 		game.engine.keyboardHandler.addKeyDownListener(' ', this.onUp);
 		game.engine.keyboardHandler.addKeyUpListener(' ', this.onUp);
+		game.engine.keyboardHandler.addKeyDownListener(['w','ArrowUp'], this.onUp);
+		game.engine.keyboardHandler.addKeyUpListener(['w','ArrowUp'], this.onUp);
 	}
 
 	onExit(game) {

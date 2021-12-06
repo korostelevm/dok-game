@@ -1,6 +1,8 @@
 class ImageLoader {
 	constructor() {
 		this.imageStock = {};
+		this.collisionBoxes = {};
+		this.canvas = document.createElement("canvas");
 	}
 
 	unload() {
@@ -76,4 +78,42 @@ class ImageLoader {
 			}
 		});
 	}
+
+	async calculateCollisionBoxes(collision_url, textureAtlas) {
+		const tag = `${collision_url}_${textureAtlas.rows}_${textureAtlas.cols}`;
+		if (this.collisionBoxes[tag]) {
+			return this.collisionBoxes[tag];
+		}
+		const { canvas } = textureAtlas;
+		const collisionBoxes = [];
+		const collisionImage = await this.loadImage(collision_url);
+		canvas.width = collisionImage.naturalWidth;
+		canvas.height = collisionImage.naturalHeight;
+		const context = canvas.getContext("2d");
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		context.drawImage(collisionImage, 0, 0);
+
+		for (let row = 0; row < textureAtlas.rows; row++) {
+			for (let col = 0; col < textureAtlas.cols; col++) {
+				const cellWidth = canvas.width / textureAtlas.cols;
+				const cellHeight = canvas.height / textureAtlas.rows;
+				const cellX = col * cellWidth;
+				const cellY = row * cellHeight;
+				const top = textureAtlas.getTop(context, cellX, cellY, cellWidth, cellHeight) / cellHeight;
+				if (top < 0) {
+					continue;
+				}
+				const bottom = (textureAtlas.getBottom(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellHeight;
+				const left = textureAtlas.getLeft(context, cellX, cellY, cellWidth, cellHeight) / cellWidth;
+				const right = (textureAtlas.getRight(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellWidth;
+				if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
+					collisionBoxes[row * textureAtlas.cols + col] = {
+						top, left, bottom, right,
+					};
+				}
+			}
+		}
+		this.collisionBoxes[tag] = collisionBoxes;
+		return collisionBoxes;
+	}	
 }

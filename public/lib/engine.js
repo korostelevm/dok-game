@@ -322,6 +322,8 @@ class Engine {
 		this.gl = gl;
 		this.chrono.tick("dom content loaded");
 
+		this.tipBox = new TipBox(this.canvas);
+
 		this.debugView = new DebugView(this);
 
 		this.overlay = document.getElementById("overlay");
@@ -387,8 +389,6 @@ class Engine {
 
 		this.textureManager.generateAllMipMaps();
 		this.chrono.tick("mipmaps generated");
-
-		this.tipBox = new TipBox(this.canvas);
 
 		this.ready = true;
 		Engine.start(this);
@@ -552,6 +552,9 @@ class Engine {
 		if (this.textureManager) {
 			this.textureManager.clear();
 		}
+		if (this.tipBox) {
+			this.tipBox.clear();
+		}
 		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
 		this.shift.x = 0;
@@ -659,16 +662,20 @@ class Engine {
 			const frame = sprite.getAnimationFrame(time);
 			const previousFrame = sprite.frame;
 			sprite.frame = frame;
-			if (sprite.onFrame) {
-				let f = sprite.onFrame[frame];
-				if (typeof f === "number") {
-					f = sprite.onFrame[f];
-				}
-				if (f) {
-					f(sprite, previousFrame);
-				}
-			}
+			this.handleOnFrame(sprite, frame);
 		}		
+	}
+
+	handleOnFrame(sprite, frame) {
+		if (sprite.onFrame) {
+			let f = sprite.onFrame[frame];
+			if (typeof f === "number") {
+				f = sprite.onFrame[f];
+			}
+			if (f) {
+				f(sprite, previousFrame);
+			}
+		}
 	}
 
 	bestVoice(voices, voiceName) {
