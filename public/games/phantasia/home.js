@@ -224,6 +224,10 @@ class Home extends GameBase {
 	onDropOnOverlay(e) {
 	}
 
+	getWindowSize() {
+		return [900, 500];
+	}
+
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		for (let i = 0; i < this.refreshableSprites.length; i++) {

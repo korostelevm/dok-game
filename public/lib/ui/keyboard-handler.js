@@ -35,6 +35,10 @@ class KeyboardHandler {
 	}
 
 	addKeyListener(key, type, onKey) {
+		if (Array.isArray(key)) {
+			key.forEach(k => this.addKeyListener(k, type, onKey));
+			return;
+		}
 		this.listeners[key] = (this.listeners[key] || {});
 		this.listeners[key][type] = (this.listeners[key][type]||[]).concat(onKey);
 	}

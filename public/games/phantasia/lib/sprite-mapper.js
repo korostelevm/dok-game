@@ -40,12 +40,12 @@ class SpriteMapper {
 					collide: 1,
 					jump: 4.8,
 					control: 1,
-					onEntering: (self, sprite) => {
+					onEnter: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.showMessage(self.id, `press [E] to start dialog`);
 						}
 					},
-					onLeaving: (self, sprite) => {
+					onLeave: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.clearMessage(self.id);
 						}
@@ -66,6 +66,7 @@ class SpriteMapper {
 							return;
 						}
 
+						//	VERTICAL COLLIDE
 						if (Math.abs(yPush) < Math.abs(xPush)) {
 							if (sprite.ladder || sprite.crate) {
 								if (self.dy <= 0 || yPush > 0) {
@@ -77,7 +78,13 @@ class SpriteMapper {
 								self.dy = 0;
 							}
 
+							if (sprite.lowceiling && yPush > 0 && self.rest && !self.crouch) {
+								self.crouch = self.engine.lastTime;
+								return;
+							}
+
 							self.changePosition(self.x, self.y + yPush);
+							//	push from bottom
 							if (yPush < 0) {
 								self.lastJump = 0;
 								if (!self.rest) {
@@ -85,12 +92,15 @@ class SpriteMapper {
 								}
 								if (sprite.canLand) {
 									self.rest = self.engine.lastTime;
-									if (self.platform && self.platform.onPlatform) {
-										self.platform.onPlatform(self.platform, null);
-									}
-									self.platform = sprite;
-									if (self.platform.onPlatform) {
-										self.platform.onPlatform(self.platform, self);
+									if (self.platform !== sprite) {
+										if (self.platform && self.platform.onPlatform) {
+											self.platform.onPlatform(self.platform, null);
+										}
+										self.platform = sprite;
+										if (self.platform.onPlatform) {
+											//	TODO: Optimize. Right now, this gets called every frame when colliding two platforms.
+											self.platform.onPlatform(self.platform, self);
+										}
 									}
 								}
 							}
@@ -113,6 +123,9 @@ class SpriteMapper {
 						self.changePosition(self.x, self.y - self.jump);
 						self.lastJump = self.engine.lastTime;
 						onMotion(self, 0, 0);
+					},
+					onUp: (self, e) => {
+						self.crouch = 0;
 					},
 					onDown: (self, e) => {
 						if (e.type === "keyup") {
@@ -214,7 +227,7 @@ class SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					collide: 1,
+					collide: 1, lowceiling: 1,
 					init: (self, col, row, grid) => {
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {
 							self.canLand = true;

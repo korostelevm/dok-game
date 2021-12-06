@@ -9,6 +9,7 @@ class Collision extends PhysicsBase {
 			this.vertical,
 		];
 		this.openColliders = {};
+		this.countedColliders = [];
 
 		this.H = 1;
 		this.V = 2;
@@ -25,16 +26,24 @@ class Collision extends PhysicsBase {
 				collisions: new Array(this.sprites.length).fill(null).map(() => 0),
 				overlappers: [],
 				overlapping: new Array(this.sprites.length).fill(null).map(() => 0),
+				countCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
 			};
 		});
 	}
 
-	countCollision(sprite, index, horizontal) {
-		const { collisions, colliders } = sprite.collisionData;
-		if (!collisions[index]) {
-			colliders.push(index);
+	countCollision(sprite, secondSprite, horizontal) {
+		if (!sprite.collisionData.countCollision) {
+			return;
 		}
-		collisions[index] |= horizontal ? this.H : this.V; 
+		const { colIndex } = secondSprite.collisionData;
+		const { collisions, colliders } = sprite.collisionData;
+		if (!collisions[colIndex]) {
+			if (!colliders.length) {
+				this.countedColliders.push(sprite);
+			}
+			colliders.push(colIndex);
+		}
+		collisions[colIndex] |= horizontal ? this.H : this.V; 
 	}
 
 	refresh(time, dt) {
@@ -46,6 +55,7 @@ class Collision extends PhysicsBase {
 		this.vertical.sort(this.compareVertical);
 
 		for (let m = 0; m < this.axis.length; m++) {
+			const isHorizontal = m === 0;
 			const openColliders = this.openColliders;
 			const ax = this.axis[m];
 			for (let i = 0; i < ax.length; i++) {
@@ -58,12 +68,8 @@ class Collision extends PhysicsBase {
 				for (let id in openColliders) {
 					const openCollider = openColliders[id];
 					if (id !== sprite.id) {
-						if (openCollider.onCollide) {
-							this.countCollision(openCollider, sprite.collisionData.colIndex, m === 0);
-						}
-						if (sprite.onCollide) {
-							this.countCollision(sprite, openCollider.collisionData.colIndex, m === 0);
-						}
+						this.countCollision(openCollider, sprite, isHorizontal);
+						this.countCollision(sprite, openCollider, isHorizontal);
 					}
 				}
 
@@ -90,8 +96,8 @@ class Collision extends PhysicsBase {
 			sprite.onCollide(sprite, secondSprite, xPush, yPush);
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
-			if (sprite.onEntering) {
-				sprite.onEntering(sprite, secondSprite);
+			if (sprite.onEnter) {
+				sprite.onEnter(sprite, secondSprite);
 			}
 			sprite.collisionData.overlappers.push(secondSprite.collisionData.colIndex);
 		}
@@ -99,12 +105,13 @@ class Collision extends PhysicsBase {
 	}
 
 	applyCollisionsOnAllSprites(time) {
-		for (let i = 0; i < this.sprites.length; i++) {
-			this.applyCollisions(this.sprites[i], time);
+		for (let i = 0; i < this.countedColliders.length; i++) {
+			this.applyCollisions(this.countedColliders[i], time);
 		}
-		for (let i = 0; i < this.sprites.length; i++) {
-			this.leaveCollisions(this.sprites[i], time);
+		for (let i = 0; i < this.countedColliders.length; i++) {
+			this.leaveCollisions(this.countedColliders[i], time);
 		}
+		this.countedColliders.length = 0;
 	}
 
 	applyCollisions(sprite, time) {
@@ -127,8 +134,8 @@ class Collision extends PhysicsBase {
 				overlapping[overlapperIndex] = 0;
 				overlappers[i] = overlappers[overlappers.length - 1];
 				overlappers.pop();
-				if (sprite.onLeaving) {
-					sprite.onLeaving(sprite, this.sprites[overlapperIndex]);
+				if (sprite.onLeave) {
+					sprite.onLeave(sprite, this.sprites[overlapperIndex]);
 				}
 			}
 		}

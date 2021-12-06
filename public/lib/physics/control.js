@@ -52,14 +52,14 @@ class Control extends PhysicsBase {
 			this.lastControl = game.engine.lastTime;
 			this.forwardEvents("onDown", e);
 		}
-		game.engine.keyboardHandler.addKeyDownListener('a', this.onLeft);
-		game.engine.keyboardHandler.addKeyUpListener('a', this.onLeft);
-		game.engine.keyboardHandler.addKeyDownListener('d', this.onRight);
-		game.engine.keyboardHandler.addKeyUpListener('d', this.onRight);
-		game.engine.keyboardHandler.addKeyDownListener('w', this.onUp);
-		game.engine.keyboardHandler.addKeyUpListener('w', this.onUp);
-		game.engine.keyboardHandler.addKeyDownListener('s', this.onDown);
-		game.engine.keyboardHandler.addKeyUpListener('s', this.onDown);
+		game.engine.keyboardHandler.addKeyDownListener(['a','ArrowLeft'], this.onLeft);
+		game.engine.keyboardHandler.addKeyUpListener(['a','ArrowLeft'], this.onLeft);
+		game.engine.keyboardHandler.addKeyDownListener(['d','ArrowRight'], this.onRight);
+		game.engine.keyboardHandler.addKeyUpListener(['d','ArrowRight'], this.onRight);
+		game.engine.keyboardHandler.addKeyDownListener(['w','ArrowUp'], this.onUp);
+		game.engine.keyboardHandler.addKeyUpListener(['w','ArrowUp'], this.onUp);
+		game.engine.keyboardHandler.addKeyDownListener(['s','ArrowDown'], this.onDown);
+		game.engine.keyboardHandler.addKeyUpListener(['s','ArrowDown'], this.onDown);
 		game.engine.keyboardHandler.addKeyDownListener(' ', this.onUp);
 		game.engine.keyboardHandler.addKeyUpListener(' ', this.onUp);
 
@@ -111,7 +111,7 @@ class Control extends PhysicsBase {
 				return;
 			}
 
-			const acceleration = Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
+			const acceleration = sprite.crouch ? 1.5 : Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
 			sprite.dx += this.dx * sprite.control * acceleration;
 			sprite.dx *= sprite.rest ? (sprite.crouch || !this.dx ? .3 : .72) : sprite.dy < 0 ? .76 : .8;
 			if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {

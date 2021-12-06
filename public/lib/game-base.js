@@ -73,6 +73,10 @@ class GameBase {
 		return this.constructor.name;
 	}
 
+	getWindowSize() {
+		return [1080, 600];
+	}
+
 	onExit(engine) {
 	}
 

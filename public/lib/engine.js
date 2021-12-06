@@ -474,6 +474,14 @@ class Engine {
 		return game;
 	}
 
+	adjustWindowSize(game) {
+		const [windowWidth, windowHeight] = game.getWindowSize();
+		document.body.style.width = `${windowWidth}px`;
+		document.body.style.height = `${windowHeight}px`;
+		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = this.config;
+		this.canvas.style.left = `${(windowWidth - viewportWidth) / 2}px`;
+	}
+
 	async wait(ms) {
 		return new Promise(resolve => {
 			setTimeout(() => {
@@ -488,6 +496,8 @@ class Engine {
 
 		this.chrono.tick("game init " + game.sceneName);
 
+		this.adjustWindowSize(game);		
+		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
 		await game.init(this, this.classToGame[game.sceneName]);
 
 		await game.postInit();
@@ -502,7 +512,6 @@ class Engine {
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
-		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
 	}
 
 	handleMouse(e) {
