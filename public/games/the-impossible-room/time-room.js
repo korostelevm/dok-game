@@ -482,9 +482,36 @@ class TimeRoom extends GameCore {
 		});
 	}
 
+	initializeTimeRoomLabels() {
+		const container = document.getElementById("container");
+		const timeRoomLabels = this.timeRoomLabels = container.appendChild(document.createElement("div"));
+		timeRoomLabels.id = "time-room-labels";
+		timeRoomLabels.style.display = "";
+		const sideClock = timeRoomLabels.appendChild(document.createElement("div"));
+		sideClock.id = "side-clock";
+		sideClock.style.position = "absolute";
+		sideClock.style.transform = "perspective(400px) rotateY(-70deg) translateY(-80px)";
+		sideClock.style.top = "175px";
+		sideClock.style.left = "813px";
+		sideClock.style.fontSize = "25pt";
+		sideClock.style.fontWeight = 800;
+		const nobr = sideClock.appendChild(document.createElement("nobr"));
+		nobr.id = "clock-1";
+		nobr.textContent = "03:00:00";
+		const doorClock = timeRoomLabels.appendChild(document.createElement("div"));
+		doorClock.id = "time-room-clock";
+		doorClock.style.display = "none";
+		doorClock.style.textAlign = "center";
+		doorClock.style.position = "absolute";
+		doorClock.style.left = "747px";
+		doorClock.style.top = "240px";
+		doorClock.style.fontSize = "15pt";
+		doorClock.style.innerHTML = `The door<br>closes at<br>exactly<br><span id="clock-2">03:00:00</span>`;
+	}
+
 	async postInit() {
+		this.initializeTimeRoomLabels();
 		this.walkingThrough = false;
-		document.getElementById("time-room-labels").style.display = "";
 		await super.postInit();
 	}
 
@@ -501,8 +528,7 @@ class TimeRoom extends GameCore {
 
 	onExit(engine) {
 		document.getElementById("im").style.display = "none";
-		document.getElementById("time-room-clock").style.display = "none";
-		document.getElementById("time-room-labels").style.display = "none";
+		document.getElementById("container").removeChild(this.timeRoomLabels);
 		if (this.redButton) {
 			this.redButton.setProperty("pushed", null);
 		}

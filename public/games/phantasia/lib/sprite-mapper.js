@@ -1,9 +1,11 @@
 class SpriteMapper {
-	constructor(spriteFactory, atlas, control, audio) {
+	constructor(game, spriteFactory, atlas, control, audio, jump) {
 		this.spriteFactory = spriteFactory;
 		this.atlas = atlas;
 		this.control = control;
+		this.jump = jump;
 		this.audio = audio;
+		this.game = game;
 	}
 
 	async init(engine) {
@@ -13,13 +15,12 @@ class SpriteMapper {
 			const climbing = time - self.climbing < 100;
 			const climbingStill = climbing && self.dx === 0 && self.dy === 0;
 			const jumping = time - self.lastJump < 300;
-			const crouching = self.crouch;
-			const crouchingStill = crouching && dx === 0;
+			const crouchingStill = self.crouch && dx === 0;
 			self.changeAnimation(climbingStill ? this.atlas.hero.climb_still
 				: climbing ? this.atlas.hero.climb
 				: jumping ? this.atlas.hero.jump
 				: crouchingStill ? this.atlas.hero.crouch_still
-				: crouching ? this.atlas.hero.crouch
+				: self.crouch ? this.atlas.hero.crouch
 				: still ? this.atlas.hero.still
 				: this.atlas.hero.run);
 			if (dx !== 0) {
@@ -33,7 +34,9 @@ class SpriteMapper {
 					name: "hero",
 					anim: this.atlas.hero.still,
 					size: [50, 75],
+					hotspot: [25, 75],
 					x: 40 * col, y: 40 * row, z: -1,
+					remember: true,
 				}, {
 					gravity: .2,
 					motion: 1,
@@ -43,26 +46,47 @@ class SpriteMapper {
 					onEnter: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.showMessage(self.id, `press [E] to start dialog`);
+							this.game.camera = "zoom";
 						}
 						if (sprite.ladder) {
-							self.changePosition(sprite.x + sprite.size[0] / 2 - self.size[0] / 2, self.y);
+							self.changePosition(sprite.getCenterX(), self.y);
 							self.dx = 0;
 						}
 					},
 					onLeave: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.clearMessage(self.id);
+							if (!self.engine.getMessage()) {
+								this.game.camera = "normal";
+							}
 						}
+						if (sprite.ladder && !self.touchingLadder) {
+							const jumping = self.engine.lastTime - self.lastJump < 100;
+							if (this.control.dy < 0 && !jumping) {
+								this.jump.performJump(self);
+							}
+							if (self.climbing) {
+								self.climbing = 0;
+								onMotion(self, this.control.dx, this.control.dy);
+							}
+						}
+					},
+					preCollisionCheck: (self) => {
+						self.touchingLadder = false;
 					},
 					onCollide: (self, sprite, xPush, yPush) => {
 						if (sprite.ladder && !self.climbing && self.dy > 0) {
 							self.climbing = self.engine.lastTime;
 							self.dy = 0;
-							onMotion(self, 0, 0);
+							onMotion(self, this.control.dx, this.control.dy);
 						}
 
 						if (self.climbing && sprite.ladder) {
 							self.climbing = self.engine.lastTime;
+							if (!self.touchingLadder) {
+								self.touchingLadder = true;
+								onMotion(self, this.control.dx, this.control.dy);
+							}
 							return;
 						}
 
@@ -216,8 +240,7 @@ class SpriteMapper {
 				}
 				const index = parseInt(option);
 				this.movingPlatform.path[index] = {
-					x: 40 * col,
-					y: 40 * row,
+					x: 40 * col, y: 40 * row,
 				};
 				if (index === 0) {
 					this.movingPlatform.changePosition(40 * col, 40 * row);

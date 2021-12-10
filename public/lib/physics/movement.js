@@ -9,9 +9,10 @@ class Movement extends PhysicsBase {
 
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
+			const maxBottom = 440;
 			const px = Math.max(-30, sprite.x + sprite.dx * sprite.motion);
-			const py = Math.min(360, sprite.y + sprite.dy * sprite.motion);
-			if (py >= 360) {
+			const py = Math.min(maxBottom, sprite.y + sprite.dy * sprite.motion);
+			if (py >= maxBottom) {
 				sprite.rest = time;
 				if (sprite.platform && sprite.platform.onPlatform) {
 					sprite.platform.onPlatform(sprite.platform, null);

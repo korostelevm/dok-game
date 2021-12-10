@@ -1,3 +1,5 @@
+const {mat2, mat3, mat4, vec2, vec3, vec4, quat} = glMatrix;
+
 class Shader {
 	constructor(gl, ext, vertexShader, fragmentShader, attributes, maxInstanceCount) {
 		this.gl = gl;

@@ -2221,6 +2221,24 @@ class GameCore extends GameBase {
 
 	setDialogVisibility(visible, responses) {
 		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
+
+		if (!document.getElementById("conversation")) {
+			const div = document.getElementById("container").appendChild(document.createElement("div"));
+			div.id = "conversation";
+			div.style.position = "absolute";
+			div.style.top = "490px";
+			div.style.left = "100px";
+			div.style.zIndex = 131;
+			div.style.display = "none";
+
+			for (let i = 0; i < 4; i++) {
+				const chatDiv = div.appendChild(document.createElement("div"));
+				chatDiv.classList.add("chat-selection");
+				chatDiv.id = `conversation-${i+1}`;
+			}
+		}
+
+
 		const div = document.getElementById("conversation");
 		div.style.display = actualVisibilty ? "" : "none";
 

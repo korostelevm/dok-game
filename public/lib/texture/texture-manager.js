@@ -1,9 +1,8 @@
 class TextureManager {
-	constructor(gl, uniforms, chrono) {
+	constructor(gl, uniforms) {
 		this.gl = gl;
 		this.glTextures = [];
 		this.textureSize = 4096;
-		this.chrono = chrono;
 		this.textureAtlas = [];
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
@@ -26,7 +25,7 @@ class TextureManager {
 	}
 
 	createAtlas(index, imageLoader, width, height) {
-		const atlas = new TextureAtlas(this.gl, this.glTextures, index, width, height, this.textureSize, imageLoader, this.chrono);
+		const atlas = new TextureAtlas(this.gl, this.glTextures, index, width, height, this.textureSize, imageLoader);
 		this.textureAtlas.push(atlas);
 		return atlas;
 	}

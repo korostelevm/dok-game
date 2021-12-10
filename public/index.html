@@ -161,12 +161,6 @@
 				display: none;
 			}
 
-			.fps {
-				position: absolute;
-				color: white;
-				z-index: 1
-			}
-
 			.code-editor {
 			}
 
@@ -365,7 +359,7 @@
 			}
 			.scene-button {
 				border-radius: 8pt;
-				cursor:url(assets/select-cursor.png), auto;
+				cursor:url(assets/pointer-cursor.png), auto;
 				/*cursor:url(assets/pointer-cursor.png), auto;*/
 				/*cursor: pointer;*/
 			}
@@ -675,7 +669,6 @@
 			<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
 			<audio id="blinkpong" src="audio/blinkpong-loop.mp3" style="position: absolute; display: none" loop></audio>
 			
-			<input id="info-box" style="border:  0; box-outline:  0;right: 10px; top: 4px; width: 60px; position: absolute; z-index: 10; display: none"></input>
 			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 100px">
 			</div>
 			<canvas id="canvas"  ondrop="console.log(event)" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
@@ -714,23 +707,7 @@
 							</select>
 					</span>
 				</div>
-				<div style="display: none">🔁: <span id="pressing-r">R to start over.</span></div>
 			</div>
-			<div id="conversation" style="position: absolute; top: 490px; left: 100px; z-index: 131; display: none;">
-				<div class="chat-selection" id="conversation-1">Option 1</div>
-				<div class="chat-selection" id="conversation-2">Option 2</div>
-				<div class="chat-selection" id="conversation-3">Option 3</div>
-				<div class="chat-selection" id="conversation-4">Exit</div>
-			</div>
-			<div id="time-room-labels" style="display: none">
-				<div style="position: absolute; transform: perspective(400px) rotateY(-70deg) translateY(-80px); top: 175px; left: 773px; font-size: 25pt; font-weight: 800;">
-					<nobr id="clock-1">03:00:00</nobr>
-				</div>
-				<div id="time-room-clock" style="display: none;text-align: center; position: absolute; left: 747px; top: 240px; font-size: 15pt">
-					The door<br>closes at<br>exactly<br><span id="clock-2">03:00:00</span>
-				</div>
-			</div>
-
 		</div>
 		<script type="text/javascript" src="gen/data.js"></script>
 		<script type="text/javascript" src="gen/files.js"></script>
@@ -763,12 +740,9 @@
 		<script type="text/javascript" src="games/the-impossible-room/start-screen.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>
-		<script type="text/javascript" src="lib/utils/chrono.js"></script>
+		<script type="text/javascript" src="lib/utils/sort.js"></script>
 		<script type="text/javascript" src="lib/utils/string.js"></script>
 		<script type="text/javascript" src="lib/math/gl-matrix-min.js"></script>
-		<script type="text/javascript">
-			    const {mat2, mat3, mat4, vec2, vec3, vec4, quat} = glMatrix;
-		</script>
 		<script type="text/javascript" src="lib/opengl/buffer-renderer.js"></script>
 		<script type="text/javascript" src="lib/opengl/shader.js"></script>
 		<script type="text/javascript" src="lib/opengl/utils.js"></script>
@@ -780,7 +754,6 @@
 		<script type="text/javascript" src="lib/sprite/sprite-collection.js"></script>
 		<script type="text/javascript" src="lib/sprite/sprite-factory.js"></script>
 		<script type="text/javascript" src="lib/translate-voice.js"></script>
-		<script type="text/javascript" src="lib/engine.js"></script>
 		<script type="text/javascript" src="lib/physics/physics-base.js"></script>
 		<script type="text/javascript" src="lib/physics/movement.js"></script>
 		<script type="text/javascript" src="lib/physics/gravity.js"></script>
@@ -793,11 +766,13 @@
 		<script type="text/javascript" src="lib/ui/scene-tab.js"></script>
 		<script type="text/javascript" src="lib/ui/debug-view.js"></script>
 		<script type="text/javascript" src="lib/ui/tip-box.js"></script>
+		<script type="text/javascript" src="lib/ui/fps-box.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="lib/newgrounds/ng.js"></script>
 		<script type="text/javascript" src="games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="games/phantasia/home.js"></script>
 		<script type="text/javascript" src="games/phantasia/lib/sprite-mapper.js"></script>
+		<script type="text/javascript" src="lib/engine.js"></script>
 		<script type="text/javascript">
 			function handlerFunction(e) {
 				// console.log(e.type, e);

@@ -7,17 +7,15 @@ class Engine {
 
 		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
 		this.imageLoader = new ImageLoader();
+		this.onPostRefresh = [];
 
-		this.perfIndex = 0;
-		this.perfTimers = new Array(20).map(() => 0);
+		new FpsBox(this);
+		new DebugView(this);
+
 
 		this.init(config);
 
 		this.seenGame = {};
-
-		if (this.debug) {
-			document.getElementById("info-box").style.display = "";
-		}
 
 		const gender = localStorage.getItem("playerGender") || "M";
 		this.changeCharacter(gender === "W" ? "nuna" : gender === "T" ? "twin" : "monkor");
@@ -160,7 +158,11 @@ class Engine {
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
-		this.shift = {x:0, y:0, goal:{x:0,y:0}, speed:dist => dist / 20, dirty: true};
+		this.shift = {x:0, y:0, zoom:1, opacity: 1, goal:{ x:0, y:0, zoom:1, opacity: 1 }, speed:dist => dist / 20, dirty: true};
+	}
+
+	addOnPostRefresh(component) {
+		this.onPostRefresh.push(component);
 	}
 
 	countUnlocked() {
@@ -299,13 +301,11 @@ class Engine {
 
 	async init(config) {
 		this.config = config;
-		this.chrono = new Chrono();
 
 		if (config.viewport.pixelScale < 1 && !this.isRetinaDisplay()) {
 			config.viewport.pixelScale = 1;
 		}
 
-		this.chrono.tick("init");
 		console.log(config);
 		const maxInstancesCount = config.maxInstancesCount || 1000;
 		console.log("maxInstancesCount", maxInstancesCount);
@@ -320,11 +320,8 @@ class Engine {
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
-		this.chrono.tick("dom content loaded");
 
 		this.tipBox = new TipBox(this.canvas);
-
-		this.debugView = new DebugView(this);
 
 		this.overlay = document.getElementById("overlay");
 
@@ -348,7 +345,7 @@ class Engine {
 		this.shader = new Shader(gl, ext, vertexShader, fragmentShader, attributes, maxInstancesCount);
 
 		/* Texture management */
-		this.textureManager = new TextureManager(gl, this.shader.uniforms, this.chrono);
+		this.textureManager = new TextureManager(gl, this.shader.uniforms);
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection(this);
@@ -388,11 +385,11 @@ class Engine {
 		}
 
 		this.textureManager.generateAllMipMaps();
-		this.chrono.tick("mipmaps generated");
+
+		this.onPostRefresh.filter(component => component).forEach(component => component.init());
 
 		this.ready = true;
 		Engine.start(this);
-		this.chrono.tick("engine started");
 	}
 
 	async preloadAssets(onProgress) {
@@ -431,7 +428,6 @@ class Engine {
 					for (let dirName in folder) {
 						if (Array.isArray(folder[dirName])) {
 							const gameName = StringUtil.kebabToClass(dirName);
-//							console.log(`/games/${dirName}`);
 
 							folder[dirName].forEach(sceneFile => {
 								if (typeof(sceneFile) !== "string") {
@@ -450,18 +446,18 @@ class Engine {
 				});
 			}
 		});
-		// console.log(globalFiles);
 	}
 
 	async changeCursor(cursor) {
 		if (this.overlay && this.overlay.style.cursor !== cursor) {
-			this.chrono.tick("cursor: " + cursor);
 			this.overlay.style.cursor = cursor;
 			await this.wait(500);
 		}
 	}
 
 	async setGame(game, skipCursor) {
+		this.shift.goal.opacity = 0;
+		this.shift.opacity = 0;
 		if (!skipCursor) {
 			await this.changeCursor("wait");
 		}
@@ -494,12 +490,9 @@ class Engine {
 		game.engine = this;
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
-		this.chrono.tick("game init " + game.sceneName);
-
 		this.adjustWindowSize(game);		
 		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
 		await game.init(this, this.classToGame[game.sceneName]);
-
 		await game.postInit();
 
 		const sprites = game.engine.spriteCollection.sprites;
@@ -508,7 +501,7 @@ class Engine {
 		}
 
 		game.ready = true;
-		this.chrono.tick("game init done");
+		this.shift.goal.opacity = 1;
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
@@ -539,11 +532,15 @@ class Engine {
 		const { game } = this;
 		if (game) {
 			game.ready = false;
+			for (let i = 0; i < this.spriteCollection.size(); i++) {
+				const sprite = this.spriteCollection.get(i);
+				sprite.onExit(game);
+			}		
+
 			for (let i = 0; i < game.physics.length; i++) {
 				game.physics[i].onExit(game);
 			}
 			game.onExit(engine);
-
 			this.lastGame = game.constructor.name;
 		}
 		if (this.spriteCollection) {
@@ -559,8 +556,12 @@ class Engine {
 		this.urlToTextureIndex = {};
 		this.shift.x = 0;
 		this.shift.y = 0;
+		this.shift.opacity = 0;
+		this.shift.zoom = 1;
 		this.shift.goal.x = 0;
 		this.shift.goal.y = 0;
+		this.shift.goal.zoom = 1;
+		this.shift.goal.opacity = 0;
 		this.shift.dirty = true;
 	}
 
@@ -570,7 +571,6 @@ class Engine {
 
 	async addTexture(imageConfig) {
 		const index = !imageConfig.url ? -1 : (this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.nextTextureIndex++));
-//		console.log(`New texture at index ${index} for ${imageConfig.url}`);
 		return await this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
 	}
 
@@ -662,11 +662,11 @@ class Engine {
 			const frame = sprite.getAnimationFrame(time);
 			const previousFrame = sprite.frame;
 			sprite.frame = frame;
-			this.handleOnFrame(sprite, frame);
+			this.handleOnFrame(sprite, frame, previousFrame);
 		}		
 	}
 
-	handleOnFrame(sprite, frame) {
+	handleOnFrame(sprite, frame, previousFrame) {
 		if (sprite.onFrame) {
 			let f = sprite.onFrame[frame];
 			if (typeof f === "number") {
@@ -802,6 +802,10 @@ class Engine {
 		}
 
 		const { game } = this;
+		const { gl, ext } = this;
+		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
+		const {attributes, uniforms} = this.shader;
+
 		if (game && game.ready) {
 			if (game.paused) {
 				return;
@@ -811,19 +815,54 @@ class Engine {
 			}
 
 			game.refresh(time, dt);
+
+			//	Handle special frame actions
+			this.handleFrames(time);
 		}
 
-		const { gl, ext } = this;
-		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
-		const {attributes, uniforms} = this.shader;
+		let shiftChanged = false;
+		const shift = this.shift;
+		if (shift.x !== shift.goal.x
+			|| shift.y !== shift.goal.y
+			|| shift.zoom !== shift.goal.zoom
+			|| shift.opacity !== shift.goal.opacity
+			|| shift.dirty) {
+			const dx = (shift.goal.x - shift.x);
+			const dy = (shift.goal.y - shift.y);
+			const dzoom = (shift.goal.zoom - shift.zoom);
+			const dopacity = (shift.goal.opacity - shift.opacity);
+			const dist = Math.sqrt(dx*dx + dy*dy + dzoom*dzoom + dopacity*dopacity);
+			const speed = shift.speed(dist);
+			const mul = dist < .01 ? 1 : Math.min(speed, dist) / dist;
+			shift.x += dx * mul;
+			shift.y += dy * mul;
+			shift.zoom += dzoom * mul;
+			shift.opacity += dopacity * mul;
+			shift.dirty = false;
+			shiftChanged = true;
+		}
 
-		//	Reset view
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		gl.uniform1f(uniforms.time.location, time);
-		gl.clearDepth(0);
+		let shakeX = 0, shakeY = 0;
+		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
+		if (shake) {
+			if (shake > 1) {
+				shakeY = (Math.random() - .5) * shake;
+			}
+		} else if (shake === null && this.shake) {
+			this.viewMatrix = mat4.fromTranslation(this.viewMatrix, vec3.fromValues(shift.x, shift.y, 0));
+			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+			delete this.shake;
+			shiftChanged = true;
+		}
 
-		//	Handle special frame actions
-		this.handleFrames(time);
+		if (shiftChanged || shakeX || shakeY) {
+			mat4.identity(this.viewMatrix);
+			const coef = shift.zoom;
+			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, coef));
+			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x*coef + shakeX, -shift.y*coef + shakeY, 0));
+			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+			gl.uniform1f(uniforms.globalOpacity.location, shift.opacity);
+		}
 
 		let didUpdate = 0;
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
@@ -850,55 +889,19 @@ class Engine {
 			}
 		}
 
-		let xyChanged = false;
-		const shift = this.shift;
-		if (shift.x !== shift.goal.x || shift.y !== shift.goal.y || shift.dirty) {
-			const dx = (shift.goal.x - shift.x);
-			const dy = (shift.goal.y - shift.y);
-			const dist = Math.sqrt(dx*dx + dy*dy);
-			const speed = shift.speed(dist);
-			const mul = Math.min(speed, dist) / (dist || 1);
-			shift.x += dx * mul;
-			shift.y += dy * mul;
-			shift.dirty = false;
-			xyChanged = true;
-		}
-
-		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
-		if (shake) {
-			if (shake > 1) {
-				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y + (Math.random() - .5) * shake, 0));
-				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-			} else {
-				this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y, 0));
-				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-			}
-		} else if (shake === null && this.shake) {
-			this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y, 0));
-			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-			delete this.shake;
-		} else if (xyChanged) {
-			this.viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(shift.x, shift.y, 0));
-			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-		}
+		//	Reset view
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.uniform1f(uniforms.time.location, time);
+		gl.clearDepth(0);
 
 		//	DRAW CALL
 		ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());
-		this.lastTime = time;
-		if (this.debug) {
-			this.debugView.showDebugCanvas(time, this.canvas, this.shift);
+
+		for (let i = 0; i < this.onPostRefresh.length; i++) {
+			this.onPostRefresh[i].onRefresh(time, dt);
 		}
 
-		if (this.debug) {
-			this.perfTimers[this.perfIndex] = time;
-			this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
-			const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];
-			const timeCalc = 1000 / timeDiff * this.perfTimers.length;
-			const newFPS = `${timeCalc.toFixed(1)}fps`
-			if (document.getElementById("info-box").value !== newFPS) {
-				document.getElementById("info-box").value = newFPS;
-			}
-		}
+		this.lastTime = time;
 	}
 
 	postScore(score, callback) {
@@ -925,6 +928,10 @@ class Engine {
 
 	clearMessage(id) {
 		this.tipBox.clearMessage(id);
+	}
+
+	getMessage() {
+		return this.tipBox.id;
 	}
 }
 

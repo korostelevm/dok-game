@@ -35,10 +35,30 @@ class SceneTab {
 			groupDiv.style.margin = "2px";
 			groupDiv.style.padding = "2px";
 			groupDiv.style.color = "white";
-			const titleDiv = groupDiv.appendChild(document.createElement("div"));
+
+			const titleGroup= groupDiv.appendChild(document.createElement("div"));
+			titleGroup.style.whiteSpace = "nowrap";
+			const checkbox = titleGroup.appendChild(document.createElement("input"));
+			checkbox.type = "checkbox";
+			checkbox.id = `${name}_checkbox`;
+			const gameName = name;
+			checkbox.checked = localStorage.getItem(`${gameName}_showScenes`);
+			checkbox.addEventListener("change", e => {
+				if (checkbox.checked) {
+					localStorage.setItem(`${gameName}_showScenes`, true);
+				} else {
+					localStorage.removeItem(`${gameName}_showScenes`);
+				}
+				sceneGroupDiv.style.display = checkbox.checked ? "" : "none";
+			});
+
+			const titleDiv = titleGroup.appendChild(document.createElement("label"));
 			titleDiv.innerText = name;
+			titleDiv.for = `${name}_checkbox`;
 			const sceneGroupDiv = groupDiv.appendChild(document.createElement("div"));
 			sceneGroupDiv.style.marginTop = "4px";
+			sceneGroupDiv.style.display = checkbox.checked ? "" : "none";
+
 			gameList[name].forEach(className => {
 				const button = sceneGroupDiv.appendChild(document.createElement("button"));
 				button.classList.add("scene-button");

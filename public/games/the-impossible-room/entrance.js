@@ -5,8 +5,6 @@ class Entrance extends GameCore {
 		const { gl, config } = engine;
 		const { gender } = this.data;
 
-		engine.chrono.tick("game init start.");
-
 		/* Load Audio */
 		this.audio = {
 			...this.audio,
@@ -104,7 +102,6 @@ class Entrance extends GameCore {
 				}),
 		};
 //		this.imageLoader.unload();
-		engine.chrono.tick("done creating atlas");
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
@@ -116,8 +113,6 @@ class Entrance extends GameCore {
 				],
 			},
 		};
-
-		engine.chrono.tick("done setting up inventory");
 
 		const I = gender === "T" ? "We" : "I";
 
@@ -332,8 +327,6 @@ class Entrance extends GameCore {
 		this.title.style.opacity = .5;
 		document.getElementById("im").style.display = "";
 		document.getElementById("im").innerText = this.properties.title || "THE IMPOSSIBLE ROOM";
-
-		engine.chrono.tick("done entrance initialization");		
 	}
 
 	getWalkArea() {

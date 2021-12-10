@@ -1,5 +1,5 @@
 class TextureAtlas {
-	constructor(gl, glTextures, index, width, height, textureSize, imageLoader, chrono) {
+	constructor(gl, glTextures, index, width, height, textureSize, imageLoader) {
 		this.gl = gl;
 		this.glTextures = glTextures;
 		this.index = index || 0;
@@ -13,7 +13,6 @@ class TextureAtlas {
 		this.spriteHeight = 0;
 		this.startIndex = 0;
 		this.endIndex = 0;
-		this.chrono = chrono;
 
 		this.tempMatrix = new Float32Array([
 			0, 0, 0, 0,
@@ -93,10 +92,8 @@ class TextureAtlas {
 			}
 		}
 
-		this.chrono.tick(`Done loading image: ${url}`);
 		if (collision_url) {
 			this.collisionBoxes = await this.imageLoader.calculateCollisionBoxes(collision_url, this);
-			this.chrono.tick(`Done loading collision image: ${collision_url}`);
 		} else {
 			this.collisionBoxes = [];
 		}
@@ -184,6 +181,7 @@ class TextureAtlas {
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
 		const { cols, rows, spriteWidth, spriteHeight, frameRate, range, firstFrame, direction, vdirection } = animationData;
 		this.frameRate = frameRate || 1;
+		this.frameDuration = 1000 / this.frameRate;
 		this.cols = cols || (spriteWidth ? Math.ceil(this.spriteSheetWidth / spriteWidth) : 1);
 		this.rows = rows || (spriteHeight ? Math.ceil(this.spriteSheetHeight / spriteHeight) : 1);
 		this.spriteWidth = spriteWidth || this.spriteSheetWidth / this.cols;

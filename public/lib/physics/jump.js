@@ -22,6 +22,17 @@ class Jump extends PhysicsBase {
 		game.engine.keyboardHandler.removeListener(this.onJump);
 	}
 
+	performJump(sprite) {
+		sprite.dy = -sprite.jump;
+		sprite.rest = 0;
+		if (sprite.platform && sprite.platform.onPlatform) {
+			sprite.platform.onPlatform(sprite.platform, null);
+		}
+		sprite.platform = null;
+		sprite.climbing = 0;
+		sprite.onJump(sprite);
+	}
+
 	refresh(time, dt) {
 		let recordJump = false;
 		this.sprites.forEach(sprite => {
@@ -29,15 +40,8 @@ class Jump extends PhysicsBase {
 				return;
 			}
 			if (time - sprite.rest < 100 || time - sprite.climbing < 100) {
-				sprite.dy = -sprite.jump;
-				sprite.rest = 0;
-				if (sprite.platform && sprite.platform.onPlatform) {
-					sprite.platform.onPlatform(sprite.platform, null);
-				}
-				sprite.platform = null;
-				sprite.climbing = 0;
+				this.performJump(sprite);
 				recordJump = true;
-				sprite.onJump(sprite);
 			}
 		});
 		if (recordJump || time - this.jump > 100) {

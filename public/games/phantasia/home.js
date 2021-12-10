@@ -142,6 +142,25 @@ class Home extends GameBase {
 			},
 		};
 
+		this.cameras = {
+			normal: {
+				default: true,
+				xOffset: 800, yOffset: 200, zoom: 1,
+				maxX: 0, minY: 0,
+				follow: "hero",
+			},
+			zoom: {
+				xOffset: 400, yOffset: 200, zoom: 2,
+				follow: "hero",
+			},
+		};
+
+		for (let id in this.cameras) {
+			if (this.cameras[id].default || !this.camera) {
+				this.camera = id;
+			}
+		}
+
 		this.audio = {
 			... this.audio,
 			scream: new Sound("audio/scream.mp3", 1),
@@ -157,13 +176,13 @@ class Home extends GameBase {
 			jingle: new Sound("audio/jingle.mp3", 1),
 		};
 
-		const physics = this.addPhysics(new Jump());
+		const jump = this.addPhysics(new Jump());
 		const control = this.addPhysics(new Control());
 		const gravity = this.addPhysics(new Gravity());
 		const movement = this.addPhysics(new Movement());
 		const collision = this.addPhysics(new Collision());
 
-		const spriteMapper = new SpriteMapper(this.spriteFactory, this.atlas, control, this.audio);
+		const spriteMapper = new SpriteMapper(this, this.spriteFactory, this.atlas, control, this.audio, jump);
 		await spriteMapper.init(engine);
 
 		const grid = new SpriteGrid(this, this.spriteFactory, spriteMapper);
@@ -204,8 +223,29 @@ class Home extends GameBase {
 				}
 			});
 		})
+	}
 
-		this.hero.changePosition(this.hero.x, this.hero.y + 10);
+	applyCamera(camera) {
+		const cameraConfig = this.cameras[camera];
+		const followed = this[cameraConfig.follow];
+		const zoom = cameraConfig.zoom;
+		const shift = this.engine.shift;
+		shift.goal.x = -followed.x * 2 / zoom + cameraConfig.xOffset;
+		shift.goal.y = -followed.y * 2 / zoom + cameraConfig.yOffset;
+		shift.goal.zoom = zoom;
+		if (typeof(cameraConfig.minX) !== "undefined") {
+			shift.goal.x = Math.max(cameraConfig.minX, shift.goal.x);
+		}
+		if (typeof(cameraConfig.minY) !== "undefined") {
+			shift.goal.y = Math.max(cameraConfig.minY, shift.goal.y);			
+		}
+		if (typeof(cameraConfig.maxX) !== "undefined") {
+			shift.goal.x = Math.min(cameraConfig.maxX, shift.goal.x);
+		}
+		if (typeof(cameraConfig.maxY) !== "undefined") {
+			shift.goal.y = Math.max(cameraConfig.maxY, shift.goal.y);			
+		}
+		this.adjustBackwall();
 	}
 
 	onChange(key, value) {
@@ -213,9 +253,12 @@ class Home extends GameBase {
 
 	async postInit() {
 		await super.postInit();
+
+		this.adjustBackwall();
 	}
 
 	onExit(engine) {
+
 	}
 
 	handleMouse(e) {
@@ -228,14 +271,16 @@ class Home extends GameBase {
 		return [900, 500];
 	}
 
+	adjustBackwall() {
+		this.backwall.changePosition(-this.engine.shift.x/2 * this.engine.shift.zoom, -this.engine.shift.y/2 * this.engine.shift.zoom);
+	}
+
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		for (let i = 0; i < this.refreshableSprites.length; i++) {
 			const sprite = this.refreshableSprites[i];
 			sprite.onRefresh(sprite);
 		}
-		this.engine.shift.goal.x = Math.min(0, - this.hero.x * 2 + 800);
-		this.engine.shift.goal.y = Math.min(0, this.hero.y * 2 - 50);
-		this.backwall.changePosition(-this.engine.shift.x/2, this.engine.shift.y/2, time);
+		this.applyCamera(this.camera);
 	}
 }

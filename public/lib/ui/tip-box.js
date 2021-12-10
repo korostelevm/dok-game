@@ -5,7 +5,7 @@ class TipBox {
 		this.div = document.getElementById("tip-box") || canvas.parentElement.insertBefore(document.createElement("div"), canvas.nextSibling);
 		this.div.id = "tip-box";
 		this.div.style.position = "absolute";
-		this.div.style.top = `${canvas.getBoundingClientRect().bottom - 50}px`;
+		this.div.style.top = `${canvas.getBoundingClientRect().bottom - 175}px`;
 		this.div.style.fontSize = "18pt";
 		this.div.style.transitionProperty = "opacity";
 		this.div.style.transitionDuration = ".2s";

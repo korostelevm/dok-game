@@ -52,17 +52,22 @@ class Collision extends PhysicsBase {
 		}
 		for (let i = 0; i < this.horizontal.length; i++) {
 			const marker = this.horizontal[i];
-			marker.x = marker.topLeft ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right;
+			marker.x = Math.round(marker.topLeft ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
 		}
 		for (let i = 0; i < this.vertical.length; i++) {
 			const marker = this.vertical[i];
-			marker.y = marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom;
+			marker.y = Math.round(marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
 		}
 		this.horizontal.sort(this.compareHorizontal);
 		this.vertical.sort(this.compareVertical);
 	}
 
 	refresh(time, dt) {
+		for (let i = 0; i < this.sprites.length; i++) {
+			if (this.sprites[i].preCollisionCheck) {
+				this.sprites[i].preCollisionCheck(this.sprites[i]);
+			}
+		}
 		this.calculateCollisionMarkers(time);
 		for (let m = 0; m < this.axis.length; m++) {
 			const isHorizontal = m === 0;

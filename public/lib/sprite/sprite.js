@@ -19,6 +19,7 @@ class Sprite {
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.crop = [1, 1];
 		this.active = true;
+		this.remember = data.remember || false;
 
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
@@ -31,7 +32,11 @@ class Sprite {
 			dirty: true,
 		};
 		this.properties = properties || {};
-		this.onChange = {};
+		this.onChange = {
+			position: (self, {x, y}) => {
+				this.changePosition(x, y);
+			},
+		};
 
 		this.updated = {
 			sprite: time,
@@ -42,6 +47,12 @@ class Sprite {
 			opacity: time,
 			crop: time,
 		};
+	}
+
+	onExit(game) {
+		if (this.remember) {
+			this.setProperty("position", {x: this.x, y: this.y});
+		}
 	}
 
 	setProperty(key, value) {
@@ -65,8 +76,7 @@ class Sprite {
 			return 0;
 		}
 		const frameOffset = anim.firstFrame - anim.startFrame;
-		const frameDuration = 1000 / anim.frameRate;
-		return updated.animation - frameOffset * frameDuration;
+		return updated.animation - frameOffset * anim.frameDuration;
 	}
 
 	getAnimationFrame(time) {
@@ -75,9 +85,8 @@ class Sprite {
 			console.error("Anim not available for " + this.name);
 			return 0;
 		}
-		const frameDuration = 1000 / anim.frameRate;
 		const animationElapsed = time - updated.animation;
-		const framesElapsed = Math.floor(animationElapsed / frameDuration);
+		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
 		const currentFrame = anim.startFrame + (frameOffset + framesElapsed) % frameCount;
@@ -148,7 +157,7 @@ class Sprite {
 	changeAnimation(anim, time, updateTime) {
 		if (this.anim !== anim) {
 			if (!anim) {
-//				console.warn("anim is null.");
+				console.warn("anim is null.");
 				return false;
 			}
 			this.anim = anim;
@@ -187,16 +196,31 @@ class Sprite {
 		this.updated.updateTime = time || this.engine.lastTime;
 	}
 
+	getCenterX(time) {
+		const box = this.getCollisionBox(time);
+		return (box.left + box.right) / 2;
+	}
+
+	getCenterY(time) {
+		const box = this.getCollisionBox(time);
+		return (box.top + box.bottom) / 2;
+	}
+
 	getCollisionBox(time) {
 		if (!this.collisionBox.dirty) {
 			return this.collisionBox;
 		}
-		const flipH = this.direction < 0;
-		const flipV = this.vdirection < 0;
-		const rect = this.anim.getCollisionBoxNormalized(this.getAnimationFrame(time));
+		const frame = this.getAnimationFrame(time);
+		if (this.collisionBox.frame === frame && !this.collisionBox.dirty) {
+			return this.collisionBox;
+		}
+		this.collisionBox.frame = frame;
+		const rect = this.anim.getCollisionBoxNormalized(frame);
 		if (!rect) {
 			return null;
 		}
+		const flipH = this.direction < 0;
+		const flipV = this.vdirection < 0;
 		const rLeft = flipH ? 1 - rect.right : rect.left;
 		const rRight = flipH ? 1 - rect.left : rect.right;
 		const rTop = flipV ? 1 - rect.bottom : rect.top;
@@ -211,9 +235,7 @@ class Sprite {
 		this.collisionBox.right = left + rRight * width * this.crop[0] + collisionPadding;
 		this.collisionBox.top = top + rTop * height * this.crop[1] - collisionPadding;
 		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
-		if (!this.anim.animated) {
-			this.collisionBox.dirty = false;
-		}
+		this.collisionBox.dirty = false;
 		return this.collisionBox;
 	}
 

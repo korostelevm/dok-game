@@ -13,9 +13,9 @@
   },
   "homepage": "https://github.com/jacklehamster/dok-game#readme",
   "window": {
-    "title": "The Impossible Room",
-    "width": 1000,
-    "height": 600,
+    "title": "Dok Game",
+    "width": 900,
+    "height": 500,
     "fullscreen": false,
     "kiosk": false,
     "resizable": false,

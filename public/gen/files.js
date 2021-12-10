@@ -160,6 +160,9 @@ const globalFiles=[
 					".DS_Store",
 					"home.js",
 					{
+						"levels": []
+					},
+					{
 						"lib": [
 							"sprite-mapper.js"
 						]
@@ -276,6 +279,7 @@ const globalFiles=[
 				"ui": [
 					"debug-view.js",
 					"focus-fixer.js",
+					"fps-box.js",
 					"keyboard-handler.js",
 					"scene-tab.js",
 					"tip-box.js"
@@ -283,7 +287,7 @@ const globalFiles=[
 			},
 			{
 				"utils": [
-					"chrono.js",
+					"sort.js",
 					"string.js"
 				]
 			}
