@@ -1,5 +1,38 @@
 window.addEventListener("DOMContentLoaded", () => {
     console.log("Content loaded.");
+
+
+    function getMedal(medal_name, callback) {
+        unlockMedal(ngio, medal_name, (medal, unlocked) => {
+            if (unlocked) {
+                console.log("Unlock:" + medal.name);
+                audio.play();
+                if (callback) {
+                    callback(medal.name);
+                }
+            }
+        });
+    }
+    window.getMedal = getMedal;
+
+    function postScore(score, callback) {
+        postNGScore(ngio, score, result => {
+            console.log("post score result: ", result);
+            if (callback) {
+                callback(result);
+            }
+        });
+    }
+    window.postScore = postScore;
+
+    function getScore(callback) {
+        fetchScoreboards(ngio, scoreboards => {
+            const scoreboard = scoreboards[0];
+            console.log(scoreboard);
+        });
+    }
+    window.getScore = getScore;
+    
     const { config } = globalData;
     const { key, secret } = config.newgrounds;
     if (!key || !secret) {
@@ -177,34 +210,4 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function getMedal(medal_name, callback) {
-        unlockMedal(ngio, medal_name, (medal, unlocked) => {
-            if (unlocked) {
-                console.log("Unlock:" + medal.name);
-                audio.play();
-                if (callback) {
-                    callback(medal.name);
-                }
-            }
-        });
-    }
-    window.getMedal = getMedal;
-
-    function postScore(score, callback) {
-        postNGScore(ngio, score, result => {
-            console.log("post score result: ", result);
-            if (callback) {
-                callback(result);
-            }
-        });
-    }
-    window.postScore = postScore;
-
-    function getScore(callback) {
-        fetchScoreboards(ngio, scoreboards => {
-            const scoreboard = scoreboards[0];
-            console.log(scoreboard);
-        });
-    }
-    window.getScore = getScore;
 });

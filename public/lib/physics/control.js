@@ -11,6 +11,8 @@ class Control extends PhysicsBase {
 			],
 			onDown: [
 			],
+			onJumpControl: [
+			],
 		};
 
 		this.dx = 0;
@@ -59,6 +61,7 @@ class Control extends PhysicsBase {
 				this.dy++;
 			}			
 			this.lastControl = game.engine.lastTime;
+			this.forwardEvents("onJumpControl", e);
 		}
 		game.engine.keyboardHandler.addKeyDownListener(['a','ArrowLeft'], this.onLeft);
 		game.engine.keyboardHandler.addKeyUpListener(['a','ArrowLeft'], this.onLeft);
@@ -72,17 +75,10 @@ class Control extends PhysicsBase {
 		game.engine.keyboardHandler.addKeyUpListener(' ', this.onJump);
 
 		this.sprites.forEach(sprite => {
-			if (sprite.onLeft) {
-				this.onKeyActions.onLeft.push(sprite);
-			}
-			if (sprite.onRight) {
-				this.onKeyActions.onRight.push(sprite);
-			}
-			if (sprite.onUp) {
-				this.onKeyActions.onUp.push(sprite);
-			}
-			if (sprite.onDown) {
-				this.onKeyActions.onDown.push(sprite);
+			for (let event in this.onKeyActions) {
+				if (sprite[event]) {
+					this.onKeyActions[event].push(sprite);
+				}
 			}
 		});
 	}
@@ -128,7 +124,7 @@ class Control extends PhysicsBase {
 			if (!sprite.jump || time - sprite.jump > 500) {
 				if (sprite.climb && time - sprite.climb < 200) {
 					sprite.lastClimb = time;
-					sprite.dy += this.dy * sprite.control;
+					sprite.dy += Math.sign(this.dy) * 2 * sprite.control;
 					sprite.dy *= .7;
 				}
 			}

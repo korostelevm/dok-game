@@ -3,7 +3,7 @@ precision mediump float;
 const int NUM_TEXTURES = 16;
 
 uniform sampler2D uTextures[NUM_TEXTURES];
-uniform float globalOpacity;
+uniform float globalLight;
 
 varying vec2 v_textureCoord;
 varying float v_index;
@@ -24,5 +24,5 @@ void main() {
 	if (color.a == 0.) {
 		discard;
 	}
-	gl_FragColor = vec4(color.xyz, color.w * v_opacity * globalOpacity);
+	gl_FragColor = vec4(color.xyz * globalLight, color.w * v_opacity);
 }

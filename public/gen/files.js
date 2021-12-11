@@ -42,6 +42,7 @@ const globalFiles=[
 			"door.png",
 			"entrance.png",
 			"gandalf.png",
+			"gradient.png",
 			"ground-entrance.png",
 			"gum.png",
 			"hand.png",

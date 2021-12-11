@@ -48,10 +48,6 @@ class SpriteMapper {
 							self.engine.showMessage(self.id, `press [E] to start dialog`);
 							this.game.camera = "zoom";
 						}
-						if (sprite.ladder) {
-							self.changePosition(sprite.getCenterX(), self.y);
-							self.dx = 0;
-						}
 					},
 					onLeave: (self, sprite) => {
 						if (sprite.npc) {
@@ -78,6 +74,8 @@ class SpriteMapper {
 						if (sprite.ladder && !self.climbing && self.dy > 0) {
 							self.climbing = self.engine.lastTime;
 							self.dy = 0;
+							self.dx = 0;
+							self.changePosition(sprite.getCenterX(), self.y);
 							onMotion(self, this.control.dx, this.control.dy);
 						}
 
@@ -94,6 +92,19 @@ class SpriteMapper {
 							return;
 						}
 
+						if (sprite.bounce) {
+							if (self.dy > 0) {
+								self.lastJump = self.engine.lastTime;
+								self.dy = -self.dy * (this.control.dy < 0 ? 1.3 : 1);
+								self.changePosition(self.x, self.y + self.dy);
+								self.bouncing = self.engine.lastTime;
+								sprite.changeAnimation(this.atlas.debugBounceBouncing);
+								sprite.bounced = self.engine.lastTime;
+								sprite.engine.addRefresh(sprite);
+							}
+							return;
+						}
+
 						//	VERTICAL COLLIDE
 						if (Math.abs(yPush) < Math.abs(xPush)) {
 							if (sprite.ladder || sprite.crate) {
@@ -102,8 +113,10 @@ class SpriteMapper {
 								}
 							}
 
-							if (sprite.canLand && self.dy > 0 || self.dy < 0) {
+							if (sprite.canLand && self.dy > 0 || sprite.ceiling && self.dy < 0) {
 								self.dy = 0;
+								self.bouncing = 0;
+								onMotion(self, this.control.dx, this.control.dy);
 							}
 
 							if (sprite.lowceiling && yPush > 0 && self.rest && !self.crouch) {
@@ -154,6 +167,10 @@ class SpriteMapper {
 					},
 					onUp: (self, e) => {
 						self.crouch = 0;
+						self.floating = e.type === "keydown" ? self.engine.lastTime : 0;
+					},
+					onJumpControl: (self, e) => {
+						self.floating = e.type === "keydown" ? self.engine.lastTime : 0;
 					},
 					onDown: (self, e) => {
 						if (e.type === "keyup") {
@@ -177,6 +194,9 @@ class SpriteMapper {
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {
 							self.canLand = true;
 							self.changeOpacity(.7);
+						}
+						if (!grid[row+1] || !grid[row+1][col] || !grid[row+1][col].block) {
+							self.ceiling = true;
 						}
 					},
 					onPlatform: (self, lander) => {
@@ -271,8 +291,6 @@ class SpriteMapper {
 					x: 40 * col, y: 40 * row,
 				}, {
 					collide: 1, npc: 1, noblock: 1,
-					onCollide: (self, sprite, xPush, yPush) => {
-					},
 				});
 			},
 			'$': (col, row, option) => {
@@ -298,6 +316,22 @@ class SpriteMapper {
 								coin.setActive(false);
 							}
 						},
+					},
+				});
+			},
+			'@': (col, row, option) => {
+				return this.spriteFactory.create({
+					name: `bounce_${col}_${row}`,
+					anim: this.atlas.debugBounce,
+					size: [40, 40],
+					x: 40 * col, y: 40 * row,
+				}, {
+					collide: 1, bounce: 1, manualRefresh: true,
+					onRefresh: self => {
+						if (self.engine.lastTime - self.bounced > 1000) {
+							self.changeAnimation(this.atlas.debugBounce);
+							self.engine.removeRefresh(self);
+						}
 					},
 				});
 			},

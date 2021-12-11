@@ -23,8 +23,8 @@ class FpsBox {
 		document.getElementById("container").appendChild(this.input);
 	}
 
-	onRefresh(time, dt) {
-		this.perfTimers[this.perfIndex] = time;
+	onRefresh(time, dt, actualTime) {
+		this.perfTimers[this.perfIndex] = actualTime;
 		this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
 		const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];
 		const timeCalc = 1000 / timeDiff * this.perfTimers.length;

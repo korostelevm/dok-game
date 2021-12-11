@@ -1,12 +1,17 @@
 const {mat2, mat3, mat4, vec2, vec3, vec4, quat} = glMatrix;
 
 class Shader {
-	constructor(gl, ext, vertexShader, fragmentShader, attributes, maxInstanceCount) {
+	constructor(id, gl, ext, vertexShader, fragmentShader, attributes, maxInstanceCount) {
+		this.id = id;
 		this.gl = gl;
 		this.ext = ext;
 		this.attributes = {};
 		this.uniforms = {};
-		this.linkShaders(vertexShader, fragmentShader, attributes, maxInstanceCount);
+		this.program = this.linkShaders(vertexShader, fragmentShader, attributes, maxInstanceCount);
+	}
+
+	use() {
+		this.gl.useProgram(this.program);		
 	}
 
 	typeName(type) {
@@ -43,8 +48,6 @@ class Shader {
 		this.gl.deleteShader(vertexShader);
 		this.gl.deleteShader(fragmentShader);
 
-		this.gl.useProgram(program);
-
 		if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
 		  throw new Error('Unable to initialize the shader program:\n' + this.gl.getProgramInfoLog(program));
 		}
@@ -53,6 +56,7 @@ class Shader {
 		this.initAttributes(program, attributes, vertexShaderCode, maxInstanceCount);
 		this.verifyAttributes(attributes);
 		console.log("shaders linked.");
+		return program;
 	}
 
 	verifyAttributes(attributes) {
@@ -73,6 +77,7 @@ class Shader {
 			this.uniforms[name] = {
 				name,
 				location: this.gl.getUniformLocation(program, name),
+				shader: this.id,
 			};
 			this.enableLocations(name, this.uniforms[name].location, dataType);
 		});
@@ -154,6 +159,7 @@ class Shader {
 			buffer,
 			bytesPerInstance,
 			instances: attributeConfig.instances,
+			shader: this.id,
 		}
 	}
 

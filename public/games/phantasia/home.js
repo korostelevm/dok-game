@@ -68,6 +68,23 @@ class Home extends GameBase {
 				range: [1,4],
 				frameRate: 10,
 			}),
+			debugBounce: await engine.addTexture({
+				url: "assets/debug-bounce.png",
+				collision_url: "assets/debug-bounce.png",
+				spriteWidth: 32, spriteHeight: 32,
+				range: [0],
+			}),
+			debugBounceBouncing: await engine.addTexture({
+				url: "assets/debug-bounce.png",
+				collision_url: "assets/debug-bounce.png",
+				spriteWidth: 32, spriteHeight: 32,
+				range: [0, 3],
+				frameRate: 8,
+			}),
+			debugGradient: await engine.addTexture({
+				url: "assets/gradient.png",
+				collision_url: "assets/gradient.png",
+			}),
 			npc: {
 				still: await engine.addTexture({
 					url: "assets/debug-npc.png",
@@ -209,20 +226,52 @@ class Home extends GameBase {
 				[]  $$[]                        [][]  [][]      [][][][][]  [][][][][][][]HH[][][][]    [][][][]  ^^^^^^^^^^  [][]  [][]                    [][][][]
 				[]    [][]    []      [][][][]    []  ..              [][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]                []
 				[]  [][]                ?1[][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]        -4    -3    -2
-				[]        [][]    [][][][]      [][][][][][] [] [][][]  []      VVVVVV          [][]                    [][]                                  
+				[]        [][]    [][][][]      [][][][][][]    [][][]  []      VVVVVV          [][]                    [][]                                  
 				[][]    [][][][]        [][][][][][][][][][]    [][]        VVVVVV  [][][][]          [][][][][][][]          [][]        -0
 				....    [][][][][][][]            [][][][][]    [][][]  [][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]    []            -1
-				[][][][][][][][][][][][][][][][][][][][][][]    [][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]                         
+				[][][][][][][][][][][][][][][][][][][][][][]@@@@[][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]                         
 			`);
 
-		this.refreshableSprites = [];
-		gridMap.forEach((line, row) => {
-			line.forEach((cell, col) => {
-				if (cell && cell.onRefresh) {
-					this.refreshableSprites.push(cell);
+		this.overlayHud = this.spriteFactory.create({
+			anim: this.atlas.debugGradient,
+			size: [viewportWidth + 1, 130],
+			y: viewportHeight, z: -2,
+			opacity: 0, manualRefresh: true,
+		}, {
+			// onScroll: (self, scrollX, scrollY) => {
+			// 	self.changePosition(-scrollX/2, self.y);
+			// },
+			show: (self) => {
+				self.showTime = self.engine.lastTime;
+				self.hideTime = 0;
+				self.engine.addRefresh(self);
+			},
+			hide: (self) => {
+				self.hideTime = self.engine.lastTime;
+				self.showTime = 0;
+				self.engine.addRefresh(self);
+			},
+			onRefresh: (self) => {
+				const shift = self.engine.shift;
+				const time = self.engine.lastTime;
+				const hideY = viewportHeight;
+				const showY = viewportHeight - 130;
+				let progress;
+				self.changeSize(viewportWidth / shift.zoom, 130 / shift.zoom);
+				if (self.showTime) {
+					progress = Math.min(1, (time - self.showTime) / 300);
+					self.changePosition(-shift.x / 2 * shift.zoom, showY * (progress) + hideY * (1 - progress));
+					self.changeOpacity(progress);
+				} else if (self.hideTime) {
+					progress = Math.min(1, (time - self.hideTime) / 300);
+					self.changePosition(-shift.x / 2 * shift.zoom, showY * (1 - progress) + hideY * (progress));
+					self.changeOpacity(1 - progress);
 				}
-			});
-		})
+				if (progress >= 1) {
+//					self.engine.removeRefresh(self);
+				}
+			},
+		});
 	}
 
 	applyCamera(camera) {
@@ -277,10 +326,6 @@ class Home extends GameBase {
 
 	refresh(time, dt) {
 		super.refresh(time, dt);
-		for (let i = 0; i < this.refreshableSprites.length; i++) {
-			const sprite = this.refreshableSprites[i];
-			sprite.onRefresh(sprite);
-		}
 		this.applyCamera(this.camera);
 	}
 }
