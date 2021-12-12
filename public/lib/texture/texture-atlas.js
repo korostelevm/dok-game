@@ -25,7 +25,7 @@ class TextureAtlas {
 	}
 
 	textureMix(image, texture, texture_alpha, texture_blend) {
-		const { canvas } = this;
+		const canvas = this.canvas;
 		const context = canvas.getContext("2d");
 		if (canvas !== image) {
 			this.getCanvasImage(image);
@@ -43,12 +43,15 @@ class TextureAtlas {
 
 	getCanvasImage(image) {
 		const { canvas } = this;
-		canvas.width = image.naturalWidth;
-		canvas.height = image.naturalHeight;
+		const sourceWidth = image.naturalWidth || image.width;
+		const sourceHeight = image.naturalHeight || image.height;
+		canvas.width = sourceWidth;
+		canvas.height = sourceHeight;
+		console.log(sourceWidth, sourceHeight);
 
 		const context = canvas.getContext("2d");
 		context.imageSmoothingEnabled = false;
-		context.drawImage(image, 0, 0, image.naturalWidth, image.naturalHeight, 0, 0, canvas.width, canvas.height);
+		context.drawImage(image, 0, 0, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
 		return canvas;
 	}
 
@@ -66,8 +69,7 @@ class TextureAtlas {
 
 		const context = canvas.getContext("2d");
 		context.imageSmoothingEnabled = false;
-		context.drawImage(image, col * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight,
-			0, 0, canvas.width, canvas.height);
+		context.drawImage(image, col * spriteWidth, row * spriteHeight, spriteWidth, spriteHeight, 0, 0, spriteWidth, spriteHeight);
 		return canvas;
 	}
 

@@ -832,13 +832,13 @@ class Engine {
 			this.handleFrames(time);
 			this.handleOnRefreshes(time);
 		}
-		this.handleShift(time);
+		this.handleShift(time, this.shaders[0]);
 		this.handleSpriteUpdate(this.lastTime);
 		this.render(time);
 		this.handlePostRefresh(time, dt, actualTime);
 	}
 
-	handleShift(time) {
+	handleShift(time, shader) {
 		let shiftChanged = false;
 		const shift = this.shift;
 		if (shift.x !== shift.goal.x
@@ -862,7 +862,7 @@ class Engine {
 		}
 
 		const gl = this.gl;
-		const uniforms = this.shaders[0].uniforms;
+		const uniforms = shader.uniforms;
 		let shakeX = 0, shakeY = 0;
 		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
 		if (shake) {
