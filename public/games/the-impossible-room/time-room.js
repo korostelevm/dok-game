@@ -503,10 +503,10 @@ class TimeRoom extends GameCore {
 		doorClock.style.display = "none";
 		doorClock.style.textAlign = "center";
 		doorClock.style.position = "absolute";
-		doorClock.style.left = "747px";
+		doorClock.style.left = "787px";
 		doorClock.style.top = "240px";
 		doorClock.style.fontSize = "15pt";
-		doorClock.style.innerHTML = `The door<br>closes at<br>exactly<br><span id="clock-2">03:00:00</span>`;
+		doorClock.innerHTML = `The door<br>closes at<br>exactly<br><span id="clock-2">03:00:00</span>`;
 	}
 
 	async postInit() {

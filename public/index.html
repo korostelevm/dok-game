@@ -489,13 +489,35 @@
 				font-family: math;
 				font-size: 30pt;
 				color:  #FBF7F5;
-				width:  300px;
+				width:  350px;
 				top: 150px;
 				left: 350px;
 				text-align: center;
 				vertical-align: middle;
 				z-index: 300;
 				white-space: nowrap;
+			}
+
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+			    /* display: none; <- Crashes Chrome on hover */
+			    -webkit-appearance: none;
+			    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+			}
+
+			input[type=number] {
+			    -moz-appearance:textfield; /* Firefox */
+			}
+
+			.math-result {
+				background: transparent;
+				height: 35px;
+				border: 2px solid #FBF7F5;
+				color:  #FBF7F5;
+				font-family: math;
+				font-size: 20pt;
+				outline: none;
+				margin: 0;
 			}
 		</style>
 		<script>
@@ -615,7 +637,7 @@
 				<div id="math-board">
 				</div>
 				<div>
-					x = <input id="math-result" type="text" style="background: transparent; height: 35px; border: 2px solid #FBF7F5; color:  #FBF7F5; font-family: math; font-size: 20pt; outline: none;" autocomplete="off">
+					x = <input class="math-result" id="math-result" type="number" autocomplete="off">
 				</div>
 			</div>
 
@@ -670,7 +692,7 @@
 			<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
 			<audio id="blinkpong" src="audio/blinkpong-loop.mp3" style="position: absolute; display: none" loop></audio>
 			
-			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 100px">
+			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 150px">
 			</div>
 			<canvas id="canvas"  ondrop="console.log(event)" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
  			<div id="actions" style="position: absolute; top: 460px; left: 400px; display: flex; flex-direction: : horizontal; z-index: 121;">

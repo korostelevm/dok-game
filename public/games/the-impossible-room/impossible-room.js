@@ -292,6 +292,7 @@ class ImpossibleRoom extends GameCore {
 			size: [96,192],
 			hotspot: [24,192],
 		}, {
+			bubbleTop: -80,
 			reachable: true,
 			actions: [
 				{ name: "talk",
