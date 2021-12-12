@@ -604,8 +604,6 @@ class Engine {
 		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
-		
-
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
@@ -622,7 +620,6 @@ class Engine {
 		gl.cullFace(gl.BACK);
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-		console.log(depth);
 
 		if (depth) {
 			gl.enable(gl.DEPTH_TEST);
@@ -639,11 +636,6 @@ class Engine {
 		canvas.style.opacity = 1;
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 		this.initialize(gl, this.shaders[0], config);
-
-		// this.writeCanvas.width = canvas.width;
-		// this.writeCanvas.height = canvas.height;
-		// this.writeCanvas.style.width = canvas.style.width;
-		// this.writeCanvas.style.height = canvas.style.height;
 	}
 
 	static start(engine) {

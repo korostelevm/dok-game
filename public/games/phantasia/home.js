@@ -235,13 +235,10 @@ class Home extends GameBase {
 		this.overlayHud = this.spriteFactory.create({
 			anim: this.atlas.debugGradient,
 			size: [viewportWidth + 1, 130],
-			y: viewportHeight, z: -2,
+			y: viewportHeight + 1, z: -2,
 			opacity: 0, manualRefresh: true,
 			hud: 1,
 		}, {
-			// onScroll: (self, scrollX, scrollY) => {
-			// 	self.changePosition(-scrollX/2, self.y);
-			// },
 			show: (self) => {
 				self.showTime = self.engine.lastTime;
 				self.hideTime = 0;
@@ -255,14 +252,14 @@ class Home extends GameBase {
 			onRefresh: (self) => {
 				const time = self.engine.lastTime;
 				const hideY = viewportHeight;
-				const showY = viewportHeight - 130 + 1;
+				const showY = viewportHeight - 130;
 				let progress;
 				if (self.showTime) {
-					progress = Math.min(1, (time - self.showTime) / 300);
+					progress = Math.min(1, (time - self.showTime) / 150);
 					self.changePosition(0, showY * (progress) + hideY * (1 - progress));
 					self.changeOpacity(progress);
 				} else if (self.hideTime) {
-					progress = Math.min(1, (time - self.hideTime) / 300);
+					progress = Math.min(1, (time - self.hideTime) / 150);
 					self.changePosition(0, showY * (1 - progress) + hideY * (progress));
 					self.changeOpacity(1 - progress);
 				}
@@ -301,7 +298,6 @@ class Home extends GameBase {
 
 	async postInit() {
 		await super.postInit();
-
 		this.adjustBackwall();
 	}
 

@@ -46,15 +46,15 @@ class SpriteMapper {
 					onEnter: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.showMessage(self.id, `press [E] to start dialog`);
-							this.game.camera = "zoom";
+//							this.game.camera = "zoom";
 						}
 					},
 					onLeave: (self, sprite) => {
 						if (sprite.npc) {
 							self.engine.clearMessage(self.id);
-							if (!self.engine.getMessage()) {
-								this.game.camera = "normal";
-							}
+							// if (!self.engine.getMessage()) {
+							// 	this.game.camera = "normal";
+							// }
 						}
 						if (sprite.ladder && !self.touchingLadder) {
 							const jumping = self.engine.lastTime - self.lastJump < 100;

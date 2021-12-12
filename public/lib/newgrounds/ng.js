@@ -1,7 +1,4 @@
 window.addEventListener("DOMContentLoaded", () => {
-    console.log("Content loaded.");
-
-
     function getMedal(medal_name, callback) {
         unlockMedal(ngio, medal_name, (medal, unlocked) => {
             if (unlocked) {
@@ -24,14 +21,6 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     }
     window.postScore = postScore;
-
-    function getScore(callback) {
-        fetchScoreboards(ngio, scoreboards => {
-            const scoreboard = scoreboards[0];
-            console.log(scoreboard);
-        });
-    }
-    window.getScore = getScore;
     
     const { config } = globalData;
     const { key, secret } = config.newgrounds;
@@ -149,7 +138,7 @@ window.addEventListener("DOMContentLoaded", () => {
             ngio.callComponent('Medal.getList', {}, result => {
                 if(result.success) {
                     medals = result.medals;
-                    medals.forEach(medal => console.log(medal.name, medal.unlocked));
+                    console.log(medals.map(({name, unlocked}) => [name, unlocked]));
                     medalCallbacks.forEach(callback => {
                         callback(medals);
                     });
@@ -171,7 +160,7 @@ window.addEventListener("DOMContentLoaded", () => {
             ngio.callComponent("ScoreBoard.getBoards", {}, result => {
                 if (result.success) {
                     scoreboards = result.scoreboards;
-                    scoreboards.forEach(scoreboard => console.log(scoreboard.name, scoreboard.id));
+                    scoreboards.forEach(scoreboard => console.log("Scoreboard:", scoreboard.name, scoreboard.id));
                     scoreBoardsCallback.forEach(callback => {
                         callback(scoreboards);
                     });
