@@ -57,8 +57,8 @@ const globalData={
 			"isPerspective": 0
 		},
 		"newgrounds": {
-			"key": "",
-			"secret": ""
+			"key": "53522:zs4SBILE",
+			"secret": "jq6s6DaxBvK3Thlr+cZ+bw=="
 		},
 		"maxInstancesCount": 10000
 	},
