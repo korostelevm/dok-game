@@ -33,5 +33,10 @@
 		"type": "FLOAT",
 		"usage": "DYNAMIC_DRAW",
 		"instances": 1
+	},
+	"isHud": {
+		"type": "UNSIGNED_BYTE",
+		"usage": "STATIC_DRAW",
+		"instances": 1
 	}
 }

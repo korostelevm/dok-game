@@ -19,6 +19,7 @@ class Sprite {
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.crop = [1, 1];
 		this.active = true;
+		this.isHud = data.hud ? 1 : 0;
 		this.remember = data.remember || false;
 
 		this.direction = data.direction || 1;
@@ -46,6 +47,7 @@ class Sprite {
 			direction: time,
 			opacity: time,
 			crop: time,
+			isHud: time,
 		};
 	}
 
@@ -129,6 +131,15 @@ class Sprite {
 		if (this.opacity !== opacity) {
 			this.opacity = opacity;
 			this.updated.opacity = time || this.engine.lastTime;
+			return true;
+		}
+		return false;
+	}
+
+	changeHud(isHud, time) {
+		if (this.isHud !== isHud) {
+			this.isHud = isHud;
+			this.updated.isHud = time || this.engine.lastTime;
 			return true;
 		}
 		return false;

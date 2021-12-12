@@ -14,12 +14,14 @@ attribute mat4 textureCoordinates;
 attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
 attribute vec4 updateTime;
+attribute float isHud;
 
 uniform float isPerspective;
 uniform float time;
 uniform mat4 perspective;
 uniform mat4 ortho;
 uniform mat4 view;
+uniform mat4 hudView;
 
 // varying vec4 v_color;
 varying vec2 v_textureCoord;
@@ -63,6 +65,8 @@ void main() {
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex;
 	v_opacity = textureInfo.z / 1000.;
+	vec4 vertexPosition4 = vec4(vertexPosition.xy, 0., 1.);
 
-	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * view * matrix * vec4(vertexPosition.xy, 0., 1.);
+	mat4 finalView = isHud * hudView + (1. - isHud) * view;
+	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * finalView * matrix * vertexPosition4;
 }

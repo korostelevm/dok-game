@@ -237,6 +237,7 @@ class Home extends GameBase {
 			size: [viewportWidth + 1, 130],
 			y: viewportHeight, z: -2,
 			opacity: 0, manualRefresh: true,
+			hud: 1,
 		}, {
 			// onScroll: (self, scrollX, scrollY) => {
 			// 	self.changePosition(-scrollX/2, self.y);
@@ -252,23 +253,21 @@ class Home extends GameBase {
 				self.engine.addRefresh(self);
 			},
 			onRefresh: (self) => {
-				const shift = self.engine.shift;
 				const time = self.engine.lastTime;
 				const hideY = viewportHeight;
-				const showY = viewportHeight - 130;
+				const showY = viewportHeight - 130 + 1;
 				let progress;
-				self.changeSize(viewportWidth / shift.zoom, 130 / shift.zoom);
 				if (self.showTime) {
 					progress = Math.min(1, (time - self.showTime) / 300);
-					self.changePosition(-shift.x / 2 * shift.zoom, showY * (progress) + hideY * (1 - progress));
+					self.changePosition(0, showY * (progress) + hideY * (1 - progress));
 					self.changeOpacity(progress);
 				} else if (self.hideTime) {
 					progress = Math.min(1, (time - self.hideTime) / 300);
-					self.changePosition(-shift.x / 2 * shift.zoom, showY * (1 - progress) + hideY * (progress));
+					self.changePosition(0, showY * (1 - progress) + hideY * (progress));
 					self.changeOpacity(1 - progress);
 				}
 				if (progress >= 1) {
-//					self.engine.removeRefresh(self);
+					self.engine.removeRefresh(self);
 				}
 			},
 		});

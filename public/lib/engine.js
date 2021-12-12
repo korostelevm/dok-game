@@ -596,6 +596,7 @@ class Engine {
 		const viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
 		this.viewMatrix = viewMatrix;
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
 
 		const zNear = -1;
 		const zFar = 2000;
@@ -621,11 +622,11 @@ class Engine {
 		gl.cullFace(gl.BACK);
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+		console.log(depth);
 
 		if (depth) {
 			gl.enable(gl.DEPTH_TEST);
 			gl.depthFunc(gl.GEQUAL);
-			// gl.depthFunc(gl.LEQUAL);
 		}
 	}
 
@@ -893,7 +894,6 @@ class Engine {
 	}
 
 	handleSpriteUpdate(lastTime) {
-		let didUpdate = 0;
 		for (let i = 0; i < this.spriteCollection.size(); i++) {
 			const sprite = this.spriteCollection.get(i);
 			const { crop:[cropX, cropY]} = sprite;
@@ -902,7 +902,6 @@ class Engine {
 				|| sprite.updated.hotspot >= lastTime) {
 				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
 				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
-				didUpdate++;
 			}
 			if (sprite.updated.animation >= lastTime
 				|| sprite.updated.direction >= lastTime
@@ -910,11 +909,12 @@ class Engine {
 				|| sprite.updated.crop >= lastTime) {
 				const {direction, vdirection, opacity} = sprite;
 				this.spriteRenderer.setAnimation(i, sprite.anim, direction, vdirection, opacity, cropX, cropY);
-				didUpdate++;
 			}
 			if (sprite.updated.updateTime >= lastTime) {
 				this.spriteRenderer.setUpdateTime(i, sprite);
-				didUpdate++;
+			}
+			if (sprite.updated.isHud >= lastTime) {
+				this.spriteRenderer.setHud(i, sprite.isHud);
 			}
 		}		
 	}
