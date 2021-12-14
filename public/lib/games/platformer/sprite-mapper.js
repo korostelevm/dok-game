@@ -210,8 +210,8 @@ class SpriteMapper {
 					anim: this.atlas.debugBlock,
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
-					canMerge: true,
 				}, {
+					canMerge: true,
 					block: 1,
 					collide: 1,
 					init: (self, col, row, grid) => {

@@ -15,7 +15,7 @@ class GameBase {
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
 		this.audio = {};
 		if (!this.data.gender) {
-			this.data.gender = ((this.engine.inception ? null : localStorage.getItem("playerGender")) || "M");
+			this.data.gender = (this.engine.inception ? null : localStorage.getItem("playerGender")) || "M";
 		}
 		this.data.sceneName = this.sceneName;
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;

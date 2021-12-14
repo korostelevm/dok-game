@@ -26,10 +26,10 @@ class SpriteGrid {
 				const col = i / 2;
 				asciiMap[row][col] = fixedLine.substr(i, 2);
 			}
-
 			row++;
 		});
 
+		let maxcols = 0;
 		asciiMap.forEach((asciiRow, row) => {
 			asciiRow.forEach((piece, col) => {
 				if (!grid[row]) {
@@ -42,7 +42,8 @@ class SpriteGrid {
 				if (block && block.onCreate) {
 					block.onCreate(grid[row][col], col, row, asciiMap, grid);
 				}
-			})
+			});
+			maxcols = Math.max(maxcols, asciiRow.length);
 		});
 
 		grid.forEach((line, row) => {
@@ -53,7 +54,7 @@ class SpriteGrid {
 			});
 		})
 
-		return grid;
+		return { grid, cols: maxcols, rows: grid.length };
 	}
 
 	createBlock(col, row, type, option) {

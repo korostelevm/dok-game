@@ -3,11 +3,11 @@
 */
 
 class SpriteCollection {
-	constructor(engine) {
+	constructor(engine, refresher) {
 		this.sprites = [];
 		this.engine = engine;
 		this.filtered = {};
-		this.refreshers = [];
+		this.refresher  = refresher;
 	}
 
 	create(data, attributes, spriteData) {
@@ -17,7 +17,6 @@ class SpriteCollection {
 			anim: typeof(data.anim) === "string" ? this.engine.game.atlas[data.anim] : data.anim,
 		}, this.engine.lastTime, spriteData);
 		sprite.index = this.sprites.index;
-		sprite.refreshIndex = null;
 		this.sprites.push(sprite);
 		
 		for (let i in attributes) {
@@ -27,30 +26,9 @@ class SpriteCollection {
 			}
 		}
 		if (sprite.onRefresh && !sprite.manualRefresh) {
-			this.addRefresh(sprite);
+			this.refresher.addRefresh(sprite);
 		}		
 		return sprite;
-	}
-
-	addRefresh(sprite) {
-		if (sprite.refreshIndex === null) {
-			sprite.refreshIndex = this.refreshers.length;
-			this.refreshers.push(sprite);
-		}
-	}
-
-	removeRefresh(sprite) {
-		const refreshIndex = sprite.refreshIndex;
-		if (refreshIndex !== null) {
-			this.refreshers[refreshIndex] = this.refreshers[this.refreshers.length - 1];
-			this.refreshers[refreshIndex].refreshIndex = refreshIndex;
-			this.refreshers.pop();
-			sprite.refreshIndex = null;
-		}
-	}
-
-	getRefreshers() {
-		return this.refreshers;
 	}
 
 	postCreate() {

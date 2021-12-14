@@ -12,6 +12,7 @@ class Engine {
 		new FpsBox(this);
 		new DebugView(this);
 
+		this.refresher = new Refresher();
 
 		this.init(config);
 
@@ -355,7 +356,7 @@ class Engine {
 		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shaders[0], this.config.viewport.size);
 
 		/* Load sprite */
-		this.spriteCollection = new SpriteCollection(this);
+		this.spriteCollection = new SpriteCollection(this, this.refresher);
 		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
 
@@ -680,11 +681,11 @@ class Engine {
 		}
 	}
 
-	handleOnRefreshes(time) {
-		const sprites = this.spriteCollection.getRefreshers();
-		for (let i = 0; i < sprites.length; i++) {
-			const sprite = sprites[i];
-			sprite.onRefresh(sprite);
+	handleOnRefreshes(time, dt, actualTime) {
+		const refreshes = this.refresher.getRefreshers();
+		for (let i = 0; i < refreshes.length; i++) {
+			const refresh = refreshes[i];
+			refresh.onRefresh(refresh, time, dt, actualTime);
 		}				
 	}
 
@@ -974,11 +975,11 @@ class Engine {
 	}
 
 	addRefresh(sprite) {
-		this.spriteCollection.addRefresh(sprite);
+		this.refresher.addRefresh(sprite);
 	}
 
 	removeRefresh(sprite) {
-		this.spriteCollection.removeRefresh(sprite);
+		this.refresher.removeRefresh(sprite);
 	}
 }
 

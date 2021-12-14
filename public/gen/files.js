@@ -157,19 +157,6 @@ const globalFiles=[
 				]
 			},
 			{
-				"phantasia": [
-					".DS_Store",
-					{
-						"lib": [
-							".DS_Store"
-						]
-					},
-					{
-						"worlds": []
-					}
-				]
-			},
-			{
 				"the-impossible-room": [
 					".DS_Store",
 					"animal-room.js",
@@ -269,6 +256,7 @@ const globalFiles=[
 			},
 			{
 				"physics": [
+					"collision-merger.js",
 					"collision.js",
 					"control.js",
 					"gravity.js",
@@ -289,6 +277,7 @@ const globalFiles=[
 			},
 			{
 				"sprite": [
+					"refresher.js",
 					"sprite-collection.js",
 					"sprite-factory.js",
 					"sprite.js"

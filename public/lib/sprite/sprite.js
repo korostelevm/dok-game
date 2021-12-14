@@ -10,6 +10,7 @@
 class Sprite {
 	constructor(data, time, properties) {
 		this.data = data;
+		this.type = this.constructor.name;
 		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;

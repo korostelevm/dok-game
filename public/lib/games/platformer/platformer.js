@@ -209,21 +209,21 @@ class Platformer extends GameBase {
 		const spriteMapper = new SpriteMapper(this, this.spriteFactory, this.atlas, control, this.audio, jump);
 		await spriteMapper.init(engine);
 
-		const grid = new SpriteGrid(this, this.spriteFactory, spriteMapper);
-		await grid.init();
+		const spriteGrid = new SpriteGrid(this, this.spriteFactory, spriteMapper);
+		await spriteGrid.init();
 
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
 		this.backwall = this.spriteFactory.create({
-			anim: this.atlas.backwall,
+			anim: "backwall",
 			z: 100,
 			size: [viewportWidth, viewportHeight],
 			opacity: 0.3,
 			hud: 1,
 		});
 
-		const gridMap = grid.generate(` 
+		const { grid, cols, rows } = spriteGrid.generate(` 
 				..                        [][][][][][][][][][][][][][][][][][][][][][][][]  [][][][]    [][][][]    [][][][]    [][][][]
 				..                      HH
 				..                      HH
@@ -241,11 +241,14 @@ class Platformer extends GameBase {
 				[][][][][][][][][][][][][][][][][][][][][][]@@@@[][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]            --     
 			`);
 
+		const collisionMerger = new CollisionMerger();
+		collisionMerger.merge(grid, cols, rows);
+
 		this.overlayHud = this.spriteFactory.create({
 			type: "Hud",
 			anim: "debugGradient",
 			size: [viewportWidth + 1, 131],
-			y: viewportHeight,
+			y: viewportHeight, z: -100,
 			opacity: 0, manualRefresh: true,
 			hud: 1,
 			viewportWidth, viewportHeight,

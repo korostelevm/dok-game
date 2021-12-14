@@ -1,5 +1,0 @@
-class Sort {
-	sort(indexCallback) {
-		
-	}
-}
