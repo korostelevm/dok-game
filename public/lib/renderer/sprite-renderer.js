@@ -12,6 +12,7 @@ class SpriteRenderer {
 		this.tempScale = vec3.create();
 		this.tempOrigin = vec3.create();
 		this.updateTimes = new Float32Array([0, 0, 0, 0]);
+		this.alter = -400;
 	}
 
 	makeMatrix(x, y, z, width, height, hotX, hotY, degreeRotation) {
@@ -27,7 +28,7 @@ class SpriteRenderer {
 
 	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, degreeRotation, cropX, cropY) {
 		const attribute = this.attributes.matrix;
-		const mat = this.makeMatrix(x, y, z, width * (cropX || 1), height * (cropY || 1), hotX, hotY, degreeRotation);
+		const mat = this.makeMatrix(x, y, z + this.alter, width * (cropX || 1), height * (cropY || 1), hotX, hotY, degreeRotation);
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 

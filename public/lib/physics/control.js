@@ -97,7 +97,8 @@ class Control extends PhysicsBase {
 	}
 
 	refresh(time, dt) {
-		this.sprites.forEach(sprite => {
+		for (let i = 0; i < this.sprites.length; i++) {
+			const sprite = this.sprites[i];
 			if (time - sprite.climbing < 100) {
 				sprite.dx += this.dx * sprite.control;
 				sprite.dx *= .8;
@@ -112,7 +113,7 @@ class Control extends PhysicsBase {
 				if (time - this.lastControl < 50) {
 					sprite.onControl(sprite, this.dx, this.dy);
 				}
-				return;
+				continue;
 			}
 
 			const acceleration = sprite.crouch ? 1.5 : Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
@@ -123,7 +124,7 @@ class Control extends PhysicsBase {
 			}
 			if (!sprite.jump || time - sprite.jump > 500) {
 				if (sprite.climb && time - sprite.climb < 200) {
-					sprite.lastClimb = time;
+					sprite.lastClimbLedge = time;
 					sprite.dy += Math.sign(this.dy) * 2 * sprite.control;
 					sprite.dy *= .7;
 				}
@@ -131,6 +132,6 @@ class Control extends PhysicsBase {
 			if (time - this.lastControl < 50) {
 				sprite.onControl(sprite, this.dx, this.dy);
 			}
-		});
+		}
 	}
 }

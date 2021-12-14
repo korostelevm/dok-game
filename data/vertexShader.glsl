@@ -3,6 +3,7 @@ precision mediump float;
 const int START_FRAME_INDEX = 0;
 const int END_FRAME_INDEX = 1;
 const int FRAME_RATE_INDEX = 2;
+const int MAX_FRAME_COUNT_INDEX = 3;
 const int ANIMATION_UPDATE_INDEX = 0;
 
 attribute vec2 vertexPosition;
@@ -49,7 +50,9 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 	float frameCount = max(0., frameRange[1] - frameRange[0]) + 1.;
 
 	float framePerSeconds = animInfo[FRAME_RATE_INDEX];
-	float globalFrame = floor((time - animTime) * framePerSeconds / 1000.);
+	float globalFrame = floor(min(
+		(time - animTime) * framePerSeconds / 1000.,
+		animInfo[MAX_FRAME_COUNT_INDEX] - 1.));
 	float frame = frameRange[0] + modPlus(globalFrame, frameCount);
 	float row = floor(frame / animCols);
 	float col = floor(frame - row * animCols);

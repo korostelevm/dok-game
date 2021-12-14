@@ -15,7 +15,7 @@ class TipBox {
 
 
 		this.imageReplacements = {
-			"E": "assets/button_e.png",
+			"[E]": "assets/button_e.png",
 		};
 		Object.keys(this.imageReplacements).forEach(key => {
 			const img = new Image();
@@ -51,7 +51,20 @@ class TipBox {
 	#displayMessage(id, message) {
 		this.id = id;
 		if (message) {
-			this.div.innerHTML = message.split("[E]").join(`<image style="width: 21px; height: 21px; vertical-align: middle" src="assets/button_e.png">`);
+			this.div.innerText = "";
+			const splits = message.replaceAll("[E]", "|[E]|").split("|");
+			splits.forEach((section, index) => {
+				if (this.imageReplacements[section]) {
+					const img = this.div.appendChild(document.createElement("img"));
+					img.src = this.imageReplacements[section];
+					img.style.width = "21px";
+					img.style.height = "21px";
+					img.style.verticalAlign = "middle";
+				} else {
+					const span = this.div.appendChild(document.createElement("span"));
+					span.textContent = section;
+				}
+			});
 		}
 		this.div.style.opacity = message ? 1 : 0;
 	}

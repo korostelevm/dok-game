@@ -53,11 +53,11 @@ class Collision extends PhysicsBase {
 		}
 		for (let i = 0; i < this.horizontal.length; i++) {
 			const marker = this.horizontal[i];
-			marker.x = Math.round(marker.topLeft ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
+			marker.x = (marker.topLeft ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
 		}
 		for (let i = 0; i < this.vertical.length; i++) {
 			const marker = this.vertical[i];
-			marker.y = Math.round(marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
+			marker.y = (marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
 		}
 		this.horizontal.sort(this.compareHorizontal);
 		this.vertical.sort(this.compareVertical);
@@ -137,6 +137,11 @@ class Collision extends PhysicsBase {
 		const bottomPush = secondSprite.collisionBox.bottom - sprite.collisionBox.top;
 		const yPush = topPush < bottomPush ? -topPush : bottomPush;
 		if (sprite.onCollide) {
+			if (Math.abs(yPush - (-.5))< .001 && secondSprite.id === "block_16_0") {
+				console.log(xPush, yPush, topPush, bottomPush);
+				console.log(sprite.id, [sprite.collisionBox.top,sprite.collisionBox.bottom]);
+				console.log(secondSprite.id, [secondSprite.collisionBox.top, secondSprite.collisionBox.bottom]);
+			}
 			sprite.onCollide(sprite, secondSprite, xPush, yPush);
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {

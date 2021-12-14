@@ -159,14 +159,13 @@ const globalFiles=[
 			{
 				"phantasia": [
 					".DS_Store",
-					"home.js",
-					{
-						"levels": []
-					},
 					{
 						"lib": [
-							"sprite-mapper.js"
+							".DS_Store"
 						]
+					},
+					{
+						"worlds": []
 					}
 				]
 			},
@@ -200,6 +199,9 @@ const globalFiles=[
 					"time-room.js",
 					"tv-room.js"
 				]
+			},
+			{
+				"winter": []
 			}
 		]
 	},
@@ -213,9 +215,33 @@ const globalFiles=[
 	{
 		"lib": [
 			".DS_Store",
-			"engine.js",
-			"game-base.js",
-			"game-template.js",
+			{
+				"components": [
+					"hud.js"
+				]
+			},
+			{
+				"core": [
+					"engine.js",
+					"game-base.js"
+				]
+			},
+			{
+				"games": [
+					".DS_Store",
+					{
+						"platformer": [
+							"platformer.js",
+							"sprite-mapper.js"
+						]
+					}
+				]
+			},
+			{
+				"lang": [
+					"translate-voice.js"
+				]
+			},
 			{
 				"map": [
 					"sprite-grid.js"
@@ -275,7 +301,6 @@ const globalFiles=[
 					"texture-manager.js"
 				]
 			},
-			"translate-voice.js",
 			{
 				"ui": [
 					"debug-view.js",

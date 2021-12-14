@@ -50,6 +50,10 @@ class GameBase {
 		return this.sceneData.seenTime === 1;
 	}
 
+	isPerpective() {
+		return false;
+	}
+
 	setProperty(key, value) {
 		if (this.properties[key] !== value) {
 			this.properties[key] = value;
@@ -66,6 +70,7 @@ class GameBase {
 		}
 		this.spriteFactory.postCreate();
 		this.engine.enableSidebar(true);
+		this.engine.setPerspective(this.isPerpective());
 		await this.engine.changeCursor(null);
 	}
 

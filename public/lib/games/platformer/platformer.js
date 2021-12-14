@@ -1,4 +1,4 @@
-class Home extends GameBase {
+class Platformer extends GameBase {
 	async init(engine, gameName) {
 		super.init(engine, gameName);
 
@@ -61,12 +61,19 @@ class Home extends GameBase {
 				range: [0],
 				frameRate: 10,
 			}),
-			debugDoor: await engine.addTexture({
+			debugDoorStill: await engine.addTexture({
+				url: "assets/door.png",
+				collision_url: "assets/door.png",
+				spriteWidth: 64, spriteHeight: 128,
+				range: [1],
+			}),
+			debugDoorOpen: await engine.addTexture({
 				url: "assets/door.png",
 				collision_url: "assets/door.png",
 				spriteWidth: 64, spriteHeight: 128,
 				range: [1,4],
-				frameRate: 10,
+				frameRate: 8,
+				loopCount: 1,
 			}),
 			debugBounce: await engine.addTexture({
 				url: "assets/debug-bounce.png",
@@ -210,8 +217,10 @@ class Home extends GameBase {
 
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
+			z: 100,
 			size: [viewportWidth, viewportHeight],
-			opacity: .5,
+			opacity: 0.3,
+			hud: 1,
 		});
 
 		const gridMap = grid.generate(` 
@@ -225,48 +234,21 @@ class Home extends GameBase {
 				[]    []      8                       [][][]    [][][][][]  [][][][][][][]HH[][][][]    [][][][]  [][][][][]  [][]  [][]          [][]
 				[]  $$[]                        [][]  [][]      [][][][][]  [][][][][][][]HH[][][][]    [][][][]  ^^^^^^^^^^  [][]  [][]                    [][][][]
 				[]    [][]    []      [][][][]    []  ..              [][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]                []
-				[]  [][]                ?1[][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]        -4    -3    -2
-				[]        [][]    [][][][]      [][][][][][]    [][][]  []      VVVVVV          [][]                    [][]                                  
-				[][]    [][][][]        [][][][][][][][][][]    [][]        VVVVVV  [][][][]          [][][][][][][]          [][]        -0
-				....    [][][][][][][]            [][][][][]    [][][]  [][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]    []            -1
-				[][][][][][][][][][][][][][][][][][][][][][]@@@@[][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]                         
+				[]  [][]                ?1[][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]      -4----  -3--  -2--
+				[]        [][]    [][][][]      [][][][][][]    [][][]  []      VVVVVV          [][]                    [][]                                ----  
+				[][]    [][][][]        [][][][][][][][][][]    [][]        VVVVVV  [][][][]          [][][][][][][]          [][]        -0--
+				....    [][][][][][][]          DD[][][][][]    [][][]  [][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]    []            -1
+				[][][][][][][][][][][][][][][][][][][][][][]@@@@[][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]            --     
 			`);
 
 		this.overlayHud = this.spriteFactory.create({
-			anim: this.atlas.debugGradient,
-			size: [viewportWidth + 1, 130],
-			y: viewportHeight + 1, z: -2,
+			type: "Hud",
+			anim: "debugGradient",
+			size: [viewportWidth + 1, 131],
+			y: viewportHeight,
 			opacity: 0, manualRefresh: true,
 			hud: 1,
-		}, {
-			show: (self) => {
-				self.showTime = self.engine.lastTime;
-				self.hideTime = 0;
-				self.engine.addRefresh(self);
-			},
-			hide: (self) => {
-				self.hideTime = self.engine.lastTime;
-				self.showTime = 0;
-				self.engine.addRefresh(self);
-			},
-			onRefresh: (self) => {
-				const time = self.engine.lastTime;
-				const hideY = viewportHeight;
-				const showY = viewportHeight - 130;
-				let progress;
-				if (self.showTime) {
-					progress = Math.min(1, (time - self.showTime) / 150);
-					self.changePosition(0, showY * (progress) + hideY * (1 - progress));
-					self.changeOpacity(progress);
-				} else if (self.hideTime) {
-					progress = Math.min(1, (time - self.hideTime) / 150);
-					self.changePosition(0, showY * (1 - progress) + hideY * (progress));
-					self.changeOpacity(1 - progress);
-				}
-				if (progress >= 1) {
-					self.engine.removeRefresh(self);
-				}
-			},
+			viewportWidth, viewportHeight,
 		});
 	}
 
@@ -290,15 +272,9 @@ class Home extends GameBase {
 		if (typeof(cameraConfig.maxY) !== "undefined") {
 			shift.goal.y = Math.max(cameraConfig.maxY, shift.goal.y);			
 		}
-		this.adjustBackwall();
 	}
 
 	onChange(key, value) {
-	}
-
-	async postInit() {
-		await super.postInit();
-		this.adjustBackwall();
 	}
 
 	onExit(engine) {
@@ -313,10 +289,6 @@ class Home extends GameBase {
 
 	getWindowSize() {
 		return [900, 500];
-	}
-
-	adjustBackwall() {
-		this.backwall.changePosition(-this.engine.shift.x/2 * this.engine.shift.zoom, -this.engine.shift.y/2 * this.engine.shift.zoom);
 	}
 
 	refresh(time, dt) {

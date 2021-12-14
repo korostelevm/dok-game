@@ -1,3 +1,5 @@
+const MAX_FRAME_COUNT = Number.MAX_SAFE_INTEGER;
+
 class TextureAtlas {
 	constructor(gl, glTextures, index, width, height, textureSize, imageLoader) {
 		this.gl = gl;
@@ -47,7 +49,6 @@ class TextureAtlas {
 		const sourceHeight = image.naturalHeight || image.height;
 		canvas.width = sourceWidth;
 		canvas.height = sourceHeight;
-		console.log(sourceWidth, sourceHeight);
 
 		const context = canvas.getContext("2d");
 		context.imageSmoothingEnabled = false;
@@ -78,8 +79,9 @@ class TextureAtlas {
 		const image = url ? await this.imageLoader.loadImage(url) : null;
 		this.onUpdateImage(image, animationData || {});
 
-		const { spriteWidth, spriteHeight } = this;
-		const { gl, glTextures, index, x, y } = this;
+		const { x, y, spriteWidth, spriteHeight } = this;
+		const tag = `${url} ${collision_url||""} ${collision_padding||""} ${texture_url||""} ${texture_alpha||""} ${texture_blend||""} ${x},${y} ${spriteWidth},${spriteHeight}`;
+		const { gl, glTextures, index } = this;
 		if (index >= 0) {
 			for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
 				const spriteImage = this.getSpriteImageForFrame(image, frame);
@@ -92,6 +94,7 @@ class TextureAtlas {
 				const row = Math.floor(frame / this.cols);
 				this.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
 			}
+			console.log("Tex#" + index, "=", spriteWidth * this.cols + "x" + spriteHeight * this.rows, "(" + tag + ")");
 		}
 
 		if (collision_url) {
@@ -175,13 +178,13 @@ class TextureAtlas {
 	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
 		}
 		gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-		gl.generateMipmap(gl.TEXTURE_2D);		
+		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = image ? image.naturalWidth : 0;
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
-		const { cols, rows, spriteWidth, spriteHeight, frameRate, range, firstFrame, direction, vdirection } = animationData;
+		const { cols, rows, spriteWidth, spriteHeight, frameRate, maxFrameCount, loopCount, range, firstFrame, direction, vdirection } = animationData;
 		this.frameRate = frameRate || 1;
 		this.frameDuration = 1000 / this.frameRate;
 		this.cols = cols || (spriteWidth ? Math.ceil(this.spriteSheetWidth / spriteWidth) : 1);
@@ -190,6 +193,7 @@ class TextureAtlas {
 		this.spriteHeight = spriteHeight || this.spriteSheetHeight / this.rows;
 		this.startFrame = (range ? range[0] : 0) || 0;
 		this.endFrame = (range ? range[1] : 0) || this.startFrame;
+		this.maxFrameCount = maxFrameCount || (loopCount ? loopCount * (this.endFrame - this.startFrame + 1) : MAX_FRAME_COUNT);
 		this.animated = this.startFrame !== this.endFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 		this.direction = direction || 1;
@@ -211,7 +215,7 @@ class TextureAtlas {
 			y1 = y;
 		}
 
-		const { tempMatrix } = this;
+		const tempMatrix = this.tempMatrix;
 		tempMatrix[0]  = x0; tempMatrix[1]  = y1;
 		tempMatrix[4]  = x1; tempMatrix[5]  = y1;
 		tempMatrix[8]  = x0; tempMatrix[9]  = y0;
@@ -227,7 +231,7 @@ class TextureAtlas {
 	}
 
 	getSpritesheetInfo() {
-		const { shortVec4 } = this;
+		const shortVec4 = this.shortVec4;
 		shortVec4[0] = this.cols;
 		shortVec4[1] = this.rows;
 		shortVec4[2] = 0;
@@ -236,11 +240,11 @@ class TextureAtlas {
 	}
 
 	getAnimationInfo() {
-		const { floatVec4 } = this;
+		const floatVec4 = this.floatVec4;
 		floatVec4[0] = this.startFrame;
 		floatVec4[1] = this.endFrame;
 		floatVec4[2] = this.frameRate;
-		floatVec4[3] = 0;
+		floatVec4[3] = this.maxFrameCount;
 		return floatVec4;
 	}
 }

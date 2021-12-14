@@ -9,6 +9,7 @@
 
 class Sprite {
 	constructor(data, time, properties) {
+		this.data = data;
 		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;
@@ -110,7 +111,7 @@ class Sprite {
 		if (this.size[0] !== width || this.size[1] !== height) {
 			this.size[0] = width;
 			this.size[1] = height;
-			this.updated.sprite = time;
+			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			return true;
 		}

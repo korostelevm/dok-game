@@ -9,27 +9,40 @@ class SpriteGrid {
 	}
 
 	generate(map) {
-		let str = "";
-
 		const grid = [];
+		const asciiMap = [];
 		const lines = map.split("\n");
 
 		let row = 0;
 		const rowShift = 10 - lines.filter(line => line.trim().length).length;
+
 		lines.forEach(line => {
 			const fixedLine = line.trim();
 			if (!fixedLine.length && row === 0) {
 				return;
 			}
-			grid[row] = [];
+			asciiMap[row] = [];
 			for (let i = 0; i < fixedLine.length; i+= 2) {
 				const col = i / 2;
-				const piece = fixedLine.substr(i, 2);
-				grid[row][col] =  this.createBlock(col, row + rowShift, piece.charAt(0), piece.charAt(1));
+				asciiMap[row][col] = fixedLine.substr(i, 2);
 			}
 
 			row++;
-			str += "\n";
+		});
+
+		asciiMap.forEach((asciiRow, row) => {
+			asciiRow.forEach((piece, col) => {
+				if (!grid[row]) {
+					grid[row] = [];
+				} else if (grid[row][col]) {
+					return;
+				}
+				const block = this.createBlock(col, row + rowShift, piece.charAt(0), piece.charAt(1));
+				grid[row][col] = block;
+				if (block && block.onCreate) {
+					block.onCreate(grid[row][col], col, row, asciiMap, grid);
+				}
+			})
 		});
 
 		grid.forEach((line, row) => {

@@ -598,16 +598,29 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
 
-		const zNear = -1;
+		const zNear = 0.01;
 		const zFar = 2000;
 
-		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
+		const fieldOfView = (viewAngle||90) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
+
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
-		gl.uniform1f(uniforms.isPerspective.location, isPerspective || 0);
+		gl.uniform1f(uniforms.globalLight.location, 1);
+
+		this.setPerspective(isPerspective);
+		this.keyboardHandler.addKeyDownListener('p', () => {
+			this.setPerspective(!this.isPerspective)
+		});
+	}
+
+	setPerspective(perspective) {
+		console.log("Perspective:", perspective);
+		this.isPerspective = perspective;
+		const uniforms = this.shaders[0].uniforms;
+		this.gl.uniform1f(uniforms.isPerspective.location, perspective ? 1 : 0);		
 	}
 
 	pointContains(x, y, collisionBox) {
@@ -779,7 +792,6 @@ class Engine {
 			this.canvas.parentElement.classList.remove("inception");
 		}
 
-//		this.canvas.parentElement.style.transform = inception ? "translate(-40px, -100px) scale(.5)" : "";
 		document.getElementById("player-overlay").style.display = inception ? "" : "none";
 		document.getElementById("back-button").style.display = inception ? "" : "none";
 		doResize();
@@ -872,7 +884,7 @@ class Engine {
 		if (shiftChanged || shakeX || shakeY) {
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
-			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, coef));
+			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, 1));
 			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x*coef + shakeX, -shift.y*coef + shakeY, 0));
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			gl.uniform1f(uniforms.globalLight.location, shift.light);
@@ -891,7 +903,8 @@ class Engine {
 			const { crop:[cropX, cropY]} = sprite;
 			if (sprite.updated.sprite >= lastTime
 				|| sprite.updated.crop >= lastTime
-				|| sprite.updated.hotspot >= lastTime) {
+				|| sprite.updated.hotspot >= lastTime)
+			{
 				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
 				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
 			}

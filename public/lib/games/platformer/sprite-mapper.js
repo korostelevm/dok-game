@@ -44,17 +44,40 @@ class SpriteMapper {
 					jump: 4.8,
 					control: 1,
 					onEnter: (self, sprite) => {
-						if (sprite.npc) {
+						if (sprite.onChat) {
+							sprite.onChatEvent = e => {
+								sprite.onChat(sprite, self);
+								self.engine.clearMessage(self.id);
+							};
+
 							self.engine.showMessage(self.id, `press [E] to start dialog`);
-//							this.game.camera = "zoom";
+							self.engine.keyboardHandler.addKeyDownListener('e', sprite.onChatEvent);
+						}
+						if (sprite.onOpen) {
+							sprite.onOpenEvent = e => {
+								self.changePosition(sprite.getCenterX(), self.y);
+								sprite.onOpen(sprite, self);
+								self.engine.clearMessage(self.id);
+							};
+
+							self.engine.showMessage(self.id, `press [E] to start open ${sprite.name}`);
+							self.engine.keyboardHandler.addKeyDownListener('e', sprite.onOpenEvent);							
 						}
 					},
 					onLeave: (self, sprite) => {
-						if (sprite.npc) {
+						if (sprite.onChat) {
+							if (self.chatting) {
+								sprite.stopChat(sprite, self);
+							}
 							self.engine.clearMessage(self.id);
-							// if (!self.engine.getMessage()) {
-							// 	this.game.camera = "normal";
-							// }
+							self.engine.keyboardHandler.removeListener(sprite.onChatEvent);
+							this.game.camera = "normal";
+						}
+						if (sprite.onOpen) {
+							sprite.setProperty("opened", 0);
+							self.engine.clearMessage(self.id);
+							self.engine.keyboardHandler.removeListener(sprite.onOpenEvent);
+							this.game.camera = "normal";
 						}
 						if (sprite.ladder && !self.touchingLadder) {
 							const jumping = self.engine.lastTime - self.lastJump < 100;
@@ -187,6 +210,7 @@ class SpriteMapper {
 					anim: this.atlas.debugBlock,
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
+					canMerge: true,
 				}, {
 					block: 1,
 					collide: 1,
@@ -229,43 +253,86 @@ class SpriteMapper {
 					this.movingPlatform = this.spriteFactory.create({
 						name: `mover_${col}_${row}`,
 						anim: this.atlas.debugMovingPlatform,
-						size: [80, 40],
+						size: [40, 40],
 						x: 40 * col, y: 40 * row,
 					}, {
 						path: [],
 						collide: 1, canLand: true,
 						index: 0,
 						speed: 2,
+						onCreate: (self, col, row, asciiMap, grid) => {
+							let w = 1, h = 1;
+							for (let i = 1; asciiMap[row][col+i] === "--"; i++) {
+								w ++;
+							}
+							for (let i = 1; asciiMap[row+i] && asciiMap[row+i][col] === "--"; i++) {
+								h ++;
+							}
+							for (let y = 0; y < h; y++) {
+								if (!grid[row + y]) {
+									grid[row + y] = [];
+								}
+								for (let x = 0; x < w; x++) {
+									if (!grid[row + y][col + x]) {
+										grid[row + y][col + x] = self;
+									}
+								}
+							}
+
+
+							self.path[self.index].size = [w * 40, h * 40];
+						},
 						onPlatform: (self, lander) => {
 							self.lander = lander;
 						},
 						onRefresh: platform => {
+							const previousSpot = platform.path[(platform.index + platform.path.length - 1) % platform.path.length];
 							const nextSpot = platform.path[platform.index];
 							const dx = nextSpot.x - platform.x;
 							const dy = nextSpot.y - platform.y;
 							const dist = Math.sqrt(dx * dx + dy * dy);
+							if (dist < 0.0001) {
+								platform.index = (platform.index + 1) % platform.path.length;								
+								return;
+							}
+							const lander = platform.lander;
+
 							const speed = Math.min(dist, platform.speed);
 							const ddx = dist < 0.1 ? dx : dx / dist * speed;
 							const ddy = dist < 0.1 ? dy : dy / dist * speed;
+
 							platform.changePosition(platform.x + ddx, platform.y + ddy);
-							const lander = platform.lander;
+
+							const xProgressSize = nextSpot.x - previousSpot.x;
+							const xProgress = xProgressSize === 0 ? 0 : (platform.x - previousSpot.x) / xProgressSize;
+							const yProgressSize = nextSpot.y - previousSpot.y;
+							const yProgress = yProgressSize === 0 ? 0 : (platform.y - previousSpot.y) / yProgressSize;
+							const progress = (xProgress + yProgress) / ((xProgressSize !== 0 ? 1 : 0) + (yProgressSize !== 0 ? 1 : 0));
+							const regress = (1 - progress);
+							const w = nextSpot.size[0] * progress + previousSpot.size[0] * regress;
+							const h = nextSpot.size[1] * progress + previousSpot.size[1] * regress;
+
+							const preWidth = platform.size[0];
+							const preRelativeX = lander ? (lander.x - platform.x) : 0;
+							platform.changeSize(w, h);
+
 							if (lander) {
-								lander.changePosition(lander.x + ddx, lander.y + ddy);
-							}
-							if (dist < 0.1) {
-								platform.index = (platform.index + 1) % platform.path.length;
+								const newRelativeX = preRelativeX / preWidth * w;
+								const shiftX = newRelativeX - preRelativeX;
+								lander.changePosition(lander.x + ddx + shiftX, lander.y + ddy);
 							}
 						},
 					});
 				}
 				const index = parseInt(option);
+				this.movingPlatform.index = index;
 				this.movingPlatform.path[index] = {
-					x: 40 * col, y: 40 * row,
+					x: 40 * col, y: 40 * row, size: [40, 40],
 				};
 				if (index === 0) {
 					this.movingPlatform.changePosition(40 * col, 40 * row);
-					return this.movingPlatform;
 				}
+				return this.movingPlatform;
 			},
 			'^': (col, row, option) => {
 				return this.spriteFactory.create({
@@ -291,6 +358,23 @@ class SpriteMapper {
 					x: 40 * col, y: 40 * row,
 				}, {
 					collide: 1, npc: 1, noblock: 1,
+					onChat: (self, sprite) => {
+						if (!sprite.chatting) {
+							self.startChat(self, sprite);
+						} else {
+							self.stopChat(self, sprite);
+						}
+					},
+					startChat: (self, sprite) => {
+						sprite.chatting = self.engine.lastTime;
+						this.game.camera = "zoom";
+						this.game.overlayHud.show(this.game.overlayHud);
+					},
+					stopChat: (self, sprite) => {
+						sprite.chatting = 0;
+						this.game.camera = "normal";
+						this.game.overlayHud.hide(this.game.overlayHud);
+					}
 				});
 			},
 			'$': (col, row, option) => {
@@ -334,6 +418,35 @@ class SpriteMapper {
 						}
 					},
 				});
+			},
+			'D': (col, row, option) => {
+				const door = this.spriteFactory.create({
+					name: "the door",
+					id: `door_${col}_${row}`,
+					anim: this.atlas.debugDoorBack,
+					size: [40, 60],
+					x: 40 * col, y: 40 * row - 20,
+				}, {
+					collide: 1, noblock: 1, manualRefresh: true,
+					onRefresh: self => {
+					},
+					onOpen: self => {
+						self.setProperty("opened", self.properties.opened ? 0 : self.engine.lastTime);
+						this.game.camera = self.properties.opened ? "zoom" : "normal";
+					},
+					onChange: {
+						opened: (self, opened) => {
+							self.door.changeAnimation(opened ? this.atlas.debugDoorOpen : this.atlas.debugDoorStill);
+						},
+					},
+				});
+				door.door = this.spriteFactory.create({
+					id: `door_door_${col}_${row}`,
+					anim: this.atlas.debugDoorStill,
+					size: [40, 60],
+					x: 40 * col, y: 40 * row - 20,
+				});
+				return door;
 			},
 		};
 	}

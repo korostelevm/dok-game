@@ -11,7 +11,11 @@ class SpriteCollection {
 	}
 
 	create(data, attributes, spriteData) {
-		const sprite = new Sprite(data, this.engine.lastTime, spriteData);
+		const type = data.type ? eval(data.type) : Sprite;
+		const sprite = new type({
+			...data,
+			anim: typeof(data.anim) === "string" ? this.engine.game.atlas[data.anim] : data.anim,
+		}, this.engine.lastTime, spriteData);
 		sprite.index = this.sprites.index;
 		sprite.refreshIndex = null;
 		this.sprites.push(sprite);

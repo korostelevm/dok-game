@@ -1,7 +1,3 @@
-
-
-
-
 document.addEventListener("DOMContentLoaded", () => {
-	engine.setGame(new Home());
+	engine.setGame(new Platformer());
 });

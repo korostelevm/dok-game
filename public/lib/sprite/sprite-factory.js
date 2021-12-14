@@ -2,11 +2,12 @@ class SpriteFactory {
 	constructor(sceneData, spriteCollection, game) {
 		this.spriteCollection = spriteCollection;
 		this.spriteData = sceneData.sprite || (sceneData.sprite = {});
+		this.game = game;
 		this.index = 0;
 	}
 
 	create(data, attributes, initCallback) {
-		const id = (typeof(data.name) !== "function" ? data.name : null) || engine.game.constructor.name + this.index;
+		const id = (typeof(data.name) !== "function" ? data.name : null) || this.game.constructor.name + this.index;
 		const properties = this.spriteData[id] || (this.spriteData[id] = {});
 		this.index++;
 		const sprite = this.spriteCollection.create(data, attributes, properties);

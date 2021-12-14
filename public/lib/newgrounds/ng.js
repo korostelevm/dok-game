@@ -33,7 +33,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
     function onLoggedIn() {
-        console.log("Welcome " + ngio.user.name + "!", ngio.user.icons.large);
+        console.log("Welcome %c  ", `font-size:25px; background:url(${ngio.user.icons.small}) no-repeat;`, ngio.user.name + "!");
         // const button = document.body.appendChild(document.createElement('button'));
         // button.classList.add('button');
         // button.innerText = "lock medals";
@@ -138,10 +138,10 @@ window.addEventListener("DOMContentLoaded", () => {
             ngio.callComponent('Medal.getList', {}, result => {
                 if(result.success) {
                     medals = result.medals;
-                    console.log(medals.map(({name, unlocked}) => [name, unlocked]));
-                    medalCallbacks.forEach(callback => {
-                        callback(medals);
-                    });
+                    const style = 'font-weight: bold;';
+                    console.log("%c Unlocked:", style, medals.filter(({unlocked}) => unlocked).map(({name}) => name).join(", "));
+                    console.log("%c Locked:", style, medals.filter(({unlocked}) => !unlocked).map(({name}) => name).join(", "));
+                    medalCallbacks.forEach(callback => callback(medals));
                     medalCallbacks = null;
                 }
             });
@@ -161,9 +161,7 @@ window.addEventListener("DOMContentLoaded", () => {
                 if (result.success) {
                     scoreboards = result.scoreboards;
                     scoreboards.forEach(scoreboard => console.log("Scoreboard:", scoreboard.name, scoreboard.id));
-                    scoreBoardsCallback.forEach(callback => {
-                        callback(scoreboards);
-                    });
+                    scoreBoardsCallback.forEach(callback => callback(scoreboards));
                     scoreBoardsCallback = null;
                 }
             });
