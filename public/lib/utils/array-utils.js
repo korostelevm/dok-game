@@ -10,6 +10,6 @@ class ArrayUtils {
 	}
 }
 
-Array.prototype.at = (x, y) {
+Array.prototype.at = (x, y) => {
 	return this[y] ? this[y][x] : null;
 };

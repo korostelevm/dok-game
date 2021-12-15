@@ -302,7 +302,7 @@ const globalFiles=[
 			},
 			{
 				"utils": [
-					"sort.js",
+					"array-utils.js",
 					"string.js"
 				]
 			}

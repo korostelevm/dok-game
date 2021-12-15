@@ -8,7 +8,6 @@ const archiver 	= require('archiver');
 const md5File 	= require('md5-file');
 const getPixels = require("get-pixels");
 
-
 const PORT = 3000;
  
 const app = express();
@@ -38,6 +37,13 @@ app.get('/', (req, res, next) => {
 						});
 					}
 				});
+
+				const paths = generatePaths(data);
+				const indexHtml = fs.readFile(`${__dirname}/public/index.html`);
+				const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
+				indexSplit[1] = "\n" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n") + "\n";
+				fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
+
 				const assetProperties = {};
 				return fs.promises.readFile(`${__dirname}/public/gen/asset-property.json`)
 					.then(data => {
@@ -146,6 +152,28 @@ function listFiles(root, path) {
 		}))
 	});
 }
+
+function generatePaths(data, optionalPath) {
+	const fullPath = optionalPath || ``;
+	const list = [];
+	if (Array.isArray(data)) {
+		data.forEach(filename => {
+			if (typeof(filename) === "string") {
+				const {ext} = path.parse(filename);
+				if (ext === ".js") {
+					list.push(`${fullPath}/${filename}`);
+				}
+			} else {
+				list.push(...generatePaths(filename, `${fullPath}`));
+			}
+		});
+	} else {
+		Object.keys(data).forEach(key => {
+			list.push(...generatePaths(data[key], `${fullPath}/${key}`));
+		});
+	}
+	return list;
+ }
 
 function zipPublic(source, out) {
 	const archive = archiver('zip', { zlib: { level: 9 }});
