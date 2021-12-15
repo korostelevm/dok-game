@@ -19,7 +19,7 @@ app.get('/', (req, res, next) => {
 	const isRelease = "release" in queryObject;
 
 	Promise.all([
-		fs.promises.readFile(`${__dirname}/public/index.html`),
+		regenerateIndex().then(() => fs.promises.readFile(`${__dirname}/public/index.html`)),
 		generateData(),
 		listFiles(`${__dirname}/public`, "")
 			.then(data => {
@@ -39,9 +39,11 @@ app.get('/', (req, res, next) => {
 				});
 
 				const paths = generatePaths(data);
-				const indexHtml = fs.readFile(`${__dirname}/public/index.html`);
+				paths.sort(compareDependencies);
+				console.log(paths);
+				const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 				const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
-				indexSplit[1] = "\n" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n") + "\n";
+				indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
 				fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
 
 				const assetProperties = {};
@@ -112,6 +114,17 @@ app.get('/', (req, res, next) => {
 });
 
 app.use(serve(`${__dirname}/public`));
+
+async function regenerateIndex() {
+	const data = await listFiles(`${__dirname}/public`, "");
+	const paths = generatePaths(data);
+	paths.sort(compareDependencies);
+	console.log(paths);
+	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
+	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
+	indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
+	fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
+}
 
 function tabToSpaces(string) {
 	return string.split("\t").join("    ");
@@ -188,6 +201,26 @@ function zipPublic(source, out) {
 		stream.on('close', () => resolve());
 		archive.finalize();
 	});
+}
+
+function compareDependencies(a, b) {
+	const isGenA = a.indexOf("/gen/") >= 0;
+	const isGenB = b.indexOf("/gen/") >= 0;
+	if (isGenA !== isGenB) {
+		return isGenA ? -1 : 1;
+	}
+
+	const isCoreA = a.indexOf("/core/") >= 0;
+	const isCoreB = b.indexOf("/core/") >= 0;
+	if (isCoreA !== isCoreB) {
+		return isCoreA ? -1 : 1;
+	}
+	const pathCountA = a.split("/").length;
+	const pathCountB = b.split("/").length;
+	if (pathCountA !== pathCountB) {
+		return pathCountB - pathCountA;
+	}
+	return a.localeCompare(b);
 }
 
 function getPixelsPromise(path) {

@@ -290,6 +290,9 @@ class Engine {
 	}
 
 	async loadDomContent(document) {
+		if (document.readyState !== "loading") {
+			return Promise.resolve(document);
+		}
 		return new Promise(resolve => document.addEventListener("DOMContentLoaded", () => resolve(document)));
 	}	
 
@@ -306,7 +309,6 @@ class Engine {
 		if (config.viewport.pixelScale < 1 && !this.isRetinaDisplay()) {
 			config.viewport.pixelScale = 1;
 		}
-
 		console.log(config);
 		const maxInstancesCount = config.maxInstancesCount || 1000;
 		console.log("maxInstancesCount", maxInstancesCount);
@@ -393,7 +395,7 @@ class Engine {
 		this.onPostRefresh.filter(component => component).forEach(component => component.init());
 
 		this.ready = true;
-		Engine.start(this);
+		Engine.trigger(this);
 	}
 
 	async preloadAssets(onProgress) {
@@ -652,7 +654,7 @@ class Engine {
 		this.initialize(gl, this.shaders[0], config);
 	}
 
-	static start(engine) {
+	static trigger(engine) {
 		const frameDuration = 1000 / 60;
 		let frame = 0;
 		const loop = (time) => {
@@ -981,6 +983,10 @@ class Engine {
 	removeRefresh(sprite) {
 		this.refresher.removeRefresh(sprite);
 	}
-}
 
-const engine = new Engine(globalData.config);
+	static start(classObj) {
+		const engine = new Engine(globalData.config);
+		engine.setGame(new classObj());
+		window.engine = engine;
+	}
+}

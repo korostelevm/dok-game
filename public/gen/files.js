@@ -160,6 +160,11 @@ const globalFiles=[
 				"the-impossible-room": [
 					".DS_Store",
 					"animal-room.js",
+					{
+						"base": [
+							"game-core.js"
+						]
+					},
 					"batman-room.js",
 					"clue-room.js",
 					"computer-room.js",
@@ -167,7 +172,6 @@ const globalFiles=[
 					"desert-far.js",
 					"desert-room.js",
 					"entrance.js",
-					"game-core.js",
 					"game-title.js",
 					"gandalf-room.js",
 					"impossible-room.js",
@@ -202,11 +206,6 @@ const globalFiles=[
 	{
 		"lib": [
 			".DS_Store",
-			{
-				"components": [
-					"hud.js"
-				]
-			},
 			{
 				"core": [
 					"engine.js",
@@ -256,13 +255,18 @@ const globalFiles=[
 			},
 			{
 				"physics": [
+					".DS_Store",
+					{
+						"base": [
+							"physics-base.js"
+						]
+					},
 					"collision-merger.js",
 					"collision.js",
 					"control.js",
 					"gravity.js",
 					"jump.js",
-					"movement.js",
-					"physics-base.js"
+					"movement.js"
 				]
 			},
 			{
@@ -277,10 +281,17 @@ const globalFiles=[
 			},
 			{
 				"sprite": [
+					".DS_Store",
+					{
+						"base": [
+							".DS_Store",
+							"sprite.js"
+						]
+					},
+					"hud.js",
 					"refresher.js",
 					"sprite-collection.js",
-					"sprite-factory.js",
-					"sprite.js"
+					"sprite-factory.js"
 				]
 			},
 			{

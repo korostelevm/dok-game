@@ -1,3 +1,3 @@
 document.addEventListener("DOMContentLoaded", () => {
-	engine.setGame(new Platformer());
+	Engine.start(Platformer);
 });
