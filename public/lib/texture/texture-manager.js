@@ -4,6 +4,7 @@ class TextureManager {
 		this.glTextures = [];
 		this.textureSize = 4096;
 		this.textureAtlas = [];
+		this.maxTextureIndex = 0;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {
@@ -25,13 +26,14 @@ class TextureManager {
 	}
 
 	createAtlas(index, imageLoader, width, height) {
-		const atlas = new TextureAtlas(this.gl, this.glTextures, index, width, height, this.textureSize, imageLoader);
+		const atlas = new TextureAtlas(this, index, width, height, imageLoader);
 		this.textureAtlas.push(atlas);
 		return atlas;
 	}
 
 	clear() {
 		this.textureAtlas.length = 0;
+		this.maxTextureIndex = 0;
 	}
 
 	generateMipMap(index) {
@@ -41,12 +43,26 @@ class TextureManager {
 	}
 
 	generateAllMipMaps() {
-		let maxIndex = 0;
-		this.textureAtlas.forEach(({maxTextureIndex}) => {
-			maxIndex = Math.max(maxIndex, maxTextureIndex);
-		});
-		for (let i = 0; i <= maxIndex; i++) {
+		for (let i = 0; i <= this.maxTextureIndex; i++) {
 			this.generateMipMap(i);
 		}
+	}
+
+	saveTexture(index, x, y, canvas) {
+		const { gl, glTextures, textureSize } = this;
+		this.maxTextureIndex = Math.max(index, this.maxTextureIndex);
+		gl.activeTexture(gl[`TEXTURE${index}`]);
+		const glTexture = glTextures[index];
+		if (glTexture.width < textureSize || glTexture.height < textureSize) {
+			gl.bindTexture(gl.TEXTURE_2D, glTexture.glTexture);
+			glTexture.width = glTexture.height = textureSize;
+			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, glTexture.width, glTexture.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
+		}
+		gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+		gl.generateMipmap(gl.TEXTURE_2D);
 	}
 }

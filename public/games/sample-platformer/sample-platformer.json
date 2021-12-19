@@ -1,0 +1,347 @@
+{
+  "className": "Platformer",
+  "size": [900, 500],
+  "world": {
+    "overlayHud": {
+      "type": "Hud",
+      "anim": "debugGradient",
+      "x": 1,
+      "y": "viewportHeight",
+      "z": -100,
+      "opacity": 0,
+      "manualRefresh": true,
+      "hud": 1
+    },
+    "backwall": {
+      "anim": "backwall",
+      "z": 100,
+      "size": [
+        "viewportWidth",
+        "viewportHeight"
+      ],
+      "opacity": 0.3,
+      "hud": 1
+    }
+  },
+  "grid": [
+    "..                        [][][][][][][][][][][][][][][][][][][][][][][][]  [][][][]    [][][][]    [][][][]    [][][][]",
+    "..                      HH",
+    "..                      HH",
+    "..                      HH",
+    "..            ?0        HH",
+    "[][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]  [][][][]    [][][][][][]VV[][][]  [][]  [][]",
+    "[]    [][]                [][][][]  [][][][]    [][][][][][][][][][][][][]HH[][][][]    [][][][]      [][][]  [][]  [][][][][][][]",
+    "[]    []      8                       [][][]    [][][][][]  [][][][][][][]HH[][][][]    [][][][]  [][][][][]  [][]  [][]          [][]",
+    "[]  $$[]                        [][]  [][]      [][][][][]  [][][][][][][]HH[][][][]    [][][][]  ^^^^^^^^^^  [][]  [][]                    [][][][]",
+    "[]    [][]    []      [][][][]    []  ..              [][]  [][][][][][][]HH[][][][]    [][][][][][][][][][][][][]  [][]                []",
+    "[]  [][]                ?1[][]    [][][][][]      []    []  []          []HH[][][][]    [][][][][][][][][][][][][]  [][]      -4----  -3--  -2--",
+    "[]        [][]    [][][][]      [][][][][][]    [][][]  []      VVVVVV          [][]                    [][]                                ----  ",
+    "[][]    [][][][]        [][][][][][][][][][]    [][]        VVVVVV  [][][][]          [][][][][][][]          [][]        -0--",
+    "....    [][][][][][][]          DD[][][][][]    [][][]  [][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]    []            -1",
+    "[][][][][][][][][][][][][][][][][][][][][][]@@@@[][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]            --     "
+  ],
+  "audio": {
+    "scream": {
+      "src": "audio/scream.mp3",
+      "volume": 1
+    },
+    "piano": {
+      "src": "audio/piano.mp3",
+      "volume": 1
+    },
+    "beep": {
+      "src": "audio/beep.mp3",
+      "volume": 0.5
+    },
+    "eat": {
+      "src": "audio/eat.mp3",
+      "volume": 0.5
+    },
+    "dud": {
+      "src": "audio/dud.mp3",
+      "volume": 1
+    },
+    "hit": {
+      "src": "audio/hit.mp3",
+      "volume": 0.5
+    },
+    "door": {
+      "src": "audio/door.mp3",
+      "volume": 0.5
+    },
+    "pickup": {
+      "src": "audio/pickup.mp3",
+      "volume": 0.3
+    },
+    "drink": {
+      "src": "audio/drink.mp3",
+      "volume": 1
+    },
+    "mouse": {
+      "src": "audio/animal-cry.mp3",
+      "volume": 1
+    },
+    "jingle": {
+      "src": "audio/jingle.mp3",
+      "volume": 1
+    }
+  },
+  "cameras": {
+    "normal": {
+      "default": true,
+      "xOffset": 800,
+      "yOffset": 200,
+      "zoom": 1,
+      "maxX": 0,
+      "minY": 0,
+      "follow": "hero"
+    },
+    "zoom": {
+      "xOffset": 400,
+      "yOffset": 200,
+      "zoom": 2,
+      "follow": "hero"
+    }
+  },
+  "atlas": {
+    "backwall": {
+      "url": "assets/backwall.jpg"
+    },
+    "debugBlock": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        0
+      ]
+    },
+    "debugBlockHighlight": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        1
+      ]
+    },
+    "debugCrate": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        2
+      ]
+    },
+    "debugLadder": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        3
+      ]
+    },
+    "debugMovingPlatform": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        4
+      ]
+    },
+    "debugCeiling": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        5
+      ]
+    },
+    "debugPlayer": {
+      "url": "assets/debug-player.png",
+      "collision_url": "assets/debug-player.png"
+    },
+    "debugCoin": {
+      "url": "assets/debug-coin.png",
+      "collision_url": "assets/debug-coin.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        0,
+        3
+      ],
+      "frameRate": 10
+    },
+    "debugDoorBack": {
+      "url": "assets/door.png",
+      "collision_url": "assets/door.png",
+      "spriteWidth": 64,
+      "spriteHeight": 128,
+      "range": [
+        0
+      ],
+      "frameRate": 10
+    },
+    "debugDoorStill": {
+      "url": "assets/door.png",
+      "collision_url": "assets/door.png",
+      "spriteWidth": 64,
+      "spriteHeight": 128,
+      "range": [
+        1
+      ]
+    },
+    "debugDoorOpen": {
+      "url": "assets/door.png",
+      "collision_url": "assets/door.png",
+      "spriteWidth": 64,
+      "spriteHeight": 128,
+      "range": [
+        1,
+        4
+      ],
+      "frameRate": 8,
+      "loopCount": 1
+    },
+    "debugBounce": {
+      "url": "assets/debug-bounce.png",
+      "collision_url": "assets/debug-bounce.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        0
+      ]
+    },
+    "debugBounceBouncing": {
+      "url": "assets/debug-bounce.png",
+      "collision_url": "assets/debug-bounce.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        0,
+        3
+      ],
+      "frameRate": 8
+    },
+    "debugGradient": {
+      "url": "assets/gradient.png",
+      "collision_url": "assets/gradient.png"
+    },
+    "npc": {
+      "still": {
+        "url": "assets/debug-npc.png",
+        "collision_url": "assets/debug-npc.png",
+        "spriteWidth": 32,
+        "spriteHeight": 32,
+        "range": [
+          0,
+          3
+        ]
+      },
+      "talk": {
+        "url": "assets/debug-npc.png",
+        "collision_url": "assets/debug-npc.png",
+        "spriteWidth": 32,
+        "spriteHeight": 32,
+        "range": [
+          4,
+          7
+        ]
+      }
+    },
+    "hero": {
+      "still": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 10,
+        "range": [
+          0,
+          3
+        ]
+      },
+      "run": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 10,
+        "range": [
+          4,
+          7
+        ]
+      },
+      "jump": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 5,
+        "range": [
+          8,
+          11
+        ]
+      },
+      "climb": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 8,
+        "range": [
+          20,
+          23
+        ]
+      },
+      "climb_still": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 8,
+        "range": [
+          24,
+          27
+        ]
+      },
+      "dead": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 10,
+        "range": [
+          16,
+          19
+        ]
+      },
+      "crouch_still": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 8,
+        "range": [
+          28,
+          31
+        ]
+      },
+      "crouch": {
+        "url": "assets/stick.png",
+        "collision_url": "assets/stick-collision.png",
+        "spriteWidth": 128,
+        "spriteHeight": 172,
+        "frameRate": 8,
+        "range": [
+          32,
+          35
+        ]
+      }
+    }
+  }
+}

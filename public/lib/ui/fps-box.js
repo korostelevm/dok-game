@@ -20,7 +20,7 @@ class FpsBox {
 	}
 
 	init() {
-		document.getElementById("container").appendChild(this.input);
+		document.body.appendChild(this.input);
 	}
 
 	onRefresh(time, dt, actualTime) {

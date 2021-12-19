@@ -26,7 +26,7 @@ class ImageLoader {
 	}
 
 	async loadImage(url) {
-		return new Promise((resolve, reject) => {
+		return !url ? Promise.resolve(null) : new Promise((resolve, reject) => {
 			if (this.imageStock[url]) {
 				const { img, loaded, onLoadListeners } = this.imageStock[url];
 				if (!loaded) {

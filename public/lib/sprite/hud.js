@@ -1,21 +1,22 @@
 class Hud extends Sprite {
-	constructor(data, time, properties) {
-		super(data, time, properties);
-		this.viewportWidth = data.viewportWidth;
-		this.viewportHeight = data.viewportHeight;
+	constructor(data, time, properties, engine) {
+		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = engine.config;
+		super({...data, size:[viewportWidth, 131]}, time, properties, engine);
+		this.viewportWidth = viewportWidth;
+		this.viewportHeight =viewportHeight;
 		this.animDuration = data.animDuration || 150;
 	}
 
 	show(self) {
 		self.showTime = self.engine.lastTime;
 		self.hideTime = 0;
-		self.engine.addRefresh(self);
+		self.engine.refresher.add(self);
 	}
 
 	hide(self) {
 		self.hideTime = self.engine.lastTime;
 		self.showTime = 0;
-		self.engine.addRefresh(self);
+		self.engine.refresher.add(self);
 	}
 
 	onRefresh(self) {
@@ -25,15 +26,15 @@ class Hud extends Sprite {
 		let progress;
 		if (self.showTime) {
 			progress = Math.min(1, (time - self.showTime) / self.animDuration);
-			self.changePosition(0, showY * (progress) + hideY * (1 - progress));
+			self.changePosition(self.x, showY * (progress) + hideY * (1 - progress));
 			self.changeOpacity(progress);
 		} else if (self.hideTime) {
 			progress = Math.min(1, (time - self.hideTime) / self.animDuration);
-			self.changePosition(0, showY * (1 - progress) + hideY * (progress));
+			self.changePosition(self.x, showY * (1 - progress) + hideY * (progress));
 			self.changeOpacity(1 - progress);
 		}
 		if (progress >= 1) {
-			self.engine.removeRefresh(self);
+			self.engine.refresher.remove(self);
 		}
 	}
 }

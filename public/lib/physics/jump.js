@@ -39,7 +39,7 @@ class Jump extends PhysicsBase {
 			if (!this.jump && (!this.up || !sprite.rest)) {
 				return;
 			}
-			if (time - sprite.rest < 100 || time - sprite.climbing < 100) {
+			if (time - sprite.rest < 150 || time - sprite.climbing < 100) {
 				this.performJump(sprite);
 				recordJump = true;
 			}

@@ -10,6 +10,8 @@
  -->
 <html lang="en">
 	<head>
+		<script type="text/javascript" src="lib/utils/chrono-utils-self-load.js">
+			</script>
         <title>Dobuki Game</title>
 		<meta charset="utf-8"/>
 		<meta name="description" content="Dobuki Game Description">
@@ -738,10 +740,14 @@
 		<script type="text/javascript" src="/lib/core/engine.js"></script>
 		<script type="text/javascript" src="/lib/core/game-base.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/base/game-core.js"></script>
-		<script type="text/javascript" src="/lib/games/platformer/platformer.js"></script>
-		<script type="text/javascript" src="/lib/games/platformer/sprite-mapper.js"></script>
+		<script type="text/javascript" src="/lib/gametypes/overworld/overworld.js"></script>
+		<script type="text/javascript" src="/lib/gametypes/platformer/platformer.js"></script>
+		<script type="text/javascript" src="/lib/gametypes/platformer/sprite-mapper.js"></script>
 		<script type="text/javascript" src="/lib/physics/base/physics-base.js"></script>
+		<script type="text/javascript" src="/lib/physics/utils/collision-merger.js"></script>
+		<script type="text/javascript" src="/lib/sprite/base/sprite-state.js"></script>
 		<script type="text/javascript" src="/lib/sprite/base/sprite.js"></script>
+		<script type="text/javascript" src="/games/common/start-screen.js"></script>
 		<script type="text/javascript" src="/games/one-rule/game-ring.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/animal-room.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/batman-room.js"></script>
@@ -764,7 +770,6 @@
 		<script type="text/javascript" src="/games/the-impossible-room/restroom.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/selection.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/sound-room.js"></script>
-		<script type="text/javascript" src="/games/the-impossible-room/start-screen.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/template.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/time-room.js"></script>
 		<script type="text/javascript" src="/games/the-impossible-room/tv-room.js"></script>
@@ -772,12 +777,12 @@
 		<script type="text/javascript" src="/lib/map/sprite-grid.js"></script>
 		<script type="text/javascript" src="/lib/math/gl-matrix-min.js"></script>
 		<script type="text/javascript" src="/lib/math/gl-matrix.js"></script>
+		<script type="text/javascript" src="/lib/math/math.js"></script>
 		<script type="text/javascript" src="/lib/newgrounds/newgroundsio.min.js"></script>
 		<script type="text/javascript" src="/lib/newgrounds/ng.js"></script>
 		<script type="text/javascript" src="/lib/opengl/buffer-renderer.js"></script>
 		<script type="text/javascript" src="/lib/opengl/shader.js"></script>
 		<script type="text/javascript" src="/lib/opengl/utils.js"></script>
-		<script type="text/javascript" src="/lib/physics/collision-merger.js"></script>
 		<script type="text/javascript" src="/lib/physics/collision.js"></script>
 		<script type="text/javascript" src="/lib/physics/control.js"></script>
 		<script type="text/javascript" src="/lib/physics/gravity.js"></script>
@@ -786,7 +791,6 @@
 		<script type="text/javascript" src="/lib/renderer/sprite-renderer.js"></script>
 		<script type="text/javascript" src="/lib/sound/sound.js"></script>
 		<script type="text/javascript" src="/lib/sprite/hud.js"></script>
-		<script type="text/javascript" src="/lib/sprite/refresher.js"></script>
 		<script type="text/javascript" src="/lib/sprite/sprite-collection.js"></script>
 		<script type="text/javascript" src="/lib/sprite/sprite-factory.js"></script>
 		<script type="text/javascript" src="/lib/texture/image-loader.js"></script>
@@ -799,6 +803,7 @@
 		<script type="text/javascript" src="/lib/ui/scene-tab.js"></script>
 		<script type="text/javascript" src="/lib/ui/tip-box.js"></script>
 		<script type="text/javascript" src="/lib/utils/array-utils.js"></script>
+		<script type="text/javascript" src="/lib/utils/file-utils.js"></script>
 		<script type="text/javascript" src="/lib/utils/string.js"></script>
 		<script type="text/javascript" src="/game-starter.js"></script>
 		<!-- JAVASCRIPT -->

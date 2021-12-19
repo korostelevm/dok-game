@@ -46,6 +46,7 @@ const globalFiles=[
 			"ground-entrance.png",
 			"gum.png",
 			"hand.png",
+			"hex.png",
 			"idols.png",
 			"impossible-room.png",
 			"invitation-check-collision.png",
@@ -152,8 +153,21 @@ const globalFiles=[
 		"games": [
 			".DS_Store",
 			{
+				"common": [
+					"start-screen.js"
+				]
+			},
+			{
+				"dobuki": []
+			},
+			{
 				"one-rule": [
 					"game-ring.js"
+				]
+			},
+			{
+				"sample-platformer": [
+					"sample-platformer.json"
 				]
 			},
 			{
@@ -185,7 +199,6 @@ const globalFiles=[
 					"restroom.js",
 					"selection.js",
 					"sound-room.js",
-					"start-screen.js",
 					"template.js",
 					"time-room.js",
 					"tv-room.js"
@@ -213,8 +226,13 @@ const globalFiles=[
 				]
 			},
 			{
-				"games": [
+				"gametypes": [
 					".DS_Store",
+					{
+						"overworld": [
+							"overworld.js"
+						]
+					},
 					{
 						"platformer": [
 							"platformer.js",
@@ -235,8 +253,11 @@ const globalFiles=[
 			},
 			{
 				"math": [
+					".DS_Store",
 					"gl-matrix-min.js",
-					"gl-matrix.js"
+					"gl-matrix.js",
+					"math.js",
+					"math.js.map"
 				]
 			},
 			{
@@ -261,12 +282,16 @@ const globalFiles=[
 							"physics-base.js"
 						]
 					},
-					"collision-merger.js",
 					"collision.js",
 					"control.js",
 					"gravity.js",
 					"jump.js",
-					"movement.js"
+					"movement.js",
+					{
+						"utils": [
+							"collision-merger.js"
+						]
+					}
 				]
 			},
 			{
@@ -285,11 +310,11 @@ const globalFiles=[
 					{
 						"base": [
 							".DS_Store",
+							"sprite-state.js",
 							"sprite.js"
 						]
 					},
 					"hud.js",
-					"refresher.js",
 					"sprite-collection.js",
 					"sprite-factory.js"
 				]
@@ -314,6 +339,8 @@ const globalFiles=[
 			{
 				"utils": [
 					"array-utils.js",
+					"chrono-utils-self-load.js",
+					"file-utils.js",
 					"string.js"
 				]
 			}

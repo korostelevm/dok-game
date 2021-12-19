@@ -38,23 +38,18 @@ app.get('/', (req, res, next) => {
 					}
 				});
 
-				const paths = generatePaths(data);
-				paths.sort(compareDependencies);
-				console.log(paths);
-				const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
-				const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
-				indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
-				fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
-
 				const assetProperties = {};
-				return fs.promises.readFile(`${__dirname}/public/gen/asset-property.json`)
+				const assetPropertyPath = `${__dirname}/public/gen/asset-property.json`;
+				return fs.promises.readFile(assetPropertyPath)
 					.then(data => {
 						const properties = JSON.parse(data);
 						for (let asset in properties) {
 							assetProperties[asset] = properties[asset];
 						}
 					})
-					.catch(console.warn)
+					.catch(error => {
+						console.warn(error);
+					})
 					.then(() => {
 						return fs.promises.readFile(`${__dirname}/build/asset-md5.json`);
 					})
@@ -117,9 +112,8 @@ app.use(serve(`${__dirname}/public`));
 
 async function regenerateIndex() {
 	const data = await listFiles(`${__dirname}/public`, "");
-	const paths = generatePaths(data);
+	const paths = generatePaths(data).filter(path => path.indexOf("self-load") < 0);
 	paths.sort(compareDependencies);
-	console.log(paths);
 	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
 	indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";

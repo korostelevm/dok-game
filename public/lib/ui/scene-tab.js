@@ -1,33 +1,53 @@
 class SceneTab {
 	constructor(engine, globalFiles, gameTab) {
+		this.engine = engine;
+		this.globalFiles = globalFiles;
+		this.gameTab = gameTab;
+	}
+
+	async init() {
+		const { engine, globalFiles, gameTab } = this;
 		const gameList = {};
-		globalFiles.forEach(file => {
+
+		for (let i = 0; i < globalFiles.length; i++) {
+			const file = globalFiles[i];
 			const { games } = file;
 			if (games) {
-				games.forEach(game => {
+				for (let j = 0; j < games.length; j++) {
+					const game = games[j];
 					if (typeof(game) === "object") {
 						for (let name in game) {
 							if (!gameList[name]) {
 								gameList[name] = [];
 							}
-							game[name].forEach(sceneFile => {
+							for (let s = 0; s < game[name].length; s++) {
+								const sceneFile = game[name][s];
 								if (typeof(sceneFile) !== "string") {
-									return;
+									continue;
 								}
 								const [ scene, extension ] = sceneFile.split(".");
-								if (extension !== "js") {
-									return;
+								if (extension === "js") {
+									const className = StringUtil.kebabToClass(scene);
+									gameList[name].push({
+										name: className,
+										classObj: eval(className),
+									});
+								} else if (extension === "json") {
+									const configFile = `games/${name}/${sceneFile}`;
+									const gameConfig = await engine.fileUtils.load(configFile);
+									console.log(gameConfig);
+									gameList[name].push({
+										name: scene,
+										classObj: eval(gameConfig.className),
+										configFile,
+									});
 								}
-								const className = StringUtil.kebabToClass(scene);
-								if (className !== "Index" && className !== "GameCore") {
-									gameList[name].push(className);
-								}
-							});
+							}
 						}
 					}
-				});
+				}
 			}
-		});
+		}
 
 		this.buttonForScene = {};
 		for (let name in gameList) {
@@ -59,20 +79,15 @@ class SceneTab {
 			sceneGroupDiv.style.marginTop = "4px";
 			sceneGroupDiv.style.display = checkbox.checked ? "" : "none";
 
-			gameList[name].forEach(className => {
+			gameList[name].forEach(({name, classObj, configFile}) => {
 				const button = sceneGroupDiv.appendChild(document.createElement("button"));
 				button.classList.add("scene-button");
-				button.innerText = className;
-				const classObj = eval(className);
+				button.innerText = name;
 				if (classObj.start) {
 					button.classList.add("first");
 				}
-				if (!engine.classes) {
-					engine.classes = {};
-				}
-				engine.classes[className] = classObj;
-				this.buttonForScene[className] = button;
-				button.addEventListener("mousedown", () => 	engine.setGame(new classObj()));
+				this.buttonForScene[classObj.constructor.name] = button;
+				button.addEventListener("mousedown", () => 	engine.setGame(new classObj(configFile)));
 			});
 		}
 	}

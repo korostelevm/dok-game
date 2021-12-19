@@ -1,14 +1,12 @@
 const MAX_FRAME_COUNT = Number.MAX_SAFE_INTEGER;
 
 class TextureAtlas {
-	constructor(gl, glTextures, index, width, height, textureSize, imageLoader) {
-		this.gl = gl;
-		this.glTextures = glTextures;
+	constructor(textureManager, index, width, height, imageLoader) {
+		this.textureManager = textureManager;
 		this.index = index || 0;
 		this.maxTextureIndex = 0;
 		this.x = 0;
 		this.y = 0;
-		this.textureSize = textureSize;
 		this.imageLoader = imageLoader;
 		this.canvas = this.imageLoader.canvas;
 		this.spriteWidth = 0;
@@ -75,24 +73,25 @@ class TextureAtlas {
 	}
 
 	async setImage(animationData) {
-		const { url, collision_url, collision_padding, texture_url, texture_alpha, texture_blend } = animationData;
-		const image = url ? await this.imageLoader.loadImage(url) : null;
+		const { id, url, collision_url, collision_padding, texture_url, texture_alpha, texture_blend } = animationData;
+		const [image, textureImage] = await Promise.all([url,texture_url].map(u => this.imageLoader.loadImage(u)));
+		this.id = id;
 		this.onUpdateImage(image, animationData || {});
 
 		const { x, y, spriteWidth, spriteHeight } = this;
 		const tag = `${url} ${collision_url||""} ${collision_padding||""} ${texture_url||""} ${texture_alpha||""} ${texture_blend||""} ${x},${y} ${spriteWidth},${spriteHeight}`;
-		const { gl, glTextures, index } = this;
+		const { index } = this;
 		if (index >= 0) {
 			for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
 				const spriteImage = this.getSpriteImageForFrame(image, frame);
-				const blendedImage = texture_url ? this.textureMix(spriteImage, await this.imageLoader.loadImage(texture_url), texture_alpha, texture_blend) : spriteImage;
+				const blendedImage = texture_url ? this.textureMix(spriteImage, textureImage, texture_alpha, texture_blend) : spriteImage;
 				if (!blendedImage) {
 					continue;
 				}
 
 				const col = frame % this.cols;
 				const row = Math.floor(frame / this.cols);
-				this.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
+				this.textureManager.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
 			}
 			console.log("Tex#" + index, "=", spriteWidth * this.cols + "x" + spriteHeight * this.rows, "(" + tag + ")");
 		}
@@ -163,24 +162,6 @@ class TextureAtlas {
 		return false;
 	}
 
-	saveTexture(index, x, y, canvas) {
-		const { textureSize, glTextures, gl } = this;
-		this.maxTextureIndex = Math.max(index, this.maxTextureIndex);
-		gl.activeTexture(gl[`TEXTURE${index}`]);
-		const glTexture = glTextures[index];
-		if (glTexture.width < textureSize || glTexture.height < textureSize) {
-			gl.bindTexture(gl.TEXTURE_2D, glTexture.glTexture);
-			glTexture.width = glTexture.height = textureSize;
-			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, glTexture.width, glTexture.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-			gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	  		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
-		}
-		gl.texSubImage2D(gl.TEXTURE_2D, 0, x || 0, y || 0, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
-		gl.generateMipmap(gl.TEXTURE_2D);
-	}
-
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = image ? image.naturalWidth : 0;
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
@@ -246,5 +227,35 @@ class TextureAtlas {
 		floatVec4[2] = this.frameRate;
 		floatVec4[3] = this.maxFrameCount;
 		return floatVec4;
+	}
+
+	static flattenAtlases(object, path, array) {
+		if (object.url) {	//	is atlas
+			array.push({id: path.join("."), ...object});
+			return array;
+		}
+		Object.keys(object).forEach(id => {
+			TextureAtlas.flattenAtlases(object[id], path.concat(id), array);
+		});
+		return array;
+	}
+
+	static async makeAtlases(engine, atlasConfig) {
+		const flattened = TextureAtlas.flattenAtlases(atlasConfig, [], []);
+		const atlases = await Promise.all(flattened.map(config => engine.addTexture(config)));
+		const atlas = {};
+		atlases.forEach(textureAtlas => {
+			const idSplit = textureAtlas.id.split(".");
+			let root = atlas, id = idSplit[0];
+			for (let i = 1; i < idSplit.length; i++) {
+				if (!root[id]) {
+					root[id] = {};
+				}
+				root = root[id];
+				id = idSplit[i];
+			}
+			root[id] = textureAtlas;
+		});
+		return atlas;
 	}
 }

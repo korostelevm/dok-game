@@ -9,7 +9,7 @@ class Gravity extends PhysicsBase {
 
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
-			if (time - sprite.climbing < 100) {
+			if (time - sprite.climbing < 150) {
 				return;
 			}
 

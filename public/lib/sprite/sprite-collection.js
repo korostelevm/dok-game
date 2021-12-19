@@ -10,12 +10,25 @@ class SpriteCollection {
 		this.refresher  = refresher;
 	}
 
-	create(data, attributes, spriteData) {
+	static fetchAnim(atlas, anim) {
+		if (typeof(anim) !== "string") {
+			return anim;
+		}
+		const idSplit = anim.split(".");
+		let root = atlas;
+		for (let i = 0; i < idSplit.length; i++) {
+			root = root[idSplit[i]];
+		}
+		return root;
+	}
+
+	create(id, data, attributes, spriteData) {
 		const type = data.type ? eval(data.type) : Sprite;
 		const sprite = new type({
+			id,
 			...data,
-			anim: typeof(data.anim) === "string" ? this.engine.game.atlas[data.anim] : data.anim,
-		}, this.engine.lastTime, spriteData);
+			anim: typeof(data.anim) === "string" ? SpriteCollection.fetchAnim(this.engine.game.atlas, data.anim) : data.anim,
+		}, this.engine.lastTime, spriteData, this.engine);
 		sprite.index = this.sprites.index;
 		this.sprites.push(sprite);
 		
@@ -26,17 +39,13 @@ class SpriteCollection {
 			}
 		}
 		if (sprite.onRefresh && !sprite.manualRefresh) {
-			this.refresher.addRefresh(sprite);
+			this.refresher.add(sprite);
 		}		
 		return sprite;
 	}
 
 	postCreate() {
-		this.sprites.forEach(sprite => {
-			for (let key in sprite.properties) {
-				sprite.onUpdate(key, sprite.properties[key], true);
-			}
-		});
+		this.sprites.forEach(sprite => sprite.postCreate());
 	}
 
 	get(index) {

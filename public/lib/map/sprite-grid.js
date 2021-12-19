@@ -11,7 +11,7 @@ class SpriteGrid {
 	generate(map) {
 		const grid = [];
 		const asciiMap = [];
-		const lines = map.split("\n");
+		const lines = typeof(map) === "string" ? map.split("\n") : map;
 
 		let row = 0;
 		const rowShift = 10 - lines.filter(line => line.trim().length).length;

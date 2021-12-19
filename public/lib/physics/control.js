@@ -124,7 +124,6 @@ class Control extends PhysicsBase {
 			}
 			if (!sprite.jump || time - sprite.jump > 500) {
 				if (sprite.climb && time - sprite.climb < 200) {
-					sprite.lastClimbLedge = time;
 					sprite.dy += Math.sign(this.dy) * 2 * sprite.control;
 					sprite.dy *= .7;
 				}

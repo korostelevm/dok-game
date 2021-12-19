@@ -98,22 +98,6 @@ class GameRing extends GameBase {
 		}
 	}
 
-	onChange(key, value) {
-	}
-
-	async postInit() {
-		super.postInit();
-	}
-
-	onExit(engine) {
-	}
-
-	handleMouse(e) {
-	}
-
-	onDropOnOverlay(e) {
-	}
-
 	refresh(time, dt) {
 		this.moveMazoos(time);
 	}

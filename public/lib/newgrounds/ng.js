@@ -51,11 +51,19 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     function onLoginFailed() {
-        console.log("There was a problem logging in: " . ngio.login_error.message );
+        console.log("There was a problem logging in: " . ngio?.login_error?.message );
+        const button = document.getElementById("newgrounds-login");
+        if (button) {
+            button.style.display = "";
+        }
     }
 
     function onLoginCancelled() {
         console.log("The user cancelled the login.");
+        const button = document.getElementById("newgrounds-login");
+        if (button) {
+            button.style.display = "";
+        }
     }
 
     /*
@@ -69,7 +77,7 @@ window.addEventListener("DOMContentLoaded", () => {
              button.id = "newgrounds-login";
              button.style.position = "absolute";
              button.style.top = "5px";
-             button.style.left = "840px";
+             button.style.right = "5px";
              button.style.height = "24px";
              button.style.fontSize = "10pt";
              button.style.zIndex = 1000;
@@ -97,6 +105,10 @@ window.addEventListener("DOMContentLoaded", () => {
     function requestLogin() {
         ngio.requestLogin(onLoggedIn, onLoginFailed, onLoginCancelled);
         /* you should also draw a 'cancel login' buton here */
+        const button = document.getElementById("newgrounds-login");
+        if (button) {
+            button.style.display = "none";
+        }
     }
 
     /*

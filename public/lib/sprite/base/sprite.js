@@ -8,14 +8,16 @@
 
 
 class Sprite {
-	constructor(data, time, properties) {
+	constructor(data, time, properties, engine) {
 		this.data = data;
+		this.engine = engine;
 		this.type = this.constructor.name;
+		this.id = data.id;
 		this.name = data.name || "";
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.z = data.z || 0;
-		this.size = data.size || [0, 0];
+		this.size = engine.translate(data.size) || [0, 0];
 		this.hotspot = data.hotspot || [0, 0];
 		this.rotation = data.rotation || 0;
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
@@ -27,6 +29,10 @@ class Sprite {
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
 		this.anim = data.anim;
+		if (!this.anim) {
+			console.warn("Anim doesn't exist.");
+			throw new Error("");
+		}
 		this.collisionBox = {
 			top:0,
 			left:0,
@@ -36,9 +42,7 @@ class Sprite {
 		};
 		this.properties = properties || {};
 		this.onChange = {
-			position: (self, {x, y}) => {
-				this.changePosition(x, y);
-			},
+			position: (self, {x, y}) => this.changePosition(x, y),
 		};
 
 		this.updated = {
@@ -204,6 +208,21 @@ class Sprite {
 		return false;
 	}
 
+	changeActive(value, time) {
+		if (this.active !== value) {
+			this.active = value;
+			this.updated.active = time || this.engine.lastTime;
+			return true;
+		}
+		return false;
+	}
+
+	postCreate() {
+		for (let key in this.properties) {
+			this.onUpdate(key, this.properties[key], true);
+		}		
+	}
+
 	resetAnimation(time) {
 		this.updated.animation = time || this.engine.lastTime;
 		this.updated.updateTime = time || this.engine.lastTime;
@@ -250,18 +269,5 @@ class Sprite {
 		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
 		this.collisionBox.dirty = false;
 		return this.collisionBox;
-	}
-
-	onDisable() {
-		this.changeOpacity(0);
-	}
-
-	setActive(active) {
-		if (this.active !== active) {
-			this.active = active ? this.engine.lastTime : 0;
-			if (!active) {
-				this.onDisable();
-			}
-		}
 	}
 }

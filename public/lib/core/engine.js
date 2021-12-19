@@ -1,9 +1,13 @@
+ChronoUtils.tick();
 class Engine {
 	constructor(config) {
+		ChronoUtils.tick();
 		/* Prototypes */
 		this.setupPrototypes();
 		/* Setup stylesheet emoji cursors. */
 		this.setupEmojiCursors();
+
+		this.fileUtils = new FileUtils();
 
 		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
 		this.imageLoader = new ImageLoader();
@@ -12,7 +16,8 @@ class Engine {
 		new FpsBox(this);
 		new DebugView(this);
 
-		this.refresher = new Refresher();
+		this.refresher = new Set();
+		this.updater = new Set();
 
 		this.init(config);
 
@@ -306,6 +311,7 @@ class Engine {
 	async init(config) {
 		this.config = config;
 
+		ChronoUtils.tick();
 		if (config.viewport.pixelScale < 1 && !this.isRetinaDisplay()) {
 			config.viewport.pixelScale = 1;
 		}
@@ -318,6 +324,7 @@ class Engine {
 		if (!canvas) {
 			console.error("You need a canvas with id 'canvas'.");
 		}
+		ChronoUtils.tick();
 		// const writeCanvas = document.getElementById("write-canvas");
 		// this.writeCanvas = writeCanvas;
 		this.canvas = canvas;
@@ -371,7 +378,9 @@ class Engine {
 		if (this.debug) {
 			const gameTab = document.getElementById("game-tab");
 			this.sceneTab = new SceneTab(this, globalFiles, gameTab);
+			await this.sceneTab.init();
 		}
+		ChronoUtils.tick();
 
 		await this.setupGameName(globalFiles);
 
@@ -384,11 +393,11 @@ class Engine {
 
 		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
 		//console.log(this.voices);
+		ChronoUtils.tick();
 
 		this.lastTime = 0;
-		if (this.game) {
-			await this.initGame(this.game);
-		}
+		await this.initGame(this.game);
+		ChronoUtils.tick();
 
 		this.textureManager.generateAllMipMaps();
 
@@ -454,10 +463,12 @@ class Engine {
 		});
 	}
 
-	async changeCursor(cursor) {
+	async changeCursor(cursor, cantWait) {
 		if (this.overlay && this.overlay.style.cursor !== cursor) {
 			this.overlay.style.cursor = cursor;
-			await this.wait(500);
+			if (!cantWait) {
+				await this.wait(500);
+			}
 		}
 	}
 
@@ -476,8 +487,8 @@ class Engine {
 		return game;
 	}
 
-	adjustWindowSize(game) {
-		const [windowWidth, windowHeight] = game.getWindowSize();
+	async adjustWindowSize(game) {
+		const [windowWidth, windowHeight] = await game.getWindowSize(this);
 		document.body.style.width = `${windowWidth}px`;
 		document.body.style.height = `${windowHeight}px`;
 		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = this.config;
@@ -496,21 +507,26 @@ class Engine {
 		game.engine = this;
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
-		this.adjustWindowSize(game);		
+		await this.adjustWindowSize(game);		
 		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
+		ChronoUtils.tick();
 		await game.init(this, this.classToGame[game.sceneName]);
+		ChronoUtils.tick();
 		await game.postInit();
+		ChronoUtils.tick();
 
 		const sprites = this.spriteCollection.sprites;
 		for (let i = 0; i < game.physics.length; i++) {
 			await game.physics[i].init(sprites, game);
 		}
+		ChronoUtils.tick();
 
 		game.ready = true;
 		this.shift.goal.light = 1;
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
+		ChronoUtils.log();
 	}
 
 	handleMouse(e) {
@@ -558,6 +574,12 @@ class Engine {
 		if (this.tipBox) {
 			this.tipBox.clear();
 		}
+		if (this.refresher) {
+			this.refresher.clear();
+		}
+		if (this.updater) {
+			this.updater.clear();
+		}
 		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
 		this.shift.x = 0;
@@ -577,7 +599,7 @@ class Engine {
 
 	async addTexture(imageConfig) {
 		const index = !imageConfig.url ? -1 : (this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.nextTextureIndex++));
-		return await this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
+		return this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
 	}
 
 	setupPrototypes() {
@@ -684,11 +706,7 @@ class Engine {
 	}
 
 	handleOnRefreshes(time, dt, actualTime) {
-		const refreshes = this.refresher.getRefreshers();
-		for (let i = 0; i < refreshes.length; i++) {
-			const refresh = refreshes[i];
-			refresh.onRefresh(refresh, time, dt, actualTime);
-		}				
+		this.refresher.forEach(refresh => refresh.onRefresh(refresh, time, dt, actualTime));
 	}
 
 	handleOnFrame(sprite, frame, previousFrame) {
@@ -906,17 +924,17 @@ class Engine {
 			const { crop:[cropX, cropY]} = sprite;
 			if (sprite.updated.sprite >= lastTime
 				|| sprite.updated.crop >= lastTime
-				|| sprite.updated.hotspot >= lastTime)
-			{
+				|| sprite.updated.hotspot >= lastTime) {
 				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
 				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
 			}
 			if (sprite.updated.animation >= lastTime
 				|| sprite.updated.direction >= lastTime
 				|| sprite.updated.opacity >= lastTime
-				|| sprite.updated.crop >= lastTime) {
-				const {direction, vdirection, opacity} = sprite;
-				this.spriteRenderer.setAnimation(i, sprite.anim, direction, vdirection, opacity, cropX, cropY);
+				|| sprite.updated.crop >= lastTime
+				|| sprite.updated.active >= lastTime) {
+				const {direction, vdirection, opacity, active} = sprite;
+				this.spriteRenderer.setAnimation(i, sprite.anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
 			}
 			if (sprite.updated.updateTime >= lastTime) {
 				this.spriteRenderer.setUpdateTime(i, sprite);
@@ -964,6 +982,21 @@ class Engine {
 		});
 	}
 
+	translate(data) {
+		if (Array.isArray(data)) {
+			return data.map(d => this.translate(d));
+		}
+		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = this.config;
+		switch (data) {
+			case "viewportWidth":
+				return this.config.viewport.size[0];
+			case "viewportHeight":
+				return this.config.viewport.size[1];
+			default:
+		}
+		return data;
+	}
+
 	showMessage(id, message) {
 		this.tipBox.showMessage(id, message);
 	}
@@ -977,16 +1010,16 @@ class Engine {
 	}
 
 	addRefresh(sprite) {
-		this.refresher.addRefresh(sprite);
+		this.refresher.add(sprite);
 	}
 
 	removeRefresh(sprite) {
-		this.refresher.removeRefresh(sprite);
+		this.refresher.delete(sprite);
 	}
 
-	static start(classObj) {
+	static start(classObj, gameConfig) {
 		const engine = new Engine(globalData.config);
-		engine.setGame(new classObj());
+		engine.setGame(new StartScreen({classObj, gameConfig}));
 		window.engine = engine;
 	}
 }

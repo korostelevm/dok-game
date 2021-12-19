@@ -10,6 +10,12 @@ class ArrayUtils {
 	}
 }
 
-Array.prototype.at = (x, y) => {
+Array.prototype.cell = function(x, y) {
 	return this[y] ? this[y][x] : null;
 };
+
+Array.prototype.setCell = function(x, y, value) {
+	if (this[y]) {
+		this[y][x] = value;
+	}
+}

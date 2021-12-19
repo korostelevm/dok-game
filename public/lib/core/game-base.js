@@ -71,14 +71,14 @@ class GameBase {
 		this.spriteFactory.postCreate();
 		this.engine.enableSidebar(true);
 		this.engine.setPerspective(this.isPerpective());
-		await this.engine.changeCursor(null);
+		await this.engine.changeCursor(null, true);
 	}
 
 	get sceneName() {
 		return this.constructor.name;
 	}
 
-	getWindowSize() {
+	async getWindowSize(engine) {
 		return [1080, 600];
 	}
 
