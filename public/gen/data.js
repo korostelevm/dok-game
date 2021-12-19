@@ -62,6 +62,8 @@ const globalData={
 			"isPerspective": 1
 		},
 		"newgrounds": {
+			"game": "The Impossible Room",
+			"url": "https://www.newgrounds.com/portal/view/823348",
 			"key": "53522:zs4SBILE",
 			"secret": "jq6s6DaxBvK3Thlr+cZ+bw=="
 		},
