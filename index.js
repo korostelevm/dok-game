@@ -7,6 +7,7 @@ const path 		= require('path');
 const archiver 	= require('archiver');
 const md5File 	= require('md5-file');
 const getPixels = require("get-pixels");
+const NwBuilder = require('nw-builder');
 
 const PORT = 3000;
  
@@ -84,7 +85,6 @@ app.get('/', (req, res, next) => {
 		res.end();
 	}).then(() => zipPublic("public", "game.zip"))
 	.then(() => {
-		const NwBuilder = require('nw-builder');
 		const nw = new NwBuilder({
 		    files: './public/**/**', // use the glob format
 		    platforms: isRelease ? ['win', 'osx64', 'linux'] : [ 'osx64' ],
@@ -112,7 +112,7 @@ app.use(serve(`${__dirname}/public`));
 
 async function regenerateIndex() {
 	const data = await listFiles(`${__dirname}/public`, "");
-	const paths = generatePaths(data).filter(path => path.indexOf("self-load") < 0);
+	const paths = generatePaths(data).filter(path => path.indexOf("self-load") < 0).map(path => path.indexOf("/") === 0 ? path.substr(1) : path);
 	paths.sort(compareDependencies);
 	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
@@ -168,7 +168,7 @@ function generatePaths(data, optionalPath) {
 			if (typeof(filename) === "string") {
 				const {ext} = path.parse(filename);
 				if (ext === ".js") {
-					list.push(`${fullPath}/${filename}`);
+					list.push(`${fullPath ? fullPath + "/" + filename : filename}`);
 				}
 			} else {
 				list.push(...generatePaths(filename, `${fullPath}`));
@@ -176,7 +176,7 @@ function generatePaths(data, optionalPath) {
 		});
 	} else {
 		Object.keys(data).forEach(key => {
-			list.push(...generatePaths(data[key], `${fullPath}/${key}`));
+			list.push(...generatePaths(data[key], `${fullPath ? fullPath + "/" + key : key}`));
 		});
 	}
 	return list;

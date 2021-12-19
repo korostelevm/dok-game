@@ -1,0 +1,28 @@
+{
+  "name": "dok-game",
+  "version": "1.0.0",
+  "main": "index.html",
+  "author": "Vincent Le Quang <vincentlequang@gmail.com> (https://jacklehamster.github.io/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacklehamster/dok-game.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jacklehamster/dok-game/issues"
+  },
+  "homepage": "https://github.com/jacklehamster/dok-game#readme",
+  "window": {
+    "title": "Dok Game",
+    "width": 900,
+    "height": 500,
+    "fullscreen": false,
+    "kiosk": false,
+    "resizable": false,
+    "always_on_top": false,
+    "show_in_taskbar": true,
+    "frame": true,
+    "transparent": false
+  },
+  "nodejs": false
+}
