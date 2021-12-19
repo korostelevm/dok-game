@@ -919,14 +919,13 @@ class Engine {
 	}
 
 	handleSpriteUpdate(lastTime) {
-		for (let i = 0; i < this.spriteCollection.size(); i++) {
-			const sprite = this.spriteCollection.get(i);
-			const { crop:[cropX, cropY]} = sprite;
+		this.updater.forEach(sprite => {
+			const { crop:[cropX, cropY], spriteIndex} = sprite;
 			if (sprite.updated.sprite >= lastTime
 				|| sprite.updated.crop >= lastTime
 				|| sprite.updated.hotspot >= lastTime) {
 				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
-				this.spriteRenderer.setAttributeSprite(i, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
+				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
 			}
 			if (sprite.updated.animation >= lastTime
 				|| sprite.updated.direction >= lastTime
@@ -934,15 +933,16 @@ class Engine {
 				|| sprite.updated.crop >= lastTime
 				|| sprite.updated.active >= lastTime) {
 				const {direction, vdirection, opacity, active} = sprite;
-				this.spriteRenderer.setAnimation(i, sprite.anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
+				this.spriteRenderer.setAnimation(spriteIndex, sprite.anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
 			}
 			if (sprite.updated.updateTime >= lastTime) {
-				this.spriteRenderer.setUpdateTime(i, sprite);
+				this.spriteRenderer.setUpdateTime(spriteIndex, sprite);
 			}
 			if (sprite.updated.isHud >= lastTime) {
-				this.spriteRenderer.setHud(i, sprite.isHud);
+				this.spriteRenderer.setHud(spriteIndex, sprite.isHud);
 			}
-		}		
+		});
+		this.updater.clear();	
 	}
 
 	render(time) {
@@ -1007,14 +1007,6 @@ class Engine {
 
 	getMessage() {
 		return this.tipBox.id;
-	}
-
-	addRefresh(sprite) {
-		this.refresher.add(sprite);
-	}
-
-	removeRefresh(sprite) {
-		this.refresher.delete(sprite);
 	}
 
 	static start(classObj, gameConfig) {

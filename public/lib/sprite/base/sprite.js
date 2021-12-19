@@ -55,6 +55,7 @@ class Sprite {
 			crop: time,
 			isHud: time,
 		};
+		this.engine.updater.add(this);
 	}
 
 	onExit(game) {
@@ -107,6 +108,7 @@ class Sprite {
 			this.y = y;
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -118,6 +120,7 @@ class Sprite {
 			this.size[1] = height;
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -128,6 +131,7 @@ class Sprite {
 			this.rotation = rotation;
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -137,6 +141,7 @@ class Sprite {
 		if (this.opacity !== opacity) {
 			this.opacity = opacity;
 			this.updated.opacity = time || this.engine.lastTime;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -146,6 +151,7 @@ class Sprite {
 		if (this.isHud !== isHud) {
 			this.isHud = isHud;
 			this.updated.isHud = time || this.engine.lastTime;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -156,6 +162,7 @@ class Sprite {
 			this.direction = direction;
 			this.updated.direction = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -166,6 +173,7 @@ class Sprite {
 			this.vdirection = vdirection;
 			this.updated.direction = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -181,6 +189,7 @@ class Sprite {
 			this.updated.animation = time || this.engine.lastTime;
 			this.updated.updateTime = updateTime || time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -192,6 +201,7 @@ class Sprite {
 			this.crop[1] = y;
 			this.updated.crop = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -203,6 +213,7 @@ class Sprite {
 			this.hotspot[1] = y;
 			this.updated.hotspot = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
+			this.needUpdate();
 			return true;
 		}
 		return false;
@@ -212,9 +223,14 @@ class Sprite {
 		if (this.active !== value) {
 			this.active = value;
 			this.updated.active = time || this.engine.lastTime;
+			this.needUpdate();
 			return true;
 		}
 		return false;
+	}
+
+	needUpdate() {
+		this.engine.updater.add(this);
 	}
 
 	postCreate() {
@@ -251,6 +267,11 @@ class Sprite {
 		if (!rect) {
 			return null;
 		}
+		this.calculateCollisonBox(rect);
+		return this.collisionBox;
+	}
+
+	calculateCollisonBox(rect) {
 		const flipH = this.direction < 0;
 		const flipV = this.vdirection < 0;
 		const rLeft = flipH ? 1 - rect.right : rect.left;
@@ -268,6 +289,5 @@ class Sprite {
 		this.collisionBox.top = top + rTop * height * this.crop[1] - collisionPadding;
 		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
 		this.collisionBox.dirty = false;
-		return this.collisionBox;
 	}
 }

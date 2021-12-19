@@ -419,7 +419,7 @@ class SpriteMapper {
 					onRefresh: self => {
 						if (self.engine.lastTime - self.bounced > 1000) {
 							self.changeAnimation(this.atlas.debugBounce);
-							self.engine.refresher.remove(self);
+							self.engine.refresher.delete(self);
 						}
 					},
 				});

@@ -34,7 +34,7 @@ class Hud extends Sprite {
 			self.changeOpacity(1 - progress);
 		}
 		if (progress >= 1) {
-			self.engine.refresher.remove(self);
+			self.engine.refresher.delete(self);
 		}
 	}
 }

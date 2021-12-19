@@ -29,7 +29,7 @@ class SpriteCollection {
 			...data,
 			anim: typeof(data.anim) === "string" ? SpriteCollection.fetchAnim(this.engine.game.atlas, data.anim) : data.anim,
 		}, this.engine.lastTime, spriteData, this.engine);
-		sprite.index = this.sprites.index;
+		sprite.spriteIndex = this.sprites.length;
 		this.sprites.push(sprite);
 		
 		for (let i in attributes) {
