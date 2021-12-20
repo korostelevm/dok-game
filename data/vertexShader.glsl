@@ -18,7 +18,7 @@ attribute vec4 updateTime;
 attribute float isHud;
 
 uniform float isPerspective;
-uniform float time;
+uniform vec2 timeInfo;
 uniform mat4 perspective;
 uniform mat4 ortho;
 uniform mat4 view;
@@ -50,6 +50,7 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 	float frameCount = max(0., frameRange[1] - frameRange[0]) + 1.;
 
 	float framePerSeconds = animInfo[FRAME_RATE_INDEX];
+	float time = timeInfo[0];
 	float globalFrame = floor(min(
 		(time - animTime) * framePerSeconds / 1000.,
 		animInfo[MAX_FRAME_COUNT_INDEX] - 1.));

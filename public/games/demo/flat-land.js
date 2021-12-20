@@ -37,36 +37,56 @@ class FlatLand extends GameBase {
 				frameRate: 10,
 				direction: -1,
 			}),
+			hex: await engine.addTexture({
+				url: "assets/hex.png",
+				collision_url: "assets/hex.png",
+				cols: 2, rows: 2,
+				range: [0],
+			}),
 		};
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
+		const backwallWidth = viewportWidth * 4, backwallHeight = viewportHeight * 4;
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
-			size: [viewportWidth, viewportHeight],
-			hotspot: [viewportWidth / 2, viewportHeight / 2],
+			size: [backwallWidth, backwallHeight],
+			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight / 2,
-			z: -1000,
+			z: -2000,
 		});
 
 		this.mazoos = [];
 		for (let i = 0; i < 1000; i++) {
-			const x = Math.random() * viewportWidth;
-			const z = - Math.random() * 1000
-			console.log(z);
+			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
+			const z = - Math.random() * 2000;
+			const y = 400 + (z / 2000) * 500;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
 				size: [32, 32],
 				hotspot: [16, 32],
-				x, y: 400, z,
+				x, y, z,
 			}, {
 				goal: [
 					Math.random() * viewportWidth,
 					0,
-					-Math.random() * 1000,
+					-Math.random() * 2000,
 				],
 			}));
+		}
+
+		for (let i = 0; i < 1000; i++) {
+			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
+			const z = - Math.random() * 2000;
+			const y = 400 + (z / 2000) * 500;
+			this.spriteFactory.create({
+				anim: this.atlas.hex,
+				size: [256, 256],
+				hotspot: [128, 128],
+				x, y, z,
+				rotation: [-70, 0, 0],					
+			});
 		}
 	}
 
@@ -88,14 +108,17 @@ class FlatLand extends GameBase {
 			if (!dist) {
 				continue;
 			}
-			mazoo.changePosition3d(mazoo.x + dx / dist, mazoo.y, mazoo.z + dz / dist, time);
+			const z = mazoo.z + dz / dist;
+			const y = 400 + (z / 2000) * 500;
+			mazoo.changePosition3d(mazoo.x + dx / dist, y, z, time);
 			if (dist <= 1) {
 				if (!mazoo.stillTime) {
 					mazoo.stillTime = time;
 					mazoo.changeAnimation(this.atlas.mazoo_still, time);
 				} else if (time - mazoo.stillTime > 5000) {
-					mazoo.goal[0] = Math.random() * viewportWidth;
-					mazoo.goal[2] = -Math.random() * 1000;
+					const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
+					mazoo.goal[0] = x;
+					mazoo.goal[2] = -Math.random() * 2000;
 				}
 			} else {
 				mazoo.stillTime = 0;

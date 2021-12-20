@@ -19,7 +19,7 @@ class Sprite {
 		this.z = data.z || 0;
 		this.size = engine.translate(data.size) || [0, 0];
 		this.hotspot = data.hotspot || [0, 0];
-		this.rotation = data.rotation || 0;
+		this.rotation = data.rotation || [0, 0, 0];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.crop = [1, 1];
 		this.active = true;
@@ -139,9 +139,11 @@ class Sprite {
 		return false;
 	}
 
-	changeRotation(rotation, time) {
-		if (this.rotation !== rotation) {
-			this.rotation = rotation;
+	changeRotation(rotX, rotY, rotZ, time) {
+		if (this.rotation[0] !== rotX || this.rotation[1] !== rotY || this.rotation[2] !== rotZ) {
+			this.rotation[0] = rotX;
+			this.rotation[1] = rotY;
+			this.rotation[2] = rotZ;
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();

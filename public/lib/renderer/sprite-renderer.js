@@ -15,20 +15,20 @@ class SpriteRenderer {
 		this.alter = -400;
 	}
 
-	makeMatrix(x, y, z, width, height, hotX, hotY, degreeRotation) {
+	makeMatrix(x, y, z, width, height, hotX, hotY, rotation) {
 		const [viewportWidth, viewportHeight] = this.size;
 		return mat4.fromRotationTranslationScaleOrigin(
 			this.tempMatrix,
-			quat.fromEuler(this.tempQuat, 0, 0, degreeRotation || 0),
+			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),
 			vec3.set(this.tempTranslation, (x * 2 - viewportWidth), -(y * 2 - viewportHeight), z),
 			vec3.set(this.tempScale, width, height, 1),
 			vec3.set(this.tempOrigin, (hotX - width/2) / width * 2, -(hotY - height/2) / height * 2, 0)
 		);		
 	}
 
-	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, degreeRotation, cropX, cropY) {
+	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY) {
 		const attribute = this.attributes.matrix;
-		const mat = this.makeMatrix(x, y, z + this.alter, width * (cropX || 1), height * (cropY || 1), hotX, hotY, degreeRotation);
+		const mat = this.makeMatrix(x, y, z + this.alter, width * (cropX || 1), height * (cropY || 1), hotX, hotY, rotation);
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 

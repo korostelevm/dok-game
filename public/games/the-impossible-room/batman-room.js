@@ -285,7 +285,7 @@ class BatmanRoom extends GameCore {
 						this.audio.punch.play();
 						this.audio.scream.play();
 						this.monkor.setProperty("paused", true);
-						this.monkor.changeRotation(90, this.engine.lastTime);
+						this.monkor.changeRotation(0, 0, 90, this.engine.lastTime);
 						this.monkor.punched = this.engine.lastTime;
 					}
 				},
@@ -378,7 +378,7 @@ class BatmanRoom extends GameCore {
 			if (t >= 8) {
 				this.monkor.punched = 0;
 				this.monkor.setProperty("paused", null);
-				this.monkor.changeRotation(0, this.engine.lastTime);					
+				this.monkor.changeRotation(0, 0, 0, this.engine.lastTime);					
 			}
 		}
 		if (this.batman.goalX) {

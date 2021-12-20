@@ -315,9 +315,8 @@ class Engine {
 		if (config.viewport.pixelScale < 1 && !this.isRetinaDisplay()) {
 			config.viewport.pixelScale = 1;
 		}
-		console.log(config);
+		console.log("Config", config);
 		const maxInstancesCount = config.maxInstancesCount || 1000;
-		console.log("maxInstancesCount", maxInstancesCount);
 		await this.loadDomContent(document);
 		console.log("Starting engine...");
 		const canvas = document.getElementById("canvas");
@@ -624,9 +623,9 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
 
 		const zNear = 0.01;
-		const zFar = 2000;
+		const zFar = 5000;
 
-		const fieldOfView = (viewAngle||90) * Math.PI / 180;   // in radians
+		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
@@ -859,7 +858,7 @@ class Engine {
 		}
 		this.handleShift(time, this.shaders[0]);
 		this.handleSpriteUpdate(this.lastTime);
-		this.render(time);
+		this.render(time, dt);
 		this.handlePostRefresh(time, dt, actualTime);
 	}
 
@@ -944,13 +943,13 @@ class Engine {
 		this.updater.clear();	
 	}
 
-	render(time) {
+	render(time, dt) {
 		const gl = this.gl;
 		//	Reset view
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		const uniforms = this.shaders[0].uniforms;
-		gl.uniform1f(uniforms.time.location, time);
+		gl.uniform2f(uniforms.timeInfo.location, time, dt);
 		//	DRAW CALL
 		this.ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
 	}

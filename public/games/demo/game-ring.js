@@ -45,6 +45,7 @@ class GameRing extends GameBase {
 			anim: this.atlas.backwall,
 			size: [viewportWidth, viewportHeight],
 			opacity: .5,
+			z: -1000,
 		});
 
 		this.mazoos = [];
@@ -55,7 +56,7 @@ class GameRing extends GameBase {
 				anim: this.atlas.mazoo_still,
 				size: [16, 16],
 				hotspot: [8, 16],
-				x, y, z: - y / 400 * 1000,
+				x, y, z: y / 400 * 100,
 			}, {
 				goal: [
 					Math.random() * viewportWidth,
@@ -78,7 +79,7 @@ class GameRing extends GameBase {
 			const dy = (goalY - mazoo.y);
 			const dist = Math.max(1, Math.sqrt(dx*dx + dy*dy));
 			mazoo.changePosition(mazoo.x + dx / dist, mazoo.y + dy / dist, time);
-			mazoo.z = - mazoo.y / 400 * 1000;
+			mazoo.z = mazoo.y / 400 * 100;
 			if (dist <= 1) {
 				if (!mazoo.stillTime) {
 					mazoo.stillTime = time;
