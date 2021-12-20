@@ -114,6 +114,19 @@ class Sprite {
 		return false;
 	}
 
+	changePosition3d(x, y, z, time) {
+		if (this.x !== x || this.y !== y || this.z !== z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.updated.sprite = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
+			this.needUpdate();
+			return true;
+		}
+		return false;
+	}
+
 	changeSize(width, height, time) {
 		if (this.size[0] !== width || this.size[1] !== height) {
 			this.size[0] = width;

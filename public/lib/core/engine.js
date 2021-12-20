@@ -613,7 +613,7 @@ class Engine {
 		};		
 	}
 
-	initialize(gl, shader, {webgl: {depth}, viewport: {viewAngle, pixelScale, size: [viewportWidth, viewportHeight]}, options: {isPerspective}}) {
+	initialize(gl, shader, {webgl: {depth}, viewport: {viewAngle, pixelScale, size: [viewportWidth, viewportHeight]}}) {
 		const uniforms = shader.uniforms;
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
@@ -629,15 +629,13 @@ class Engine {
 		const fieldOfView = (viewAngle||90) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
-
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
 		gl.uniform1f(uniforms.globalLight.location, 1);
 
-		this.setPerspective(isPerspective);
 		this.keyboardHandler.addKeyDownListener('p', () => {
-			this.setPerspective(!this.isPerspective)
+			this.setPerspective(!this.isPerspective);
 		});
 	}
 
@@ -654,14 +652,15 @@ class Engine {
 	}
 
 	configShader(gl, {webgl: {depth}}) {
-		gl.enable(gl.CULL_FACE);
-		gl.cullFace(gl.BACK);
+		// gl.enable(gl.CULL_FACE);
+		// gl.cullFace(gl.BACK);
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 		if (depth) {
 			gl.enable(gl.DEPTH_TEST);
-			gl.depthFunc(gl.GEQUAL);
+			// gl.depthFunc(gl.GEQUAL);
+			gl.depthFunc(gl.LEQUAL);
 		}
 	}
 
@@ -949,7 +948,6 @@ class Engine {
 		const gl = this.gl;
 		//	Reset view
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		gl.clearDepth(0);
 
 		const uniforms = this.shaders[0].uniforms;
 		gl.uniform1f(uniforms.time.location, time);

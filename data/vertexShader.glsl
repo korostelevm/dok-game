@@ -68,7 +68,7 @@ void main() {
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex;
 	v_opacity = textureInfo.z / 1000.;
-	vec4 vertexPosition4 = vec4(vertexPosition.xy, 0., 1.);
+	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
 	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * finalView * matrix * vertexPosition4;

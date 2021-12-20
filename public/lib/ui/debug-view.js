@@ -64,6 +64,10 @@ class DebugView {
 			this.visible = checkbox.checked;
 			this.debugCanvas.style.display = checkbox.checked ? "" : "none";
 		}
+		this.debugCanvas.style.left = `${canvas.offsetLeft + 2}px`;
+		this.debugCanvas.style.top = `${canvas.offsetTop + 2}px`;
+
+
 		if (!this.visible) {
 			return;
 		}
@@ -79,6 +83,9 @@ class DebugView {
 
 		for (let i = 0; i < engine.spriteCollection.size(); i++) {
 			const sprite = engine.spriteCollection.get(i);
+			if (!sprite.active) {
+				continue;
+			}
 			this.drawCollisionBox(ctx, sprite, time, canvasZoom, shift);
 		}
 

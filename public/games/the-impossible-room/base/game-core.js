@@ -1975,6 +1975,7 @@ class GameCore extends GameBase {
 		if (monkor.x > 850 && !this.changingLevel && monkor.goal.x === 900) {
 			this.changingLevel = true;
 			if (monkor.properties.jokerReturn) {
+				this.updateJokerLocalStorage();
 				const nextRoom = monkor.properties.jokerReturn;
 				const classObj = eval(nextRoom);
 				engine.setGame(new classObj());
@@ -2002,7 +2003,7 @@ class GameCore extends GameBase {
 
 	updateJokerLocalStorage() {
 		const joker = !this.isBatmanRoom() && this.monkor.properties.joker === this.constructor.name ? this.constructor.name : null;
-//		console.log("update joker: " + joker);
+		console.log("update joker: " + joker);
 		if (joker) {
 			localStorage.setItem("joker", joker);
 		} else {

@@ -346,6 +346,7 @@ class SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
+					canMerge: HORIZONTAL,
 					collide: 1, lowceiling: 1,
 					init: (self, col, row, grid) => {
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {

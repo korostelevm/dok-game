@@ -158,15 +158,16 @@ const globalFiles=[
 				]
 			},
 			{
-				"dobuki": []
-			},
-			{
-				"one-rule": [
+				"demo": [
+					"flat-land.js",
 					"game-ring.js"
 				]
 			},
 			{
-				"sample-platformer": [
+				"dobuki": []
+			},
+			{
+				"samples": [
 					"sample-platformer.json"
 				]
 			},

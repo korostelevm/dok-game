@@ -30,6 +30,11 @@ class Collision extends PhysicsBase {
 				openColliderIndex: 0,
 			};
 		});
+
+		this.perf = {
+			count: 0,
+			time: 0,
+		};
 	}
 
 	countCollision(sprite, secondSprite, horizontal) {
@@ -59,8 +64,8 @@ class Collision extends PhysicsBase {
 			const marker = this.vertical[i];
 			marker.y = (marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
 		}
-		this.horizontal.sort(this.compareHorizontal);
-		this.vertical.sort(this.compareVertical);
+		ArrayUtils.sort(this.horizontal, this.compareHorizontal);
+		ArrayUtils.sort(this.vertical, this.compareVertical);
 	}
 
 	refresh(time, dt) {
@@ -137,11 +142,6 @@ class Collision extends PhysicsBase {
 		const bottomPush = secondSprite.collisionBox.bottom - sprite.collisionBox.top;
 		const yPush = topPush < bottomPush ? -topPush : bottomPush;
 		if (sprite.onCollide) {
-			if (Math.abs(yPush - (-.5))< .001 && secondSprite.id === "block_16_0") {
-				console.log(xPush, yPush, topPush, bottomPush);
-				console.log(sprite.id, [sprite.collisionBox.top,sprite.collisionBox.bottom]);
-				console.log(secondSprite.id, [secondSprite.collisionBox.top, secondSprite.collisionBox.bottom]);
-			}
 			sprite.onCollide(sprite, secondSprite, xPush, yPush);
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
