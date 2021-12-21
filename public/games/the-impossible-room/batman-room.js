@@ -231,7 +231,7 @@ class BatmanRoom extends GameCore {
 		const dy = goalY - this.butler.y;
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		if (dist > 5) {
-			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
+			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {
@@ -305,10 +305,10 @@ class BatmanRoom extends GameCore {
 					}
 				},
 				20: batman => {
-					this.joker.changePosition3d(this.batman.x - 60, this.batman.y - 150, this.joker.z, this.engine.lastTime);
+					this.joker.changePosition(this.batman.x - 60, this.batman.y - 150, this.joker.z, this.engine.lastTime);
 				},
 				23: batman => {
-					this.joker.changePosition3d(this.batman.x - 40, this.batman.y - 170, this.joker.z, this.engine.lastTime);
+					this.joker.changePosition(this.batman.x - 40, this.batman.y - 170, this.joker.z, this.engine.lastTime);
 				},
 				25: batman => {
 					if (batman.anim === this.atlas.batman_lifting) {
@@ -372,7 +372,7 @@ class BatmanRoom extends GameCore {
 		}
 		if (this.monkor.punched) {
 			const t = (time - this.monkor.punched) / 500;
-			this.monkor.changePosition3d(520 - Math.min(1, t) * 200, this.monkor.y, this.monkor.z, time);
+			this.monkor.changePosition(520 - Math.min(1, t) * 200, this.monkor.y, this.monkor.z, time);
 			this.monkor.goal.x = this.monkor.x;
 			this.monkor.goal.y = this.monkor.y;
 			if (t >= 8) {
@@ -387,7 +387,7 @@ class BatmanRoom extends GameCore {
 			const dist = Math.abs(dx);
 			if (dist > 20 && !this.batman.properties.liftJoker) {
 				this.batman.changeAnimation(this.atlas.batman_walk, time);
-				this.batman.changePosition3d(this.batman.x + dx / dist * 2, this.batman.y, this.batman.z, time);
+				this.batman.changePosition(this.batman.x + dx / dist * 2, this.batman.y, this.batman.z, time);
 			} else {				
 				if (!this.batman.properties.liftJoker) {
 					this.batman.changeAnimation(this.atlas.batman_lifting, time);

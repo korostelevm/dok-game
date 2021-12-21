@@ -353,7 +353,7 @@ class DesertFar extends GameCore {
 			const dx = x - you_are_here.lastLift.x;
 			const dy = y - you_are_here.lastLift.y;
 
-			you_are_here.changePosition3d(
+			you_are_here.changePosition(
 				Math.min(257, Math.max(-332, you_are_here.x + dx)),
 				Math.min(77, Math.max(-130, you_are_here.y + dy)),
 				you_are_here.z,
@@ -380,7 +380,7 @@ class DesertFar extends GameCore {
 
 	showChain(x, y, time) {
 		this.chain.changeOpacity(1, time);
-		this.chain.changePosition3d(x * 10, this.chain.y, this.chain.z, time);
+		this.chain.changePosition(x * 10, this.chain.y, this.chain.z, time);
 	}
 
 	hideChain(time) {
@@ -439,7 +439,7 @@ class DesertFar extends GameCore {
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		if (!this.flipped) {
-			this.pop_out.changePosition3d(
+			this.pop_out.changePosition(
 				this.pop_out.x + this.pop_out.dx,
 				this.pop_out.y + this.pop_out.dy,
 				this.pop_out.z,
@@ -478,22 +478,22 @@ class DesertFar extends GameCore {
 				this.monkor.changeOpacity(1, time);
 				this.monkor.changeSize(64, 64, time);
 				this.monkor.changeHotSpot(32, 64, time);
-				this.monkor.changePosition3d(390, 350, this.monkor.z, time);
+				this.monkor.changePosition(390, 350, this.monkor.z, time);
 				this.savedWalkArea = null;
 
 				if (this.nextScene) {
 					switch(this.nextScene) {
 						case "N": 
-							this.monkor.changePosition3d(390, 430, this.monkor.z, time);
+							this.monkor.changePosition(390, 430, this.monkor.z, time);
 							break;
 						case "S":
-							this.monkor.changePosition3d(390, 270, this.monkor.z, time);
+							this.monkor.changePosition(390, 270, this.monkor.z, time);
 							break;
 						case "E":
-							this.monkor.changePosition3d(100, 350, this.monkor.z, time);
+							this.monkor.changePosition(100, 350, this.monkor.z, time);
 							break;							
 						case "W":
-							this.monkor.changePosition3d(700, 350, this.monkor.z, time);
+							this.monkor.changePosition(700, 350, this.monkor.z, time);
 							break;							
 					}
 					this.changedSceneCount = (this.changedSceneCount||0) + 1;

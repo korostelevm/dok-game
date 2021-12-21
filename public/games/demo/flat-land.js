@@ -110,7 +110,7 @@ class FlatLand extends GameBase {
 			}
 			const z = mazoo.z + dz / dist;
 			const y = 400;// + (z / 2000) * 500;
-			mazoo.changePosition3d(mazoo.x + dx / dist, y, z, time);
+			mazoo.changePosition(mazoo.x + dx / dist, y, z, time);
 			if (dist <= 1) {
 				if (!mazoo.stillTime) {
 					mazoo.stillTime = time;

@@ -265,10 +265,10 @@ class Restaurant extends GameCore {
 					if (served && !burger.eaten) {
 						this.table.changeOpacity(1, this.engine.lastTime);
 						this.table.changeAnimation(this.atlas.table_broke, this.engine.lastTime);
-						burger.changePosition3d(burger.x, 280, burger.z, this.engine.lastTime);
+						burger.changePosition(burger.x, 280, burger.z, this.engine.lastTime);
 						setTimeout(() => {
 							this.haveMouseCheckBurger();
-							burger.changePosition3d(burger.x, 350, burger.z, this.engine.lastTime);
+							burger.changePosition(burger.x, 350, burger.z, this.engine.lastTime);
 							this.table.changeAnimation(this.atlas.table_completely_broke, this.engine.lastTime);
 							if (this.audio && this.audio.hit) {
 								this.audio.hit.play();
@@ -1208,7 +1208,7 @@ class Restaurant extends GameCore {
 		const chefSprite = this.chef.properties.faint ? "chef_faint" : this.chef.properties.surprised ? "chef_surprised" : this.chef.properties.serving ? "chef_serve" : "chef"
 		let turnTowardsRight = false;
 		if (dist > 5) {
-			this.chef.changePosition3d(this.chef.x + speed * dx / dist, this.chef.y + speed * dy / dist, this.chef.z, time);
+			this.chef.changePosition(this.chef.x + speed * dx / dist, this.chef.y + speed * dy / dist, this.chef.z, time);
 			if (dx < 0) {
 				this.chef.changeAnimation(this.atlas[`${chefSprite}_walk_left`], time);
 			} else {
@@ -1234,7 +1234,7 @@ class Restaurant extends GameCore {
 			}
 		}
 		if (this.chef.properties.serving) {
-			this.burgerServed.changePosition3d(this.chef.x + (turnTowardsRight ? 60 : -60), this.burgerServed.y, this.burgerServed.z, time);
+			this.burgerServed.changePosition(this.chef.x + (turnTowardsRight ? 60 : -60), this.burgerServed.y, this.burgerServed.z, time);
 			this.burgerServed.changeAnimation(turnTowardsRight ? this.atlas.burger_right : this.atlas.burger_left, time);
 		}
 	}
@@ -1246,7 +1246,7 @@ class Restaurant extends GameCore {
 		const dy = goalY - this.butler.y;
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		if (dist > 5) {
-			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
+			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {

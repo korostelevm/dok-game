@@ -45,7 +45,7 @@ class Sprite {
 		this.properties = properties || {};
 		this.onChange = {
 			position: (self, {x, y, z}) => {
-				self.changePosition3d(x, y, z);
+				self.changePosition(x, y, z);
 			},
 		};
 
@@ -109,7 +109,7 @@ class Sprite {
 		return currentFrame;
 	}
 
-	changePosition3d(x, y, z, time) {
+	changePosition(x, y, z, time) {
 		if (this.x !== x || this.y !== y || this.z !== z) {
 			this.x = x;
 			this.y = y;
@@ -315,7 +315,7 @@ class Sprite {
 			const x = this.x + dt * this.motion[0] + .5 * dt * dt * this.acceleration[0];
 			const y = this.y + dt * this.motion[1] + .5 * dt * dt * this.acceleration[1];
 			const z = this.z + dt * this.motion[2] + .5 * dt * dt * this.acceleration[2];
-			this.changePosition3d(x, y, z, t);
+			this.changePosition(x, y, z, t);
 			this.updated.motion = t;
 		}
 	}

@@ -194,7 +194,7 @@ class ComputerRoom extends GameCore {
 		const dy = goalY - this.butler.y;
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		if (dist > 5) {
-			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
+			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {
@@ -280,7 +280,7 @@ class ComputerRoom extends GameCore {
 			size: [800, 400],
 		});
 		if (this.isFirstTime()) {
-			this.monkor.changePosition3d(100, 360, this.monkor.z, this.engine.lastTime);
+			this.monkor.changePosition(100, 360, this.monkor.z, this.engine.lastTime);
 			this.monkor.setProperty("paused", true);
 			this.monkor.goal.x = 250;
 			this.monkor.onStill = () => {

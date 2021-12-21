@@ -61,11 +61,11 @@ class SpriteState {
 	// 	let progress;
 	// 	if (self.showTime) {
 	// 		progress = Math.min(1, (time - self.showTime) / self.animDuration);
-	// 		self.changePosition3d(self.x, showY * (progress) + hideY * (1 - progress), self.z);
+	// 		self.changePosition(self.x, showY * (progress) + hideY * (1 - progress), self.z);
 	// 		self.changeOpacity(progress);
 	// 	} else if (self.hideTime) {
 	// 		progress = Math.min(1, (time - self.hideTime) / self.animDuration);
-	// 		self.changePosition3d(self.x, showY * (1 - progress) + hideY * (progress), self.z);
+	// 		self.changePosition(self.x, showY * (1 - progress) + hideY * (progress), self.z);
 	// 		self.changeOpacity(1 - progress);
 	// 	}
 	// 	if (progress >= 1) {

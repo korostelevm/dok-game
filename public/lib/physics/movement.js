@@ -19,7 +19,7 @@ class Movement extends PhysicsBase {
 				}
 				sprite.platform = null;
 			}
-			sprite.changePosition3d(px, py, sprite.z);
+			sprite.changePosition(px, py, sprite.z);
 		});
 	}	
 }
