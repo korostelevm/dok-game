@@ -33,7 +33,7 @@ class SpriteRenderer {
 
 	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY) {
 		const attribute = this.attributes.matrix;
-		const mat = this.makeMatrix(x, y, z, width * (cropX || 1), height * (cropY || 1), hotX, hotY, rotation);
+		const mat = this.makeMatrix(x, y, z + this.alter, width * (cropX || 1), height * (cropY || 1), hotX, hotY, rotation);
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
