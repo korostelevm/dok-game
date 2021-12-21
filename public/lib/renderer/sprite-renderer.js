@@ -1,4 +1,5 @@
 const ANIM_INDEX = 0;
+const MOTION_INDEX = 1;
 
 class SpriteRenderer {
 	constructor(bufferRenderer, shader, size) {
@@ -33,12 +34,12 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
-	setMotion(index, motion, acceleration, time) {
+	setMotion(index, motion, acceleration) {
 		const attribute = this.attributes.motion;
 		this.tempMotion[0] = motion[0];
 		this.tempMotion[1] = motion[1];
 		this.tempMotion[2] = motion[2];
-		this.bufferRenderer.setAttribute(this.attributes.motion, index, this.tempMotion);
+//		this.bufferRenderer.setAttribute(this.attributes.motion, index, this.tempMotion);
 	}
 
 	setAnimation(index, anim, direction, vdirection, opacity, cropX, cropY) {
