@@ -1,6 +1,8 @@
 const ANIM_INDEX = 0;
 const MOTION_INDEX = 1;
 
+const MUL = 2;
+
 class SpriteRenderer {
 	constructor(bufferRenderer, shader, size) {
 		this.attributes = shader.attributes;
@@ -23,7 +25,7 @@ class SpriteRenderer {
 		return mat4.fromRotationTranslationScaleOrigin(
 			this.tempMatrix,
 			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),
-			vec3.set(this.tempTranslation, (x * 2 - viewportWidth), -(y * 2 - viewportHeight), (z * 2)),
+			vec3.set(this.tempTranslation, (x * MUL - viewportWidth), -(y * MUL - viewportHeight), (z)),
 			vec3.set(this.tempScale, width, height, 1),
 			vec3.set(this.tempOrigin, (hotX - width/2) / width * 2, -(hotY - height/2) / height * 2, 0)
 		);		
@@ -31,18 +33,18 @@ class SpriteRenderer {
 
 	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY) {
 		const attribute = this.attributes.matrix;
-		const mat = this.makeMatrix(x, y, z + this.alter, width * (cropX || 1), height * (cropY || 1), hotX, hotY, rotation);
+		const mat = this.makeMatrix(x, y, z, width * (cropX || 1), height * (cropY || 1), hotX, hotY, rotation);
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
 	setMotion(index, motion, acceleration) {
-		this.tempMotion[0] = motion[0];
-		this.tempMotion[1] = -motion[1];
-		this.tempMotion[2] = motion[2];
+		this.tempMotion[0] = motion[0] * MUL;
+		this.tempMotion[1] = -motion[1] * MUL;
+		this.tempMotion[2] = motion[2] * MUL;
 		this.bufferRenderer.setAttribute(this.attributes.motion, index, this.tempMotion);
-		this.tempAcceleration[0] = acceleration[0];
-		this.tempAcceleration[1] = -acceleration[1];
-		this.tempAcceleration[2] = acceleration[2];
+		this.tempAcceleration[0] = acceleration[0] * MUL;
+		this.tempAcceleration[1] = -acceleration[1] * MUL;
+		this.tempAcceleration[2] = acceleration[2] * MUL;
 		this.bufferRenderer.setAttribute(this.attributes.acceleration, index, this.tempAcceleration);
 	}
 
