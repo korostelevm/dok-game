@@ -241,11 +241,11 @@ class Sprite {
 
 	changeMotion(dx, dy, dz, time) {
 		if (this.motion[0] !== dx || this.motion[1] !== dy || this.motion[2] !== dz) {
+			this.recalculatePosition(time || this.engine.lastTime);
 			this.motion[0] = dx;
 			this.motion[1] = dy;
 			this.motion[2] = dz;
 			this.updated.motion = time || this.engine.lastTime;
-			this.updated.motionTime = time || this.engine.lastTime;
 			this.needUpdate();
 			return true;
 		}
@@ -254,10 +254,11 @@ class Sprite {
 
 	changeAcceleration(ax, ay, az, time) {
 		if (this.acceleration[0] !== ax || this.acceleration[1] !== ay || this.acceleration[2] !== az) {
+			this.recalculatePosition(time);
 			this.acceleration[0] = ax;
 			this.acceleration[1] = ay;
 			this.acceleration[2] = az;
-			this.updated.acceleration = time || this.engine.lastTime;
+			this.updated.motion = time || this.engine.lastTime;
 			this.needUpdate();
 			return true;
 		}
@@ -275,8 +276,9 @@ class Sprite {
 	}
 
 	resetAnimation(time) {
-		this.updated.animation = time || this.engine.lastTime;
-		this.updated.updateTime = time || this.engine.lastTime;
+		const t = time || this.engine.lastTime;
+		this.updated.animation = t;
+		this.updated.updateTime = t;
 	}
 
 	getCenterX(time) {
@@ -304,6 +306,18 @@ class Sprite {
 		}
 		this.calculateCollisonBox(rect);
 		return this.collisionBox;
+	}
+
+	recalculatePosition(time) {
+		const t = time || this.engine.lastTime;
+		if (this.updated.motion !== t) {
+			const dt = (t - this.updated.motion) / 1000;
+			const x = this.x + dt * this.motion[0] + .5 * dt * dt * this.acceleration[0];
+			const y = this.y + dt * this.motion[1] + .5 * dt * dt * this.acceleration[1];
+			const z = this.z + dt * this.motion[2] + .5 * dt * dt * this.acceleration[2];
+			this.changePosition3d(x, y, z, t);
+			this.updated.motion = t;
+		}
 	}
 
 	calculateCollisonBox(rect) {

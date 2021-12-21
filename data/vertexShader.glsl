@@ -5,7 +5,7 @@ const int END_FRAME_INDEX = 1;
 const int FRAME_RATE_INDEX = 2;
 const int MAX_FRAME_COUNT_INDEX = 3;
 const int ANIMATION_UPDATE_INDEX = 0;
-const int MOTION_UPDATE_INDEX = 0;
+const int MOTION_UPDATE_INDEX = 1;
 
 attribute vec2 vertexPosition;
 // attribute mat4 colors;
@@ -43,7 +43,7 @@ float modPlus(float a, float b) {
 	return mod(a + .4, b);
 }
 
-vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
+vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, float time) {
 	float animCols = spriteSheet[0];
 	if (animCols == 0.) {
 		return vec2(0, 0);
@@ -53,7 +53,6 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 	float frameCount = max(0., frameRange[1] - frameRange[0]) + 1.;
 
 	float framePerSeconds = animInfo[FRAME_RATE_INDEX];
-	float time = timeInfo[0];
 	float globalFrame = floor(min(
 		(time - animTime) * framePerSeconds / 1000.,
 		animInfo[MAX_FRAME_COUNT_INDEX] - 1.));
@@ -67,16 +66,21 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates) {
 }
 
 void main() {
+	float time = timeInfo[0];
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
-	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates);
+	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex;
 	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
-	vec3 dummy = motion + acceleration;
+
+	float motionTime = updateTime[MOTION_UPDATE_INDEX];
+	float dt = (time - motionTime) / 1000.;
 	mat4 mat = matrix;
-//	mat[3][1] += 200.;
+	mat[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
-	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * finalView * mat * vertexPosition4;
+	float isOrtho = 1. - isPerspective;
+	gl_Position = (ortho * isOrtho + perspective * isPerspective)
+		* finalView * mat * vertexPosition4;
 }

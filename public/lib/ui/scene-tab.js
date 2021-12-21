@@ -87,7 +87,12 @@ class SceneTab {
 					button.classList.add("first");
 				}
 				this.buttonForScene[classObj.constructor.name] = button;
-				button.addEventListener("mousedown", () => 	engine.setGame(new classObj(configFile)));
+				button.addEventListener("click", e => {
+					engine.setGame(new classObj(configFile));
+					e.stopPropagation();
+					e.preventDefault();
+					e.currentTarget.blur();
+				});
 			});
 		}
 	}

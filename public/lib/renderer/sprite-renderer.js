@@ -12,7 +12,8 @@ class SpriteRenderer {
 		this.tempTranslation = vec3.create();
 		this.tempScale = vec3.create();
 		this.tempOrigin = vec3.create();
-		this.tempMotion = vec4.create();
+		this.tempMotion = vec3.create();
+		this.tempAcceleration = vec3.create();
 		this.updateTimes = new Float32Array([0, 0, 0, 0]);
 		this.alter = -400;
 	}
@@ -22,7 +23,7 @@ class SpriteRenderer {
 		return mat4.fromRotationTranslationScaleOrigin(
 			this.tempMatrix,
 			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),
-			vec3.set(this.tempTranslation, (x * 2 - viewportWidth), -(y * 2 - viewportHeight), z),
+			vec3.set(this.tempTranslation, (x * 2 - viewportWidth), -(y * 2 - viewportHeight), (z * 2)),
 			vec3.set(this.tempScale, width, height, 1),
 			vec3.set(this.tempOrigin, (hotX - width/2) / width * 2, -(hotY - height/2) / height * 2, 0)
 		);		
@@ -35,11 +36,14 @@ class SpriteRenderer {
 	}
 
 	setMotion(index, motion, acceleration) {
-		const attribute = this.attributes.motion;
 		this.tempMotion[0] = motion[0];
-		this.tempMotion[1] = motion[1];
+		this.tempMotion[1] = -motion[1];
 		this.tempMotion[2] = motion[2];
-//		this.bufferRenderer.setAttribute(this.attributes.motion, index, this.tempMotion);
+		this.bufferRenderer.setAttribute(this.attributes.motion, index, this.tempMotion);
+		this.tempAcceleration[0] = acceleration[0];
+		this.tempAcceleration[1] = -acceleration[1];
+		this.tempAcceleration[2] = acceleration[2];
+		this.bufferRenderer.setAttribute(this.attributes.acceleration, index, this.tempAcceleration);
 	}
 
 	setAnimation(index, anim, direction, vdirection, opacity, cropX, cropY) {
@@ -52,9 +56,10 @@ class SpriteRenderer {
 		}
 	}
 
-	setUpdateTime(index, animationTime) {
+	setUpdateTime(index, animationTime, motionTime) {
 		const attributes = this.attributes;
 		this.updateTimes[ANIM_INDEX] = animationTime;
+		this.updateTimes[MOTION_INDEX] = motionTime;
 		this.bufferRenderer.setAttribute(attributes.updateTime, index, this.updateTimes);
 	}
 

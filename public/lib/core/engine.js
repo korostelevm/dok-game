@@ -651,14 +651,13 @@ class Engine {
 	}
 
 	configShader(gl, {webgl: {depth}}) {
-		// gl.enable(gl.CULL_FACE);
-		// gl.cullFace(gl.BACK);
+		gl.enable(gl.CULL_FACE);
+		gl.cullFace(gl.BACK);
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
 		if (depth) {
 			gl.enable(gl.DEPTH_TEST);
-			// gl.depthFunc(gl.GEQUAL);
 			gl.depthFunc(gl.LEQUAL);
 		}
 	}
@@ -904,9 +903,9 @@ class Engine {
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
 			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, 0));
-//			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(0, - 200, 0));
+//			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(0, -350, 0));
 			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, 1));
-//			mat4.rotateX(this.viewMatrix, this.viewMatrix, Math.PI / 6);
+//			mat4.rotateX(this.viewMatrix, this.viewMatrix, Math.PI / 8);
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			gl.uniform1f(uniforms.globalLight.location, shift.light);
 
@@ -935,13 +934,13 @@ class Engine {
 				const {anim, direction, vdirection, opacity, active} = sprite;
 				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
 			}
-			if (sprite.updated.motion >= lastTime
-				|| sprite.updated.acceleration >= lastTime) {
+			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;
-				this.spriteRenderer.setMotion(spriteIndex, motion, acceleration, lastTime);
+				this.spriteRenderer.setMotion(spriteIndex, motion, acceleration);
 			}
-			if (sprite.updated.updateTime >= lastTime) {
-				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime());
+			if (sprite.updated.updateTime >= lastTime
+				|| sprite.updated.motion >= lastTime) {
+				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
 			}
 			if (sprite.updated.isHud >= lastTime) {
 				this.spriteRenderer.setHud(spriteIndex, sprite.isHud);
