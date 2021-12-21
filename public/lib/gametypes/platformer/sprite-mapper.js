@@ -41,7 +41,7 @@ class SpriteMapper {
 					remember: true,
 				}, {
 					gravity: .2,
-					motion: 1,
+					movement: 1,
 					collide: 1,
 					jump: 4.8,
 					control: 1,
@@ -57,7 +57,7 @@ class SpriteMapper {
 						}
 						if (sprite.onOpen) {
 							sprite.onOpenEvent = e => {
-								self.changePosition(sprite.getCenterX(), self.y);
+								self.changePosition3d(sprite.getCenterX(), self.y, self.z);
 								sprite.onOpen(sprite, self);
 								self.engine.clearMessage(self.id);
 							};
@@ -100,7 +100,7 @@ class SpriteMapper {
 							self.climbing = self.engine.lastTime;
 							self.dy = 0;
 							self.dx = 0;
-							self.changePosition(sprite.getCenterX(), self.y);
+							self.changePosition3d(sprite.getCenterX(), self.y, self.z);
 							onMotion(self, this.control.dx, this.control.dy);
 						}
 
@@ -121,7 +121,7 @@ class SpriteMapper {
 							if (self.dy > 0) {
 								self.lastJump = self.engine.lastTime;
 								self.dy = -self.dy * (this.control.dy < 0 ? 1.3 : 1);
-								self.changePosition(self.x, self.y + self.dy);
+								self.changePosition3d(self.x, self.y + self.dy, self.z);
 								self.bouncing = self.engine.lastTime;
 								self.lastJump = self.engine.lastTime;
 								sprite.changeAnimation(this.atlas.debugBounceBouncing);
@@ -151,7 +151,7 @@ class SpriteMapper {
 								return;
 							}
 
-							self.changePosition(self.x, self.y + yPush);
+							self.changePosition3d(self.x, self.y + yPush, self.z);
 							//	push from bottom
 							if (yPush < 0) {
 								self.lastJump = 0;
@@ -177,7 +177,7 @@ class SpriteMapper {
 								return;
 							}
 							self.dx += xPush;
-							self.changePosition(self.x + xPush, self.y);
+							self.changePosition3d(self.x + xPush, self.y, self.z);
 							if (sprite.canLand && self.dy < .2 && self.dy > 0 && self.collisionBox.top < sprite.collisionBox.top) {
 								self.climb = self.engine.lastTime;
 								self.climbSide = xPush < 0 ? 1 : -1;
@@ -188,7 +188,7 @@ class SpriteMapper {
 						onMotion(self, dx, dy);
 					},
 					onJump: (self) => {
-						self.changePosition(self.x, self.y - self.jump);
+						self.changePosition3d(self.x, self.y - self.jump, self.z);
 						self.lastJump = self.engine.lastTime;
 						onMotion(self, 0, 0);
 					},
@@ -306,7 +306,7 @@ class SpriteMapper {
 							const ddx = dist < 0.1 ? dx : dx / dist * speed;
 							const ddy = dist < 0.1 ? dy : dy / dist * speed;
 
-							platform.changePosition(platform.x + ddx, platform.y + ddy);
+							platform.changePosition3d(platform.x + ddx, platform.y + ddy, platform.z);
 
 							const xProgressSize = nextSpot.x - previousSpot.x;
 							const xProgress = xProgressSize === 0 ? 0 : (platform.x - previousSpot.x) / xProgressSize;
@@ -324,7 +324,7 @@ class SpriteMapper {
 							if (lander) {
 								const newRelativeX = preRelativeX / preWidth * w;
 								const shiftX = newRelativeX - preRelativeX;
-								lander.changePosition(lander.x + ddx + shiftX, lander.y + ddy);
+								lander.changePosition3d(lander.x + ddx + shiftX, lander.y + ddy, lander.z);
 							}
 						},
 					});
@@ -335,7 +335,7 @@ class SpriteMapper {
 					x: 40 * col, y: 40 * row, size: [40, 40],
 				};
 				if (index === 0) {
-					this.movingPlatform.changePosition(40 * col, 40 * row);
+					this.movingPlatform.changePosition3d(40 * col, 40 * row, this.movingPlatform.z);
 				}
 				return this.movingPlatform;
 			},

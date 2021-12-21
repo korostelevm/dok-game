@@ -139,7 +139,7 @@ class Mall extends GameCore {
 	refreshPerson2(time) {
 		if (this.person2.walkRight) {
 			this.person2.changeAnimation(this.atlas.person2_walk_right, time);
-			this.person2.changePosition(this.person2.x + .6, this.person2.y, time);
+			this.person2.changePosition3d(this.person2.x + .6, this.person2.y, this.person2.z, time);
 		} else if (this.person2.talking) {
 			this.person2.changeAnimation(this.atlas.person2_talk, time);
 		} else {
@@ -150,7 +150,7 @@ class Mall extends GameCore {
 	refreshPerson3(time) {
 		if (this.person3.walkRight) {
 			this.person3.changeAnimation(this.atlas.person3_walk_right, time);
-			this.person3.changePosition(this.person3.x + 1, this.person3.y, time);
+			this.person3.changePosition3d(this.person3.x + 1, this.person3.y, this.person3.z, time);
 		} else if (this.person3.talking) {
 			this.person3.changeAnimation(this.atlas.person3_talk, time);
 		} else {
@@ -160,7 +160,7 @@ class Mall extends GameCore {
 
 	addMonkor() {
 		super.addMonkor();
-		this.monkor.changePosition(-1500, 373, this.engine.lastTime);
+		this.monkor.changePosition3d(-1500, 373, this.monkor.z, this.engine.lastTime);
 		this.monkor.goal.x = 223;
 		this.monkor.goal.y = 375;
 		const { config } = this.engine;
@@ -263,7 +263,7 @@ class Mall extends GameCore {
 			const opacity = Math.min(1, Math.min(1, timeDiff / 5000));
 			const x = viewportWidth / 2 - width / 2;
 			const y = viewportHeight / 2 - height / 2;
-			this.title.changePosition(x, y, time);
+			this.title.changePosition3d(x, y, this.title.z, time);
 			this.title.changeSize(width, height, time);
 			this.title.changeOpacity(opacity, time);
 			this.mall.changeOpacity(opacityOut, time);

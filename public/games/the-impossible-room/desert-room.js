@@ -274,7 +274,7 @@ class DesertRoom extends GameCore {
 		const dy = goalY - this.butler.y;
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		if (dist > 5) {
-			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, time);
+			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {
@@ -348,7 +348,7 @@ class DesertRoom extends GameCore {
 
 	updateMonkor(time) {
 		if (this.monkor.x > 400 || this.monkor.properties.stuck) {
-			this.monkor.changePosition(400, this.monkor.y, time);
+			this.monkor.changePosition3d(400, this.monkor.y, this.monkor.z, time);
 			if (!this.monkor.properties.stuck) {
 				this.monkor.setProperty("stuck", time);
 			}
@@ -357,10 +357,10 @@ class DesertRoom extends GameCore {
 		const I = gender === "T" ? "We" : "I";
 		if (this.monkor.properties.stuck) {
 			if (this.monkor.y < 400) {
-				this.monkor.changePosition(this.monkor.x, this.monkor.y + 4, time);
+				this.monkor.changePosition3d(this.monkor.x, this.monkor.y + 4, this.monkor.z, time);
 			}
 			if (this.monkor.anim === this.atlas.monkor_run_left || this.monkor.anim === this.atlas.monkor_run_right || this.monkor.y > 450) {
-				this.monkor.changePosition(this.monkor.x, this.monkor.y + .5, time);
+				this.monkor.changePosition3d(this.monkor.x, this.monkor.y + .5, this.monkor.z, time);
 			}
 			if (this.monkor.y >= 550 && !this.changingScene) {
 				this.changingScene = true;

@@ -78,8 +78,10 @@ class GameRing extends GameBase {
 			const dx = (goalX - mazoo.x);
 			const dy = (goalY - mazoo.y);
 			const dist = Math.max(1, Math.sqrt(dx*dx + dy*dy));
-			mazoo.changePosition(mazoo.x + dx / dist, mazoo.y + dy / dist, time);
-			mazoo.z = mazoo.y / 400 * 100;
+			const x = mazoo.x + dx / dist;
+			const y = mazoo.y + dy / dist;
+			const z = y / 400 * 100;
+			mazoo.changePosition3d(x, y, z, time);
 			if (dist <= 1) {
 				if (!mazoo.stillTime) {
 					mazoo.stillTime = time;

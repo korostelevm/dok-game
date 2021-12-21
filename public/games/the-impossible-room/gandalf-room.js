@@ -524,7 +524,7 @@ class GandalfRoom extends GameCore {
 			butler.goal = {x: butler.x, y: butler.y};
 		});
 
-		this.joker.changePosition(this.joker.x, this.joker.y - 90, engine.lastTime);
+		this.joker.changePosition3d(this.joker.x, this.joker.y - 90, this.joker.z, engine.lastTime);
 	}
 
 	onKick(butler, time) {
@@ -547,7 +547,7 @@ class GandalfRoom extends GameCore {
 		const dy = goalY - this.butler.y;
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		if (dist > 5) {
-			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, time);
+			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {
@@ -630,7 +630,7 @@ class GandalfRoom extends GameCore {
 		}
 		if (this.gandalf.falling) {
 			this.gandalf.dy ++;
-			this.gandalf.changePosition(this.gandalf.x + 1, this.gandalf.y + this.gandalf.dy, time);
+			this.gandalf.changePosition3d(this.gandalf.x + 1, this.gandalf.y + this.gandalf.dy, this.gandalf.z, time);
 		}
 	}
 

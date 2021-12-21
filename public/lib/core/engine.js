@@ -617,7 +617,7 @@ class Engine {
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
-		const viewMatrix = mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0));
+		const viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.fromValues(0, 0, 0));
 		this.viewMatrix = viewMatrix;
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
@@ -894,7 +894,7 @@ class Engine {
 				shakeY = (Math.random() - .5) * shake;
 			}
 		} else if (shake === null && this.shake) {
-			this.viewMatrix = mat4.fromTranslation(this.viewMatrix, vec3.fromValues(shift.x, shift.y, 0));
+			this.viewMatrix = mat4.fromRotationTranslation(this.viewMatrix, quat.fromEuler(quat.create(), -45, 0, 0), vec3.fromValues(shift.x, shift.y, 0));
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			delete this.shake;
 			shiftChanged = true;
@@ -903,8 +903,10 @@ class Engine {
 		if (shiftChanged || shakeX || shakeY) {
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
+			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, 0));
+//			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(0, - 200, 0));
 			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, 1));
-			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x*coef + shakeX, -shift.y*coef + shakeY, 0));
+//			mat4.rotateX(this.viewMatrix, this.viewMatrix, Math.PI / 6);
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			gl.uniform1f(uniforms.globalLight.location, shift.light);
 
@@ -930,11 +932,16 @@ class Engine {
 				|| sprite.updated.opacity >= lastTime
 				|| sprite.updated.crop >= lastTime
 				|| sprite.updated.active >= lastTime) {
-				const {direction, vdirection, opacity, active} = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, sprite.anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
+				const {anim, direction, vdirection, opacity, active} = sprite;
+				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
+			}
+			if (sprite.updated.motion >= lastTime
+				|| sprite.updated.acceleration >= lastTime) {
+				const {motion, acceleration} = sprite;
+				this.spriteRenderer.setMotion(spriteIndex, motion, acceleration, lastTime);
 			}
 			if (sprite.updated.updateTime >= lastTime) {
-				this.spriteRenderer.setUpdateTime(spriteIndex, sprite);
+				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime());
 			}
 			if (sprite.updated.isHud >= lastTime) {
 				this.spriteRenderer.setHud(spriteIndex, sprite.isHud);

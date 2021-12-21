@@ -47,7 +47,7 @@ class FlatLand extends GameBase {
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
-		const backwallWidth = viewportWidth * 4, backwallHeight = viewportHeight * 4;
+		const backwallWidth = viewportWidth * 2, backwallHeight = viewportHeight * 2;
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
 			size: [backwallWidth, backwallHeight],
@@ -58,10 +58,10 @@ class FlatLand extends GameBase {
 		});
 
 		this.mazoos = [];
-		for (let i = 0; i < 1000; i++) {
+		for (let i = 0; i < 2000; i++) {
 			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
 			const z = - Math.random() * 2000;
-			const y = 400 + (z / 2000) * 500;
+			const y = 400;// + (z / 2000) * 500;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
 				size: [32, 32],
@@ -70,7 +70,7 @@ class FlatLand extends GameBase {
 			}, {
 				goal: [
 					Math.random() * viewportWidth,
-					0,
+					y,
 					-Math.random() * 2000,
 				],
 			}));
@@ -79,13 +79,13 @@ class FlatLand extends GameBase {
 		for (let i = 0; i < 1000; i++) {
 			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
 			const z = - Math.random() * 2000;
-			const y = 400 + (z / 2000) * 500;
+			const y = 400;// + (z / 2000) * 500 + 20;
 			this.spriteFactory.create({
 				anim: this.atlas.hex,
 				size: [256, 256],
 				hotspot: [128, 128],
 				x, y, z,
-				rotation: [-70, 0, 0],					
+				rotation: [-90, 0, 0],					
 			});
 		}
 	}
@@ -109,7 +109,7 @@ class FlatLand extends GameBase {
 				continue;
 			}
 			const z = mazoo.z + dz / dist;
-			const y = 400 + (z / 2000) * 500;
+			const y = 400;// + (z / 2000) * 500;
 			mazoo.changePosition3d(mazoo.x + dx / dist, y, z, time);
 			if (dist <= 1) {
 				if (!mazoo.stillTime) {
@@ -132,6 +132,6 @@ class FlatLand extends GameBase {
 	}
 
 	refresh(time, dt) {
-		this.moveMazoos(time);
+//		this.moveMazoos(time);
 	}
 }

@@ -17,14 +17,16 @@ class Sprite {
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.z = data.z || 0;
-		this.size = engine.translate(data.size) || [0, 0];
-		this.hotspot = data.hotspot || [0, 0];
-		this.rotation = data.rotation || [0, 0, 0];
+		this.size = [... engine.translate(data.size) || [0, 0]];
+		this.hotspot = [... data.hotspot || [0, 0]];
+		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.crop = [1, 1];
 		this.active = true;
 		this.isHud = data.hud ? 1 : 0;
 		this.remember = data.remember || false;
+		this.motion = [... data.motion || [0, 0, 0]];
+		this.acceleration = [... data.acceleration || [0, 0, 0]];
 
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
@@ -42,7 +44,9 @@ class Sprite {
 		};
 		this.properties = properties || {};
 		this.onChange = {
-			position: (self, {x, y}) => this.changePosition(x, y),
+			position: (self, {x, y, z}) => {
+				self.changePosition3d(x, y, z);
+			},
 		};
 
 		this.updated = {
@@ -50,17 +54,20 @@ class Sprite {
 			spriteSheet: time,
 			animation: time,
 			updateTime: time,
+			motionTime: time,
 			direction: time,
 			opacity: time,
 			crop: time,
 			isHud: time,
+			motion: time,
+			acceleration: time,
 		};
 		this.engine.updater.add(this);
 	}
 
 	onExit(game) {
 		if (this.remember) {
-			this.setProperty("position", {x: this.x, y: this.y});
+			this.setProperty("position", {x: this.x, y: this.y, z: this.z});
 		}
 	}
 
@@ -100,18 +107,6 @@ class Sprite {
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
 		const currentFrame = anim.startFrame + (frameOffset + framesElapsed) % frameCount;
 		return currentFrame;
-	}
-
-	changePosition(x, y, time) {
-		if (this.x !== x || this.y !== y) {
-			this.x = x;
-			this.y = y;
-			this.updated.sprite = time || this.engine.lastTime;
-			this.collisionBox.dirty = true;
-			this.needUpdate();
-			return true;
-		}
-		return false;
 	}
 
 	changePosition3d(x, y, z, time) {
@@ -238,6 +233,31 @@ class Sprite {
 		if (this.active !== value) {
 			this.active = value;
 			this.updated.active = time || this.engine.lastTime;
+			this.needUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	changeMotion(dx, dy, dz, time) {
+		if (this.motion[0] !== dx || this.motion[1] !== dy || this.motion[2] !== dz) {
+			this.motion[0] = dx;
+			this.motion[1] = dy;
+			this.motion[2] = dz;
+			this.updated.motion = time || this.engine.lastTime;
+			this.updated.motionTime = time || this.engine.lastTime;
+			this.needUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	changeAcceleration(ax, ay, az, time) {
+		if (this.acceleration[0] !== ax || this.acceleration[1] !== ay || this.acceleration[2] !== az) {
+			this.acceleration[0] = ax;
+			this.acceleration[1] = ay;
+			this.acceleration[2] = az;
+			this.updated.acceleration = time || this.engine.lastTime;
 			this.needUpdate();
 			return true;
 		}

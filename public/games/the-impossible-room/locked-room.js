@@ -523,7 +523,7 @@ class LockedRoom extends GameCore {
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		const speed = Math.min(dist, this.butler.speed || 1);
 		if (dist > 5) {
-			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, time);
+			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {

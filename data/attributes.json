@@ -9,6 +9,11 @@
 		"usage": "DYNAMIC_DRAW",
 		"instances": 1
 	},
+	"motion": {
+		"type": "FLOAT",
+		"usage": "DYNAMIC_DRAW",
+		"instances": 1
+	},
 	"textureIndex": {
 		"type": "UNSIGNED_BYTE",
 		"usage": "DYNAMIC_DRAW",

@@ -11,6 +11,7 @@ class SpriteRenderer {
 		this.tempTranslation = vec3.create();
 		this.tempScale = vec3.create();
 		this.tempOrigin = vec3.create();
+		this.tempMotion = vec4.create();
 		this.updateTimes = new Float32Array([0, 0, 0, 0]);
 		this.alter = -400;
 	}
@@ -32,6 +33,14 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(attribute, index, mat);
 	}
 
+	setMotion(index, motion, acceleration, time) {
+		const attribute = this.attributes.motion;
+		this.tempMotion[0] = motion[0];
+		this.tempMotion[1] = motion[1];
+		this.tempMotion[2] = motion[2];
+		this.bufferRenderer.setAttribute(this.attributes.motion, index, this.tempMotion);
+	}
+
 	setAnimation(index, anim, direction, vdirection, opacity, cropX, cropY) {
 		const attributes = this.attributes;
 		if (anim) {
@@ -42,9 +51,9 @@ class SpriteRenderer {
 		}
 	}
 
-	setUpdateTime(index, sprite) {
+	setUpdateTime(index, animationTime) {
 		const attributes = this.attributes;
-		this.updateTimes[ANIM_INDEX] = sprite.getAnimationTime();
+		this.updateTimes[ANIM_INDEX] = animationTime;
 		this.bufferRenderer.setAttribute(attributes.updateTime, index, this.updateTimes);
 	}
 

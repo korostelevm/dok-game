@@ -20,5 +20,3 @@ Array.prototype.setCell = function(x, y, value) {
 		this[y][x] = value;
 	}
 }
-
-ArrayUtils.perf = { count: 0, time: 0 };

@@ -164,15 +164,16 @@ class Collision extends PhysicsBase {
 	}
 
 	applyCollisions(sprite, time) {
-		for (let i = 0; i < sprite.collisionData.colliders.length; i++) {
-			const index = sprite.collisionData.colliders[i];
+		const colliders = sprite.collisionData.colliders;
+		for (let i = 0; i < colliders.length; i++) {
+			const index = colliders[i];
 			const secondSprite = this.sprites[index];
 			if (sprite.collisionData.collisions[secondSprite.collisionData.colIndex] === this.BOTH) {
 				this.accountForCollision(sprite, secondSprite, time);
 			}
 			sprite.collisionData.collisions[secondSprite.collisionData.colIndex] = 0;
 		}
-		sprite.collisionData.colliders.length = 0;
+		colliders.length = 0;
 	}
 
 	leaveCollisions(sprite, time) {

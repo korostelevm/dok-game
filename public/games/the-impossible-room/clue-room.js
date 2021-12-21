@@ -339,7 +339,7 @@ class ClueRoom extends GameCore {
 	updateHand(time) {
 		if (this.hand.properties.received && !this.hand.properties.stopped) {
 			const diff = time - this.hand.properties.received;
-			this.hand.changePosition(Math.min(900, 600 + diff / 10), this.hand.y, time);
+			this.hand.changePosition3d(Math.min(900, 600 + diff / 10), this.hand.y, this.hand.z, time);
 			if (diff > 5000) {
 				this.hand.setProperty("stopped", true);
 			}
@@ -353,7 +353,7 @@ class ClueRoom extends GameCore {
 		const dy = goalY - this.butler.y;
 		const dist = Math.sqrt(dx * dx + dy * dy);
 		if (dist > 5) {
-			this.butler.changePosition(this.butler.x + dx / dist, this.butler.y + dy / dist, time);
+			this.butler.changePosition3d(this.butler.x + dx / dist, this.butler.y + dy / dist, this.butler.z, time);
 			if (dx < 0) {
 				this.butler.changeAnimation(this.atlas.butler_walk_left, time);
 			} else {

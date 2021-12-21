@@ -5,10 +5,13 @@ const int END_FRAME_INDEX = 1;
 const int FRAME_RATE_INDEX = 2;
 const int MAX_FRAME_COUNT_INDEX = 3;
 const int ANIMATION_UPDATE_INDEX = 0;
+const int MOTION_UPDATE_INDEX = 0;
 
 attribute vec2 vertexPosition;
 // attribute mat4 colors;
 attribute mat4 matrix;
+attribute vec3 motion;
+attribute vec3 acceleration;
 // attribute vec2 position;
 attribute float textureIndex;
 attribute mat4 textureCoordinates;
@@ -70,7 +73,10 @@ void main() {
 	v_index = textureIndex;
 	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
+	vec3 dummy = motion + acceleration;
+	mat4 mat = matrix;
+//	mat[3][1] += 200.;
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
-	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * finalView * matrix * vertexPosition4;
+	gl_Position = (ortho * (1. - isPerspective) + perspective * isPerspective) * finalView * mat * vertexPosition4;
 }

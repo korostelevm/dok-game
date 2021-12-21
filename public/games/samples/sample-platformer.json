@@ -7,7 +7,7 @@
       "anim": "debugGradient",
       "x": 1,
       "y": "viewportHeight",
-      "z": -100,
+      "z": 10,
       "opacity": 0,
       "manualRefresh": true,
       "hud": 1

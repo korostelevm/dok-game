@@ -625,7 +625,7 @@ class GameCore extends GameBase {
 							}
 							this.monkor.setProperty("joker", this.constructor.name);
 							this.monkor.setProperty("joker_position", this.monkor.x);
-							this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, engine.lastTime);
+							this.joker.changePosition3d(this.monkor.properties.joker_position, this.joker.y, this.joker.z, engine.lastTime);
 							this.joker.setProperty("pickedUp", false);
 							this.audio.hit.play();
 							if (!this.isBatmanRoom()) {
@@ -1014,7 +1014,7 @@ class GameCore extends GameBase {
 		}
 
 		if (this.monkor.properties.joker_position) {
-			this.joker.changePosition(this.monkor.properties.joker_position, this.joker.y, this.engine.lastTime);
+			this.joker.changePosition3d(this.monkor.properties.joker_position, this.joker.y, this.joker.z, this.engine.lastTime);
 		}		
 	}
 
@@ -1204,7 +1204,7 @@ class GameCore extends GameBase {
 				divMouse.style.opacity = 1;
 				return;
 			}
-			this.mouse.changePosition(x, y, lastTime);
+			this.mouse.changePosition3d(x, y, this.mouse.z, lastTime);
 			this.mouse.changeOpacity(1, lastTime);
 			this.mouse.alive = lastTime;
 			divMouse.style.opacity = 0;
@@ -1215,7 +1215,7 @@ class GameCore extends GameBase {
 			if (x < 0 || x > 800 || y < 0 || y > 400) {
 				return;
 			}
-			this.file.changePosition(x, y, lastTime);
+			this.file.changePosition3d(x, y, this.file.z, lastTime);
 			this.file.setProperty("name", e.dataTransfer.files[0].name.split(".")[0]);
 			this.file.setProperty("dropped", lastTime);
 			this.file.setProperty("pickedUp", null);
@@ -1244,7 +1244,7 @@ class GameCore extends GameBase {
 			const dist = Math.sqrt(dx * dx + dy * dy);
 			const speed = falling ? dy : Math.min(dist, 5);
 			if (speed > .1) {
-				this.file.changePosition(this.file.x + speed * dx / dist, Math.min(400, this.file.y + speed * dy / dist), time);
+				this.file.changePosition3d(this.file.x + speed * dx / dist, Math.min(400, this.file.y + speed * dy / dist), this.file.z, time);
 			}
 		}
 	}
@@ -1269,7 +1269,7 @@ class GameCore extends GameBase {
 			if (speed > .1) {
 				this.mouse.changeDirection(dx < 0 ? -1 : 1, time);
 				this.mouse.changeAnimation(this.mouse.eating ? this.atlas.mouse_eat : this.atlas.mouse_run, time);
-				this.mouse.changePosition(this.mouse.x + speed * dx / dist, Math.min(400, this.mouse.y + speed * dy / dist), time);
+				this.mouse.changePosition3d(this.mouse.x + speed * dx / dist, Math.min(400, this.mouse.y + speed * dy / dist), this.mouse.z, time);
 			} else {
 				this.mouse.changeAnimation(this.atlas.mouse, time);
 				if (this.mouse.onStill) {
@@ -1840,9 +1840,9 @@ class GameCore extends GameBase {
 			} else {
 				const dx = this.canRunRight() ? -(mouse.x - monkor.x) : -1;
 				monkor.changeAnimation(dx < 0 ? this.atlas.monkor_run_left : this.atlas.monkor_run_right, time);
-				monkor.changePosition(monkor.x + (dx < 0 ? -4 : 4), monkor.y, time);
+				monkor.changePosition3d(monkor.x + (dx < 0 ? -4 : 4), monkor.y, monkor.z, time);
 				if (monkor.x < 50 && !this.canRunLeft()) {
-					monkor.changePosition(monkor.x + 20, monkor.y, time);
+					monkor.changePosition3d(monkor.x + 20, monkor.y, monkor.z, time);
 				}
 				if (!monkor.running_away && this.canRunLeft()) {
 					if (dx < 0) {
@@ -1865,7 +1865,7 @@ class GameCore extends GameBase {
 
 			const rolling = monkor.x > 50 && monkor.x < 700 && this.isCarpetRolling();
 			if (rolling) {
-				monkor.changePosition(monkor.x - 3.8, monkor.y, time);
+				monkor.changePosition3d(monkor.x - 3.8, monkor.y, monkor.z, time);
 			}
 			return;
 		}
@@ -1881,7 +1881,7 @@ class GameCore extends GameBase {
 
 				monkor.changeAnimation(this.atlas.monkor_back, time);
 				if (!this.properties.impossibleRoomSolved) {
-					monkor.changePosition(400, 350 - 30 * (elapsed / 2000), time);
+					monkor.changePosition3d(400, 350 - 30 * (elapsed / 2000), monkor.z, time);
 				}
 				monkor.changeOpacity(Math.max(0, 1 - (elapsed / 2000)), time);
 				if (elapsed > 3000 && !monkor.levelup) {
@@ -1902,7 +1902,7 @@ class GameCore extends GameBase {
 		const lookup = this.monkor.lookupUntil && this.monkor.lookupUntil > time || this.monkor.alwaysLookup;
 		let anim = lookup ? this.atlas.monkor_back_still : this.atlas.monkor_still;
 		if (dist) {
-			monkor.changePosition(monkor.x + actualSpeed * dx / dist, monkor.y + actualSpeed * dy / dist, time);
+			monkor.changePosition3d(monkor.x + actualSpeed * dx / dist, monkor.y + actualSpeed * dy / dist, monkor.z, time);
 			if (Math.abs(dx) > Math.abs(dy)) {
 				anim = dx > 0 ? this.atlas.monkor_right : this.atlas.monkor_left;
 			} else if (dy > 0) {
@@ -1953,13 +1953,13 @@ class GameCore extends GameBase {
 		}
 		const rolling = monkor.x > 50 && monkor.x < 700 && this.isCarpetRolling();
 		if (rolling) {
-			monkor.changePosition(monkor.x - 3.86, monkor.y, time);
+			monkor.changePosition3d(monkor.x - 3.86, monkor.y, monkor.z, time);
 			if (Math.abs(dist) < 5) {
 				monkor.goal.x = monkor.x;
 			}
 		}
 		if (this.joker.x > 50 && this.isCarpetRolling()) {
-			this.joker.changePosition(this.joker.x - 3.86, this.joker.y, time);
+			this.joker.changePosition3d(this.joker.x - 3.86, this.joker.y, this.joker.z, time);
 		}
 
 
@@ -2081,7 +2081,7 @@ class GameCore extends GameBase {
 		this.piano.dropping = time;
 		this.piano.changeOpacity(1, time);
 		this.piano.dy = 30;
-		this.piano.changePosition(this.monkor.x, this.monkor.y - 1000, time);
+		this.piano.changePosition3d(this.monkor.x, this.monkor.y - 1000, this.monkor.z, time);
 	}
 
 	updatePiano(time, dt) {
@@ -2089,7 +2089,7 @@ class GameCore extends GameBase {
 			return;
 		}
 		if (this.piano.y < this.monkor.y + 20) {
-			this.piano.changePosition(this.piano.x, this.piano.y + this.piano.dy * Math.min(2, dt / 16), time);
+			this.piano.changePosition3d(this.piano.x, this.piano.y + this.piano.dy * Math.min(2, dt / 16), this.piano.z, time);
 		} else if(this.piano.anim !== this.atlas.piano_splash) {
 			this.piano.changeAnimation(this.atlas.piano_splash, time);
 			this.monkor.changeOpacity(0, time);
