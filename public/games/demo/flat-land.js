@@ -131,6 +131,13 @@ class FlatLand extends GameBase {
 		}
 	}
 
+	getInitialShift() {
+		return {
+			x: 0, y: 200, z: 550,
+			rotation: [20, 0, 0],
+		};
+	}
+
 	refresh(time, dt) {
 //		this.moveMazoos(time);
 	}

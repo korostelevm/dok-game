@@ -78,6 +78,7 @@ void main() {
 	float dt = (time - motionTime) / 1000.;
 	mat4 mat = matrix;
 	mat[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
+//	mat[3].x = mod(mat[3].x, 1000.);
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
 	float isOrtho = 1. - isPerspective;

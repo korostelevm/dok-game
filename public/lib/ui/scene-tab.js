@@ -70,7 +70,9 @@ class SceneTab {
 					localStorage.removeItem(`${gameName}_showScenes`);
 				}
 				sceneGroupDiv.style.display = checkbox.checked ? "" : "none";
+				checkbox.blur();
 			});
+			checkbox.addEventListener("click", e => e.stopPropagation());
 
 			const titleDiv = titleGroup.appendChild(document.createElement("label"));
 			titleDiv.innerText = name;

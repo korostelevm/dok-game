@@ -72,6 +72,7 @@ const globalFiles=[
 			"monkor.png",
 			"mouse-cursor.png",
 			"mouse.png",
+			"mushrooms.png",
 			"next-button.png",
 			"next-cursor.png",
 			"no-smoking.png",
@@ -90,6 +91,7 @@ const globalFiles=[
 			"sign.png",
 			"skin-texture.jpg",
 			"smoking-sign.png",
+			"smurf.png",
 			"sound-room.png",
 			"sparkle.png",
 			"start-screen.png",
@@ -160,7 +162,8 @@ const globalFiles=[
 			{
 				"demo": [
 					"flat-land.js",
-					"game-ring.js"
+					"game-ring.js",
+					"smurf.js"
 				]
 			},
 			{
@@ -333,6 +336,7 @@ const globalFiles=[
 					"focus-fixer.js",
 					"fps-box.js",
 					"keyboard-handler.js",
+					"player-overlay.js",
 					"scene-tab.js",
 					"tip-box.js"
 				]

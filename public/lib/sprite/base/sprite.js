@@ -265,6 +265,11 @@ class Sprite {
 		return false;
 	}
 
+	changeAnimationTime(animationTime, time) {
+		this.updated.updateTime = time || this.engine.lastTime;
+		this.updated.animation = animationTime;		
+	}
+
 	needUpdate() {
 		this.engine.updater.add(this);
 	}

@@ -11,10 +11,11 @@ class Engine {
 
 		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
 		this.imageLoader = new ImageLoader();
-		this.onPostRefresh = [];
+		this.uiComponents = [];
 
 		new FpsBox(this);
 		new DebugView(this);
+		this.playerOverlay = new PlayerOverlay(this);
 
 		this.refresher = new Set();
 		this.updater = new Set();
@@ -22,9 +23,6 @@ class Engine {
 		this.init(config);
 
 		this.seenGame = {};
-
-		const gender = localStorage.getItem("playerGender") || "M";
-		this.changeCharacter(gender === "W" ? "nuna" : gender === "T" ? "twin" : "monkor");
 
 		this.sidebars = [
 			{
@@ -164,11 +162,11 @@ class Engine {
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
-		this.shift = {x:0, y:0, zoom:1, opacity: 1, goal:{ x:0, y:0, zoom:1, opacity: 1 }, speed:dist => dist / 20, dirty: true};
+		this.shift = {x:0, y:0, z:0, zoom:1, opacity: 1, rotation:[0,0,0], goal:{ x:0, y:0, z:0, zoom:1, opacity: 1, rotation:[0,0,0], }, speed:dist => dist / 20, dirty: true};
 	}
 
-	addOnPostRefresh(component) {
-		this.onPostRefresh.push(component);
+	addUiComponent(component) {
+		this.uiComponents.push(component);
 	}
 
 	countUnlocked() {
@@ -400,7 +398,7 @@ class Engine {
 
 		this.textureManager.generateAllMipMaps();
 
-		this.onPostRefresh.filter(component => component).forEach(component => component.init());
+		this.uiComponents.filter(component => component).forEach(component => component.init());
 
 		this.ready = true;
 		Engine.trigger(this);
@@ -503,6 +501,7 @@ class Engine {
 	}
 
 	async initGame(game) {
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 		game.engine = this;
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
@@ -550,7 +549,7 @@ class Engine {
 	}
 
 	resetScene() {
-		const { game } = this;
+		const { game, gl } = this;
 		if (game) {
 			game.ready = false;
 			for (let i = 0; i < this.spriteCollection.size(); i++) {
@@ -583,12 +582,20 @@ class Engine {
 		this.urlToTextureIndex = {};
 		this.shift.x = 0;
 		this.shift.y = 0;
+		this.shift.z = 0;
+		this.shift.rotation[0] = 0;
+		this.shift.rotation[1] = 0;
+		this.shift.rotation[2] = 0;
 		this.shift.light = 0;
 		this.shift.zoom = 1;
 		this.shift.goal.x = 0;
 		this.shift.goal.y = 0;
+		this.shift.goal.z = 0;
 		this.shift.goal.zoom = 1;
 		this.shift.goal.light = 0;
+		this.shift.goal.rotation[0] = 0;
+		this.shift.goal.rotation[1] = 0;
+		this.shift.goal.rotation[2] = 0;
 		this.shift.dirty = true;
 	}
 
@@ -788,37 +795,6 @@ class Engine {
 		localStorage.setItem("defaultVoiceReplacement", voice);
 	}
 
-	setInception(inception, extraData) {
-		this.inception = inception;
-		const temp = this.swapData || {};
-		this.swapData = this.data;
-		this.data = temp;
-		if (extraData) {
-			for (let i in extraData) {
-				this.data[i] = extraData[i];
-			}
-		}
-
-		const TempScene = this.SwapScene || StartScreen;
-		this.SwapScene = engine.game.constructor;
-		this.setGame(new TempScene(), true).then(game => {
-			game.onInception(inception);
-		});
-		if (inception) {
-			this.canvas.parentElement.classList.add("inception");
-		} else {
-			this.canvas.parentElement.classList.remove("inception");
-		}
-
-		document.getElementById("player-overlay").style.display = inception ? "" : "none";
-		document.getElementById("back-button").style.display = inception ? "" : "none";
-		doResize();
-	}
-
-	changeCharacter(character) {
-		document.getElementById("player-overlay").src = `assets/${character}-overlay.png`;
-	}
-
 	onDropOnOverlay(event) {
 		if (this.game) {
 			this.game.onDropOnOverlay(event);
@@ -866,18 +842,30 @@ class Engine {
 		const shift = this.shift;
 		if (shift.x !== shift.goal.x
 			|| shift.y !== shift.goal.y
+			|| shift.z !== shift.goal.z
 			|| shift.zoom !== shift.goal.zoom
 			|| shift.light !== shift.goal.light
+			|| shift.rotation[0] !== shift.goal.rotation[0]
+			|| shift.rotation[1] !== shift.goal.rotation[1]
+			|| shift.rotation[2] !== shift.goal.rotation[2]
 			|| shift.dirty) {
 			const dx = (shift.goal.x - shift.x);
 			const dy = (shift.goal.y - shift.y);
+			const dz = (shift.goal.z - shift.z);
+			const drx = (shift.goal.rotation[0] - shift.rotation[0]);
+			const dry = (shift.goal.rotation[1] - shift.rotation[1]);
+			const drz = (shift.goal.rotation[2] - shift.rotation[2]);
 			const dzoom = (shift.goal.zoom - shift.zoom);
 			const dlight = (shift.goal.light - shift.light);
-			const dist = Math.sqrt(dx*dx + dy*dy + dzoom*dzoom + dlight*dlight);
+			const dist = Math.sqrt(dx*dx + dy*dy + dz*dz + drx*drx + dry*dry + drz*drz + dzoom*dzoom + dlight*dlight);
 			const speed = shift.speed(dist);
 			const mul = dist < .01 ? 1 : Math.min(speed, dist) / dist;
 			shift.x += dx * mul;
 			shift.y += dy * mul;
+			shift.z += dz * mul;
+			shift.rotation[0] += drx * mul;
+			shift.rotation[1] += dry * mul;
+			shift.rotation[2] += drz * mul;
 			shift.zoom += dzoom * mul;
 			shift.light += dlight * mul;
 			shift.dirty = false;
@@ -902,10 +890,11 @@ class Engine {
 		if (shiftChanged || shakeX || shakeY) {
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
-			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, 0));
-//			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(0, -350, 0));
+			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, -shift.z * coef * coef));
 			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, 1));
-//			mat4.rotateX(this.viewMatrix, this.viewMatrix, Math.PI / 8);
+			mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
+			mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
+			mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			gl.uniform1f(uniforms.globalLight.location, shift.light);
 
@@ -952,7 +941,7 @@ class Engine {
 	render(time, dt) {
 		const gl = this.gl;
 		//	Reset view
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+//		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
 		const uniforms = this.shaders[0].uniforms;
 		gl.uniform2f(uniforms.timeInfo.location, time, dt);
@@ -961,8 +950,10 @@ class Engine {
 	}
 
 	handlePostRefresh(time, dt, actualTime) {
-		for (let i = 0; i < this.onPostRefresh.length; i++) {
-			this.onPostRefresh[i].onRefresh(time, dt, actualTime);
+		for (let i = 0; i < this.uiComponents.length; i++) {
+			if (this.uiComponents[i].onRefresh) {
+				this.uiComponents[i].onRefresh(time, dt, actualTime);
+			}
 		}
 		this.lastTime = time;
 	}

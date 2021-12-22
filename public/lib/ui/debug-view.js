@@ -3,7 +3,7 @@ class DebugView {
 		if (!engine.debug) {
 			return;
 		}
-		engine.addOnPostRefresh(this);
+		engine.addUiComponent(this);
 		this.engine = engine;
 		this.debugCanvas = document.createElement("canvas");
 		this.debugCanvas.style.position = "absolute";
@@ -50,6 +50,7 @@ class DebugView {
 			checkbox.type = "checkbox";
 			checkbox.style.position = "absolute";
 			checkbox.style.top = `${this.debugCanvas.getBoundingClientRect().bottom + 10}px`;
+			checkbox.style.right = "20px";
 			checkbox.style.zIndex = "300";
 			checkbox.addEventListener("change", e => {
 				if (checkbox.checked) {
@@ -59,18 +60,20 @@ class DebugView {
 				}
 				this.debugCanvas.style.display = checkbox.checked ? "" : "none";
 				this.visible = checkbox.checked;
+				checkbox.blur();
 			});
+			checkbox.addEventListener("click", e => e.stopPropagation());
 			checkbox.checked = localStorage.getItem("showDebugView");
 			this.visible = checkbox.checked;
 			this.debugCanvas.style.display = checkbox.checked ? "" : "none";
+		}
+		if (!this.visible) {
+			return;
 		}
 		this.debugCanvas.style.left = `${canvas.offsetLeft + 2}px`;
 		this.debugCanvas.style.top = `${canvas.offsetTop + 2}px`;
 
 
-		if (!this.visible) {
-			return;
-		}
 		const ctx = this.debugCtx;
 		const { config: { viewport: { pixelScale } } } = engine;
 		const margin = 10 / pixelScale / canvasZoom;

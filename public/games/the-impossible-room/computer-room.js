@@ -152,7 +152,7 @@ class ComputerRoom extends GameCore {
 						// getMedal("The Computer", this.onUnlockMedal);
 
 						const { gender } = this.data;
-						this.engine.setInception(true, {
+						this.engine.playerOverlay.setInception(true, {
 							computerGender: gender,
 						});
 					},

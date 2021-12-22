@@ -72,6 +72,14 @@ class GameBase {
 		this.engine.enableSidebar(true);
 		this.engine.setPerspective(this.isPerpective());
 		await this.engine.changeCursor(null, true);
+		const { x, y, z, rotation } = this.getInitialShift() || {};
+		const [rotX, rotY, rotZ] = rotation || [];
+		this.engine.shift.goal.x = x || 0;
+		this.engine.shift.goal.y = y || 0;
+		this.engine.shift.goal.z = z || 0;
+		this.engine.shift.goal.rotation[0] = rotX || 0;
+		this.engine.shift.goal.rotation[1] = rotY || 0;
+		this.engine.shift.goal.rotation[2] = rotZ || 0;
 	}
 
 	get sceneName() {
@@ -80,6 +88,12 @@ class GameBase {
 
 	async getWindowSize(engine) {
 		return [1080, 600];
+	}
+
+	getInitialShift() {
+		return {
+			x: 0, y: 0, z: 0,
+		};
 	}
 
 	onExit(engine) {

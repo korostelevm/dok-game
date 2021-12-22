@@ -1,0 +1,128 @@
+class Smurf extends GameBase {
+	async init(engine, gameName) {
+		super.init(engine, gameName);
+
+		const { gl, config } = engine;
+		this.atlas = {
+			backwall: await engine.addTexture({
+				url: "assets/backwall.jpg",
+			}),
+			smurf_still: await engine.addTexture({
+				url: "assets/smurf.png",
+				spriteWidth: 256, spriteHeight: 256,
+				range:[1],
+			}),
+			smurf_walk: await engine.addTexture({
+				url: "assets/smurf.png",
+				spriteWidth: 256, spriteHeight: 256,
+				range:[0, 1],
+				frameRate: 5,
+			}),
+			hex: await engine.addTexture({
+				url: "assets/hex.png",
+				collision_url: "assets/hex.png",
+				cols: 2, rows: 2,
+				range: [0],
+			}),
+		};
+
+		const [viewportWidth, viewportHeight] = config.viewport.size;
+
+		const backwallWidth = viewportWidth * 2, backwallHeight = viewportHeight * 2;
+		this.backwall = this.spriteFactory.create({
+			anim: this.atlas.backwall,
+			size: [backwallWidth, backwallHeight],
+			hotspot: [backwallWidth / 2, backwallHeight / 2],
+			opacity: .5,
+			x: viewportWidth / 2, y: viewportHeight / 2,
+			z: -2000,
+		});
+
+		this.mazoos = [];
+		for (let i = 0; i < 2000; i++) {
+			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
+			const z = - Math.random() * 2000;
+			const y = 400;// + (z / 2000) * 500;
+			const smurf = this.spriteFactory.create({
+				anim: this.atlas.smurf_walk,
+				size: [64, 64],
+				hotspot: [32, 64],
+				x, y, z,
+				motion: [100, 0, 0],
+			}, {
+				goal: [
+					Math.random() * viewportWidth,
+					y,
+					-Math.random() * 2000,
+				],
+			});
+			smurf.changeAnimationTime(Math.random() * 1000000);
+			this.mazoos.push(smurf);
+		}
+
+		for (let i = 0; i < 1000; i++) {
+			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
+			const z = - Math.random() * 2000;
+			const y = 400;// + (z / 2000) * 500 + 20;
+			this.spriteFactory.create({
+				anim: this.atlas.hex,
+				size: [256, 256],
+				hotspot: [128, 128],
+				x, y, z,
+				rotation: [-90, 0, 0],					
+			});
+		}
+	}
+
+	isPerpective() {
+		return true;
+	}
+
+	moveMazoos(time) {
+		const gl = engine.gl;
+		const config = engine.config;
+		const viewportWidth = config.viewport.size[0];
+		for (let i = 0; i < this.mazoos.length; i++) {
+			const mazoo = this.mazoos[i];
+			const goalX = mazoo.goal[0];
+			const goalZ = mazoo.goal[2];
+			const dx = (goalX - mazoo.x);
+			const dz = (goalZ - mazoo.z);
+			const dist = Math.max(1, Math.sqrt(dx*dx + dz*dz));
+			if (!dist) {
+				continue;
+			}
+			const z = mazoo.z + dz / dist;
+			const y = 400;// + (z / 2000) * 500;
+			mazoo.changePosition(mazoo.x + dx / dist, y, z, time);
+			if (dist <= 1) {
+				if (!mazoo.stillTime) {
+					mazoo.stillTime = time;
+					mazoo.changeAnimation(this.atlas.mazoo_still, time);
+				} else if (time - mazoo.stillTime > 5000) {
+					const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
+					mazoo.goal[0] = x;
+					mazoo.goal[2] = -Math.random() * 2000;
+				}
+			} else {
+				mazoo.stillTime = 0;
+				if (Math.abs(dx) >= Math.abs(dz)) {
+					mazoo.changeAnimation(dx < 0 ? this.atlas.mazoo_left : this.atlas.mazoo_right, time);
+				} else {
+					mazoo.changeAnimation(dz < 0 ? this.atlas.mazoo_up : this.atlas.mazoo_down, time);
+				}
+			}
+		}
+	}
+
+	getInitialShift() {
+		return {
+			x: 0, y: 200, z: 550,
+			rotation: [20, 0, 0],
+		};
+	}
+
+	refresh(time, dt) {
+//		this.moveMazoos(time);
+	}
+}
