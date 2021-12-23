@@ -44,7 +44,7 @@
 		"usage": "DYNAMIC_DRAW",
 		"instances": 1
 	},
-	"isHud": {
+	"isFlag": {
 		"type": "UNSIGNED_BYTE",
 		"usage": "STATIC_DRAW",
 		"instances": 1

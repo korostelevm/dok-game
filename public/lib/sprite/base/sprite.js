@@ -28,6 +28,7 @@ class Sprite {
 		this.remember = data.remember || false;
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
+		this.isSprite = data.isSprite || 0;
 
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
@@ -58,7 +59,7 @@ class Sprite {
 			direction: time,
 			opacity: time,
 			crop: time,
-			isHud: time,
+			isFlag: time,
 			motion: time,
 			acceleration: time,
 			light: time,
@@ -161,7 +162,17 @@ class Sprite {
 	changeHud(isHud, time) {
 		if (this.isHud !== isHud) {
 			this.isHud = isHud;
-			this.updated.isHud = time || this.engine.lastTime;
+			this.updated.isFlag = time || this.engine.lastTime;
+			this.needUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	changeSprite(isSprite, time) {
+		if (this.isSprite !== isSprite) {
+			this.isSprite = isSprite;
+			this.updated.isFlag = time || this.engine.lastTime;
 			this.needUpdate();
 			return true;
 		}

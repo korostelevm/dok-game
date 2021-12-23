@@ -189,6 +189,7 @@ class Smurf extends GameBase {
 				hotspot: [16,32],
 				x: xdiff, y:400, z:zdiff,
 				opacity: .5,
+				isSprite: 1,
 			}, {
 				onRefresh: mushroom => {
 					if (!mushroom.built) {

@@ -582,34 +582,24 @@
 	</head>
 	<body>
 		<div id="game-tab" style="margin-left: 80px;"></div>
-			<img class="incept" id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
-			<img class="incept inceptback" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px;
-				cursor:url(assets/pointer-cursor.png), auto;" src="assets/back-button.png"></img>
-			<script type="text/javascript">
-				const backButton = document.getElementById("back-button");
-				function doResize() {
-					if (document.getElementById("canvas")) {
-						const rect = document.getElementById("canvas").getBoundingClientRect();
-						const shift = -200;
-						const sidebarShift = -220;
-						document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
-						document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
-						document.getElementById("player-overlay").style.top = `${rect.y + shift + 150}px`;
-						document.getElementById("back-button").style.top = `${rect.y + shift + 450}px`;
-					}
+		<img class="incept" id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
+		<img class="incept inceptback" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px;
+			cursor:url(assets/pointer-cursor.png), auto;" src="assets/back-button.png"></img>
+		<script type="text/javascript">
+			const backButton = document.getElementById("back-button");
+			function doResize() {
+				if (document.getElementById("canvas")) {
+					const rect = document.getElementById("canvas").getBoundingClientRect();
+					const shift = -200;
+					const sidebarShift = -220;
+					document.getElementById("player-overlay").style.left = `${rect.x + shift + 50}px`;
+					document.getElementById("back-button").style.left = `${rect.x + shift + 750}px`;
+					document.getElementById("player-overlay").style.top = `${rect.y + shift + 150}px`;
+					document.getElementById("back-button").style.top = `${rect.y + shift + 450}px`;
 				}
-				window.addEventListener("resize", doResize);
-			</script>
-
-<!-- 			<img id="mouse-cursor" class="shadowed" style="z-index: 150; position: absolute; touch-action: none; pointer-events: none; height: 25px; width: 15px" src="assets/mouse-cursor.png">
-			<script type="text/javascript">
-				const mouseCursor = document.getElementById("mouse-cursor");
-				document.addEventListener("mousemove", e => {
-						mouseCursor.style.top = `${e.pageY}px`;
-						mouseCursor.style.left = `${e.pageX}px`;
-				});
-			</script>
- -->
+			}
+			window.addEventListener("resize", doResize);
+		</script>
 
 		<div style="position: absolute; left: 10px; top: 60px; z-index: 100; font-size: 8pt;">
 			<div id="sidebar" style="flex-direction: column; display: flex; display: none; 			  cursor:url(assets/mouse-cursor.png), auto;">

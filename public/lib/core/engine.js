@@ -329,8 +329,6 @@ class Engine {
 			console.error("You need a canvas with id 'canvas'.");
 		}
 		ChronoUtils.tick();
-		// const writeCanvas = document.getElementById("write-canvas");
-		// this.writeCanvas = writeCanvas;
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
@@ -901,8 +899,6 @@ class Engine {
 				shakeY = (Math.random() - .5) * shake;
 			}
 		} else if (shake === null && this.shake) {
-			this.viewMatrix = mat4.fromRotationTranslation(this.viewMatrix, quat.fromEuler(quat.create(), -45, 0, 0), vec3.fromValues(shift.x, shift.y, 0));
-			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			delete this.shake;
 			shiftChanged = true;
 		}
@@ -917,6 +913,12 @@ class Engine {
 			mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			gl.uniform1f(uniforms.globalLight.location, shift.light);
+
+			mat4.identity(this.viewMatrix);
+			mat4.rotateX(this.viewMatrix, this.viewMatrix, -shift.rotation[0] / 180 * Math.PI);
+			mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] / 180 * Math.PI);
+			mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] / 180 * Math.PI);
+			gl.uniformMatrix4fv(uniforms.spriteMatrix.location, false, this.viewMatrix);
 
 			const scrollables = this.spriteCollection.filterBy("onScroll");
 			for (let i = 0; i < scrollables.length; i++) {
@@ -954,8 +956,8 @@ class Engine {
 				|| sprite.updated.motion >= lastTime) {
 				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
 			}
-			if (sprite.updated.isHud >= lastTime) {
-				this.spriteRenderer.setHud(spriteIndex, sprite.isHud);
+			if (sprite.updated.isFlag >= lastTime) {
+				this.spriteRenderer.setFlag(spriteIndex, sprite.isHud, sprite.isSprite);
 			}
 		});
 		this.updater.clear();	

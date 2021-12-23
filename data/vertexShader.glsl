@@ -18,7 +18,7 @@ attribute mat4 textureCoordinates;
 attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
 attribute vec4 updateTime;
-attribute float isHud;
+attribute vec2 isFlag;
 
 uniform float isPerspective;
 uniform vec2 timeInfo;
@@ -27,6 +27,7 @@ uniform mat4 ortho;
 uniform mat4 view;
 uniform mat4 hudView;
 uniform mat3 clamp;
+uniform mat4 spriteMatrix;
 
 // varying vec4 v_color;
 varying vec2 v_textureCoord;
@@ -67,6 +68,48 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, f
 	return cell * spriteRect;
 }
 
+float det(mat2 matrix) {
+    return matrix[0].x * matrix[1].y - matrix[0].y * matrix[1].x;
+}
+
+mat3 transpose(mat3 matrix) {
+    vec3 row0 = matrix[0];
+    vec3 row1 = matrix[1];
+    vec3 row2 = matrix[2];
+    mat3 result = mat3(
+        vec3(row0.x, row1.x, row2.x),
+        vec3(row0.y, row1.y, row2.y),
+        vec3(row0.z, row1.z, row2.z)
+    );
+    return result;
+}
+
+mat3 inverse(mat3 matrix) {
+    vec3 row0 = matrix[0];
+    vec3 row1 = matrix[1];
+    vec3 row2 = matrix[2];
+
+    vec3 minors0 = vec3(
+        det(mat2(row1.y, row1.z, row2.y, row2.z)),
+        det(mat2(row1.z, row1.x, row2.z, row2.x)),
+        det(mat2(row1.x, row1.y, row2.x, row2.y))
+    );
+    vec3 minors1 = vec3(
+        det(mat2(row2.y, row2.z, row0.y, row0.z)),
+        det(mat2(row2.z, row2.x, row0.z, row0.x)),
+        det(mat2(row2.x, row2.y, row0.x, row0.y))
+    );
+    vec3 minors2 = vec3(
+        det(mat2(row0.y, row0.z, row1.y, row1.z)),
+        det(mat2(row0.z, row0.x, row1.z, row1.x)),
+        det(mat2(row0.x, row0.y, row1.x, row1.y))
+    );
+
+    mat3 adj = transpose(mat3(minors0, minors1, minors2));
+
+    return (1.0 / dot(row0, minors0)) * adj;
+}
+
 void main() {
 	float time = timeInfo[0];
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
@@ -77,16 +120,25 @@ void main() {
 	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
 
+	float isHud = isFlag[0];
+	float isSprite = isFlag[1];
+
+	mat4 finalView = isHud * hudView + (1. - isHud) * view;
+
 	float motionTime = updateTime[MOTION_UPDATE_INDEX];
 	float dt = (time - motionTime) / 1000.;
 	mat4 mat = matrix;
-	mat[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
-	mat[3].x = clamp[0][0] + mod(mat[3].x - clamp[0][0], clamp[0][1]);
-	mat[3].y = clamp[1][0] + mod(mat[3].y - clamp[1][0], clamp[1][1]);
-	mat[3].z = clamp[2][0] + mod(mat[3].z - clamp[2][0], clamp[2][1]);
+	mat4 shift = mat4(1.0);
+	shift[3] = mat[3];
+	shift[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
+	shift[3].x = clamp[0][0] + mod(shift[3].x - clamp[0][0], clamp[0][1]);
+	shift[3].y = clamp[1][0] + mod(shift[3].y - clamp[1][0], clamp[1][1]);
+	shift[3].z = clamp[2][0] + mod(shift[3].z - clamp[2][0], clamp[2][1]);
 
-	mat4 finalView = isHud * hudView + (1. - isHud) * view;
+	mat[3].xyz = vec3(0, 0, 0);
+
 	float isOrtho = max(isHud, 1. - isPerspective);
-	gl_Position = (ortho * isOrtho + perspective * (1. - isOrtho))
-		* finalView * mat * vertexPosition4;
+	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
+	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * mat4(1.0);
+	gl_Position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
 }

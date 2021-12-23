@@ -65,8 +65,8 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(attributes.updateTime, index, this.updateTimes);
 	}
 
-	setHud(index, isHud) {
+	setFlag(index, isHud, isSprite) {
 		const attributes = this.attributes;
-		this.bufferRenderer.setAttributeByte(attributes.isHud, index, isHud);		
+		this.bufferRenderer.setAttributeByte2(attributes.isFlag, index, isHud, isSprite);
 	}
 }
