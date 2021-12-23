@@ -65,6 +65,7 @@ const globalFiles=[
 			"menu-select.png",
 			"menu.png",
 			"metal.jpg",
+			"meter.png",
 			"monkor-collision.png",
 			"monkor-overlay.png",
 			"monkor-shake.png",
@@ -86,6 +87,7 @@ const globalFiles=[
 			"pipe-collision.png",
 			"pipe.png",
 			"pointer-cursor.png",
+			"red-line.png",
 			"restaurant.png",
 			"select-cursor.png",
 			"sign.png",
@@ -118,7 +120,6 @@ const globalFiles=[
 			".DS_Store",
 			"animal-cry.mp3",
 			"beep.mp3",
-			"blinkpong-loop.mp3",
 			"diving.mp3",
 			"door.mp3",
 			"drink.mp3",
@@ -133,8 +134,7 @@ const globalFiles=[
 			"piano.mp3",
 			"pickup.mp3",
 			"player-hurt.mp3",
-			"scream.mp3",
-			"weirdsong.mp3"
+			"scream.mp3"
 		]
 	},
 	"favicon.ico",
@@ -305,6 +305,8 @@ const globalFiles=[
 			},
 			{
 				"sound": [
+					".DS_Store",
+					"music.js",
 					"sound.js"
 				]
 			},
@@ -332,7 +334,13 @@ const globalFiles=[
 			},
 			{
 				"ui": [
+					{
+						"base": [
+							"ui-component.js"
+						]
+					},
 					"debug-view.js",
+					"drag-drop.js",
 					"focus-fixer.js",
 					"fps-box.js",
 					"keyboard-handler.js",
@@ -349,6 +357,12 @@ const globalFiles=[
 					"string.js"
 				]
 			}
+		]
+	},
+	{
+		"music": [
+			"blinkpong-loop.mp3",
+			"weirdsong.mp3"
 		]
 	},
 	"package.json",

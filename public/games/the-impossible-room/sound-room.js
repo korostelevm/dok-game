@@ -520,19 +520,19 @@ class SoundRoom extends GameCore {
 	async postInit() {
 		await super.postInit();
 
-		const audio = document.getElementById("audio");
+		const audio = await this.engine.music.getAudio("music/weirdsong.mp3");
 		audio.currentTime = 0;
 		this.setAudio(audio, false, .5, true);
 	}
 
-	onExit(engine) {
-		const audio = document.getElementById("blinkpong");
+	async onExit(engine) {
+		const audio = await engine.music.getAudio("music/blinkpong-loop.mp3");
 		this.setAudio(audio, false, .5, true);
-		super.onExit(engine);
+		return super.onExit(engine);
 	}
 
 	getMusic() {
-		return "blinkpong";
+		return "music/blinkpong-loop.mp3";
 	}
 
 	getWalkArea() {
@@ -581,6 +581,7 @@ class SoundRoom extends GameCore {
 	}
 
 	setAudio(audio, turnOn, volume, ignore) {
+		console.log(audio.src, turnOn);
 		super.setAudio(audio, turnOn, volume, ignore);
 		this.boombox.playing = turnOn;
 		if (turnOn) {

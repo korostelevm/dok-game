@@ -341,9 +341,9 @@ class MathRoom extends GameCore {
 		document.getElementById("math-group").style.display = "block";
 	}
 
-	onExit(engine) {
+	async onExit(engine) {
 		document.getElementById("math-group").style.display = "none";		
-		super.onExit(engine);
+		return super.onExit(engine);
 	}
 
 	updateMathBoard(time) {

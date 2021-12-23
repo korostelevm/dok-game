@@ -1,7 +1,6 @@
-class PlayerOverlay {
+class PlayerOverlay extends UiComponent {
 	constructor(engine) {
-		this.engine = engine;
-		engine.addUiComponent(this);
+		super(engine);
 	}
 
 	init() {

@@ -8,6 +8,7 @@ uniform float globalLight;
 varying vec2 v_textureCoord;
 varying float v_index;
 varying float v_opacity;
+varying float v_light;
 
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
 	float threshold = 0.00001;
@@ -24,5 +25,5 @@ void main() {
 	if (color.a <= 0.01) {
 		discard;
 	}
-	gl_FragColor = vec4(color.xyz * globalLight, color.w * v_opacity);
+	gl_FragColor = vec4(color.xyz * globalLight * v_light, color.w * v_opacity);
 }

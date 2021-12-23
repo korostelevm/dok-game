@@ -526,13 +526,13 @@ class TimeRoom extends GameCore {
 		this.updateClock();
 	}	
 
-	onExit(engine) {
+	async onExit(engine) {
 		document.getElementById("im").style.display = "none";
 		document.getElementById("container").removeChild(this.timeRoomLabels);
 		if (this.redButton) {
 			this.redButton.setProperty("pushed", null);
 		}
-		super.onExit(engine);
+		return super.onExit(engine);
 	}
 
 	checkRollingCarpet(time) {

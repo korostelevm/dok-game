@@ -48,10 +48,10 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(this.attributes.acceleration, index, this.tempAcceleration);
 	}
 
-	setAnimation(index, anim, direction, vdirection, opacity, cropX, cropY) {
+	setAnimation(index, anim, direction, vdirection, opacity, light, cropX, cropY) {
 		const attributes = this.attributes;
 		if (anim) {
-			this.bufferRenderer.setAttributeByte(attributes.textureIndex, index, anim.index);
+			this.bufferRenderer.setAttributeByte2(attributes.textureIndex, index, anim.index, light * 128);
 			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, vdirection, opacity, cropX, cropY));
 			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
 			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());

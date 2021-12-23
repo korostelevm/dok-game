@@ -2,6 +2,10 @@ class ImageLoader {
 	constructor() {
 		this.imageStock = {};
 		this.collisionBoxes = {};
+		this.preserve = {
+			"assets/mouse-cursor.png": true,
+			"assets/pointer-cursor.png": true,
+		};
 		this.canvas = document.createElement("canvas");
 	}
 
@@ -17,6 +21,11 @@ class ImageLoader {
 				delete this.imageStock[url];
 			}
 		}
+	}
+
+	async getBlobUrl(url) {
+		await this.loadImage(url);
+		return this.preserve[url] ? this.imageStock[url]?.img.src : null; 
 	}
 
 	async preloadImages(...urls) {
@@ -52,7 +61,9 @@ class ImageLoader {
 							const imageURL = URL.createObjectURL(req.response);
 							const { img } = this.imageStock[url];
 							img.addEventListener("load", e => {
-								URL.revokeObjectURL(imageURL);
+								if (!this.preserve[url]) {
+									URL.revokeObjectURL(imageURL);
+								}
 								resolve(img);
 								this.imageStock[url].progress = 1;
 								this.imageStock[url].loaded = true;

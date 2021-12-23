@@ -13,7 +13,7 @@ attribute mat4 matrix;
 attribute vec3 motion;
 attribute vec3 acceleration;
 // attribute vec2 position;
-attribute float textureIndex;
+attribute vec2 textureIndex;
 attribute mat4 textureCoordinates;
 attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
@@ -26,11 +26,13 @@ uniform mat4 perspective;
 uniform mat4 ortho;
 uniform mat4 view;
 uniform mat4 hudView;
+uniform mat3 clamp;
 
 // varying vec4 v_color;
 varying vec2 v_textureCoord;
 varying float v_index;
 varying float v_opacity;
+varying float v_light;
 
 vec4 getCornerValue(mat4 value, vec2 position) {
 	return mix(
@@ -70,7 +72,8 @@ void main() {
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
-	v_index = textureIndex;
+	v_index = textureIndex[0];
+	v_light = textureIndex[1] / 128.;
 	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
 
@@ -78,10 +81,12 @@ void main() {
 	float dt = (time - motionTime) / 1000.;
 	mat4 mat = matrix;
 	mat[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
-//	mat[3].x = mod(mat[3].x, 1000.);
+	mat[3].x = clamp[0][0] + mod(mat[3].x - clamp[0][0], clamp[0][1]);
+	mat[3].y = clamp[1][0] + mod(mat[3].y - clamp[1][0], clamp[1][1]);
+	mat[3].z = clamp[2][0] + mod(mat[3].z - clamp[2][0], clamp[2][1]);
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
-	float isOrtho = 1. - isPerspective;
-	gl_Position = (ortho * isOrtho + perspective * isPerspective)
+	float isOrtho = max(isHud, 1. - isPerspective);
+	gl_Position = (ortho * isOrtho + perspective * (1. - isOrtho))
 		* finalView * mat * vertexPosition4;
 }

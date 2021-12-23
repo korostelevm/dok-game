@@ -13,12 +13,17 @@ class Engine {
 		this.imageLoader = new ImageLoader();
 		this.uiComponents = [];
 
-		new FpsBox(this);
-		new DebugView(this);
+		if (this.debug) {
+			new FpsBox(this);
+			new DebugView(this);
+		}
 		this.playerOverlay = new PlayerOverlay(this);
+		new DragDrop(this);
 
 		this.refresher = new Set();
 		this.updater = new Set();
+
+		this.music = new Music(this);
 
 		this.init(config);
 
@@ -309,8 +314,10 @@ class Engine {
 	async init(config) {
 		this.config = config;
 
+		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = config;
+
 		ChronoUtils.tick();
-		if (config.viewport.pixelScale < 1 && !this.isRetinaDisplay()) {
+		if (pixelScale < 1 && !this.isRetinaDisplay()) {
 			config.viewport.pixelScale = 1;
 		}
 		console.log("Config", config);
@@ -385,8 +392,8 @@ class Engine {
 		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
 		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
-
-		this.resize(canvas, gl, config);
+		this.resize(viewportWidth, viewportHeight, pixelScale);
+		this.initialize(gl, this.shaders[0], config);
 
 		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
 		//console.log(this.voices);
@@ -434,7 +441,7 @@ class Engine {
 
 	async setupGameName(globalFiles) {
 		this.classToGame = {};
-		globalFiles.forEach(({games}) => {
+		globalFiles.forEach(({games, music}) => {
 			if (games) {
 				games.forEach(folder => {
 					for (let dirName in folder) {
@@ -457,6 +464,11 @@ class Engine {
 					}
 				});
 			}
+			if (music) {
+				music.forEach(mp3 => {
+					console.log(mp3);
+				});
+			}
 		});
 	}
 
@@ -475,7 +487,7 @@ class Engine {
 		if (!skipCursor) {
 			await this.changeCursor("wait");
 		}
-		this.resetScene();
+		await this.resetScene();
 
 		this.game = game;
 		if (this.ready) {
@@ -528,7 +540,7 @@ class Engine {
 	}
 
 	handleMouse(e) {
-		if (this.game) {
+		if (this.game && this.game.ready) {
 			this.game.handleMouse(e);
 		}
 	}
@@ -548,7 +560,7 @@ class Engine {
 		});
 	}
 
-	resetScene() {
+	async resetScene() {
 		const { game, gl } = this;
 		if (game) {
 			game.ready = false;
@@ -560,7 +572,7 @@ class Engine {
 			for (let i = 0; i < game.physics.length; i++) {
 				game.physics[i].onExit(game);
 			}
-			game.onExit(engine);
+			await game.onExit(engine);
 			this.lastGame = game.constructor.name;
 		}
 		if (this.spriteCollection) {
@@ -624,8 +636,7 @@ class Engine {
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
-		const viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.fromValues(0, 0, 0));
-		this.viewMatrix = viewMatrix;
+		this.viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.fromValues(0, 0, 0));
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
 
@@ -643,6 +654,7 @@ class Engine {
 		this.keyboardHandler.addKeyDownListener('p', () => {
 			this.setPerspective(!this.isPerspective);
 		});
+		this.setClamp(0, 0, 0, 0, 0, 0);
 	}
 
 	setPerspective(perspective) {
@@ -650,6 +662,15 @@ class Engine {
 		this.isPerspective = perspective;
 		const uniforms = this.shaders[0].uniforms;
 		this.gl.uniform1f(uniforms.isPerspective.location, perspective ? 1 : 0);		
+	}
+
+	setClamp(minX, maxX, minY, maxY, minZ, maxZ) {
+		const uniforms = this.shaders[0].uniforms;
+		const clampMatrix = mat3.fromValues(
+			maxX===minX ? -ArrayUtils.BIG_NUMBER / 2 : minX, (maxX-minX) || ArrayUtils.BIG_NUMBER, 0,
+			maxY===minY ? -ArrayUtils.BIG_NUMBER / 2 : minY, (maxY-minY) || ArrayUtils.BIG_NUMBER, 0,
+			maxZ===minZ ? -ArrayUtils.BIG_NUMBER / 2 : minZ, (maxZ-minZ) || ArrayUtils.BIG_NUMBER, 0);
+		this.gl.uniformMatrix3fv(uniforms.clamp.location, false, clampMatrix);
 	}
 
 	pointContains(x, y, collisionBox) {
@@ -669,15 +690,14 @@ class Engine {
 		}
 	}
 
-	resize(canvas, gl, config) {
-		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = config;
-		canvas.width = viewportWidth / pixelScale;
-		canvas.height = viewportHeight / pixelScale;
+	resize(viewportWidth, viewportHeight, pixelScale) {
+		const { canvas, gl } = this;
+		canvas.width = viewportWidth / (pixelScale || 0);
+		canvas.height = viewportHeight / (pixelScale || 0);
 		canvas.style.width = `${viewportWidth}px`;
 		canvas.style.height = `${viewportHeight}px`;
 		canvas.style.opacity = 1;
   		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-		this.initialize(gl, this.shaders[0], config);
 	}
 
 	static trigger(engine) {
@@ -859,7 +879,7 @@ class Engine {
 			const dlight = (shift.goal.light - shift.light);
 			const dist = Math.sqrt(dx*dx + dy*dy + dz*dz + drx*drx + dry*dry + drz*drz + dzoom*dzoom + dlight*dlight);
 			const speed = shift.speed(dist);
-			const mul = dist < .01 ? 1 : Math.min(speed, dist) / dist;
+			const mul = dist < 1 ? 1 : Math.min(speed, dist) / dist;
 			shift.x += dx * mul;
 			shift.y += dy * mul;
 			shift.z += dz * mul;
@@ -908,7 +928,9 @@ class Engine {
 
 	handleSpriteUpdate(lastTime) {
 		this.updater.forEach(sprite => {
-			const { crop:[cropX, cropY], spriteIndex} = sprite;
+			const spriteIndex = sprite.spriteIndex;
+			const cropX = sprite.crop.cropX;
+			const cropY = sprite.crop.cropY;
 			if (sprite.updated.sprite >= lastTime
 				|| sprite.updated.crop >= lastTime
 				|| sprite.updated.hotspot >= lastTime) {
@@ -919,9 +941,10 @@ class Engine {
 				|| sprite.updated.direction >= lastTime
 				|| sprite.updated.opacity >= lastTime
 				|| sprite.updated.crop >= lastTime
-				|| sprite.updated.active >= lastTime) {
-				const {anim, direction, vdirection, opacity, active} = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, cropX, cropY);
+				|| sprite.updated.active >= lastTime
+				|| sprite.updated.light >= lastTime) {
+				const {anim, direction, vdirection, opacity, active, light} = sprite;
+				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, cropX, cropY);
 			}
 			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;
@@ -939,14 +962,13 @@ class Engine {
 	}
 
 	render(time, dt) {
-		const gl = this.gl;
-		//	Reset view
-//		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		this.updateTime(time, dt);
+		this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
+	}
 
+	updateTime(time, dt) {
 		const uniforms = this.shaders[0].uniforms;
-		gl.uniform2f(uniforms.timeInfo.location, time, dt);
-		//	DRAW CALL
-		this.ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
+		this.gl.uniform2f(uniforms.timeInfo.location, time, dt);		
 	}
 
 	handlePostRefresh(time, dt, actualTime) {

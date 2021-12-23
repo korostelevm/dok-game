@@ -21,6 +21,7 @@ class Sprite {
 		this.hotspot = [... data.hotspot || [0, 0]];
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
+		this.light = data.light !== undefined ? data.light : 1;
 		this.crop = [1, 1];
 		this.active = true;
 		this.isHud = data.hud ? 1 : 0;
@@ -33,7 +34,6 @@ class Sprite {
 		this.anim = data.anim;
 		if (!this.anim) {
 			console.warn("Anim doesn't exist.");
-			throw new Error("");
 		}
 		this.collisionBox = {
 			top:0,
@@ -61,6 +61,7 @@ class Sprite {
 			isHud: time,
 			motion: time,
 			acceleration: time,
+			light: time,
 		};
 		this.engine.updater.add(this);
 	}
@@ -233,6 +234,16 @@ class Sprite {
 		if (this.active !== value) {
 			this.active = value;
 			this.updated.active = time || this.engine.lastTime;
+			this.needUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	changeLight(light, time) {
+		if (this.light !== light) {
+			this.light = light;
+			this.updated.light = time || this.engine.lastTime;
 			this.needUpdate();
 			return true;
 		}

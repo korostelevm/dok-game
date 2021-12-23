@@ -160,7 +160,7 @@ class Selection extends GameBase {
 		}
 	}
 
-	onExit(engine) {
+	async onExit(engine) {
 		const previousGender = this.data.gender;
 		let character = "monkor";
 		switch(this.properties.check) {
@@ -194,6 +194,7 @@ class Selection extends GameBase {
 			document.getElementById("player-name").textContent =
 				this.data.name.toUpperCase().startsWith("MONKOR") ? "Monkor" : this.data.name;
 		}
+		return super.onExit(engine);
 	}
 
 	handleMouse(e) {

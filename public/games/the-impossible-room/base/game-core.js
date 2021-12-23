@@ -763,7 +763,7 @@ class GameCore extends GameBase {
 		document.getElementById("controls").style.display = "";
 		document.getElementById("player-name").innerText = (this.data.name || "Monkor").split(" ")[0];
 
-		this.addListeners(engine);
+		await this.addListeners(engine);
 
 		this.inventoryIcons = {
 			...this.inventoryIcons,
@@ -1089,7 +1089,7 @@ class GameCore extends GameBase {
 	onJoker(putDown) {
 	}
 
-	onExit(engine) {
+	async onExit(engine) {
 		if (this.f) {
 			this.antiGameOver();
 		}
@@ -1106,7 +1106,7 @@ class GameCore extends GameBase {
 		this.setInventoryVisibility(false);
 		this.setControlVisibility(false);
 		this.setDialogVisibility(false);
-		super.onExit(engine);
+		return super.onExit(engine);
 	}
 
 	clearActions() {
@@ -1117,15 +1117,15 @@ class GameCore extends GameBase {
 	}
 
 	getMusic() {
-		return "audio";
+		return "music/weirdsong.mp3";
 	}
 
 	shouldResetAudio() {
 		return false;
 	}
 
-	addListeners(engine) {
-		const audio = document.getElementById(this.getMusic());
+	async addListeners(engine) {
+		const audio = await engine.music.getAudio(this.getMusic());
 		/* Addd audio listener */
 		engine.keyboardHandler.addKeyUpListener("m", e => {
 			if (this.shouldResetAudio()) {
@@ -2095,7 +2095,7 @@ class GameCore extends GameBase {
 			this.monkor.changeOpacity(0, time);
 			this.monkor.dead = time;
 			this.audio.piano.play();
-			const audio = document.getElementById("audio");
+			const audio = this.engine.music.getAudio("music/weirdsong.mp3");
 			this.setAudio(audio, audio.paused, 0);
 			setTimeout(() => this.gameOver(), 5000);
 			this.onDead();

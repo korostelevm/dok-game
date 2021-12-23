@@ -96,7 +96,7 @@ class GameBase {
 		};
 	}
 
-	onExit(engine) {
+	async onExit(engine) {
 	}
 
 	handleMouse(e) {

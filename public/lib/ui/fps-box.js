@@ -1,9 +1,6 @@
-class FpsBox {
+class FpsBox extends UiComponent {
 	constructor(engine) {
-		if (!engine.debug) {
-			return;
-		}
-		engine.addUiComponent(this);
+		super(engine);
 		this.perfIndex = 0;
 		this.perfTimers = new Array(20).map(() => 0);
 

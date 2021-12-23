@@ -9,6 +9,8 @@ class Menu extends GameBase {
 			...this.audio,
 		};
 
+		this.mainTheme = await engine.music.getAudio("music/weirdsong.mp3");
+
 		this.atlas = {
 			...this.atlas,
 			menu: await engine.addTexture({
@@ -100,7 +102,7 @@ class Menu extends GameBase {
 			opacity: .7,
 		}, {
 			onClick: () => {
-				const audio = document.getElementById("audio");
+				const audio = this.mainTheme;
 				this.setAudio(audio, audio.paused, .5);
 				this.speaker.changeAnimation(!audio.paused ? this.atlas.mute : this.atlas.unmute, this.engine.lastTime);
 			},
@@ -123,7 +125,7 @@ class Menu extends GameBase {
 				this.aboutPage.changeOpacity(1, this.engine.lastTime);
 				this.aboutPage2.changeOpacity(1, this.engine.lastTime);
 				this.aboutPage3.changeOpacity(1, this.engine.lastTime);
-				const audio = document.getElementById("audio");
+				const audio = this.mainTheme;
 				if (!audio.paused) {
 					this.setAudio(audio, true, .15);					
 				}
@@ -152,7 +154,7 @@ class Menu extends GameBase {
 				this.optionsPage.changeOpacity(1, this.engine.lastTime);
 				this.option1.changeOpacity(1, this.engine.lastTime);
 				this.option2.changeOpacity(1, this.engine.lastTime);
-				const audio = document.getElementById("audio");
+				const audio = this.mainTheme;
 				if (!audio.paused) {
 					this.setAudio(audio, true, .15);					
 				}
@@ -170,7 +172,7 @@ class Menu extends GameBase {
 			cursor: "url(assets/next-cursor.png), auto",
 			onClick: page => {
 				page.changeOpacity(0, this.engine.lastTime);
-				const audio = document.getElementById("audio");
+				const audio = this.mainTheme;
 				if (!audio.paused) {
 					this.setAudio(audio, true, .5);					
 				}
@@ -218,7 +220,7 @@ class Menu extends GameBase {
 				this.option1_check.setProperty("disabled", true);
 				this.option2_check.setProperty("disabled", true);
 
-				const audio = document.getElementById("audio");
+				const audio = this.mainTheme;
 				if (!audio.paused) {
 					this.setAudio(audio, true, .5);					
 				}
@@ -375,17 +377,18 @@ class Menu extends GameBase {
 
 	async postInit() {
 		await super.postInit();
-		const audio = document.getElementById("audio");
+		const audio = this.mainTheme;
 		audio.currentTime = 0;
 		this.setAudio(audio, true, .5);
 	}
 
-	onExit(engine) {
-		const audio = document.getElementById("audio");
+	async onExit(engine) {
+		const audio = this.mainTheme;
 		this.setAudio(audio, false, .5);
 		engine.keyboardHandler.clearListeners();		
 		if (document.getElementById("newgrounds-login")) {
 			document.getElementById("newgrounds-login").style.display = "none";
 		}
+		return super.onExit(engine);
 	}
 }

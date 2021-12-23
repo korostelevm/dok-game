@@ -273,7 +273,7 @@ class Mall extends GameCore {
 	async postInit() {
 		await super.postInit();
 		this.setSFX(true, true);
-		const audio = document.getElementById("audio");
+		const audio = await this.music.getAudio("music/weirdsong.mp3");
 		audio.currentTime = 0;
 		this.setAudio(audio, true, .15, true);
 
@@ -391,9 +391,9 @@ class Mall extends GameCore {
 
 	}
 
-	onExit(engine) {
-		super.onExit(engine);
+	async onExit(engine) {
 		document.getElementById("thank-you").style.display = "none";		
+		return await super.onExit(engine);
 	}
 
 	openLeft() {

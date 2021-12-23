@@ -1,15 +1,15 @@
-class DebugView {
+class DebugView extends UiComponent {
 	constructor(engine) {
-		if (!engine.debug) {
-			return;
-		}
-		engine.addUiComponent(this);
-		this.engine = engine;
+		super(engine);
 		this.debugCanvas = document.createElement("canvas");
 		this.debugCanvas.style.position = "absolute";
 		this.debugCanvas.zIndex = 1;
 		this.debugCtx = this.debugCanvas.getContext("2d");
 		this.debugCanvas.style.display = "none";
+	}
+
+	isDebugOnly() {
+		return true;
 	}
 
 	drawCollisionBox(ctx, sprite, time, canvasZoom, shift) {

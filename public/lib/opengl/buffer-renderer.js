@@ -10,6 +10,7 @@ class BufferRenderer {
 		    [ 0, 0 ],
 		));
 		this.size = config.viewport.size;
+		this.tempBytes = new Uint8Array(2);
 		this.tempSingleByte = new Uint8Array(1);
 		this.tempVec2 = new Float32Array(2);
 	}
@@ -23,6 +24,12 @@ class BufferRenderer {
 	setAttributeByte(attribute, index, byte) {
 		this.tempSingleByte[0] = byte;
 		this.setAttribute(attribute, index, this.tempSingleByte);
+	}
+
+	setAttributeByte2(attribute, index, byte0, byte1) {
+		this.tempBytes[0] = byte0;
+		this.tempBytes[1] = byte1;
+		this.setAttribute(attribute, index, this.tempBytes);
 	}
 
 	setAttribute(attribute, index, typeArray) {

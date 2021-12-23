@@ -10,7 +10,6 @@
  -->
 <html lang="en">
 	<head>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
 		<script type="text/javascript" src="lib/utils/chrono-utils-self-load.js">
 			</script>
         <title>Dobuki Game</title>
@@ -87,7 +86,7 @@
 			.mouse {
 				user-select: text;
 				/*cursor:  pointer;*/
-				cursor:url(assets/pointer-cursor.png), auto;
+				cursor: url(assets/pointer-cursor.png), auto;
 				position: relative;
 			}
 
@@ -683,9 +682,6 @@
 				</script>
 			</div>
 
-			<audio id="audio" src="audio/weirdsong.mp3" style="position: absolute; display: none" loop></audio>
-			<audio id="blinkpong" src="audio/blinkpong-loop.mp3" style="position: absolute; display: none" loop></audio>
-			
 			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 150px">
 			</div>
 			<canvas id="canvas"  ondrop="console.log(event)" style="position: absolute; top: 50px; left: 100px" width=64 height=64></canvas>
@@ -737,6 +733,7 @@
 		<script type="text/javascript" src="lib/physics/utils/collision-merger.js"></script>
 		<script type="text/javascript" src="lib/sprite/base/sprite-state.js"></script>
 		<script type="text/javascript" src="lib/sprite/base/sprite.js"></script>
+		<script type="text/javascript" src="lib/ui/base/ui-component.js"></script>
 		<script type="text/javascript" src="games/common/start-screen.js"></script>
 		<script type="text/javascript" src="games/demo/flat-land.js"></script>
 		<script type="text/javascript" src="games/demo/game-ring.js"></script>
@@ -781,6 +778,7 @@
 		<script type="text/javascript" src="lib/physics/jump.js"></script>
 		<script type="text/javascript" src="lib/physics/movement.js"></script>
 		<script type="text/javascript" src="lib/renderer/sprite-renderer.js"></script>
+		<script type="text/javascript" src="lib/sound/music.js"></script>
 		<script type="text/javascript" src="lib/sound/sound.js"></script>
 		<script type="text/javascript" src="lib/sprite/hud.js"></script>
 		<script type="text/javascript" src="lib/sprite/sprite-collection.js"></script>
@@ -789,6 +787,7 @@
 		<script type="text/javascript" src="lib/texture/texture-atlas.js"></script>
 		<script type="text/javascript" src="lib/texture/texture-manager.js"></script>
 		<script type="text/javascript" src="lib/ui/debug-view.js"></script>
+		<script type="text/javascript" src="lib/ui/drag-drop.js"></script>
 		<script type="text/javascript" src="lib/ui/focus-fixer.js"></script>
 		<script type="text/javascript" src="lib/ui/fps-box.js"></script>
 		<script type="text/javascript" src="lib/ui/keyboard-handler.js"></script>
@@ -802,24 +801,5 @@
 		<script type="text/javascript" src="gen/files.js"></script>
 		<script type="text/javascript" src="game-starter.js"></script>
 		<!-- JAVASCRIPT -->
-		<script type="text/javascript">
-			function handlerFunction(e) {
-				// console.log(e.type, e);
-				// let dt = e.dataTransfer
-  		// 		let files = dt.files
-  		// 		console.log(files);
-  		// 		console.log(dt.items);
-  				e.preventDefault();
-				e.stopPropagation();
-			}
-			
-let dropArea = document.body;
-
-//  dropArea.addEventListener('dragenter', handlerFunction, false)
-//  dropArea.addEventListener('dragleave', handlerFunction, false)
-  dropArea.addEventListener('dragover', handlerFunction, false);
- dropArea.addEventListener('drop', handlerFunction, false)
-
-		</script>
 	</body>
 </html>

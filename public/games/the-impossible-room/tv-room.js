@@ -174,9 +174,10 @@ class TvRoom extends GameCore {
 //		document.getElementById("container").style.opacity = .5;
 	}
 
-	onExit(engine) {
+	async onExit(engine) {
 		this.video.pause();
 		document.body.removeChild(this.video);
+		return super.onExit(engine);
 	}
 
 	updateHost(time) {

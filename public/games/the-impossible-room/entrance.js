@@ -333,13 +333,13 @@ class Entrance extends GameCore {
 		return this.ground.getCollisionBox(engine.lastTime);		
 	}
 
-	onExit(engine) {
+	async onExit(engine) {
 		document.getElementById("im").style.display = "none";
 		this.setProperty("title", document.getElementById("im").innerText);
 		if (this.title) {
 			this.title.style.opacity = 0;
 		}
-		super.onExit(engine);
+		return super.onExit(engine);
 	}
 
 	canRunLeft() {

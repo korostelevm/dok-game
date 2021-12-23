@@ -20,3 +20,6 @@ Array.prototype.setCell = function(x, y, value) {
 		this[y][x] = value;
 	}
 }
+
+ArrayUtils.BIG_NUMBER = 1000000;
+
