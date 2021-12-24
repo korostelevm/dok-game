@@ -59,9 +59,9 @@ class WorldOfTurtle extends GameBase {
 		});
 
 		this.mazoos = [];
-		for (let i = 0; i < 100; i++) {
-			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
-			const z = - RandomUtils.random(i, 888) * 2000;
+		for (let i = 0; i < 1; i++) {
+			const x = 450;// viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
+			const z = -1000;// - RandomUtils.random(i, 888) * 2000;
 			const y = 400;// + (z / 2000) * 500;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
@@ -133,10 +133,22 @@ class WorldOfTurtle extends GameBase {
 		}
 	}
 
+	getWindowSize(engine) {
+		return [1000, 700];
+	}
+
+	async getViewportSize(engine) {
+		return {
+			pixelScale: 0,	//	autodetect
+			viewportSize: [900, 600],
+		}
+	}
+
 	getInitialShift() {
 		return {
 			x: 0, y: 1000, z: 550,
 			rotation: [60, 0, 0],
+			light: 1.5,
 		};
 	}
 

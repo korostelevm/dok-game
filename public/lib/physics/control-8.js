@@ -11,8 +11,6 @@ class Control extends PhysicsBase {
 			],
 			onDown: [
 			],
-			onJumpControl: [
-			],
 		};
 
 		this.dx = 0;
@@ -54,15 +52,6 @@ class Control extends PhysicsBase {
 			this.lastControl = game.engine.lastTime;
 			this.forwardEvents("onDown", e);
 		}
-		this.onJump = e => {
-			if (e.type === "keydown") {
-				this.dy --;
-			} else {
-				this.dy++;
-			}			
-			this.lastControl = game.engine.lastTime;
-			this.forwardEvents("onJumpControl", e);
-		}
 		game.engine.keyboardHandler.addKeyDownListener(['a','ArrowLeft'], this.onLeft);
 		game.engine.keyboardHandler.addKeyUpListener(['a','ArrowLeft'], this.onLeft);
 		game.engine.keyboardHandler.addKeyDownListener(['d','ArrowRight'], this.onRight);
@@ -71,8 +60,6 @@ class Control extends PhysicsBase {
 		game.engine.keyboardHandler.addKeyUpListener(['w','ArrowUp'], this.onUp);
 		game.engine.keyboardHandler.addKeyDownListener(['s','ArrowDown'], this.onDown);
 		game.engine.keyboardHandler.addKeyUpListener(['s','ArrowDown'], this.onDown);
-		game.engine.keyboardHandler.addKeyDownListener(' ', this.onJump);
-		game.engine.keyboardHandler.addKeyUpListener(' ', this.onJump);
 
 		this.sprites.forEach(sprite => {
 			for (let event in this.onKeyActions) {
@@ -95,32 +82,13 @@ class Control extends PhysicsBase {
 		game.engine.keyboardHandler.removeListener(this.onRight);
 		game.engine.keyboardHandler.removeListener(this.onUp);
 		game.engine.keyboardHandler.removeListener(this.onDown);
-		game.engine.keyboardHandler.removeListener(this.onJump);
 	}
 
 	refresh(time, dt) {
 		for (let i = 0; i < this.sprites.length; i++) {
 			const sprite = this.sprites[i];
-			if (time - sprite.climbing < 100) {
-				sprite.dx += this.dx * sprite.control;
-				sprite.dx *= .8;
-				if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
-					sprite.dx = 0;
-				}
-				sprite.dy += this.dy * sprite.control * .3;
-				sprite.dy *= .8;
-				if (Math.abs(sprite.dy) < .01 && sprite.dy !== 0) {
-					sprite.dy = 0;
-				}
-				if (time - this.lastControl < 50) {
-					sprite.onControl(sprite, this.dx, this.dy);
-				}
-				continue;
-			}
-
-			const acceleration = sprite.crouch ? 1.5 : Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
+			const acceleration = Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
 			sprite.dx += this.dx * sprite.control * acceleration;
-			sprite.dx *= sprite.rest ? (sprite.crouch || !this.dx ? .3 : .72) : sprite.dy < 0 ? .76 : .8;
 			if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
 				sprite.dx = 0;
 			}

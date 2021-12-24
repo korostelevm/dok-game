@@ -19,6 +19,7 @@ class Music {
 					audio,
 				};
 				audio.currentTime = 0;
+				audio.loop = true;
 				audio.addEventListener("error", e => {
 					console.error("Unable to load: " + mp3);
 				});

@@ -60,7 +60,7 @@ class FlatLand extends GameBase {
 		this.mazoos = [];
 		for (let i = 0; i < 2000; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
-			const z = - RandomUtils.random(i, 888) * 2000;
+			const z = 2500 - RandomUtils.random(i, 888) * 5000;
 			const y = 400;// + (z / 2000) * 500;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
@@ -130,6 +130,10 @@ class FlatLand extends GameBase {
 				}
 			}
 		}
+	}
+
+	getWindowSize(engine) {
+		return [900, 600];
 	}
 
 	getInitialShift() {

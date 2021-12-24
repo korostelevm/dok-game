@@ -167,7 +167,17 @@ class Engine {
 		];
 		this.defaultVoiceReplacement = localStorage.getItem("defaultVoiceReplacement");
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
-		this.shift = {x:0, y:0, z:0, zoom:1, opacity: 1, rotation:[0,0,0], goal:{ x:0, y:0, z:0, zoom:1, opacity: 1, rotation:[0,0,0], }, speed:dist => dist / 20, dirty: true};
+		this.shift = {
+			x:0, y:0, z:0, zoom:1, opacity: 1,
+			rotation:[0,0,0],
+			goal:{
+				x:0, y:0, z:0,
+				zoom:1, opacity: 1, rotation:[0,0,0],
+			},
+			speed: dist => dist / 20,
+			canvasWidth: 0, canvasHeight: 0,
+			dirty: true,
+		};
 	}
 
 	addUiComponent(component) {
@@ -314,12 +324,9 @@ class Engine {
 	async init(config) {
 		this.config = config;
 
-		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = config;
+		const {viewport: {size: [viewportWidth, viewportHeight]}} = config;
 
 		ChronoUtils.tick();
-		if (pixelScale < 1 && !this.isRetinaDisplay()) {
-			config.viewport.pixelScale = 1;
-		}
 		console.log("Config", config);
 		const maxInstancesCount = config.maxInstancesCount || 1000;
 		await this.loadDomContent(document);
@@ -374,8 +381,6 @@ class Engine {
 		/* Keyboard handler */
 		this.keyboardHandler = new KeyboardHandler(document);
 
-		this.setupMouseListeners();
-
 		/* Setup game tab. */
 		if (this.debug) {
 			const gameTab = document.getElementById("game-tab");
@@ -390,7 +395,8 @@ class Engine {
 		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
 		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
-		this.resize(viewportWidth, viewportHeight, pixelScale);
+		this.resize(viewportWidth, viewportHeight);
+		engine.canvas.style.opacity = 1;
 		this.initialize(gl, this.shaders[0], config);
 
 		this.voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
@@ -498,8 +504,13 @@ class Engine {
 		const [windowWidth, windowHeight] = await game.getWindowSize(this);
 		document.body.style.width = `${windowWidth}px`;
 		document.body.style.height = `${windowHeight}px`;
-		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = this.config;
+		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
 		this.canvas.style.left = `${(windowWidth - viewportWidth) / 2}px`;
+	}
+
+	async adjustViewportSize(game) {
+		const {viewportSize: [viewportWidth, viewportHeight], pixelScale } = await game.getViewportSize(this);
+		this.resize(viewportWidth, viewportHeight, pixelScale||0);
 	}
 
 	async wait(ms) {
@@ -516,10 +527,12 @@ class Engine {
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
 		await this.adjustWindowSize(game);		
+		await this.adjustViewportSize(game);
 		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
 		ChronoUtils.tick();
 		await game.init(this, this.classToGame[game.sceneName]);
 		ChronoUtils.tick();
+		this.shift.goal.light = 1;
 		await game.postInit();
 		ChronoUtils.tick();
 
@@ -530,11 +543,14 @@ class Engine {
 		ChronoUtils.tick();
 
 		game.ready = true;
-		this.shift.goal.light = 1;
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
+		///		this.resize(viewportWidth, viewportHeight);
+
+
 		ChronoUtils.log();
+		this.setupMouseListeners();
 	}
 
 	handleMouse(e) {
@@ -544,18 +560,19 @@ class Engine {
 	}
 
 	setupMouseListeners() {
-		document.addEventListener("click", e => {
-			this.handleMouse(e);
-		});
-		document.addEventListener("mousedown", e => {
-			this.handleMouse(e);
-		});
-		document.addEventListener("mousemove", e => {
-			this.handleMouse(e);
-		});
-		document.addEventListener("mouseup", e => {
-			this.handleMouse(e);
-		});
+		this.handleMouseCallback = e => this.handleMouse(e);
+		document.addEventListener("click", this.handleMouseCallback);
+		document.addEventListener("mousedown", this.handleMouseCallback);
+		document.addEventListener("mousemove", this.handleMouseCallback);
+		document.addEventListener("mouseup", this.handleMouseCallback);
+	}
+
+	removeMouseListeners() {
+		document.removeEventListener("click", this.handleMouseCallback);
+		document.removeEventListener("mousedown", this.handleMouseCallback);
+		document.removeEventListener("mousemove", this.handleMouseCallback);
+		document.removeEventListener("mouseup", this.handleMouseCallback);
+		delete this.handleMouseCallback;
 	}
 
 	async resetScene() {
@@ -607,6 +624,7 @@ class Engine {
 		this.shift.goal.rotation[1] = 0;
 		this.shift.goal.rotation[2] = 0;
 		this.shift.dirty = true;
+		this.removeMouseListeners();
 	}
 
 	resetGame() {
@@ -629,7 +647,7 @@ class Engine {
 		};		
 	}
 
-	initialize(gl, shader, {webgl: {depth}, viewport: {viewAngle, pixelScale, size: [viewportWidth, viewportHeight]}}) {
+	initialize(gl, shader, {webgl: {depth}, viewport: {viewAngle, size: [viewportWidth, viewportHeight]}}) {
 		const uniforms = shader.uniforms;
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
@@ -638,21 +656,29 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
 
+		this.keyboardHandler.addKeyDownListener('p', () => {
+			this.setPerspective(!this.isPerspective);
+		});
+		this.setClamp(0, 0, 0, 0, 0, 0);
+	}
+
+	setProjectionMatrices(viewAngle, pixelScale) {
+		const { gl, canvas } = this;
+		const shader = this.shaders[0];
+		const uniforms = shader.uniforms;
 		const zNear = 0.01;
 		const zFar = 5000;
 
 		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
+		const pixelScaleMultiplier = 1 / (pixelScale || (this.isRetinaDisplay() ? .5 : 1));
+
+		const viewportWidth = gl.drawingBufferWidth / pixelScaleMultiplier;
+		const viewportHeight = gl.drawingBufferHeight / pixelScaleMultiplier;
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
-		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
-		gl.uniform1f(uniforms.globalLight.location, 1);
-
-		this.keyboardHandler.addKeyDownListener('p', () => {
-			this.setPerspective(!this.isPerspective);
-		});
-		this.setClamp(0, 0, 0, 0, 0, 0);
+		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);		
 	}
 
 	setPerspective(perspective) {
@@ -690,12 +716,21 @@ class Engine {
 
 	resize(viewportWidth, viewportHeight, pixelScale) {
 		const { canvas, gl } = this;
-		canvas.width = viewportWidth / (pixelScale || 0);
-		canvas.height = viewportHeight / (pixelScale || 0);
-		canvas.style.width = `${viewportWidth}px`;
-		canvas.style.height = `${viewportHeight}px`;
-		canvas.style.opacity = 1;
-  		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+		if (this.viewportWidth !== viewportWidth 
+			|| this.viewportHeight !== viewportHeight
+			|| this.pixelScale !== pixelScale) {
+			canvas.style.width = `${viewportWidth}px`;
+			canvas.style.height = `${viewportHeight}px`;
+			const newPixelScale = pixelScale || (this.isRetinaDisplay() ? .5 : 1);
+			const pixelScaleMultiplier = 1 / newPixelScale;
+			canvas.width = viewportWidth * pixelScaleMultiplier;
+			canvas.height = viewportHeight * pixelScaleMultiplier;
+	  		gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+	  		this.setProjectionMatrices(this.config.viewAngle, pixelScale);
+			this.viewportWidth = viewportWidth;
+			this.viewportHeight = viewportHeight;
+			this.pixelScale = pixelScale;
+		}
 	}
 
 	static trigger(engine) {
@@ -849,13 +884,13 @@ class Engine {
 			this.handleFrames(time);
 			this.handleOnRefreshes(time);
 		}
-		this.handleShift(time, this.shaders[0]);
+		this.handleViewUpdate(time, this.shaders[0]);
 		this.handleSpriteUpdate(this.lastTime);
 		this.render(time, dt);
 		this.handlePostRefresh(time, dt, actualTime);
 	}
 
-	handleShift(time, shader) {
+	handleViewUpdate(time, shader) {
 		let shiftChanged = false;
 		const shift = this.shift;
 		if (shift.x !== shift.goal.x
@@ -866,6 +901,8 @@ class Engine {
 			|| shift.rotation[0] !== shift.goal.rotation[0]
 			|| shift.rotation[1] !== shift.goal.rotation[1]
 			|| shift.rotation[2] !== shift.goal.rotation[2]
+			|| shift.canvasWidth !== this.canvas.offsetWidth
+			|| shift.canvasHeight !== this.canvas.offsetHeight
 			|| shift.dirty) {
 			const dx = (shift.goal.x - shift.x);
 			const dy = (shift.goal.y - shift.y);
@@ -1004,7 +1041,7 @@ class Engine {
 		if (Array.isArray(data)) {
 			return data.map(d => this.translate(d));
 		}
-		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = this.config;
+		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
 		switch (data) {
 			case "viewportWidth":
 				return this.config.viewport.size[0];

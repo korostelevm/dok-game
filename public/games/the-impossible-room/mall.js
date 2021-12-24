@@ -273,7 +273,7 @@ class Mall extends GameCore {
 	async postInit() {
 		await super.postInit();
 		this.setSFX(true, true);
-		const audio = await this.music.getAudio("music/weirdsong.mp3");
+		const audio = await this.engine.music.getAudio("music/weirdsong.mp3");
 		audio.currentTime = 0;
 		this.setAudio(audio, true, .15, true);
 

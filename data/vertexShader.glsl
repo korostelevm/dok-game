@@ -34,6 +34,8 @@ varying vec2 v_textureCoord;
 varying float v_index;
 varying float v_opacity;
 varying float v_light;
+varying float zDist;
+
 
 vec4 getCornerValue(mat4 value, vec2 position);
 float modPlus(float a, float b);
@@ -72,7 +74,10 @@ void main() {
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
 	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * mat4(1.0);
-	gl_Position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
+	vec4 position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
+
+	zDist = shift[3].z / 5000.;	
+	gl_Position = position;
 }
 
 
