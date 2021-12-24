@@ -85,6 +85,7 @@ window.addEventListener("DOMContentLoaded", () => {
              button.innerText = "login newgrounds";
              button.addEventListener('click', e => {
                 requestLogin();
+                e.stopPropagation();
              });
 
 

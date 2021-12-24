@@ -35,6 +35,47 @@ varying float v_index;
 varying float v_opacity;
 varying float v_light;
 
+vec4 getCornerValue(mat4 value, vec2 position);
+float modPlus(float a, float b);
+vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, float time);
+float det(mat2 matrix);
+mat3 transpose(mat3 matrix);
+mat3 inverse(mat3 matrix);
+
+void main() {
+	float time = timeInfo[0];
+	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
+	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
+	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
+	v_index = textureIndex[0];
+	v_light = textureIndex[1] / 128.;
+	v_opacity = textureInfo.z / 1000.;
+	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
+
+	float isHud = isFlag[0];
+	float isSprite = isFlag[1];
+
+	mat4 finalView = isHud * hudView + (1. - isHud) * view;
+
+	float motionTime = updateTime[MOTION_UPDATE_INDEX];
+	float dt = (time - motionTime) / 1000.;
+	mat4 mat = matrix;
+	mat4 shift = mat4(1.0);
+	shift[3] = mat[3];
+	shift[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
+	shift[3].x = clamp[0][0] + mod(shift[3].x - clamp[0][0], clamp[0][1]);
+	shift[3].y = clamp[1][0] + mod(shift[3].y - clamp[1][0], clamp[1][1]);
+	shift[3].z = clamp[2][0] + mod(shift[3].z - clamp[2][0], clamp[2][1]);
+
+	mat[3].xyz = vec3(0, 0, 0);
+
+	float isOrtho = max(isHud, 1. - isPerspective);
+	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
+	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * mat4(1.0);
+	gl_Position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
+}
+
+
 vec4 getCornerValue(mat4 value, vec2 position) {
 	return mix(
 		mix(value[0], value[1], position.x * .5 + .5), 
@@ -110,35 +151,3 @@ mat3 inverse(mat3 matrix) {
     return (1.0 / dot(row0, minors0)) * adj;
 }
 
-void main() {
-	float time = timeInfo[0];
-	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
-	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
-	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
-	v_index = textureIndex[0];
-	v_light = textureIndex[1] / 128.;
-	v_opacity = textureInfo.z / 1000.;
-	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
-
-	float isHud = isFlag[0];
-	float isSprite = isFlag[1];
-
-	mat4 finalView = isHud * hudView + (1. - isHud) * view;
-
-	float motionTime = updateTime[MOTION_UPDATE_INDEX];
-	float dt = (time - motionTime) / 1000.;
-	mat4 mat = matrix;
-	mat4 shift = mat4(1.0);
-	shift[3] = mat[3];
-	shift[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
-	shift[3].x = clamp[0][0] + mod(shift[3].x - clamp[0][0], clamp[0][1]);
-	shift[3].y = clamp[1][0] + mod(shift[3].y - clamp[1][0], clamp[1][1]);
-	shift[3].z = clamp[2][0] + mod(shift[3].z - clamp[2][0], clamp[2][1]);
-
-	mat[3].xyz = vec3(0, 0, 0);
-
-	float isOrtho = max(isHud, 1. - isPerspective);
-	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
-	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * mat4(1.0);
-	gl_Position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
-}

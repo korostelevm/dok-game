@@ -24,7 +24,7 @@ class Sprite {
 		this.light = data.light !== undefined ? data.light : 1;
 		this.crop = [1, 1];
 		this.active = true;
-		this.isHud = data.hud ? 1 : 0;
+		this.isHud = data.isHud ? 1 : 0;
 		this.remember = data.remember || false;
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];

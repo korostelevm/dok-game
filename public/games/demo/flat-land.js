@@ -59,8 +59,8 @@ class FlatLand extends GameBase {
 
 		this.mazoos = [];
 		for (let i = 0; i < 2000; i++) {
-			const x = viewportWidth / 2 + (this.random(i, 123) - .5) * viewportWidth * 4;
-			const z = - this.random(i, 888) * 2000;
+			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
+			const z = - RandomUtils.random(i, 888) * 2000;
 			const y = 400;// + (z / 2000) * 500;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
@@ -78,8 +78,8 @@ class FlatLand extends GameBase {
 		}
 
 		for (let i = 0; i < 1000; i++) {
-			const x = viewportWidth / 2 + (this.random(i,331) - .5) * viewportWidth * 4;
-			const z = - this.random(i,737) * 2000;
+			const x = viewportWidth / 2 + (RandomUtils.random(i,331) - .5) * viewportWidth * 4;
+			const z = - RandomUtils.random(i,737) * 2000;
 			const y = 400;// + (z / 2000) * 500 + 20;
 			this.spriteFactory.create({
 				anim: this.atlas.hex,
@@ -89,10 +89,6 @@ class FlatLand extends GameBase {
 				rotation: [-90, 0, 0],					
 			});
 		}
-	}
-
-	random(i, salt) {
-		return (((Math.sin((i*13053+123 + salt))*1000)%1) + 1) / 2;
 	}
 
 	isPerpective() {

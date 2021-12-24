@@ -14,8 +14,8 @@
   "homepage": "https://github.com/jacklehamster/dok-game#readme",
   "window": {
     "title": "Dok Game",
-    "width": 900,
-    "height": 500,
+    "width": 1000,
+    "height": 600,
     "fullscreen": false,
     "kiosk": false,
     "resizable": false,

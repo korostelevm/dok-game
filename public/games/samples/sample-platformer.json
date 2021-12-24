@@ -10,7 +10,7 @@
       "z": 10,
       "opacity": 0,
       "manualRefresh": true,
-      "hud": 1
+      "isHud": 1
     },
     "backwall": {
       "anim": "backwall",
@@ -20,7 +20,7 @@
         "viewportHeight"
       ],
       "opacity": 0.3,
-      "hud": 1
+      "isHud": 1
     }
   },
   "grid": [

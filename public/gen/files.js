@@ -163,6 +163,7 @@ const globalFiles=[
 				"demo": [
 					"flat-land.js",
 					"game-ring.js",
+					"peer-demo.js",
 					"smurf.js"
 				]
 			},
@@ -209,6 +210,11 @@ const globalFiles=[
 				]
 			},
 			{
+				"turtle": [
+					"world-of-turtle.js"
+				]
+			},
+			{
 				"winter": []
 			}
 		]
@@ -227,6 +233,24 @@ const globalFiles=[
 				"core": [
 					"engine.js",
 					"game-base.js"
+				]
+			},
+			{
+				"external": [
+					".DS_Store",
+					{
+						"newgrounds": [
+							"newgroundsio.min.js",
+							"newgroundsio.min.js.map"
+						]
+					},
+					{
+						"peerjs": [
+							".DS_Store",
+							"peerjs.min.js",
+							"peerjs.min.js.map"
+						]
+					}
 				]
 			},
 			{
@@ -266,7 +290,7 @@ const globalFiles=[
 			},
 			{
 				"newgrounds": [
-					"newgroundsio.min.js",
+					".DS_Store",
 					"ng.js",
 					"sound.mp3"
 				]
@@ -354,6 +378,7 @@ const globalFiles=[
 					"array-utils.js",
 					"chrono-utils-self-load.js",
 					"file-utils.js",
+					"random-utils.js",
 					"string.js"
 				]
 			}

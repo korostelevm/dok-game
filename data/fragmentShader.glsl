@@ -10,6 +10,16 @@ varying float v_index;
 varying float v_opacity;
 varying float v_light;
 
+vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint);
+
+void main() {
+	vec4 color = getTextureColor(uTextures, v_index, v_textureCoord);
+	if (color.a <= 0.01) {
+		discard;
+	}
+	gl_FragColor = vec4(color.xyz * globalLight * v_light, color.w * v_opacity);
+}
+
 vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 vTexturePoint) {
 	float threshold = 0.00001;
 	for (int i = 0; i < NUM_TEXTURES; ++i) {
@@ -18,12 +28,4 @@ vec4 getTextureColor(sampler2D textures[NUM_TEXTURES], float textureSlot, vec2 v
 		}
 	}
 	return texture2D(textures[0], vTexturePoint);
-}
-
-void main() {
-	vec4 color = getTextureColor(uTextures, v_index, v_textureCoord);
-	if (color.a <= 0.01) {
-		discard;
-	}
-	gl_FragColor = vec4(color.xyz * globalLight * v_light, color.w * v_opacity);
 }
