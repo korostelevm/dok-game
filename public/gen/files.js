@@ -311,6 +311,7 @@ const globalFiles=[
 						]
 					},
 					"collision.js",
+					"control-8.js",
 					"control.js",
 					"gravity.js",
 					"jump.js",

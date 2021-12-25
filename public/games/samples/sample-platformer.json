@@ -14,7 +14,7 @@
     },
     "backwall": {
       "anim": "backwall",
-      "z": -1000,
+      "z": -500,
       "size": [
         "viewportWidth",
         "viewportHeight"

@@ -1,4 +1,4 @@
-class Control extends PhysicsBase {
+class Control8 extends PhysicsBase {
 	async init(sprites, game) {
 		this.sprites = sprites.filter(({control}) => control);
 
@@ -88,15 +88,12 @@ class Control extends PhysicsBase {
 		for (let i = 0; i < this.sprites.length; i++) {
 			const sprite = this.sprites[i];
 			const acceleration = Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
-			sprite.dx += this.dx * sprite.control * acceleration;
-			if (Math.abs(sprite.dx) < .01 && sprite.dx !== 0) {
+			const dist = Math.sqrt(this.dx * this.dx + this.dy * this,dy);
+			sprite.dx += this.dx * sprite.control * acceleration / dist;
+			sprite.dy += this.dy * sprite.control * acceleration / dist;
+			if (dist < 0.01) {
 				sprite.dx = 0;
-			}
-			if (!sprite.jump || time - sprite.jump > 500) {
-				if (sprite.climb && time - sprite.climb < 200) {
-					sprite.dy += Math.sign(this.dy) * 2 * sprite.control;
-					sprite.dy *= .7;
-				}
+				sprite.dy = 0;
 			}
 			if (time - this.lastControl < 50) {
 				sprite.onControl(sprite, this.dx, this.dy);

@@ -54,21 +54,22 @@ class WorldOfTurtle extends GameBase {
 			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight + 10,
-			z: -1200,
+			z: -500,
 			rotation: [-90, 0, 0],					
 		});
 
 		this.mazoos = [];
-		for (let i = 0; i < 1; i++) {
-			const x = 450;// viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
-			const z = -1000;// - RandomUtils.random(i, 888) * 2000;
-			const y = 400;// + (z / 2000) * 500;
+		for (let i = 0; i < 100; i++) {
+			const x = i === 0 ? 450 : viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
+			const z = i === 0 ? -400 : - RandomUtils.random(i, 888) * 2000;
+			const y = 400;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
 				size: [64, 64],
 				hotspot: [32, 64],
 				x, y, z,
 				isSprite: 1,
+				hue: i === 0 ? 100 : 0,
 			}, {
 				goal: [
 					Math.random() * viewportWidth,
@@ -78,17 +79,19 @@ class WorldOfTurtle extends GameBase {
 			}));
 		}
 
-		for (let i = 0; i < 100; i++) {
-			const x = viewportWidth / 2 + (RandomUtils.random(i,331) - .5) * viewportWidth * 4;
-			const z = - RandomUtils.random(i,737) * 2000;
-			const y = 400;// + (z / 2000) * 500 + 20;
-			this.spriteFactory.create({
-				anim: this.atlas.hex,
-				size: [256, 256],
-				hotspot: [128, 128],
-				x, y, z,
-				rotation: [-90, 0, 0],					
-			});
+		for (let row = 0; row < 11; row++) {
+			for (let col = 0; col < 11; col++) {
+				const x = row * 100 - 50;
+				const y = 400;
+				const z = (col - 5) * 100 - 500;
+				this.spriteFactory.create({
+					anim: this.atlas.hex,
+					size: [100, 100],
+					hotspot: [50, 50],
+					x, y, z,
+					rotation: [-90, 0, 0],					
+				});
+			}
 		}
 	}
 
@@ -148,7 +151,6 @@ class WorldOfTurtle extends GameBase {
 		return {
 			x: 0, y: 1000, z: 550,
 			rotation: [60, 0, 0],
-			light: 1.5,
 		};
 	}
 

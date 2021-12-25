@@ -7,7 +7,14 @@ class Shader {
 		this.ext = ext;
 		this.attributes = {};
 		this.uniforms = {};
-		this.program = this.linkShaders(vertexShader, fragmentShader, attributes, maxInstanceCount);
+		this.vertexShaderCode = vertexShader;
+		this.fragmentShaderCode = fragmentShader;
+		this.maxInstanceCount = maxInstanceCount;
+		this.attributesConfig = attributes;
+	}
+
+	link() {
+		this.program = this.linkShaders(this.attributesConfig);
 	}
 
 	use() {
@@ -34,9 +41,10 @@ class Shader {
 		return shader;
 	}
 
-	linkShaders(vertexShaderCode, fragmentShaderCode, attributes, maxInstanceCount) {
+	linkShaders(attributesConfig) {
+		const { vertexShaderCode, fragmentShaderCode, maxInstanceCount } = this;
 		const program = this.program = this.gl.createProgram();
-		this.assignAttributes(program, attributes, vertexShaderCode);
+		this.assignAttributes(program, attributesConfig, vertexShaderCode);
 
 		const vertexShader = this.initShader(this.gl.VERTEX_SHADER, vertexShaderCode);
 		const fragmentShader = this.initShader(this.gl.FRAGMENT_SHADER, fragmentShaderCode);
@@ -52,15 +60,18 @@ class Shader {
 		  throw new Error('Unable to initialize the shader program:\n' + this.gl.getProgramInfoLog(program));
 		}
 
-		this.initUniforms(program, vertexShaderCode, fragmentShaderCode);
-		this.initAttributes(program, attributes, vertexShaderCode, maxInstanceCount);
-		this.verifyAttributes(attributes);
 		console.log("shaders linked.");
+		this.initShaders(vertexShaderCode, fragmentShaderCode, attributesConfig, maxInstanceCount);
 		return program;
 	}
 
-	verifyAttributes(attributes) {
-		for (let name in attributes) {
+	initShaders(vertexShaderCode, fragmentShaderCode, attributesConfig, maxInstanceCount) {
+		this.initUniforms(this.program, vertexShaderCode, fragmentShaderCode);
+		this.initAttributes(this.program, attributesConfig, vertexShaderCode, maxInstanceCount);
+	}
+
+	verifyAttributes(attributesConfig) {
+		for (let name in attributesConfig) {
 			if (!this.attributes[name]) {
 				console.warn(`Configured attribute ${name} does not exist in shaders.`);
 			}
@@ -83,28 +94,26 @@ class Shader {
 		});
 	}
 
-	assignAttributes(program, attributes, vertexShaderCode) {
+	assignAttributes(program, attributesConfig, vertexShaderCode) {
 		const variables = this.getShaderVariables(vertexShaderCode).filter(({attributeType}) => attributeType === "attribute");
 		variables.forEach(({name, dataType}) => {
-			if (!attributes[name]) {
+			if (!attributesConfig[name]) {
 				return;
 			}
-			if (typeof(attributes[name].location) == "number") {
+			if (typeof(attributesConfig[name].location) == "number") {
 				this.gl.bindAttribLocation(program, location, name);				
 			}
 		});
 	}
 
 	initAttributes(program, attributes, vertexShaderCode, maxInstanceCount) {
+		this.clearBuffers();
+
 		const variables = this.getShaderVariables(vertexShaderCode).filter(({attributeType}) => attributeType === "attribute");
 		variables.forEach(({name, dataType}) => {
 			if (!attributes[name]) {
 				console.warn(`Attribute ${name} has no configuration. Update config/webgl/attributes.json`);
 				return;
-			}
-			if (this.attributes[name] && this.attributes[name].buffer) {
-				this.gl.deleteBuffer(this.attributes[name].buffer);
-				this.attributes[name].buffer = null;
 			}
 			const location = this.gl.getAttribLocation(program, name);
 			this.attributes[name] = this.initializeAttribute(name, dataType, location, attributes[name], maxInstanceCount);
@@ -112,6 +121,16 @@ class Shader {
 				this.enableLocations(name, location, dataType);
 			}
 		});
+		this.verifyAttributes(attributes);
+	}
+
+	clearBuffers() {
+		for (let name in this.attributes) {
+			if (this.attributes[name].buffer) {
+				this.gl.deleteBuffer(this.attributes[name].buffer);
+				this.attributes[name].buffer = null;
+			}
+		}
 	}
 
 	initializeAttribute(name, dataType, location, attributeConfig, maxInstanceCount) {

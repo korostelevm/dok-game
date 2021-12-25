@@ -4,16 +4,22 @@ const int START_FRAME_INDEX = 0;
 const int END_FRAME_INDEX = 1;
 const int FRAME_RATE_INDEX = 2;
 const int MAX_FRAME_COUNT_INDEX = 3;
+
 const int ANIMATION_UPDATE_INDEX = 0;
 const int MOTION_UPDATE_INDEX = 1;
 
+const int TEXTURE_INDEX = 0;
+const int LIGHT_INDEX = 1;
+const int HUE_INDEX = 2;
+
+const int IS_HUD_INDEX = 0;
+const int IS_SPRITE_INDEX = 1;
+
 attribute vec2 vertexPosition;
-// attribute mat4 colors;
 attribute mat4 matrix;
 attribute vec3 motion;
 attribute vec3 acceleration;
-// attribute vec2 position;
-attribute vec2 textureIndex;
+attribute vec3 textureIndex;
 attribute mat4 textureCoordinates;
 attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
@@ -28,13 +34,14 @@ uniform mat4 view;
 uniform mat4 hudView;
 uniform mat3 clamp;
 uniform mat4 spriteMatrix;
+uniform float globalLight;
 
 // varying vec4 v_color;
 varying vec2 v_textureCoord;
 varying float v_index;
 varying float v_opacity;
 varying float v_light;
-varying float zDist;
+varying vec3 v_HSV;
 
 
 vec4 getCornerValue(mat4 value, vec2 position);
@@ -43,19 +50,22 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, f
 float det(mat2 matrix);
 mat3 transpose(mat3 matrix);
 mat3 inverse(mat3 matrix);
+vec3 modClampPosition(vec3 position, mat3 clamp);
+vec3 calculateHSV(float zDistance, float hueValue);
+vec3 applyMotion(float dt, vec3 motion, vec3 acceleration);
 
 void main() {
 	float time = timeInfo[0];
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
-	v_index = textureIndex[0];
-	v_light = textureIndex[1] / 128.;
+	v_index = textureIndex[TEXTURE_INDEX];
+	v_light = 2. * globalLight * textureIndex[LIGHT_INDEX] / 128.;
 	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
 
-	float isHud = isFlag[0];
-	float isSprite = isFlag[1];
+	float isHud = isFlag[IS_HUD_INDEX];
+	float isSprite = isFlag[IS_SPRITE_INDEX];
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
 
@@ -64,20 +74,48 @@ void main() {
 	mat4 mat = matrix;
 	mat4 shift = mat4(1.0);
 	shift[3] = mat[3];
-	shift[3].xyz += dt * motion + 0.5 * dt * dt * acceleration;
-	shift[3].x = clamp[0][0] + mod(shift[3].x - clamp[0][0], clamp[0][1]);
-	shift[3].y = clamp[1][0] + mod(shift[3].y - clamp[1][0], clamp[1][1]);
-	shift[3].z = clamp[2][0] + mod(shift[3].z - clamp[2][0], clamp[2][1]);
+	shift[3].xyz += applyMotion(dt, motion, acceleration);
+	shift[3].xyz = modClampPosition(shift[3].xyz, clamp);
 
 	mat[3].xyz = vec3(0, 0, 0);
+
+	v_HSV = calculateHSV(shift[3].z, textureIndex[HUE_INDEX] / 256.);
 
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
 	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * mat4(1.0);
 	vec4 position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
 
-	zDist = shift[3].z / 5000.;	
 	gl_Position = position;
+}
+
+vec3 applyMotion(float dt, vec3 motion, vec3 acceleration) {
+	return dt * motion + 0.5 * dt * dt * acceleration;
+}
+
+vec3 calculateHSV(float zDistance, float hueValue) {
+	float closeSaturation = 1.;
+	float farSaturation = 0.;
+	float farDistance = 1.5;
+	float vHue = hueValue;	//	range 0...1. (1 loops back to normal)
+	float distance = zDistance / 5000.;
+	float dValue = smoothstep(0.0, farDistance, distance) / farDistance;
+	return vec3(1.0 + vHue, (1.0 - dValue) * closeSaturation + dValue * farSaturation, min(1.5, max(0.0, .8 + distance * .8)));
+
+}
+
+float modClampFloat(float value, float low, float range) {
+	return low + mod(value - low, range);
+}
+
+vec3 modClampPosition(vec3 position, mat3 clamp) {
+	vec3 xClamp = clamp[0];
+	vec3 yClamp = clamp[1];
+	vec3 zClamp = clamp[2];
+	return vec3(
+		modClampFloat(position.x, xClamp[0], xClamp[1]),
+		modClampFloat(position.y, yClamp[0], yClamp[1]),
+		modClampFloat(position.z, zClamp[0], zClamp[1]));
 }
 
 

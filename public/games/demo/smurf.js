@@ -80,30 +80,31 @@ class Smurf extends GameBase {
 			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth, y: viewportHeight * 2,
-			z: -3000,
+			z: -1000,
 		});
 
-		// this.mazoos = [];
-		// for (let i = 0; i < 2000; i++) {
-		// 	const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
-		// 	const z = - Math.random() * 2000;
-		// 	const y = 400;// + (z / 2000) * 500;
-		// 	const smurf = this.spriteFactory.create({
-		// 		anim: this.atlas.smurf_walk,
-		// 		size: [32, 32],
-		// 		hotspot: [16, 32],
-		// 		x, y, z,
-		// 		motion: [100, 0, 0],
-		// 	}, {
-		// 		goal: [
-		// 			Math.random() * viewportWidth,
-		// 			y,
-		// 			-Math.random() * 2000,
-		// 		],
-		// 	});
-		// 	smurf.changeAnimationTime(Math.random() * 1000000);
-		// 	this.mazoos.push(smurf);
-		// }
+		this.mazoos = [];
+		for (let i = 0; i < 2000; i++) {
+			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 2;
+			const z = - Math.random() * 2000;
+			const y = 400;// + (z / 2000) * 500;
+			const smurf = this.spriteFactory.create({
+				anim: this.atlas.smurf_walk,
+				size: [32, 32],
+				hotspot: [16, 32],
+				x, y, z,
+				motion: [100, 0, 0],
+				isSprite: true,
+			}, {
+				goal: [
+					Math.random() * viewportWidth,
+					y,
+					-Math.random() * 2000,
+				],
+			});
+			smurf.changeAnimationTime(Math.random() * 1000000);
+			this.mazoos.push(smurf);
+		}
 
 		for (let i = 0; i < 1000; i++) {
 			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
@@ -140,12 +141,13 @@ class Smurf extends GameBase {
 		this.mushrooms = [
 
 		];
+		this.engine.setClamp(-1000, 1000, 0, 0, 0, 0);
 	}
 
 	handleMouse(e) {
 		const x = e.pageX - this.engine.canvas.offsetLeft, y = e.pageY - this.engine.canvas.offsetTop;
-		const zdiff = (y - 400) * 6.5 - 250;
-		const xdiff = 400 + (x-400) * (1 - zdiff / 1000);
+		const zdiff = (y - 400) * 3 - 100;
+		const xdiff = 400 + (x-400) * (1 - zdiff / 500);
 		if (e.type === "mousemove") {
 			const inGame = x >= 0 && x < 800 && y >= 60 && y < 400;
 			if (inGame) {
@@ -201,7 +203,7 @@ class Smurf extends GameBase {
 						const width = progress >= 1 ? baseSize : baseSize + 5 * Math.sin(age / 100),
 							height = progress >= 1 ? baseSize : baseSize + 5 * Math.cos(age / 100);
 						mushroom.changeSize(width, height);
-						mushroom.changeHotSpot(mushroom.size[0] / 2, mushroom.size[1]);
+						mushroom.changeHotSpot(mushroom.size[0] / 2, mushroom.size[1] * .8);
 						mushroom.meter.changeSize(progress * 64, 8);
 						if (progress >= 1) {
 							mushroom.changeOpacity(1);
@@ -220,7 +222,7 @@ class Smurf extends GameBase {
 				anim: this.atlas.meter,
 				size: [64,8],
 				hotspot: [0,0],
-				x: xdiff - 32, y:395, z:zdiff + 10,				
+				x: xdiff - 32, y:400, z:zdiff + 10,				
 			});
 			
 			this.mushrooms.push(mushroom);

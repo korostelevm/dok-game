@@ -25,7 +25,7 @@ class SpriteRenderer {
 		return mat4.fromRotationTranslationScaleOrigin(
 			this.tempMatrix,
 			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),
-			vec3.set(this.tempTranslation, (x * MUL - viewportWidth), -(y * MUL - viewportHeight), (z)),
+			vec3.set(this.tempTranslation, (x * MUL - viewportWidth), -(y * MUL - viewportHeight), (z * MUL)),
 			vec3.set(this.tempScale, width, height, 1),
 			vec3.set(this.tempOrigin, (hotX - width/2) / width * 2, -(hotY - height/2) / height * 2, 0)
 		);		
@@ -48,10 +48,10 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(this.attributes.acceleration, index, this.tempAcceleration);
 	}
 
-	setAnimation(index, anim, direction, vdirection, opacity, light, cropX, cropY) {
+	setAnimation(index, anim, direction, vdirection, opacity, light, hue, cropX, cropY) {
 		const attributes = this.attributes;
 		if (anim) {
-			this.bufferRenderer.setAttributeByte2(attributes.textureIndex, index, anim.index, light * 128);
+			this.bufferRenderer.setAttributeByte3(attributes.textureIndex, index, anim.index, light * 128, hue);
 			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, vdirection, opacity, cropX, cropY));
 			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
 			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());

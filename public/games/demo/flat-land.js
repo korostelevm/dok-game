@@ -54,13 +54,13 @@ class FlatLand extends GameBase {
 			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight / 2,
-			z: -2000,
+			z: -1000,
 		});
 
 		this.mazoos = [];
 		for (let i = 0; i < 2000; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
-			const z = 2500 - RandomUtils.random(i, 888) * 5000;
+			const z = 1000 - RandomUtils.random(i, 888) * 2000;
 			const y = 400;// + (z / 2000) * 500;
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,

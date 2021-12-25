@@ -24,11 +24,12 @@ class Sprite {
 		this.light = data.light !== undefined ? data.light : 1;
 		this.crop = [1, 1];
 		this.active = true;
-		this.isHud = data.isHud ? 1 : 0;
 		this.remember = data.remember || false;
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
-		this.isSprite = data.isSprite || 0;
+		this.hue = data.hue || 0;
+		this.isHud = data.isHud ? 1 : 0;
+		this.isSprite = data.isSprite ? 1 : 0;
 
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
@@ -63,6 +64,7 @@ class Sprite {
 			motion: time,
 			acceleration: time,
 			light: time,
+			hue: time,
 		};
 		this.engine.updater.add(this);
 	}
@@ -290,6 +292,16 @@ class Sprite {
 	changeAnimationTime(animationTime, time) {
 		this.updated.updateTime = time || this.engine.lastTime;
 		this.updated.animation = animationTime;		
+	}
+
+	changeHue(hue, time) {
+		if (hue !== this.hue) {
+			this.updated.hue = time || this.engine.lastTime;
+			this.hue = hue;
+			this.needUpdate();
+			return true;
+		}
+		return false;
 	}
 
 	needUpdate() {

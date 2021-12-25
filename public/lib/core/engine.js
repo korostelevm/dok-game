@@ -366,6 +366,7 @@ class Engine {
 		];
 
 		/* Texture management */
+		this.shaders[0].link();
 		this.shaders[0].use();
 		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms);
 
@@ -523,6 +524,8 @@ class Engine {
 
 	async initGame(game) {
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+		this.setClamp(0, 0, 0, 0, 0, 0);
+
 		game.engine = this;
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
@@ -901,8 +904,6 @@ class Engine {
 			|| shift.rotation[0] !== shift.goal.rotation[0]
 			|| shift.rotation[1] !== shift.goal.rotation[1]
 			|| shift.rotation[2] !== shift.goal.rotation[2]
-			|| shift.canvasWidth !== this.canvas.offsetWidth
-			|| shift.canvasHeight !== this.canvas.offsetHeight
 			|| shift.dirty) {
 			const dx = (shift.goal.x - shift.x);
 			const dy = (shift.goal.y - shift.y);
@@ -982,8 +983,8 @@ class Engine {
 				|| sprite.updated.crop >= lastTime
 				|| sprite.updated.active >= lastTime
 				|| sprite.updated.light >= lastTime) {
-				const {anim, direction, vdirection, opacity, active, light} = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, cropX, cropY);
+				const {anim, direction, vdirection, opacity, active, light, hue} = sprite;
+				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, hue, cropX, cropY);
 			}
 			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;
