@@ -43,6 +43,17 @@ class WorldOfTurtle extends GameBase {
 				cols: 2, rows: 2,
 				range: [0],
 			}),
+			turtle: await engine.addTexture({
+				url: "assets/turtle-spritesheet-rescaled.png",
+				spriteWidth: 238, spriteHeight: 409,
+				range:[6],
+				frameRate: 10,
+			}),
+			peng: await engine.addTexture({
+				url: "assets/peng-spritesheet-rescaled.png",
+				spriteWidth: 349, spriteHeight: 409,
+				range:[0],
+			}),
 		};
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
@@ -58,24 +69,48 @@ class WorldOfTurtle extends GameBase {
 			rotation: [-90, 0, 0],					
 		});
 
-		this.mazoos = [];
-		for (let i = 0; i < 100; i++) {
-			const x = i === 0 ? 450 : viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
-			const z = i === 0 ? -400 : - RandomUtils.random(i, 888) * 2000;
+		{
+			const x = 450;
+			const z = -400;
 			const y = 400;
-			this.mazoos.push(this.spriteFactory.create({
-				anim: this.atlas.mazoo_still,
-				size: [64, 64],
-				hotspot: [32, 64],
+
+			this.spriteFactory.create({
+				anim: this.atlas.turtle,
+				size: [100, 170],
+				hotspot: [50, 130],
 				x, y, z,
 				isSprite: 1,
-				hue: i === 0 ? 100 : 0,
-			}, {
-				goal: [
-					Math.random() * viewportWidth,
-					y,
-					-Math.random() * 2000,
-				],
+			});
+			this.spriteFactory.create({
+				anim: this.atlas.turtle,
+				size: [100, 170],
+				hotspot: [50, 130],
+				x, y, z,
+				light: 0,
+				opacity: .5,
+				rotation: [-90, 0, 0],					
+			});
+
+			// this.spriteFactory.create({
+			// 	anim: this.atlas.turtle,
+			// 	size: [50, 50],
+			// 	hotspot: [25, 25],
+			// 	x, y, z:z-5,
+			// 	isSprite: 1,
+			// });
+		}
+
+		this.mazoos = [];
+		for (let i = 0; i < 100; i++) {
+			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
+			const z = - RandomUtils.random(i, 888) * 2000;
+			const y = 400;
+			this.mazoos.push(this.spriteFactory.create({
+				anim: this.atlas.peng,
+				size: [100, 120],
+				hotspot: [50, 100],
+				x, y, z,
+				isSprite: 1,
 			}));
 		}
 
@@ -97,43 +132,6 @@ class WorldOfTurtle extends GameBase {
 
 	isPerpective() {
 		return true;
-	}
-
-	moveMazoos(time) {
-		const gl = engine.gl;
-		const config = engine.config;
-		const viewportWidth = config.viewport.size[0];
-		for (let i = 0; i < this.mazoos.length; i++) {
-			const mazoo = this.mazoos[i];
-			const goalX = mazoo.goal[0];
-			const goalZ = mazoo.goal[2];
-			const dx = (goalX - mazoo.x);
-			const dz = (goalZ - mazoo.z);
-			const dist = Math.max(1, Math.sqrt(dx*dx + dz*dz));
-			if (!dist) {
-				continue;
-			}
-			const z = mazoo.z + dz / dist;
-			const y = 400;// + (z / 2000) * 500;
-			mazoo.changePosition(mazoo.x + dx / dist, y, z, time);
-			if (dist <= 1) {
-				if (!mazoo.stillTime) {
-					mazoo.stillTime = time;
-					mazoo.changeAnimation(this.atlas.mazoo_still, time);
-				} else if (time - mazoo.stillTime > 5000) {
-					const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
-					mazoo.goal[0] = x;
-					mazoo.goal[2] = -Math.random() * 2000;
-				}
-			} else {
-				mazoo.stillTime = 0;
-				if (Math.abs(dx) >= Math.abs(dz)) {
-					mazoo.changeAnimation(dx < 0 ? this.atlas.mazoo_left : this.atlas.mazoo_right, time);
-				} else {
-					mazoo.changeAnimation(dz < 0 ? this.atlas.mazoo_up : this.atlas.mazoo_down, time);
-				}
-			}
-		}
 	}
 
 	getWindowSize(engine) {
