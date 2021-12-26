@@ -49,12 +49,31 @@ class WorldOfTurtle extends GameBase {
 				range:[6],
 				frameRate: 10,
 			}),
+			turtle_run: await engine.addTexture({
+				url: "assets/turtle-spritesheet-rescaled.png",
+				spriteWidth: 238, spriteHeight: 409,
+				range:[16, 23],
+				frameRate: 24,
+			}),
+			turtle_run_up: await engine.addTexture({
+				url: "assets/turtle-spritesheet-rescaled.png",
+				spriteWidth: 238, spriteHeight: 409,
+				range:[71, 79],
+				frameRate: 24,
+			}),
+			turtle_run_down: await engine.addTexture({
+				url: "assets/turtle-spritesheet-rescaled.png",
+				spriteWidth: 238, spriteHeight: 409,
+				range:[61, 70],
+				frameRate: 24,
+			}),
 			peng: await engine.addTexture({
 				url: "assets/peng-spritesheet-rescaled.png",
 				spriteWidth: 349, spriteHeight: 409,
 				range:[0],
 			}),
 		};
+		const control = this.addPhysics(new Control8());
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
@@ -74,30 +93,43 @@ class WorldOfTurtle extends GameBase {
 			const z = -400;
 			const y = 400;
 
-			this.spriteFactory.create({
+			this.turtle = this.spriteFactory.create({
+				name: "turtle",
 				anim: this.atlas.turtle,
 				size: [100, 170],
-				hotspot: [50, 130],
+				hotspot: [50, 150],
 				x, y, z,
 				isSprite: 1,
+			}, {
+				control: 1,
+				onControl: (turtle, dx, dy) => {
+					const speed = 150;
+					turtle.changeMotion(dx * speed, 0, dy * speed);
+					turtle.shadow.changeMotion(dx * speed, 0, dy * speed);
+					if (dx !== 0) {
+						turtle.changeDirection(dx);
+						turtle.shadow.changeDirection(dx);
+					}
+					if (dx != 0) {
+						turtle.changeAnimation(this.atlas.turtle_run);
+					} else if (dy < 0) {
+						turtle.changeAnimation(this.atlas.turtle_run_up);
+					} else if (dy > 0) {
+						turtle.changeAnimation(this.atlas.turtle_run_down);
+					} else {
+						turtle.changeAnimation(this.atlas.turtle);						
+					}
+				},
 			});
-			this.spriteFactory.create({
+			this.turtle.shadow = this.spriteFactory.create({
 				anim: this.atlas.turtle,
 				size: [100, 170],
-				hotspot: [50, 130],
+				hotspot: [50, 150],
 				x, y, z,
 				light: 0,
 				opacity: .5,
 				rotation: [-90, 0, 0],					
 			});
-
-			// this.spriteFactory.create({
-			// 	anim: this.atlas.turtle,
-			// 	size: [50, 50],
-			// 	hotspot: [25, 25],
-			// 	x, y, z:z-5,
-			// 	isSprite: 1,
-			// });
 		}
 
 		this.mazoos = [];
@@ -108,17 +140,26 @@ class WorldOfTurtle extends GameBase {
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.peng,
 				size: [100, 120],
-				hotspot: [50, 100],
+				hotspot: [50, 110],
 				x, y, z,
 				isSprite: 1,
 			}));
+			this.spriteFactory.create({
+				anim: this.atlas.peng,
+				size: [100, 120],
+				hotspot: [50, 110],
+				x, y, z,
+				light: 0,
+				opacity: .5,
+				rotation: [-90, 0, 0],					
+			});
 		}
 
 		for (let row = 0; row < 11; row++) {
 			for (let col = 0; col < 11; col++) {
 				const x = row * 100 - 50;
 				const y = 400;
-				const z = (col - 5) * 100 - 500;
+				const z = (col - 5) * 100 - 450;
 				this.spriteFactory.create({
 					anim: this.atlas.hex,
 					size: [100, 100],

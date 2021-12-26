@@ -35,7 +35,7 @@ class PeerDemo extends GameBase {
             console.log('Connection destroyed');
         });
         peer.on('error', function (err) {
-            console.log(err);
+            console.error(err);
         });        
 	}
 

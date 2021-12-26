@@ -1065,9 +1065,9 @@ class Engine {
 		return this.tipBox.id;
 	}
 
-	static start(classObj, gameConfig) {
+	static start(classObj, gameConfig, skipStartScreen) {
 		const engine = new Engine(globalData.config);
-		engine.setGame(new StartScreen({classObj, gameConfig}));
+		engine.setGame(skipStartScreen ? new classObj(gameConfig) : new StartScreen({classObj, gameConfig}));
 		window.engine = engine;
 	}
 }

@@ -1,6 +1,6 @@
 class Control8 extends PhysicsBase {
 	async init(sprites, game) {
-		this.sprites = sprites.filter(({control}) => control);
+		this.sprites = sprites.filter(({control, onControl}) => control || onControl);
 
 		this.onKeyActions = {
 			onLeft: [
@@ -88,9 +88,9 @@ class Control8 extends PhysicsBase {
 		for (let i = 0; i < this.sprites.length; i++) {
 			const sprite = this.sprites[i];
 			const acceleration = Math.max(.5, Math.min(1.5, (time - this.lastControl) / 150));
-			const dist = Math.sqrt(this.dx * this.dx + this.dy * this,dy);
-			sprite.dx += this.dx * sprite.control * acceleration / dist;
-			sprite.dy += this.dy * sprite.control * acceleration / dist;
+			const dist = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+			sprite.dx += this.dx * (sprite.control||0) * acceleration / dist;
+			sprite.dy += this.dy * (sprite.control||0) * acceleration / dist;
 			if (dist < 0.01) {
 				sprite.dx = 0;
 				sprite.dy = 0;

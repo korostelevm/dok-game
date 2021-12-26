@@ -60,7 +60,7 @@ void main() {
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex[TEXTURE_INDEX];
-	v_light = 2. * globalLight * textureIndex[LIGHT_INDEX] / 128.;
+	v_light = 1.75 * globalLight * textureIndex[LIGHT_INDEX] / 128.;
 	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
 
