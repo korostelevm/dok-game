@@ -1,6 +1,6 @@
 ChronoUtils.tick();
 class Engine {
-	constructor(config) {
+	constructor(config, forceDebug) {
 		ChronoUtils.tick();
 		/* Prototypes */
 		this.setupPrototypes();
@@ -9,7 +9,7 @@ class Engine {
 
 		this.fileUtils = new FileUtils();
 
-		this.debug = location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com"));
+		this.debug = forceDebug || (location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 		this.imageLoader = new ImageLoader();
 		this.uiComponents = [];
 
@@ -1065,8 +1065,8 @@ class Engine {
 		return this.tipBox.id;
 	}
 
-	static start(classObj, gameConfig, skipStartScreen) {
-		const engine = new Engine(globalData.config);
+	static start(classObj, gameConfig, skipStartScreen, debug) {
+		const engine = new Engine(globalData.config, debug);
 		engine.setGame(skipStartScreen ? new classObj(gameConfig) : new StartScreen({classObj, gameConfig}));
 		window.engine = engine;
 	}
