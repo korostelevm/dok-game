@@ -44,7 +44,7 @@ varying float v_light;
 varying vec3 v_HSV;
 
 
-vec4 getCornerValue(mat4 value, vec2 position);
+vec4 getCornerValue(mat4 textureCoordinates, vec2 position);
 float modPlus(float a, float b);
 vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, float time);
 float det(mat2 matrix);
@@ -62,7 +62,7 @@ void main() {
 	v_index = textureIndex[TEXTURE_INDEX];
 	v_light = 1.75 * globalLight * textureIndex[LIGHT_INDEX] / 128.;
 	v_opacity = textureInfo.z / 1000.;
-	vec4 vertexPosition4 = vec4(vertexPosition.x, vertexPosition.y, 0., 1.);
+	vec4 vertexPosition4 = vec4(vertexPosition.xy, 0., 1.);
 
 	float isHud = isFlag[IS_HUD_INDEX];
 	float isSprite = isFlag[IS_SPRITE_INDEX];
@@ -76,7 +76,6 @@ void main() {
 	shift[3] = mat[3];
 	shift[3].xyz += applyMotion(dt, motion, acceleration);
 	shift[3].xyz = modClampPosition(shift[3].xyz, clamp);
-
 	mat[3].xyz = vec3(0, 0, 0);
 
 	v_HSV = calculateHSV(shift[3].z, textureIndex[HUE_INDEX] / 256.);
@@ -120,10 +119,10 @@ vec3 modClampPosition(vec3 position, mat3 clamp) {
 }
 
 
-vec4 getCornerValue(mat4 value, vec2 position) {
+vec4 getCornerValue(mat4 textureCoordinates, vec2 position) {
 	return mix(
-		mix(value[0], value[1], position.x * .5 + .5), 
-		mix(value[2], value[3], position.x * .5 + .5),
+		mix(textureCoordinates[0], textureCoordinates[1], position.x * .5 + .5), 
+		mix(textureCoordinates[2], textureCoordinates[3], position.x * .5 + .5),
 		position.y * .5 + .5);	
 }
 

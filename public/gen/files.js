@@ -175,6 +175,7 @@ const globalFiles=[
 			},
 			{
 				"samples": [
+					"fighting-platformer.json",
 					"sample-platformer.json"
 				]
 			},
@@ -381,6 +382,7 @@ const globalFiles=[
 				"utils": [
 					"array-utils.js",
 					"chrono-utils-self-load.js",
+					"constants.js",
 					"file-utils.js",
 					"random-utils.js",
 					"string.js"

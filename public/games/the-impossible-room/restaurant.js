@@ -69,6 +69,7 @@ class Restaurant extends GameCore {
 					collision_url: "assets/chef.png",
 					cols:4,rows:4,
 					range:[1],
+					hotspot: [.5, .83],
 			}),
 			chef_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -76,6 +77,7 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[1],
 					direction: -1,
+					hotspot: [.5, .83],
 			}),
 			chef_walk_left: await engine.addTexture({
 					url: "assets/chef.png",
@@ -83,6 +85,7 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[0,3],
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_walk_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -90,6 +93,7 @@ class Restaurant extends GameCore {
 					range:[0,3],
 					direction: -1,
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_talk_left: await engine.addTexture({
 					url: "assets/chef.png",
@@ -97,6 +101,7 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[3,4],
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_talk_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -104,19 +109,22 @@ class Restaurant extends GameCore {
 					range:[3,4],
 					direction: -1,
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_serve_left: await engine.addTexture({
 					url: "assets/chef.png",
 					collision_url: "assets/chef.png",
 					cols:4,rows:4,
 					range:[6],
+					hotspot: [.5, .83],
 			}),
 			chef_serve_right: await engine.addTexture({
 					url: "assets/chef.png",
 					collision_url: "assets/chef.png",
 					cols:4,rows:4,
 					range:[6],
-					direction: -1
+					direction: -1,
+					hotspot: [.5, .83],
 			}),
 			chef_serve_walk_left: await engine.addTexture({
 					url: "assets/chef.png",
@@ -124,6 +132,7 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[6,9],
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_serve_walk_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -131,6 +140,7 @@ class Restaurant extends GameCore {
 					range:[6,9],
 					direction: -1,
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_serve_talk_left: await engine.addTexture({
 					url: "assets/chef.png",
@@ -138,6 +148,7 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[5,6],
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_serve_talk_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -145,19 +156,22 @@ class Restaurant extends GameCore {
 					range:[5,6],
 					direction: -1,
 					frameRate: 10,
+					hotspot: [.5, .83],
 			}),
 			chef_surprised_left: await engine.addTexture({
 					url: "assets/chef.png",
 					collision_url: "assets/chef.png",
 					cols:4,rows:4,
 					range:[10],
+					hotspot: [.5, .83],
 			}),
 			chef_surprised_right: await engine.addTexture({
 					url: "assets/chef.png",
 					collision_url: "assets/chef.png",
 					cols:4,rows:4,
 					range:[10],
-					direction: -1
+					direction: -1,
+					hotspot: [.5, .83],
 			}),			
 			chef_surprised_talk_left: await engine.addTexture({
 					url: "assets/chef.png",
@@ -165,6 +179,7 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[10,11],
 					frameRate: 12,
+					hotspot: [.5, .83],
 			}),
 			chef_surprised_talk_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -173,12 +188,14 @@ class Restaurant extends GameCore {
 					range:[10,11],
 					direction: -1,
 					frameRate: 12,
+					hotspot: [.5, .83],
 			}),			
 			chef_faint_left: await engine.addTexture({
 					url: "assets/chef.png",
 					collision_url: "assets/chef.png",
 					cols:4,rows:4,
 					range:[12],
+					hotspot: [.5, .83],
 			}),
 			chef_faint_right: await engine.addTexture({
 					url: "assets/chef.png",
@@ -186,15 +203,39 @@ class Restaurant extends GameCore {
 					cols:4,rows:4,
 					range:[12],
 					direction: -1,
+					hotspot: [.5, .83],
 			}),			
 			burger_left: await engine.addTexture({
 					url: "assets/burger.png",
 					collision_url: "assets/burger.png",
 					direction: -1,
+					hotspot: HOTSPOT_BOTTOM,
+					cols: 3, rows: 3,
+					range:[0],
 			}),
 			burger_right: await engine.addTexture({
 					url: "assets/burger.png",
 					collision_url: "assets/burger.png",
+					hotspot: HOTSPOT_BOTTOM,
+					cols: 3, rows: 3,
+					range:[0],
+			}),
+			burger_drop: await engine.addTexture({
+					url: "assets/burger.png",
+					collision_url: "assets/burger.png",
+					hotspot: [.5, .9],
+					cols: 3, rows: 3,
+					range:[0],
+					direction: -1,
+			}),
+			burger_eat: await engine.addTexture({
+					url: "assets/burger.png",
+					collision_url: "assets/burger.png",
+					hotspot: [.5, .9],
+					cols: 3, rows: 3,
+					range:[0, 9],
+					frameRate: .7,
+					direction: -1,
 			}),
 		};
 
@@ -255,7 +296,6 @@ class Restaurant extends GameCore {
 			anim: this.atlas.burger_left,
 			x: 380,
 			y: 350,
-			hotspot: [150, 250],
 			size: [300, 250],
 			opacity: 0,
 		}, {
@@ -278,6 +318,7 @@ class Restaurant extends GameCore {
 								const progress = 50 * (time - shakeTime) / 5000;
 								return progress >= 1 ? null : 50 / progress;
 							};
+							burger.changeAnimation(this.atlas.burger_drop);
 						}, 50);
 					}
 				},
@@ -311,7 +352,6 @@ class Restaurant extends GameCore {
 			anim: this.atlas.butler,
 			x: 150, y: 340,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			actions: [
 				{ name: "talk",
@@ -513,7 +553,6 @@ class Restaurant extends GameCore {
 			anim: this.atlas.burger_left,
 			x: 600 - 40,
 			y: 230,
-			hotspot: [150, 250],
 			size: [300, 250],
 			opacity: 0,
 		});
@@ -523,7 +562,6 @@ class Restaurant extends GameCore {
 			anim: this.atlas.chef_left,
 			x: this.burger.properties.served && !this.burger.properties.eaten ? 850 : 600,
 			y: 350,
-			hotspot: [150, 250],
 			size: [300, 300],
 		}, {
 			actions: [
@@ -1375,9 +1413,7 @@ class Restaurant extends GameCore {
 				this.burger.changeOpacity(0, time);
 			} else {
 				this.burger.changeOpacity(1, time);
-				const cropProgress = (1 - eatProgress);
-				this.burger.changeCrop(1, Math.max(0, cropProgress), time);
-				this.burger.changeHotSpot(this.burger.hotspot[0], cropProgress * 250, time);
+				this.burger.changeAnimation(this.atlas.burger_eat);
 			}
 		}
 	}

@@ -44,7 +44,7 @@ class BufferRenderer {
 			console.warn("No attribute.");
 			return;
 		}
-		const { gl } = this;
+		const gl = this.gl;
 		if (this.lastBoundBuffer !== attribute.buffer) {
 			gl.bindBuffer(gl.ARRAY_BUFFER, attribute.buffer);
 			this.lastBoundBuffer = attribute.buffer;

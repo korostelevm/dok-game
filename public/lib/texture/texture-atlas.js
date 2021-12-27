@@ -73,7 +73,7 @@ class TextureAtlas {
 	}
 
 	async setImage(animationData) {
-		const { id, url, collision_url, collision_padding, texture_url, texture_alpha, texture_blend } = animationData;
+		const { id, url, collision_url, collision_padding, texture_url, texture_alpha, texture_blend, hotspot } = animationData;
 		const [image, textureImage] = await Promise.all([url,texture_url].map(u => this.imageLoader.loadImage(u)));
 		this.id = id;
 		this.onUpdateImage(image, animationData || {});
@@ -105,6 +105,7 @@ class TextureAtlas {
 		this.canvas.width = 0;
 		this.canvas.height = 0;
 		this.collisionPadding = collision_padding;
+		this.hotspot = hotspot || [0, 0];
 
 		return this;
 	}
@@ -206,17 +207,17 @@ class TextureAtlas {
 		return this.tempMatrix;
 	}
 
-	getTextureCoordinates(direction, vdirection, opacity, cropX, cropY) {
+	getTextureCoordinates(direction, vdirection, opacity) {
 		const { x, y, spriteWidth, spriteHeight } = this;
-		return this.getTextureCoordinatesFromRect(x, y, spriteWidth * (cropX || 1), spriteHeight * (cropY || 1), direction, vdirection, opacity);
+		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, direction, vdirection, opacity);
 	}
 
 	getSpritesheetInfo() {
 		const shortVec4 = this.shortVec4;
 		shortVec4[0] = this.cols;
 		shortVec4[1] = this.rows;
-		shortVec4[2] = 0;
-		shortVec4[3] = 0;
+		shortVec4[2] = this.hotspot[0];
+		shortVec4[3] = this.hotspot[1];
 		return shortVec4;
 	}
 
@@ -227,6 +228,10 @@ class TextureAtlas {
 		floatVec4[2] = this.frameRate;
 		floatVec4[3] = this.maxFrameCount;
 		return floatVec4;
+	}
+
+	getHotSpot() {
+		return this.hotspot;
 	}
 
 	static flattenAtlases(object, path, array) {

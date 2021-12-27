@@ -211,7 +211,6 @@ class LockedRoom extends GameCore {
 			anim: this.atlas.butler,
 			x: 80, y: 340,
 			size: [96,192],
-			hotspot: [24,192],
 			speed: 10,
 		}, {
 			actions: [

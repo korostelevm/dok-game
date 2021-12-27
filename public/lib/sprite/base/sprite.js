@@ -18,11 +18,9 @@ class Sprite {
 		this.y = data.y || 0;
 		this.z = data.z || 0;
 		this.size = [... engine.translate(data.size) || [0, 0]];
-		this.hotspot = [... data.hotspot || [0, 0]];
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.light = data.light !== undefined ? data.light : 1;
-		this.crop = [1, 1];
 		this.active = true;
 		this.remember = data.remember || false;
 		this.motion = [... data.motion || [0, 0, 0]];
@@ -60,7 +58,6 @@ class Sprite {
 			motionTime: time,
 			direction: time,
 			opacity: time,
-			crop: time,
 			isFlag: time,
 			motion: time,
 			acceleration: time,
@@ -220,30 +217,6 @@ class Sprite {
 		return false;
 	}
 
-	changeCrop(x, y, time) {
-		if (this.crop[0] !== x || this.crop[1] !== y) {
-			this.crop[0] = x;
-			this.crop[1] = y;
-			this.updated.crop = time || this.engine.lastTime;
-			this.collisionBox.dirty = true;
-			this.needUpdate();
-			return true;
-		}
-		return false;
-	}
-
-	changeHotSpot(x, y, time) {
-		if (this.hotspot[0] !== x || this.hotspot[1] !== y) {
-			this.hotspot[0] = x;
-			this.hotspot[1] = y;
-			this.updated.hotspot = time || this.engine.lastTime;
-			this.collisionBox.dirty = true;
-			this.needUpdate();
-			return true;
-		}
-		return false;
-	}
-
 	changeActive(value, time) {
 		if (this.active !== value) {
 			this.active = value;
@@ -389,12 +362,12 @@ class Sprite {
 		const collisionPadding = this.anim.collisionPadding ?? 0;
 		const width = this.size[0];
 		const height = this.size[1];
-		const left = this.x - this.hotspot[0];
-		const top = this.y - this.hotspot[1];
-		this.collisionBox.left = left + rLeft * width * this.crop[0] - collisionPadding;
-		this.collisionBox.right = left + rRight * width * this.crop[0] + collisionPadding;
-		this.collisionBox.top = top + rTop * height * this.crop[1] - collisionPadding;
-		this.collisionBox.bottom = top + rBottom * height * this.crop[1] + collisionPadding;
+		const left = this.x - this.anim.hotspot[0] * width;
+		const top = this.y - this.anim.hotspot[1] * height;
+		this.collisionBox.left = left + rLeft * width - collisionPadding;
+		this.collisionBox.right = left + rRight * width + collisionPadding;
+		this.collisionBox.top = top + rTop * height - collisionPadding;
+		this.collisionBox.bottom = top + rBottom * height + collisionPadding;
 		this.collisionBox.dirty = false;
 	}
 }

@@ -35,7 +35,6 @@ class SceneTab {
 								} else if (extension === "json") {
 									const configFile = `games/${name}/${sceneFile}`;
 									const gameConfig = await engine.fileUtils.load(configFile);
-									console.log(gameConfig);
 									gameList[name].push({
 										name: scene,
 										classObj: eval(gameConfig.className),

@@ -36,12 +36,14 @@ class Mall extends GameCore {
 					url: person2Url,
 					cols: 5,
 					rows: 5,
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			person3_still: await engine.addTexture(
 				{
 					url: person3Url,
 					cols: person3Gender === "T" ? 6 : 5,
 					rows: person3Gender === "T" ? 6 : 5,
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			person2_talk: await engine.addTexture(
 				{
@@ -50,6 +52,7 @@ class Mall extends GameCore {
 					rows: 5,
 					frameRate:10,
 					range: person2Gender==="T" ? [21, 25] : [13, 16],
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			person2_walk_right: await engine.addTexture(
 				{
@@ -58,6 +61,7 @@ class Mall extends GameCore {
 					rows: 5,
 					frameRate:10,
 					range: person2Gender === 'T' ? [9, 12] : [9, 12],
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			person3_talk: await engine.addTexture(
 				{
@@ -66,6 +70,7 @@ class Mall extends GameCore {
 					rows: person3Gender === "T" ? 6 : 5,
 					frameRate:10,
 					range: person3Gender==="T" ? [21, 25] : [13, 16],
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			person3_walk_right: await engine.addTexture(
 				{
@@ -74,6 +79,7 @@ class Mall extends GameCore {
 					rows: person3Gender === "T" ? 6 : 5,
 					frameRate:10,
 					range: person3Gender === 'T' ? [9, 12] : [9, 12],
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
@@ -83,30 +89,35 @@ class Mall extends GameCore {
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [4],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			ng: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [0],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			twitter: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [1],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			youtube: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [2],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			github: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [3],
+				hotspot: HOTSPOT_CENTER,
 			}),
 		};
 		this.backwall = this.spriteFactory.create({
@@ -124,13 +135,11 @@ class Mall extends GameCore {
 		this.person2 = this.spriteFactory.create({
 			x: 310, y: 340,
 			size: [128, 128],
-			hotspot: [64,128],
 			anim: this.atlas.person2_still,
 		});
 		this.person3 = this.spriteFactory.create({
 			x: 400, y: 360,
 			size: [128, 128],
-			hotspot: [64,128],
 			anim: this.atlas.person3_still,
 		});
 		this.removeFromInventory("note");
@@ -177,7 +186,6 @@ class Mall extends GameCore {
 		this.ng = this.spriteFactory.create({
 			x: 100, y: 350,
 			size: [64, 64],
-			hotspot: [32,32],
 			anim: this.atlas.ng,
 //			opacity: 0,
 		}, {
@@ -189,7 +197,6 @@ class Mall extends GameCore {
 		this.itchio = this.spriteFactory.create({
 			x: 700, y: 350,
 			size: [64, 64],
-			hotspot: [32,32],
 			anim: this.atlas.itchio,
 //			opacity: 0,
 		}, {
@@ -202,7 +209,6 @@ class Mall extends GameCore {
 		this.twitter = this.spriteFactory.create({
 			x: 250, y: 350,
 			size: [64, 64],
-			hotspot: [32,32],
 			anim: this.atlas.twitter,
 //			opacity: 0,
 		}, {
@@ -214,7 +220,6 @@ class Mall extends GameCore {
 		this.youtube = this.spriteFactory.create({
 			x: 550, y: 350,
 			size: [64, 64],
-			hotspot: [32,32],
 			anim: this.atlas.youtube,
 //			opacity: 0,
 		}, {
@@ -226,7 +231,6 @@ class Mall extends GameCore {
 		this.github = this.spriteFactory.create({
 			x: 400, y: 350,
 			size: [64, 64],
-			hotspot: [32,32],
 			anim: this.atlas.github,
 //			opacity: 0,
 		}, {

@@ -16,6 +16,7 @@ class DesertFar extends GameCore {
 				collision_url: "assets/desert-far.png",
 				cols: 2, rows: 6,
 				range: [0],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			desert_far_foreground: await engine.addTexture({
 				url: "assets/desert-far.png",
@@ -94,7 +95,6 @@ class DesertFar extends GameCore {
 			name: "desert",
 			anim: this.atlas.desert_far,
 			size: [800, 400],
-			hotspot: [400, 200],
 			x: 400, y: 200,
 		}, {
 			actions: [
@@ -123,7 +123,6 @@ class DesertFar extends GameCore {
 		this.desert_far_start = this.spriteFactory.create({
 			anim: this.atlas.desert_far,
 			size: [800, 400],
-			hotspot: [400, 200],
 			x: 400, y: 200,
 		}, 		
 		{
@@ -463,7 +462,6 @@ class DesertFar extends GameCore {
 			const t = time - this.startShrink;
 			const shrinkValue = Math.max(-1, (500 - t) / 500);
 			this.desert_far.changeSize(800, 400 * Math.abs(shrinkValue), time);
-			this.desert_far.changeHotSpot(400, 200 * Math.abs(shrinkValue), time);
 			this.desert_far.changeYDirection(this.nextScene || shrinkValue < 0 ? -1 : 1, time);
 			if (this.nextScene && shrinkValue * this.desert_far.previousShrinkValue < 0) {
 				this.desert_far.changeDirection(-this.desert_far.direction, time);				
@@ -477,7 +475,6 @@ class DesertFar extends GameCore {
 				this.monkor.setProperty("paused", false);
 				this.monkor.changeOpacity(1, time);
 				this.monkor.changeSize(64, 64, time);
-				this.monkor.changeHotSpot(32, 64, time);
 				this.monkor.changePosition(390, 350, this.monkor.z, time);
 				this.savedWalkArea = null;
 

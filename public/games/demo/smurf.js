@@ -6,68 +6,81 @@ class Smurf extends GameBase {
 		this.atlas = {
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
+				hotspot: HOTSPOT_CENTER,
 			}),
 			smurf_still: await engine.addTexture({
 				url: "assets/smurf.png",
 				spriteWidth: 256, spriteHeight: 256,
 				range:[1],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			smurf_walk: await engine.addTexture({
 				url: "assets/smurf.png",
 				spriteWidth: 256, spriteHeight: 256,
 				range:[0, 1],
 				frameRate: 5,
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			hex: await engine.addTexture({
 				url: "assets/hex.png",
 				collision_url: "assets/hex.png",
 				cols: 2, rows: 2,
 				range: [0],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			red_line: await engine.addTexture({
 				url: "assets/red-line.png",
 				spriteWidth: 100, spriteHeight: 4,
 				range:[0],
+				hotspot: [0, .5],
 			}),
 			blue_line: await engine.addTexture({
 				url: "assets/red-line.png",
 				spriteWidth: 100, spriteHeight: 4,
 				range:[1],
+				hotspot: [0, .5],
 			}),
 			mushroom: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[0],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			big_mushroom: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[1],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			flower_mushroom: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[2],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			mushroom_lab: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[3],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			mushroom_workshop: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[4],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			meter: await engine.addTexture({
 				url: "assets/meter.png",
 				spriteWidth: 64, spriteHeight: 8,
 				range:[0],
+				hotspot: [0,0],
 			}),
 			meter_back: await engine.addTexture({
 				url: "assets/meter.png",
 				spriteWidth: 64, spriteHeight: 8,
 				range:[1],
+				hotspot: [0,0],
 			}),
 		};
 
@@ -77,7 +90,6 @@ class Smurf extends GameBase {
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
 			size: [backwallWidth, backwallHeight],
-			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth, y: viewportHeight * 2,
 			z: -1000,
@@ -91,7 +103,6 @@ class Smurf extends GameBase {
 			const smurf = this.spriteFactory.create({
 				anim: this.atlas.smurf_walk,
 				size: [32, 32],
-				hotspot: [16, 32],
 				x, y, z,
 				motion: [100, 0, 0],
 				isSprite: true,
@@ -113,7 +124,6 @@ class Smurf extends GameBase {
 			this.spriteFactory.create({
 				anim: this.atlas.hex,
 				size: [256, 256],
-				hotspot: [128, 128],
 				x, y, z,
 				rotation: [-90, 0, 0],					
 			});
@@ -122,7 +132,6 @@ class Smurf extends GameBase {
 		this.redLine = this.spriteFactory.create({
 			anim: this.atlas.red_line,
 			size: [2400, 32],
-			hotspot: [0, 16],
 			rotation: [-90, 0, 0],					
 			x: -800, y: 400,
 			opacity: .5,
@@ -130,7 +139,6 @@ class Smurf extends GameBase {
 		this.redLineX = this.spriteFactory.create({
 			anim: this.atlas.red_line,
 			size: [50, 1600],
-			hotspot: [25, 800],
 			rotation: [-90, 0, 0],					
 			x: 400, y: 400, z: -1000,
 			opacity: .5,
@@ -188,7 +196,6 @@ class Smurf extends GameBase {
 			const mushroom = this.spriteFactory.create({
 				anim: this.atlas.mushroom,
 				size: [32,32],
-				hotspot: [16,32],
 				x: xdiff, y:400, z:zdiff,
 				opacity: .5,
 				isSprite: 1,
@@ -203,7 +210,6 @@ class Smurf extends GameBase {
 						const width = progress >= 1 ? baseSize : baseSize + 5 * Math.sin(age / 100),
 							height = progress >= 1 ? baseSize : baseSize + 5 * Math.cos(age / 100);
 						mushroom.changeSize(width, height);
-						mushroom.changeHotSpot(mushroom.size[0] / 2, mushroom.size[1] * .8);
 						mushroom.meter.changeSize(progress * 64, 8);
 						if (progress >= 1) {
 							mushroom.changeOpacity(1);
@@ -221,7 +227,6 @@ class Smurf extends GameBase {
 			mushroom.meter = this.spriteFactory.create({
 				anim: this.atlas.meter,
 				size: [64,8],
-				hotspot: [0,0],
 				x: xdiff - 32, y:400, z:zdiff + 10,				
 			});
 			

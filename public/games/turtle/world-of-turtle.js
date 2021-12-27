@@ -6,74 +6,53 @@ class WorldOfTurtle extends GameBase {
 		this.atlas = {
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
-			}),
-			mazoo_still: await engine.addTexture({
-				url: "assets/mazoo.png",
-				cols: 3, rows: 4,
-				range:[0],
-			}),
-			mazoo_down: await engine.addTexture({
-				url: "assets/mazoo.png",
-				cols: 3, rows: 4,
-				frameRate: 10,
-				range:[0, 3],
-			}),
-			mazoo_up: await engine.addTexture({
-				url: "assets/mazoo.png",
-				cols: 3, rows: 4,
-				frameRate: 10,
-				range:[4, 7],
-			}),
-			mazoo_right: await engine.addTexture({
-				url: "assets/mazoo.png",
-				cols: 3, rows: 4,
-				frameRate: 10,
-				range:[8, 11],
-			}),
-			mazoo_left: await engine.addTexture({
-				url: "assets/mazoo.png",
-				cols: 3, rows: 4,
-				range:[8, 11],
-				frameRate: 10,
-				direction: -1,
+				hotspot:HOTSPOT_CENTER,
 			}),
 			hex: await engine.addTexture({
 				url: "assets/hex.png",
 				collision_url: "assets/hex.png",
 				cols: 2, rows: 2,
 				range: [0],
+				hotspot: HOTSPOT_CENTER,
 			}),
 			turtle: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[6],
 				frameRate: 10,
+				size: [100, 170],
+				hotspot: [.5, .8],
 			}),
 			turtle_run: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[16, 23],
 				frameRate: 24,
+				hotspot: [.5, .8],
 			}),
 			turtle_run_up: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[71, 79],
 				frameRate: 24,
+				hotspot: [.5, .8],
 			}),
 			turtle_run_down: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[61, 70],
 				frameRate: 24,
+				hotspot: [.5, .8],
 			}),
 			peng: await engine.addTexture({
 				url: "assets/peng-spritesheet-rescaled.png",
 				spriteWidth: 349, spriteHeight: 409,
 				range:[0],
+				hotspot: [.5, .9],
 			}),
 			redsquare: await engine.addTexture({
 				url: "assets/red-square.png",
+				hotspot: HOTSPOT_CENTER,
 			}),
 		};
 		const control = this.addPhysics(new Control8());
@@ -84,7 +63,6 @@ class WorldOfTurtle extends GameBase {
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
 			size: [backwallWidth, backwallHeight],
-			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight + 10,
 			z: -500,
@@ -100,7 +78,6 @@ class WorldOfTurtle extends GameBase {
 				name: "turtle",
 				anim: this.atlas.turtle,
 				size: [100, 170],
-				hotspot: [50, 150],
 				x, y, z,
 				isSprite: 1,
 				slowdown: .5,
@@ -131,7 +108,6 @@ class WorldOfTurtle extends GameBase {
 			this.turtle.shadow = this.spriteFactory.create({
 				anim: this.atlas.turtle,
 				size: [100, 170],
-				hotspot: [50, 150],
 				x, y, z,
 				light: 0,
 				opacity: .5,
@@ -140,7 +116,6 @@ class WorldOfTurtle extends GameBase {
 			this.turtle.collision = this.spriteFactory.create({
 				anim: this.atlas.redsquare,
 				size: [100, 100],
-				hotspot: [50, 50],
 				x, y, z,
 				rotation: [-90, 0, 0],					
 			});
@@ -154,7 +129,6 @@ class WorldOfTurtle extends GameBase {
 			const peng = this.spriteFactory.create({
 				anim: this.atlas.peng,
 				size: [100, 120],
-				hotspot: [50, 110],
 				x, y, z,
 				isSprite: 1,
 			});
@@ -162,7 +136,6 @@ class WorldOfTurtle extends GameBase {
 			peng.shadow = this.spriteFactory.create({
 				anim: this.atlas.peng,
 				size: [100, 120],
-				hotspot: [50, 110],
 				x, y, z,
 				light: 0,
 				opacity: .5,
@@ -171,7 +144,6 @@ class WorldOfTurtle extends GameBase {
 			peng.collision = this.spriteFactory.create({
 				anim: this.atlas.redsquare,
 				size: [100, 100],
-				hotspot: [50, 50],
 				x, y, z,
 				rotation: [-90, 0, 0],					
 			});
@@ -185,7 +157,6 @@ class WorldOfTurtle extends GameBase {
 				this.spriteFactory.create({
 					anim: this.atlas.hex,
 					size: [100, 100],
-					hotspot: [50, 50],
 					x, y, z,
 					rotation: [-90, 0, 0],					
 				});

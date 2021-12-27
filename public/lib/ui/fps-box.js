@@ -11,7 +11,7 @@ class FpsBox extends UiComponent {
 		this.input.style.boxOutline = 0;
 		this.input.style.right = "10px";
 		this.input.style.top = "4px";
-		this.input.style.width = "60px";
+		this.input.style.width = "40px";
 		this.input.style.position = "absolute";
 		this.input.style.zIndex = 10;
 		this.fps = null;
@@ -28,7 +28,7 @@ class FpsBox extends UiComponent {
 		const timeCalc = Math.round(10 * 1000 / timeDiff * this.perfTimers.length) / 10;
 		if (this.fps !== timeCalc) {
 			this.fps = timeCalc;
-			this.input.value = `${this.fps.toFixed(1)}fps`;
+			this.input.value = this.fps.toFixed(1);
 		}
 	}
 }

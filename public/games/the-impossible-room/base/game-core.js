@@ -49,24 +49,28 @@ class GameCore extends GameBase {
 					...spritesheet,
 					collision_url: "assets/monkor-collision.png",
 					range:[0],
+					hotspot: [.5, 1],
 				}),
 			monkor_back_still: await engine.addTexture(
 				{
 					...spritesheet,
 					collision_url: "assets/monkor-collision.png",
 					range:[6],
+					hotspot: [.5, 1],
 				}),
 			monkor_front: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range:[1, 4],
+					hotspot: [.5, 1],
 				}),
 			monkor_back: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range:[5, 8],
+					hotspot: [.5, 1],
 				}),
 			monkor_left: await engine.addTexture(
 				{
@@ -74,12 +78,14 @@ class GameCore extends GameBase {
 					frameRate:10,
 					range: gender === 'T' ? [13, 16] : [9, 12],
 					direction: gender === 'T' ? 1 : -1,
+					hotspot: [.5, 1],
 				}),
 			monkor_right: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range: gender === 'T' ? [9, 12] : [9, 12],
+					hotspot: [.5, 1],
 				}),
 			monkor_stand_left: await engine.addTexture(
 				{
@@ -87,58 +93,68 @@ class GameCore extends GameBase {
 					frameRate:10,
 					range: gender === 'T' ? [14] : [10],
 					direction: gender === 'T' ? 1 : -1,
+					hotspot: [.5, 1],
 				}),
 			monkor_stand_right: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range: gender === 'T' ? [14] : [10],
+					hotspot: [.5, 1],
 				}),
 			monkor_chew: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range: gender==="T" ? [17, 18] : [13, 14],
+					hotspot: [.5, 1],
 				}),
 			monkor_talk: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range: gender==="T" ? [17, 20] : [13, 16],
+					hotspot: [.5, 1],
 				}),
 			monkor_talk_2: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:10,
 					range: gender==="T" ? [21, 25] : [13, 16],
+					hotspot: [.5, 1],
 				}),
 			monkor_smoke: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate:8,
 					range: gender === "T" ? [26, 28] : [17, 19],
+					hotspot: [.5, 1],
 				}),
 			monkor_puff: await engine.addTexture(
 				{
 					...spritesheet,
 					range: gender === "T" ? [29] : [20],
+					hotspot: [.5, 1],
 				}),
 			monkor_blow: await engine.addTexture(
 				{
 					...spritesheet,
 					frameRate: gender==="T" ? 3 : 8,
 					range: gender === "T" ? [30, 32] : [17, 19],
+					hotspot: [.5, 1],
 				}),
 			monkor_scared_right: await engine.addTexture(
 				{
 					...spritesheet,
 					range: gender === "T" ? [33] : [21],
+					hotspot: [.5, 1],
 				}),
 			monkor_scared_left: await engine.addTexture(
 				{
 					...spritesheet,
 					range: gender === "T" ? [34] : [21],
 					direction: -1,
+					hotspot: [.5, 1],
 				}),
 			monkor_run_right: await engine.addTexture(
 				{
@@ -148,6 +164,7 @@ class GameCore extends GameBase {
 						: gender==="W" ? [9, 12]
 						: gender === "T" ? [9, 12]
 						: [0],
+					hotspot: [.5, 1],
 				}),
 			monkor_run_left: await engine.addTexture(
 				{
@@ -158,6 +175,7 @@ class GameCore extends GameBase {
 						: gender==="T" ? [13, 16]
 						: [0],
 					direction: -1,
+					hotspot: [.5, 1],
 				}),
 			piano: await engine.addTexture(
 				{
@@ -288,6 +306,7 @@ class GameCore extends GameBase {
 					collision_url: "assets/butler.png",
 					cols: 10, rows: 6,
 					range: [0],
+					hotspot: [.25, 1],
 				}),
 			butler_still_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -295,6 +314,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [17],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_walk_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -302,6 +322,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [5, 8],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_talk_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -309,6 +330,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [17,20],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_shake_hands_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -316,6 +338,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [21,22],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_shake_hands_talk_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -323,6 +346,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [22,25],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_still_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -331,6 +355,7 @@ class GameCore extends GameBase {
 					range: [17],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_walk_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -339,6 +364,7 @@ class GameCore extends GameBase {
 					range: [5, 8],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_talk_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -347,6 +373,7 @@ class GameCore extends GameBase {
 					range: [17,20],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_shake_hands_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -355,6 +382,7 @@ class GameCore extends GameBase {
 					range: [21,22],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_shake_hands_talk_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -363,6 +391,7 @@ class GameCore extends GameBase {
 					range: [22,25],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_angry_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -370,12 +399,14 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [41],
 					direction: -1,
+					hotspot: [.25, 1],
 				}),
 			butler_angry_right: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
 					cols: 10, rows: 6,
 					range: [41],
+					hotspot: [.25, 1],
 				}),
 			butler_talk_angry_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -384,6 +415,7 @@ class GameCore extends GameBase {
 					range: [41,44],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_talk_angry_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -391,6 +423,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [41,44],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_kick_right: await engine.addTexture({
 					url: "assets/butler.png",
@@ -398,6 +431,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [45],
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_kick_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -406,12 +440,14 @@ class GameCore extends GameBase {
 					range: [45],
 					direction: -1,
 					frameRate: 5,
+					hotspot: [.25, 1],
 				}),
 			butler_kick_right_still: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
 					cols: 10, rows: 6,
 					range: [46],
+					hotspot: [.25, 1],
 				}),
 			butler_kick_left_still: await engine.addTexture({
 					url: "assets/butler.png",
@@ -419,12 +455,14 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [46],
 					direction: -1,
+					hotspot: [.25, 1],
 				}),
 			butler_surprised_right_still: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
 					cols: 10, rows: 6,
 					range: [47],
+					hotspot: [.25, 1],
 				}),
 			butler_surprised_left_still: await engine.addTexture({
 					url: "assets/butler.png",
@@ -432,6 +470,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [47],
 					direction: -1,
+					hotspot: [.25, 1],
 				}),
 			butler_surprised_right_talk: await engine.addTexture({
 					url: "assets/butler.png",
@@ -439,6 +478,7 @@ class GameCore extends GameBase {
 					cols: 10, rows: 6,
 					range: [47,48],
 					frameRate: 8,
+					hotspot: [.25, 1],
 				}),
 			butler_surprised_left_talk: await engine.addTexture({
 					url: "assets/butler.png",
@@ -447,12 +487,14 @@ class GameCore extends GameBase {
 					range: [47,48],
 					direction: -1,
 					frameRate: 8,
+					hotspot: [.25, 1],
 				}),
 			joker: await engine.addTexture({
 				url: "assets/joker.png",
 				collision_url: "assets/joker.png",
 				cols:1,rows:2,
 				range:[0,1],
+				hotspot: [.5,1],
 			}),
 		};
 
@@ -825,7 +867,6 @@ class GameCore extends GameBase {
 			anim: this.atlas.joker,
 			size: [50, 50],
 			x: 500, y: 340,
-			hotspot: [25,50],
 			opacity: 0,
 		}, {
 			actions: [
@@ -923,7 +964,6 @@ class GameCore extends GameBase {
 			name: "monkor",
 			x: this.sceneData.monkor.x, y: this.sceneData.monkor.y,
 			size: [128, 128],
-			hotspot: [64,128],
 			anim: this.atlas.monkor_still,
 		}, {
 			self: true,
@@ -1835,7 +1875,9 @@ class GameCore extends GameBase {
 				if (!monkor.scared) {
 					monkor.scared = time;
 					this.audio.scream.play();
-					this.setAudio(audio, false, 0);
+					this.engine.music.getAudio(this.getMusic()).then(audio => {
+						this.setAudio(audio, false, 0);
+					});
 				}
 			} else {
 				const dx = this.canRunRight() ? -(mouse.x - monkor.x) : -1;
@@ -2095,8 +2137,9 @@ class GameCore extends GameBase {
 			this.monkor.changeOpacity(0, time);
 			this.monkor.dead = time;
 			this.audio.piano.play();
-			const audio = this.engine.music.getAudio("music/weirdsong.mp3");
-			this.setAudio(audio, audio.paused, 0);
+			this.engine.music.getAudio(this.getMusic()).then(audio => {
+				this.setAudio(audio, false, 0);
+			});
 			setTimeout(() => this.gameOver(), 5000);
 			this.onDead();
 		}

@@ -9,7 +9,7 @@ class Engine {
 
 		this.fileUtils = new FileUtils();
 
-		this.debug = forceDebug || (location.search.contains("release") ? false : location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
+		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 		this.imageLoader = new ImageLoader();
 		this.uiComponents = [];
 
@@ -178,6 +178,7 @@ class Engine {
 			canvasWidth: 0, canvasHeight: 0,
 			dirty: true,
 		};
+		this.tempVec3 = vec3.create();
 	}
 
 	addUiComponent(component) {
@@ -655,9 +656,9 @@ class Engine {
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
-		this.viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.fromValues(0, 0, 0));
+		this.viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.set(this.tempVec3, 0, 0, 0));
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.fromValues(0, 0, 0)));
+		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(this.tempVec3, 0, 0, 0)));
 
 		this.keyboardHandler.addKeyDownListener('p', () => {
 			this.setPerspective(!this.isPerspective);
@@ -944,8 +945,8 @@ class Engine {
 		if (shiftChanged || shakeX || shakeY) {
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
-			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.fromValues(shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, -shift.z * coef * coef));
-			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.fromValues(coef, coef, 1));
+			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, -shift.z * coef * coef));
+			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
 			mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
 			mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
 			mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
@@ -969,22 +970,18 @@ class Engine {
 	handleSpriteUpdate(lastTime) {
 		this.updater.forEach(sprite => {
 			const spriteIndex = sprite.spriteIndex;
-			const cropX = sprite.crop.cropX;
-			const cropY = sprite.crop.cropY;
 			if (sprite.updated.sprite >= lastTime
-				|| sprite.updated.crop >= lastTime
-				|| sprite.updated.hotspot >= lastTime) {
-				const {x, y, z, rotation, size:[width,height], hotspot:[hotX,hotY]} = sprite;
-				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation, cropX, cropY);
+				|| sprite.updated.animation >= lastTime) {
+				const {x, y, z, rotation, size:[width,height], anim:{hotspot:[hotX,hotY]}} = sprite;
+				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation);
 			}
 			if (sprite.updated.animation >= lastTime
 				|| sprite.updated.direction >= lastTime
 				|| sprite.updated.opacity >= lastTime
-				|| sprite.updated.crop >= lastTime
 				|| sprite.updated.active >= lastTime
 				|| sprite.updated.light >= lastTime) {
 				const {anim, direction, vdirection, opacity, active, light, hue} = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, hue, cropX, cropY);
+				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, hue);
 			}
 			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;

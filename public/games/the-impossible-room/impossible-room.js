@@ -290,7 +290,6 @@ class ImpossibleRoom extends GameCore {
 			anim: this.atlas.butler,
 			x: 370, y: 255,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			bubbleTop: -80,
 			reachable: true,

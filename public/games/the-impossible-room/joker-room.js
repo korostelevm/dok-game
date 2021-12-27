@@ -54,7 +54,6 @@ class JokerRoom extends GameCore {
 			anim: this.atlas.butler,
 			x: 200, y: 340,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			actions: [
 				{ name: "talk",

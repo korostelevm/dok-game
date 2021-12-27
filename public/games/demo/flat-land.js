@@ -6,29 +6,34 @@ class FlatLand extends GameBase {
 		this.atlas = {
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
+				hotspot: HOTSPOT_CENTER,
 			}),
 			mazoo_still: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				range:[0],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			mazoo_down: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[0, 3],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			mazoo_up: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[4, 7],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			mazoo_right: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[8, 11],
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			mazoo_left: await engine.addTexture({
 				url: "assets/mazoo.png",
@@ -36,12 +41,14 @@ class FlatLand extends GameBase {
 				range:[8, 11],
 				frameRate: 10,
 				direction: -1,
+				hotspot: HOTSPOT_BOTTOM,
 			}),
 			hex: await engine.addTexture({
 				url: "assets/hex.png",
 				collision_url: "assets/hex.png",
 				cols: 2, rows: 2,
 				range: [0],
+				hotspot: HOTSPOT_CENTER,
 			}),
 		};
 
@@ -51,7 +58,6 @@ class FlatLand extends GameBase {
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
 			size: [backwallWidth, backwallHeight],
-			hotspot: [backwallWidth / 2, backwallHeight / 2],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight / 2,
 			z: -1000,
@@ -65,7 +71,6 @@ class FlatLand extends GameBase {
 			this.mazoos.push(this.spriteFactory.create({
 				anim: this.atlas.mazoo_still,
 				size: [32, 32],
-				hotspot: [16, 32],
 				x, y, z,
 				isSprite: 1,
 			}, {
@@ -84,7 +89,6 @@ class FlatLand extends GameBase {
 			this.spriteFactory.create({
 				anim: this.atlas.hex,
 				size: [256, 256],
-				hotspot: [128, 128],
 				x, y, z,
 				rotation: [-90, 0, 0],					
 			});

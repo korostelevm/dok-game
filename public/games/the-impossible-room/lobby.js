@@ -281,7 +281,6 @@ class Lobby extends GameCore {
 			anim: this.atlas.butler,
 			x: this.properties.calledHost ? 600 : 770, y: 350,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			actions: [
 				{ name: "talk", condition: butler => butler.properties.nextRoomAvailable,

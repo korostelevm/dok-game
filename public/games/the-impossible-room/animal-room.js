@@ -22,6 +22,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[0],
+					hotspot: [.5, 1],
 				}),
 				koala: await engine.addTexture({
 					url: "assets/idols.png",
@@ -31,6 +32,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[1],
+					hotspot: [.5, 1],
 				}),
 				cat: await engine.addTexture({
 					url: "assets/idols.png",
@@ -40,6 +42,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[2],
+					hotspot: [.5, 1],
 				}),
 				bird: await engine.addTexture({
 					url: "assets/idols.png",
@@ -49,6 +52,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[3],
+					hotspot: [.5, 1],
 				}),
 				dog: await engine.addTexture({
 					url: "assets/idols.png",
@@ -58,6 +62,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[4],
+					hotspot: [.5, 1],
 				}),
 				pig: await engine.addTexture({
 					url: "assets/idols.png",
@@ -67,6 +72,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[5],
+					hotspot: [.5, 1],
 				}),
 				turtle: await engine.addTexture({
 					url: "assets/idols.png",
@@ -76,6 +82,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[6],
+					hotspot: [.5, 1],
 				}),
 				horse: await engine.addTexture({
 					url: "assets/idols.png",
@@ -85,6 +92,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[7],
+					hotspot: [.5, 1],
 				}),
 				snake: await engine.addTexture({
 					url: "assets/idols.png",
@@ -94,6 +102,7 @@ class AnimalRoom extends GameCore {
 					texture_blend: "luminosity",
 					cols:3,rows:4,
 					range:[8],
+					hotspot: [.5, 1],
 				}),
 			},
 			stand_up: await engine.addTexture({
@@ -104,6 +113,7 @@ class AnimalRoom extends GameCore {
 				texture_blend: "luminosity",
 				cols:3,rows:4,
 				range:[9],
+				hotspot: [.5, 1],
 			}),
 			stand_down: await engine.addTexture({
 				url: "assets/idols.png",
@@ -113,6 +123,7 @@ class AnimalRoom extends GameCore {
 				texture_blend: "luminosity",
 				cols:3,rows:4,
 				range:[10],
+				hotspot: [.5, 1],
 			}),
 		};
 
@@ -208,7 +219,6 @@ class AnimalRoom extends GameCore {
 				name,
 				anim: this.atlas.idols[i],
 				size: [50, 50],
-				hotspot: [25, 50],
 				x: xpos,
 				y: 320,
 				opacity: name === "cat" ? 0 : 1,
@@ -248,7 +258,6 @@ class AnimalRoom extends GameCore {
 			anim: this.atlas.butler,
 			x: 200, y: 340,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			actions: [
 				{ name: "talk",
@@ -461,7 +470,6 @@ class AnimalRoom extends GameCore {
 		this.itemCarried = this.spriteFactory.create({
 			name: "itemCarried",
 			size: [50, 50],
-			hotspot: [25, 80],
 			anim: this.atlas.idols.crab,
 			opacity: 0,
 		}, {
@@ -519,7 +527,6 @@ class AnimalRoom extends GameCore {
 				name: "pedestal #" + (i + 1),
 				anim: this.atlas.stand_up,
 				size: [50, 50],
-				hotspot: [25, 50],
 				x: xpos,
 				y: 390,
 			}, {
@@ -559,7 +566,6 @@ class AnimalRoom extends GameCore {
 				name: item => `${item.properties.idol || "idol"} on a pedestal`,
 				anim: this.atlas.idols.crab,
 				size: [50, 50],
-				hotspot: [25, 50],
 				x: xpos,
 				y: 380,
 				opacity: 0,
@@ -609,7 +615,7 @@ class AnimalRoom extends GameCore {
 
 	refreshIdol(time) {
 		const period = this.monkor.walking ? Math.sin(time / 30) * 2 : 0;
-		this.itemCarried.changePosition(this.monkor.x, this.monkor.y + period, this.monkor.z, time);
+		this.itemCarried.changePosition(this.monkor.x, this.monkor.y + period - 30, this.monkor.z, time);
 	}
 
 	refresh(time, dt) {

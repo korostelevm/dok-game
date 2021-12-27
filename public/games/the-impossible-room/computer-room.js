@@ -243,7 +243,6 @@ class ComputerRoom extends GameCore {
 				name,
 				x, y,
 				size: [128, 128],
-				hotspot: [64,128],
 				anim: gender === "M" ? this.atlas.other_monkor : gender === "W" ? this.atlas.other_nuna : this.atlas.other_twin,
 			}, {
 				actions: [

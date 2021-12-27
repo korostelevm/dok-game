@@ -20,6 +20,7 @@ class BatmanRoom extends GameCore {
 					url: "assets/batman.png",
 					cols: 5, rows: 6,
 					range: [0],
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			batman_punch: await engine.addTexture(
 				{
@@ -27,12 +28,14 @@ class BatmanRoom extends GameCore {
 					cols: 5, rows: 6,
 					range: [1, 8],
 					frameRate: 12,
+					hotspot: HOTSPOT_BOTTOM,
 				}),			
 			batman_punch_still: await engine.addTexture(
 				{
 					url: "assets/batman.png",
 					cols: 5, rows: 6,
 					range: [8],
+					hotspot: HOTSPOT_BOTTOM,
 				}),			
 			batman_punch_talk: await engine.addTexture(
 				{
@@ -40,6 +43,7 @@ class BatmanRoom extends GameCore {
 					cols: 5, rows: 6,
 					range: [8, 11],
 					frameRate: 12,
+					hotspot: HOTSPOT_BOTTOM,
 				}),			
 			batman_walk: await engine.addTexture(
 				{
@@ -47,6 +51,7 @@ class BatmanRoom extends GameCore {
 					cols: 5, rows: 6,
 					range: [12, 19],
 					frameRate: 12,
+					hotspot: HOTSPOT_BOTTOM,
 				}),
 			batman_lifting: await engine.addTexture(
 				{
@@ -54,6 +59,7 @@ class BatmanRoom extends GameCore {
 					cols: 5, rows: 6,
 					range: [20, 25],
 					frameRate: 15,
+					hotspot: HOTSPOT_BOTTOM,
 				}),			
 			batman_lift: await engine.addTexture(
 				{
@@ -61,6 +67,7 @@ class BatmanRoom extends GameCore {
 					cols: 5, rows: 6,
 					range: [25],
 					frameRate: 12,
+					hotspot: HOTSPOT_BOTTOM,
 				}),			
 			batman_lift_talk: await engine.addTexture(
 				{
@@ -68,6 +75,7 @@ class BatmanRoom extends GameCore {
 					cols: 5, rows: 6,
 					range: [25, 26],
 					frameRate: 12,
+					hotspot: HOTSPOT_BOTTOM,
 				}),			
 		};
 
@@ -112,7 +120,6 @@ class BatmanRoom extends GameCore {
 			anim: this.atlas.butler,
 			x: 200, y: 340,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			actions: [
 				{ name: "talk",
@@ -277,7 +284,6 @@ class BatmanRoom extends GameCore {
 			anim: this.atlas.batman,
 			x: 600, y: 380,
 			size: [240, 240],
-			hotspot: [120, 240],
 		}, {
 			onFrame: {
 				4: (batman, previousFrame) => {
