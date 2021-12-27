@@ -15,12 +15,12 @@ const int HUE_INDEX = 2;
 const int IS_HUD_INDEX = 0;
 const int IS_SPRITE_INDEX = 1;
 
-attribute vec2 vertexPosition;
-attribute mat4 matrix;
+attribute vec2 vertexPosition;			
+attribute mat4 matrix;				//	4
 attribute vec3 motion;
 attribute vec3 acceleration;
 attribute vec3 textureIndex;
-attribute mat4 textureCoordinates;
+attribute mat4 textureCoordinates;	//	4
 attribute vec4 animationInfo;
 attribute vec4 spriteSheet;
 attribute vec4 updateTime;
@@ -90,7 +90,8 @@ void main() {
 }
 
 vec3 applyMotion(float dt, vec3 motion, vec3 acceleration) {
-	return dt * motion + 0.5 * dt * dt * acceleration;
+	float dt2 = dt * dt;
+	return dt * motion + 0.5 * dt2 * acceleration;
 }
 
 vec3 calculateHSV(float zDistance, float hueValue) {

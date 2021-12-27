@@ -72,6 +72,9 @@ class WorldOfTurtle extends GameBase {
 				spriteWidth: 349, spriteHeight: 409,
 				range:[0],
 			}),
+			redsquare: await engine.addTexture({
+				url: "assets/red-square.png",
+			}),
 		};
 		const control = this.addPhysics(new Control8());
 
@@ -100,17 +103,20 @@ class WorldOfTurtle extends GameBase {
 				hotspot: [50, 150],
 				x, y, z,
 				isSprite: 1,
+				slowdown: .5,
 			}, {
 				control: 1,
 				onControl: (turtle, dx, dy) => {
-					const speed = 150;
+					const speed = 200;
+//					const accel = 200;
 					turtle.changeMotion(dx * speed, 0, dy * speed);
-					turtle.shadow.changeMotion(dx * speed, 0, dy * speed);
+//					turtle.changeAcceleration(dx * accel, 0, dy * accel);
+					turtle.shadow.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
+//					turtle.shadow.changeAcceleration(turtle.acceleration[0], turtle.acceleration[1], turtle.acceleration[2]);
+					turtle.collision.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
 					if (dx !== 0) {
 						turtle.changeDirection(dx);
-						turtle.shadow.changeDirection(dx);
-					}
-					if (dx != 0) {
+						turtle.shadow.changeDirection(turtle.direction);
 						turtle.changeAnimation(this.atlas.turtle_run);
 					} else if (dy < 0) {
 						turtle.changeAnimation(this.atlas.turtle_run_up);
@@ -119,6 +125,7 @@ class WorldOfTurtle extends GameBase {
 					} else {
 						turtle.changeAnimation(this.atlas.turtle);						
 					}
+					turtle.shadow.changeAnimation(turtle.anim);
 				},
 			});
 			this.turtle.shadow = this.spriteFactory.create({
@@ -130,27 +137,42 @@ class WorldOfTurtle extends GameBase {
 				opacity: .5,
 				rotation: [-90, 0, 0],					
 			});
+			this.turtle.collision = this.spriteFactory.create({
+				anim: this.atlas.redsquare,
+				size: [100, 100],
+				hotspot: [50, 50],
+				x, y, z,
+				rotation: [-90, 0, 0],					
+			});
 		}
 
-		this.mazoos = [];
+		this.pengs = [];
 		for (let i = 0; i < 100; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
 			const z = - RandomUtils.random(i, 888) * 2000;
 			const y = 400;
-			this.mazoos.push(this.spriteFactory.create({
+			const peng = this.spriteFactory.create({
 				anim: this.atlas.peng,
 				size: [100, 120],
 				hotspot: [50, 110],
 				x, y, z,
 				isSprite: 1,
-			}));
-			this.spriteFactory.create({
+			});
+			this.pengs.push(peng);			
+			peng.shadow = this.spriteFactory.create({
 				anim: this.atlas.peng,
 				size: [100, 120],
 				hotspot: [50, 110],
 				x, y, z,
 				light: 0,
 				opacity: .5,
+				rotation: [-90, 0, 0],					
+			});
+			peng.collision = this.spriteFactory.create({
+				anim: this.atlas.redsquare,
+				size: [100, 100],
+				hotspot: [50, 50],
+				x, y, z,
 				rotation: [-90, 0, 0],					
 			});
 		}
@@ -169,6 +191,18 @@ class WorldOfTurtle extends GameBase {
 				});
 			}
 		}
+
+		this.cameras = {
+		    "normal": {
+		      "default": true,
+		      "xOffset": 900,
+		      "yOffset": 1000,
+		      "zOffset": 1000,
+		      "zoom": 1,
+		      "follow": "turtle"
+		    },			
+		};
+		this.camera = "normal";
 	}
 
 	isPerpective() {
@@ -193,6 +227,37 @@ class WorldOfTurtle extends GameBase {
 		};
 	}
 
+	applyCamera(camera) {
+		const cameraConfig = this.cameras[camera];
+		const followed = this[cameraConfig.follow];
+		const zoom = cameraConfig.zoom;
+		const shift = this.engine.shift;
+		shift.goal.x = -followed.x * 2 / zoom + cameraConfig.xOffset;
+		shift.goal.y = -followed.y * 2 / zoom + cameraConfig.yOffset;
+		shift.goal.z = -followed.z * 2 / zoom + cameraConfig.zOffset;
+		shift.goal.zoom = zoom;
+		if (typeof(cameraConfig.minX) !== "undefined") {
+			shift.goal.x = Math.max(cameraConfig.minX, shift.goal.x);
+		}
+		if (typeof(cameraConfig.minY) !== "undefined") {
+			shift.goal.y = Math.max(cameraConfig.minY, shift.goal.y);			
+		}
+		if (typeof(cameraConfig.minZ) !== "undefined") {
+			shift.goal.z = Math.max(cameraConfig.minZ, shift.goal.z);			
+		}
+		if (typeof(cameraConfig.maxX) !== "undefined") {
+			shift.goal.x = Math.min(cameraConfig.maxX, shift.goal.x);
+		}
+		if (typeof(cameraConfig.maxY) !== "undefined") {
+			shift.goal.y = Math.max(cameraConfig.maxY, shift.goal.y);			
+		}
+		if (typeof(cameraConfig.maxZ) !== "undefined") {
+			shift.goal.z = Math.max(cameraConfig.maxZ, shift.goal.z);			
+		}
+	}
+
 	refresh(time, dt) {
+		super.refresh(time, dt);
+//		this.applyCamera(this.camera);
 	}
 }

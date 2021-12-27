@@ -27,12 +27,13 @@ class Sprite {
 		this.remember = data.remember || false;
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
+		this.slowdown = data.slowdown ?? 1;
 		this.hue = data.hue || 0;
 		this.isHud = data.isHud ? 1 : 0;
 		this.isSprite = data.isSprite ? 1 : 0;
 
 		this.direction = data.direction || 1;
-		this.vdirection = data.vdirection || 1;
+		this.ydirection = data.ydirection || 1;
 		this.anim = data.anim;
 		if (!this.anim) {
 			console.warn("Anim doesn't exist.");
@@ -192,9 +193,9 @@ class Sprite {
 		return false;
 	}
 
-	changeVDirection(vdirection, time) {
-		if (this.vdirection !== vdirection) {
-			this.vdirection = vdirection;
+	changeYDirection(ydirection, time) {
+		if (this.ydirection !== ydirection) {
+			this.ydirection = ydirection;
 			this.updated.direction = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
@@ -263,9 +264,11 @@ class Sprite {
 		return false;
 	}
 
-	changeMotion(dx, dy, dz, time) {
+	changeMotion(dx, dy, dz, time, skipRecalculate) {
 		if (this.motion[0] !== dx || this.motion[1] !== dy || this.motion[2] !== dz) {
-			this.recalculatePosition(time || this.engine.lastTime);
+			if (!skipRecalculate) {
+				this.recalculatePosition(time || this.engine.lastTime);
+			}
 			this.motion[0] = dx;
 			this.motion[1] = dy;
 			this.motion[2] = dz;
@@ -287,6 +290,16 @@ class Sprite {
 			return true;
 		}
 		return false;
+	}
+
+	changeSlowdown(slowdown, time) {
+		if (this.slowdown !== slowdown) {
+			this.recalculatePosition(time);
+			this.slowdown = slowdown;
+			this.updated.motion = time || this.engine.lastTime;
+			this.needUpdate();
+			return true;			
+		}
 	}
 
 	changeAnimationTime(animationTime, time) {
@@ -351,21 +364,27 @@ class Sprite {
 		const t = time || this.engine.lastTime;
 		if (this.updated.motion !== t) {
 			const dt = (t - this.updated.motion) / 1000;
-			const x = this.x + dt * this.motion[0] + .5 * dt * dt * this.acceleration[0];
-			const y = this.y + dt * this.motion[1] + .5 * dt * dt * this.acceleration[1];
-			const z = this.z + dt * this.motion[2] + .5 * dt * dt * this.acceleration[2];
+			const dt2 = dt * dt;
+			const x = this.x + this.motion[0] * dt + .5 * dt2 * this.acceleration[0];
+			const y = this.y + this.motion[1] * dt + .5 * dt2 * this.acceleration[1];
+			const z = this.z + this.motion[2] * dt + .5 * dt2 * this.acceleration[2];
+			const vx = this.motion[0] + dt * this.acceleration[0];
+			const vy = this.motion[1] + dt * this.acceleration[1];
+			const vz = this.motion[2] + dt * this.acceleration[2];
 			this.changePosition(x, y, z, t);
+			this.changeMotion(vx, vy, vz, t, true);
 			this.updated.motion = t;
 		}
 	}
 
 	calculateCollisonBox(rect) {
-		const flipH = this.direction < 0;
-		const flipV = this.vdirection < 0;
-		const rLeft = flipH ? 1 - rect.right : rect.left;
-		const rRight = flipH ? 1 - rect.left : rect.right;
-		const rTop = flipV ? 1 - rect.bottom : rect.top;
-		const rBottom = flipV ? 1 - rect.top : rect.bottom;
+		const flipX = this.direction < 0;
+		const flipY = this.ydirection < 0;
+		const flipZ = this.zdirection < 0;
+		const rLeft = flipX ? 1 - rect.right : rect.left;
+		const rRight = flipX ? 1 - rect.left : rect.right;
+		const rTop = flipY ? 1 - rect.bottom : rect.top;
+		const rBottom = flipY ? 1 - rect.top : rect.bottom;
 
 		const collisionPadding = this.anim.collisionPadding ?? 0;
 		const width = this.size[0];

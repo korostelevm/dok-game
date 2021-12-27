@@ -89,6 +89,7 @@ const globalFiles=[
 			"pipe.png",
 			"pointer-cursor.png",
 			"red-line.png",
+			"red-square.png",
 			"restaurant.png",
 			"select-cursor.png",
 			"sign.png",

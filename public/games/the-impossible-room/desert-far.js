@@ -448,7 +448,7 @@ class DesertFar extends GameCore {
 				this.pop_out.dy -= .5;
 			} else if (this.pop_out.dy < 0) {
 				this.pop_out.dy = 0;
-				this.pop_out.changeVDirection(-1, time);
+				this.pop_out.changeYDirection(-1, time);
 				setTimeout(() => {
 					this.startShrink = this.engine.lastTime;
 				}, 3000);
@@ -464,7 +464,7 @@ class DesertFar extends GameCore {
 			const shrinkValue = Math.max(-1, (500 - t) / 500);
 			this.desert_far.changeSize(800, 400 * Math.abs(shrinkValue), time);
 			this.desert_far.changeHotSpot(400, 200 * Math.abs(shrinkValue), time);
-			this.desert_far.changeVDirection(this.nextScene || shrinkValue < 0 ? -1 : 1, time);
+			this.desert_far.changeYDirection(this.nextScene || shrinkValue < 0 ? -1 : 1, time);
 			if (this.nextScene && shrinkValue * this.desert_far.previousShrinkValue < 0) {
 				this.desert_far.changeDirection(-this.desert_far.direction, time);				
 			}
