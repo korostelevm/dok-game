@@ -182,7 +182,7 @@ class TextureAtlas {
 		this.vdirection = vdirection || 1;
 	}
 
-	getTextureCoordinatesFromRect(x, y, width, height, direction, vdirection, opacity) {
+	getTextureCoordinatesFromRect(x, y, width, height, direction, vdirection) {
 		let x0 = x;
 		let x1 = x + width;
 		if (direction * this.direction < 0) {
@@ -202,14 +202,12 @@ class TextureAtlas {
 		tempMatrix[4]  = x1; tempMatrix[5]  = y1;
 		tempMatrix[8]  = x0; tempMatrix[9]  = y0;
 		tempMatrix[12] = x1; tempMatrix[13] = y0;
-
-		tempMatrix[2] = tempMatrix[6] = tempMatrix[10] = tempMatrix[14] = opacity * 1000;
 		return this.tempMatrix;
 	}
 
-	getTextureCoordinates(direction, vdirection, opacity) {
+	getTextureCoordinates(direction, vdirection) {
 		const { x, y, spriteWidth, spriteHeight } = this;
-		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, direction, vdirection, opacity);
+		return this.getTextureCoordinatesFromRect(x, y, spriteWidth, spriteHeight, direction, vdirection);
 	}
 
 	getSpritesheetInfo() {

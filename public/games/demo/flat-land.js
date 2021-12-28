@@ -93,6 +93,14 @@ class FlatLand extends GameBase {
 				rotation: [-90, 0, 0],					
 			});
 		}
+		this.engine.keyboardHandler.addKeyDownListener('p', () => {
+			this.engine.setPerspective(!this.engine.isPerspective);
+		});
+
+	}
+
+	onExit(engine) {
+//		this.engine.keyboardHandler.removeListeners
 	}
 
 	isPerpective() {

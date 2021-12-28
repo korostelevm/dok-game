@@ -10,6 +10,7 @@ const int MOTION_UPDATE_INDEX = 1;
 
 const int TEXTURE_INDEX = 0;
 const int LIGHT_INDEX = 1;
+const int OPACITY_INDEX = 2;
 
 const int IS_HUD_INDEX = 0;
 const int IS_SPRITE_INDEX = 1;
@@ -76,7 +77,7 @@ void main() {
 
 	float lightDistance = .7 + -300.0 / shift[3].z;
 	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * lightDistance;
-	v_opacity = textureInfo.z / 1000.;
+	v_opacity = textureIndex[OPACITY_INDEX] / 128.;
 
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));

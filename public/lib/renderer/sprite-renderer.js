@@ -49,8 +49,8 @@ class SpriteRenderer {
 	setAnimation(index, anim, direction, vdirection, opacity, light) {
 		const attributes = this.attributes;
 		if (anim) {
-			this.bufferRenderer.setAttributeByte2(attributes.textureIndex, index, anim.index, light * 128);
-			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, vdirection, opacity));
+			this.bufferRenderer.setAttributeByte3(attributes.textureIndex, index, anim.index, light * 128, opacity * 128);
+			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, vdirection));
 			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
 			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
 		}

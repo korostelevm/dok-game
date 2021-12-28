@@ -28,6 +28,9 @@ class Engine {
 
 		this.seenGame = {};
 
+		/* Keyboard handler */
+		this.keyboardHandler = new KeyboardHandler(document);
+
 		this.sidebars = [
 			{
 				name: "main menu",
@@ -379,9 +382,6 @@ class Engine {
 		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
 
-		/* Keyboard handler */
-		this.keyboardHandler = new KeyboardHandler(document);
-
 		/* Setup game tab. */
 		if (this.debug) {
 			const gameTab = document.getElementById("game-tab");
@@ -578,6 +578,10 @@ class Engine {
 		delete this.handleMouseCallback;
 	}
 
+	removeKeyboardListeners() {
+		this.keyboardHandler.clearListeners();
+	}
+
 	async resetScene() {
 		const { game, gl } = this;
 		if (game) {
@@ -628,6 +632,7 @@ class Engine {
 		this.shift.goal.rotation[2] = 0;
 		this.shift.dirty = true;
 		this.removeMouseListeners();
+		this.removeKeyboardListeners();
 	}
 
 	resetGame() {
@@ -659,9 +664,6 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(this.tempVec3, 0, 0, 0)));
 
-		this.keyboardHandler.addKeyDownListener('p', () => {
-			this.setPerspective(!this.isPerspective);
-		});
 		this.setClamp(0, 0, 0, 0, 0, 0);
 	}
 
@@ -928,7 +930,6 @@ class Engine {
 			shiftChanged = true;
 		}
 
-		const gl = this.gl;
 		const uniforms = shader.uniforms;
 		let shakeX = 0, shakeY = 0;
 		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
@@ -942,9 +943,11 @@ class Engine {
 		}
 
 		if (shiftChanged || shakeX || shakeY) {
+			const gl = this.gl;
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
-			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef * coef + shakeX, -shift.y * coef * coef + shakeY, -shift.z * coef * coef));
+			const coef2 = coef * coef;
+			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
 			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
 			mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
 			mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
