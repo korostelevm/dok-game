@@ -368,7 +368,6 @@ const globalFiles=[
 							"ui-component.js"
 						]
 					},
-					"debug-view.js",
 					"drag-drop.js",
 					"focus-fixer.js",
 					"fps-box.js",

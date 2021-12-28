@@ -1,25 +1,42 @@
+const HORIZONTAL = 0, VERTICAL = 1, DEEP = 2;
+
 class Collision extends PhysicsBase {
+	constructor(horizontal, vertical, deep) {
+		super();
+		this.H = 1 << HORIZONTAL;
+		this.V = 1 << VERTICAL;
+		this.D = 1 << DEEP;
+
+		this.BOTH = (horizontal ? this.H : 0) | (vertical ? this.V : 0) | (deep ? this.D : 0);
+		this.countType = [horizontal, vertical, deep];
+	}
+
 	async init(sprites, game) {
 		this.game = game;
 		this.sprites = sprites.filter(({collide}) => collide);
 		this.horizontal = [];
 		this.vertical = [];
+		this.deep = [];
 		this.axis = [
 			this.horizontal,
 			this.vertical,
+			this.deep,
 		];
 		this.openColliders = [];
 		this.countedColliders = [];
 
-		this.H = 1;
-		this.V = 2;
-		this.BOTH = this.H | this.V;
-
 		this.sprites.forEach((sprite, colIndex) => {
-			const topLeft = { sprite, topLeft: true, bottomRight: false, x: 0, y: 0 };
-			const bottomRight = { sprite, topLeft: false, bottomRight: true, x: 0, y: 0 };
-			this.horizontal.push(topLeft, bottomRight);
-			this.vertical.push(topLeft, bottomRight);
+			const topLeftClose = { sprite, topLeftClose: true, bottomRightFar: false, x: 0, y: 0, z: 0 };
+			const bottomRightFar = { sprite, topLeftClose: false, bottomRightFar: true, x: 0, y: 0, z: 0 };
+			if (this.countType[HORIZONTAL]) {
+				this.horizontal.push(topLeftClose, bottomRightFar);
+			}
+			if (this.countType[VERTICAL]) {
+				this.vertical.push(topLeftClose, bottomRightFar);
+			}
+			if (this.countType[DEEP]) {
+				this.deep.push(topLeftClose, bottomRightFar);
+			}
 			sprite.collisionData = {
 				colIndex,
 				colliders: [],
@@ -37,7 +54,7 @@ class Collision extends PhysicsBase {
 		};
 	}
 
-	countCollision(sprite, secondSprite, horizontal) {
+	countCollision(sprite, secondSprite, type) {
 		if (!sprite.collisionData.countCollision) {
 			return;
 		}
@@ -49,7 +66,7 @@ class Collision extends PhysicsBase {
 			}
 			colliders.push(colIndex);
 		}
-		collisions[colIndex] |= horizontal ? this.H : this.V; 
+		collisions[colIndex] |= 1 << type; 
 	}
 
 	calculateCollisionMarkers(time) {
@@ -58,14 +75,19 @@ class Collision extends PhysicsBase {
 		}
 		for (let i = 0; i < this.horizontal.length; i++) {
 			const marker = this.horizontal[i];
-			marker.x = (marker.topLeft ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
+			marker.x = (marker.topLeftClose ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
 		}
 		for (let i = 0; i < this.vertical.length; i++) {
 			const marker = this.vertical[i];
-			marker.y = (marker.topLeft ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
+			marker.y = (marker.topLeftClose ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
+		}
+		for (let i = 0; i < this.deep.length; i++) {
+			const marker = this.deep[i];
+			marker.z = (marker.topLeftClose ?  marker.sprite.collisionBox.close : marker.sprite.collisionBox.far);
 		}
 		ArrayUtils.sort(this.horizontal, this.compareHorizontal);
 		ArrayUtils.sort(this.vertical, this.compareVertical);
+		ArrayUtils.sort(this.deep, this.compareDepth);
 	}
 
 	refresh(time, dt) {
@@ -76,18 +98,17 @@ class Collision extends PhysicsBase {
 		}
 		this.calculateCollisionMarkers(time);
 		for (let m = 0; m < this.axis.length; m++) {
-			const isHorizontal = m === 0;
-			const ax = this.axis[m];
-			for (let i = 0; i < ax.length; i++) {
-				const marker = ax[i];
+			const markers = this.axis[m];
+			for (let i = 0; i < markers.length; i++) {
+				const marker = markers[i];
 				const sprite = marker.sprite;
 				if (sprite.disabled) {
 					continue;
 				}
 
-				this.countNewCollisionsWithOpenColliders(sprite, isHorizontal);
+				this.countNewCollisionsWithOpenColliders(sprite, m);
 
-				if (marker.topLeft) {
+				if (marker.topLeftClose) {
 					//	Open the new colliders
 					this.addOpenCollider(sprite);
 				} else {
@@ -116,19 +137,19 @@ class Collision extends PhysicsBase {
 		}
 	}
 
-	countNewCollisionsWithOpenColliders(sprite, isHorizontal) {
+	countNewCollisionsWithOpenColliders(sprite, type) {
 		const openColliders = this.openColliders;
 		for (let i = 0; i < openColliders.length; i++) {
 			const openCollider = openColliders[i];
 			if (openCollider.id !== sprite.id) {
-				this.countCollision(openCollider, sprite, isHorizontal);
+				this.countCollision(openCollider, sprite, type);
 			}
 		}
 		if (sprite.collisionData.countCollision) {
 			for (let i = 0; i < openColliders.length; i++) {
 				const openCollider = openColliders[i];
 				if (openCollider.id !== sprite.id) {
-					this.countCollision(sprite, openCollider, isHorizontal);
+					this.countCollision(sprite, openCollider, type);
 				}
 			}
 		}
@@ -141,8 +162,11 @@ class Collision extends PhysicsBase {
 		const topPush = sprite.collisionBox.bottom - secondSprite.collisionBox.top;
 		const bottomPush = secondSprite.collisionBox.bottom - sprite.collisionBox.top;
 		const yPush = topPush < bottomPush ? -topPush : bottomPush;
+		const closePush = sprite.collisionBox.far - secondSprite.collisionBox.close;
+		const farPush = secondSprite.collisionBox.far - sprite.collisionBox.close;
+		const zPush = closePush < farPush ? -closePush : farPush;
 		if (sprite.onCollide) {
-			sprite.onCollide(sprite, secondSprite, xPush, yPush);
+			sprite.onCollide(sprite, secondSprite, xPush, yPush, zPush);
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
 			if (sprite.onEnter) {
@@ -197,5 +221,9 @@ class Collision extends PhysicsBase {
 
 	compareVertical(a, b) {
 		return a.y - b.y;
+	}
+
+	compareDepth(a, b) {
+		return a.z - b.z;
 	}
 }

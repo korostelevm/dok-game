@@ -35,7 +35,6 @@ class CollisionMerger {
 				});
 				blocks[cellType] = blocks[cellType].filter(b => b.sprite.active);
 				if (!didMerge) {
-					console.log("Stop pass", pass);
 					break;
 				}
 			}
@@ -53,7 +52,7 @@ class CollisionMerger {
 				expandSize = b.size[0];
 				r += b.size[1] / unitSize[1];
 			}
-			block.sprite.changeSize(block.sprite.size[0] + expandSize, block.sprite.size[1]);
+			block.sprite.changeSize(block.sprite.size[0] + expandSize, block.sprite.size[1], 1);
 			block.spancol+= expandSize / unitSize[0];
 		}
 		if (D === BOTTOM) {
@@ -65,7 +64,7 @@ class CollisionMerger {
 				expandSize = b.size[1];
 				c += b.size[0] / unitSize[0];
 			}
-			block.sprite.changeSize(block.sprite.size[0], block.sprite.size[1] + expandSize);
+			block.sprite.changeSize(block.sprite.size[0], block.sprite.size[1] + expandSize, 1);
 			block.spanrow+= expandSize / unitSize[1];
 		}
 	}

@@ -21,6 +21,7 @@ class SoundRoom extends GameCore {
 					texture_blend: "source-atop",
 					cols: 4, rows: 7,
 					range: [0],
+					hotspot: [.5, .75],
 				}),
 			soundWaves: await engine.addTexture(
 				{
@@ -140,6 +141,7 @@ class SoundRoom extends GameCore {
 					texture_blend: "source-atop",
 					cols: 4, rows: 7,
 					range: [17],
+					hotspot: [.5, .75],
 				}),
 			monkey_scratch: await engine.addTexture(
 				{
@@ -151,6 +153,7 @@ class SoundRoom extends GameCore {
 					cols: 4, rows: 7,
 					range: [18, 19],
 					frameRate: 5,
+					hotspot: [.5, .75],
 				}),
 			monkey_surprised: await engine.addTexture(
 				{
@@ -161,6 +164,7 @@ class SoundRoom extends GameCore {
 					texture_blend: "source-atop",
 					cols: 4, rows: 7,
 					range: [20],
+					hotspot: [.5, .75],
 				}),
 			monkey_dance: await engine.addTexture(
 				{
@@ -172,6 +176,7 @@ class SoundRoom extends GameCore {
 					cols: 4, rows: 7,
 					range: [21,24],
 					frameRate: 3.951612903225806,//4.21073,
+					hotspot: [.5, .75],
 				}),
 			butler_dance: await engine.addTexture({
 					url: "assets/butler.png",
@@ -179,6 +184,7 @@ class SoundRoom extends GameCore {
 					cols: 10, rows: 6,
 					range: [49, 50],
 					frameRate: 3.951612903225806,//4.21073,					
+					hotspot: [.25, 1],
 				}),
 		};
 
@@ -264,7 +270,6 @@ class SoundRoom extends GameCore {
 			anim: this.atlas.butler,
 			x: 170, y: 340,
 			size: [96,192],
-			hotspot: [24,192],
 		}, {
 			actions: [
 				{ name: "talk",
@@ -476,7 +481,6 @@ class SoundRoom extends GameCore {
 			name: "boombox",
 			anim: this.atlas.boombox,
 			size: [400, 200],
-			hotspot: [200, 164],
 			x: 400, y: 373,
 		}, {
 			actions: [
@@ -576,8 +580,7 @@ class SoundRoom extends GameCore {
 		const cos = this.boombox.playing ? Math.cos(time / 80) : 0;
 		const width = 400 + sin * 20;
 		const height = 200 + cos * 10;
-		this.boombox.changeSize(width, height, time);
-		this.boombox.changeHotSpot(width / 2, height * 164 / 200, time);
+		this.boombox.changeSize(width, height, 1, time);
 	}
 
 	setAudio(audio, turnOn, volume, ignore) {

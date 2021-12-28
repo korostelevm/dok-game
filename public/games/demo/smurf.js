@@ -209,8 +209,8 @@ class Smurf extends GameBase {
 						const baseSize = 32 + (128-32) * Math.min(1, Math.max(0, (age - (constructionTime - growTime)) / growTime));
 						const width = progress >= 1 ? baseSize : baseSize + 5 * Math.sin(age / 100),
 							height = progress >= 1 ? baseSize : baseSize + 5 * Math.cos(age / 100);
-						mushroom.changeSize(width, height);
-						mushroom.meter.changeSize(progress * 64, 8);
+						mushroom.changeSize(width, height, 1);
+						mushroom.meter.changeSize(progress * 64, 8, 1);
 						if (progress >= 1) {
 							mushroom.changeOpacity(1);
 							mushroom.meter.changeActive(false);

@@ -5,7 +5,7 @@
     "overlayHud": {
       "type": "Hud",
       "anim": "debugGradient",
-      "x": 1,
+      "x": 0,
       "y": "viewportHeight",
       "z": 10,
       "opacity": 0,
@@ -98,7 +98,7 @@
     },
     "zoom": {
       "xOffset": 400,
-      "yOffset": 200,
+      "yOffset": 130,
       "zoom": 2,
       "follow": "hero"
     }

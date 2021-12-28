@@ -14,7 +14,11 @@ const int LIGHT_INDEX = 1;
 const int IS_HUD_INDEX = 0;
 const int IS_SPRITE_INDEX = 1;
 
+const mat4 IDENTITY = mat4(1.0);
+
+
 attribute vec2 vertexPosition;			
+//attribute vec3 normal;
 attribute mat4 matrix;				//	4
 attribute vec3 motion;
 attribute vec3 acceleration;
@@ -45,9 +49,6 @@ varying float v_saturation;
 vec4 getCornerValue(mat4 textureCoordinates, vec2 position);
 float modPlus(float a, float b);
 vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, float time);
-float det(mat2 matrix);
-mat3 transpose(mat3 matrix);
-mat3 inverse(mat3 matrix);
 vec3 modClampPosition(vec3 position, mat3 clamp);
 vec3 applyMotion(float dt, vec3 motion, vec3 acceleration);
 
@@ -55,9 +56,10 @@ void main() {
 	float time = timeInfo[0];
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
-	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
+	v_textureCoord = (textureInfo.xy + textureShift) / 4095.;
 	v_index = textureIndex[TEXTURE_INDEX];
-	vec4 vertexPosition4 = vec4(vertexPosition.xy, 0., 1.);
+	vec2 hotspot = spriteSheet.zw;
+	vec4 vertexPosition4 = vec4(vertexPosition.xy + hotspot * vec2(-.002, .002) + vec2(1., -1.), 0., 1.);
 
 	float isHud = isFlag[IS_HUD_INDEX];
 	float isSprite = isFlag[IS_SPRITE_INDEX];
@@ -67,17 +69,18 @@ void main() {
 	float motionTime = updateTime[MOTION_UPDATE_INDEX];
 	float dt = (time - motionTime) / 1000.;
 	mat4 mat = matrix;
-	mat4 shift = mat4(1.0);
+	mat4 shift = IDENTITY;
 	shift[3] = mat[3];
 	shift[3].xyz = modClampPosition(shift[3].xyz + applyMotion(dt, motion, acceleration), clamp);
 	mat[3].xyz = vec3(0, 0, 0);
 
-	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * (.7 + .3 * -1000.0 / shift[3].z);
+	float lightDistance = .7 + -300.0 / shift[3].z;
+	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * lightDistance;
 	v_opacity = textureInfo.z / 1000.;
 
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
-	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * mat4(1.0);
+	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * IDENTITY;
 	vec4 position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
 
 	gl_Position = position;
@@ -134,47 +137,5 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, f
 	vec2 cell = vec2(col, row);
 	vec2 spriteRect = abs(textureCoordinates[0].xy - textureCoordinates[3].xy);
 	return cell * spriteRect;
-}
-
-float det(mat2 matrix) {
-    return matrix[0].x * matrix[1].y - matrix[0].y * matrix[1].x;
-}
-
-mat3 transpose(mat3 matrix) {
-    vec3 row0 = matrix[0];
-    vec3 row1 = matrix[1];
-    vec3 row2 = matrix[2];
-    mat3 result = mat3(
-        vec3(row0.x, row1.x, row2.x),
-        vec3(row0.y, row1.y, row2.y),
-        vec3(row0.z, row1.z, row2.z)
-    );
-    return result;
-}
-
-mat3 inverse(mat3 matrix) {
-    vec3 row0 = matrix[0];
-    vec3 row1 = matrix[1];
-    vec3 row2 = matrix[2];
-
-    vec3 minors0 = vec3(
-        det(mat2(row1.y, row1.z, row2.y, row2.z)),
-        det(mat2(row1.z, row1.x, row2.z, row2.x)),
-        det(mat2(row1.x, row1.y, row2.x, row2.y))
-    );
-    vec3 minors1 = vec3(
-        det(mat2(row2.y, row2.z, row0.y, row0.z)),
-        det(mat2(row2.z, row2.x, row0.z, row0.x)),
-        det(mat2(row2.x, row2.y, row0.x, row0.y))
-    );
-    vec3 minors2 = vec3(
-        det(mat2(row0.y, row0.z, row1.y, row1.z)),
-        det(mat2(row0.z, row0.x, row1.z, row1.x)),
-        det(mat2(row0.x, row0.y, row1.x, row1.y))
-    );
-
-    mat3 adj = transpose(mat3(minors0, minors1, minors2));
-
-    return (1.0 / dot(row0, minors0)) * adj;
 }
 

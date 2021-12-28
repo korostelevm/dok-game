@@ -1,4 +1,4 @@
-const HORIZONTAL = 1, VERTICAL = 2;
+const HORIZONTAL_MERGE = 1, VERTICAL_MERGE = 2;
 
 class SpriteMapper {
 	constructor(game, spriteFactory, atlas, control, audio, jump) {
@@ -35,7 +35,7 @@ class SpriteMapper {
 				return this.spriteFactory.create({
 					name: "hero",
 					anim: this.atlas.hero.still,
-					size: [50, 75],
+					size: [50, 75, 2],
 					hotspot: [25, 75],
 					x: 40 * col, y: 40 * row, z: -1,
 					remember: true,
@@ -215,7 +215,7 @@ class SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: VERTICAL,
+					canMerge: VERTICAL_MERGE,
 					block: 1,
 					collide: 1,
 					init: (self, col, row, grid) => {
@@ -239,7 +239,7 @@ class SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: HORIZONTAL,
+					canMerge: HORIZONTAL_MERGE,
 					collide: 1, crate: 1, canLand: true,
 				});
 			},
@@ -319,7 +319,7 @@ class SpriteMapper {
 
 							const preWidth = platform.size[0];
 							const preRelativeX = lander ? (lander.x - platform.x) : 0;
-							platform.changeSize(w, h);
+							platform.changeSize(w, h, 1);
 
 							if (lander) {
 								const newRelativeX = preRelativeX / preWidth * w;
@@ -346,7 +346,7 @@ class SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: HORIZONTAL,
+					canMerge: HORIZONTAL_MERGE,
 					collide: 1, lowceiling: 1,
 					init: (self, col, row, grid) => {
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {

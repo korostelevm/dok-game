@@ -13,7 +13,6 @@ class SpriteRenderer {
 		this.tempQuat = quat.create();
 		this.tempTranslation = vec3.create();
 		this.tempScale = vec3.create();
-		this.tempOrigin = vec3.create();
 		this.tempMotion = vec3.create();
 		this.tempAcceleration = vec3.create();
 		this.updateTimes = new Float32Array([0, 0, 0, 0]);
@@ -22,12 +21,11 @@ class SpriteRenderer {
 
 	makeMatrix(x, y, z, width, height, hotX, hotY, rotation) {
 		const [viewportWidth, viewportHeight] = this.size;
-		return mat4.fromRotationTranslationScaleOrigin(
+		return mat4.fromRotationTranslationScale(
 			this.tempMatrix,
 			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),
 			vec3.set(this.tempTranslation, (x * MUL - viewportWidth), -(y * MUL - viewportHeight), (z * MUL)),
-			vec3.set(this.tempScale, width, height, 1),
-			vec3.set(this.tempOrigin, (hotX - width/2) / width * 2, -(hotY - height/2) / height * 2, 0)
+			vec3.set(this.tempScale, width, height, 1)
 		);		
 	}
 

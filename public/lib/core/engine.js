@@ -15,7 +15,6 @@ class Engine {
 
 		if (this.debug) {
 			new FpsBox(this);
-			new DebugView(this);
 		}
 		this.playerOverlay = new PlayerOverlay(this);
 		new DragDrop(this);
@@ -506,7 +505,7 @@ class Engine {
 		const [windowWidth, windowHeight] = await game.getWindowSize(this);
 		document.body.style.width = `${windowWidth}px`;
 		document.body.style.height = `${windowHeight}px`;
-		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
+		const {viewportSize: [viewportWidth, viewportHeight], pixelScale } = await game.getViewportSize(this);
 		this.canvas.style.left = `${(windowWidth - viewportWidth) / 2}px`;
 	}
 
@@ -530,8 +529,8 @@ class Engine {
 		game.engine = this;
 		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
 
-		await this.adjustWindowSize(game);		
 		await this.adjustViewportSize(game);
+		await this.adjustWindowSize(game);		
 		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
 		ChronoUtils.tick();
 		await game.init(this, this.classToGame[game.sceneName]);
@@ -916,7 +915,7 @@ class Engine {
 			const dlight = (shift.goal.light - shift.light);
 			const dist = Math.sqrt(dx*dx + dy*dy + dz*dz + drx*drx + dry*dry + drz*drz + dzoom*dzoom + dlight*dlight);
 			const speed = shift.speed(dist);
-			const mul = dist < 1 ? 1 : Math.min(speed, dist) / dist;
+			const mul = dist < .1 ? 1 : Math.min(speed, dist) / dist;
 			shift.x += dx * mul;
 			shift.y += dy * mul;
 			shift.z += dz * mul;

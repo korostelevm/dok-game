@@ -17,7 +17,10 @@ class Sprite {
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.z = data.z || 0;
-		this.size = [... engine.translate(data.size) || [0, 0]];
+		this.size = [... engine.translate(data.size) || [1, 1, 1]];
+		for (let i = 0; i < 3; i++) {
+			this.size[i] = this.size[i] || 1;
+		}
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.light = data.light !== undefined ? data.light : 1;
@@ -40,6 +43,8 @@ class Sprite {
 			left:0,
 			bottom:0,
 			right:0,
+			close:0,
+			far:0,
 			dirty: true,
 		};
 		this.properties = properties || {};
@@ -122,10 +127,11 @@ class Sprite {
 		return false;
 	}
 
-	changeSize(width, height, time) {
-		if (this.size[0] !== width || this.size[1] !== height) {
+	changeSize(width, height, depth, time) {
+		if (this.size[0] !== width || this.size[1] !== height || this.size[2] !== depth) {
 			this.size[0] = width;
 			this.size[1] = height;
+			this.size[2] = depth;
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
@@ -346,16 +352,22 @@ class Sprite {
 		const rRight = flipX ? 1 - rect.left : rect.right;
 		const rTop = flipY ? 1 - rect.bottom : rect.top;
 		const rBottom = flipY ? 1 - rect.top : rect.bottom;
+		const rClose = rect.close;
+		const rFar = rect.far;
 
 		const collisionPadding = this.anim.collisionPadding ?? 0;
 		const width = this.size[0];
 		const height = this.size[1];
+		const depth = this.size[2];
 		const left = this.x - this.anim.hotspot[0] * width;
 		const top = this.y - this.anim.hotspot[1] * height;
+		const close = this.z;
 		this.collisionBox.left = left + rLeft * width - collisionPadding;
 		this.collisionBox.right = left + rRight * width + collisionPadding;
 		this.collisionBox.top = top + rTop * height - collisionPadding;
 		this.collisionBox.bottom = top + rBottom * height + collisionPadding;
+		this.collisionBox.close = close + rClose * depth;
+		this.collisionBox.far = close + rFar * depth;
 		this.collisionBox.dirty = false;
 	}
 }

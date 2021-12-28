@@ -216,8 +216,8 @@ class TextureAtlas {
 		const shortVec4 = this.shortVec4;
 		shortVec4[0] = this.cols;
 		shortVec4[1] = this.rows;
-		shortVec4[2] = this.hotspot[0];
-		shortVec4[3] = this.hotspot[1];
+		shortVec4[2] = this.hotspot[0] * 1000.;
+		shortVec4[3] = this.hotspot[1] * 1000.;
 		return shortVec4;
 	}
 

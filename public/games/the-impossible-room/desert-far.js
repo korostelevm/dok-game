@@ -461,7 +461,7 @@ class DesertFar extends GameCore {
 			this.desert_map.changeOpacity(0, time);
 			const t = time - this.startShrink;
 			const shrinkValue = Math.max(-1, (500 - t) / 500);
-			this.desert_far.changeSize(800, 400 * Math.abs(shrinkValue), time);
+			this.desert_far.changeSize(800, 400 * Math.abs(shrinkValue), 1, time);
 			this.desert_far.changeYDirection(this.nextScene || shrinkValue < 0 ? -1 : 1, time);
 			if (this.nextScene && shrinkValue * this.desert_far.previousShrinkValue < 0) {
 				this.desert_far.changeDirection(-this.desert_far.direction, time);				
@@ -474,7 +474,7 @@ class DesertFar extends GameCore {
 				this.flipped = true;
 				this.monkor.setProperty("paused", false);
 				this.monkor.changeOpacity(1, time);
-				this.monkor.changeSize(64, 64, time);
+				this.monkor.changeSize(64, 64, 1, time);
 				this.monkor.changePosition(390, 350, this.monkor.z, time);
 				this.savedWalkArea = null;
 

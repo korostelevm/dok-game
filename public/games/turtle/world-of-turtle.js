@@ -21,28 +21,28 @@ class WorldOfTurtle extends GameBase {
 				range:[6],
 				frameRate: 10,
 				size: [100, 170],
-				hotspot: [.5, .8],
+				hotspot: [.5, .96],
 			}),
 			turtle_run: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[16, 23],
 				frameRate: 24,
-				hotspot: [.5, .8],
+				hotspot: [.5, .96],
 			}),
 			turtle_run_up: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[71, 79],
 				frameRate: 24,
-				hotspot: [.5, .8],
+				hotspot: [.5, .96],
 			}),
 			turtle_run_down: await engine.addTexture({
 				url: "assets/turtle-spritesheet-rescaled.png",
 				spriteWidth: 238, spriteHeight: 409,
 				range:[61, 70],
 				frameRate: 24,
-				hotspot: [.5, .8],
+				hotspot: [.5, .96],
 			}),
 			peng: await engine.addTexture({
 				url: "assets/peng-spritesheet-rescaled.png",
@@ -65,7 +65,7 @@ class WorldOfTurtle extends GameBase {
 			size: [backwallWidth, backwallHeight],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight + 10,
-			z: -500,
+			z: -450,
 			rotation: [-90, 0, 0],					
 		});
 
@@ -78,18 +78,15 @@ class WorldOfTurtle extends GameBase {
 				name: "turtle",
 				anim: this.atlas.turtle,
 				size: [100, 170],
-				x, y, z,
+				x, y, z: z + 10,
 				isSprite: 1,
 				slowdown: .5,
 			}, {
 				control: 1,
 				onControl: (turtle, dx, dy) => {
 					const speed = 200;
-//					const accel = 200;
 					turtle.changeMotion(dx * speed, 0, dy * speed);
-//					turtle.changeAcceleration(dx * accel, 0, dy * accel);
 					turtle.shadow.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
-//					turtle.shadow.changeAcceleration(turtle.acceleration[0], turtle.acceleration[1], turtle.acceleration[2]);
 					turtle.collision.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
 					if (dx !== 0) {
 						turtle.changeDirection(dx);
@@ -108,7 +105,7 @@ class WorldOfTurtle extends GameBase {
 			this.turtle.shadow = this.spriteFactory.create({
 				anim: this.atlas.turtle,
 				size: [100, 170],
-				x, y, z,
+				x, y: y + 5, z,
 				light: 0,
 				opacity: .5,
 				rotation: [-90, 0, 0],					
@@ -136,7 +133,7 @@ class WorldOfTurtle extends GameBase {
 			peng.shadow = this.spriteFactory.create({
 				anim: this.atlas.peng,
 				size: [100, 120],
-				x, y, z,
+				x, y: y + 5, z,
 				light: 0,
 				opacity: .5,
 				rotation: [-90, 0, 0],					
@@ -153,7 +150,7 @@ class WorldOfTurtle extends GameBase {
 			for (let col = 0; col < 11; col++) {
 				const x = row * 100 - 50;
 				const y = 400;
-				const z = (col - 5) * 100 - 450;
+				const z = (col - 5) * 100 - 400;
 				this.spriteFactory.create({
 					anim: this.atlas.hex,
 					size: [100, 100],

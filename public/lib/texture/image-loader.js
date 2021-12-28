@@ -119,7 +119,7 @@ class ImageLoader {
 				const right = (textureAtlas.getRight(context, cellX, cellY, cellWidth, cellHeight) + 1) / cellWidth;
 				if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
 					collisionBoxes[row * textureAtlas.cols + col] = {
-						top, left, bottom, right,
+						top, left, bottom, right, close: 0, far: 1,
 					};
 				}
 			}

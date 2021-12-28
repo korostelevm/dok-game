@@ -61,7 +61,7 @@ class GameTitle extends GameBase {
 		const x = viewportWidth / 2 - width / 2;
 		const y = viewportHeight / 2 - height / 2;
 		this.title.changePosition(x, y, 0, time);
-		this.title.changeSize(width, height, time);
+		this.title.changeSize(width, height, 1, time);
 		this.title.changeOpacity(opacity, time);
 		if (timeDiff > totalTime && !this.changingScene) {
 			this.changingScene = true;
