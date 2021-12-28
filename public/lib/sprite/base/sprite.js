@@ -26,7 +26,6 @@ class Sprite {
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
 		this.slowdown = data.slowdown ?? 1;
-		this.hue = data.hue || 0;
 		this.isHud = data.isHud ? 1 : 0;
 		this.isSprite = data.isSprite ? 1 : 0;
 
@@ -62,7 +61,6 @@ class Sprite {
 			motion: time,
 			acceleration: time,
 			light: time,
-			hue: time,
 		};
 		this.engine.updater.add(this);
 	}
@@ -278,16 +276,6 @@ class Sprite {
 	changeAnimationTime(animationTime, time) {
 		this.updated.updateTime = time || this.engine.lastTime;
 		this.updated.animation = animationTime;		
-	}
-
-	changeHue(hue, time) {
-		if (hue !== this.hue) {
-			this.updated.hue = time || this.engine.lastTime;
-			this.hue = hue;
-			this.needUpdate();
-			return true;
-		}
-		return false;
 	}
 
 	needUpdate() {

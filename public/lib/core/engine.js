@@ -980,8 +980,8 @@ class Engine {
 				|| sprite.updated.opacity >= lastTime
 				|| sprite.updated.active >= lastTime
 				|| sprite.updated.light >= lastTime) {
-				const {anim, direction, vdirection, opacity, active, light, hue} = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, hue);
+				const {anim, direction, vdirection, opacity, active, light } = sprite;
+				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light);
 			}
 			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;

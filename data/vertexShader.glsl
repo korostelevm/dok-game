@@ -10,7 +10,6 @@ const int MOTION_UPDATE_INDEX = 1;
 
 const int TEXTURE_INDEX = 0;
 const int LIGHT_INDEX = 1;
-const int HUE_INDEX = 2;
 
 const int IS_HUD_INDEX = 0;
 const int IS_SPRITE_INDEX = 1;
@@ -36,12 +35,11 @@ uniform mat3 clamp;
 uniform mat4 spriteMatrix;
 uniform float globalLight;
 
-// varying vec4 v_color;
 varying vec2 v_textureCoord;
 varying float v_index;
 varying float v_opacity;
 varying float v_light;
-varying vec3 v_HSV;
+varying float v_saturation;
 
 
 vec4 getCornerValue(mat4 textureCoordinates, vec2 position);
@@ -51,7 +49,6 @@ float det(mat2 matrix);
 mat3 transpose(mat3 matrix);
 mat3 inverse(mat3 matrix);
 vec3 modClampPosition(vec3 position, mat3 clamp);
-vec3 calculateHSV(float zDistance, float hueValue);
 vec3 applyMotion(float dt, vec3 motion, vec3 acceleration);
 
 void main() {
@@ -60,8 +57,6 @@ void main() {
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex[TEXTURE_INDEX];
-	v_light = 1.75 * globalLight * textureIndex[LIGHT_INDEX] / 128.;
-	v_opacity = textureInfo.z / 1000.;
 	vec4 vertexPosition4 = vec4(vertexPosition.xy, 0., 1.);
 
 	float isHud = isFlag[IS_HUD_INDEX];
@@ -74,11 +69,11 @@ void main() {
 	mat4 mat = matrix;
 	mat4 shift = mat4(1.0);
 	shift[3] = mat[3];
-	shift[3].xyz += applyMotion(dt, motion, acceleration);
-	shift[3].xyz = modClampPosition(shift[3].xyz, clamp);
+	shift[3].xyz = modClampPosition(shift[3].xyz + applyMotion(dt, motion, acceleration), clamp);
 	mat[3].xyz = vec3(0, 0, 0);
 
-	v_HSV = calculateHSV(shift[3].z, textureIndex[HUE_INDEX] / 256.);
+	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * (.7 + .3 * -1000.0 / shift[3].z);
+	v_opacity = textureInfo.z / 1000.;
 
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
@@ -91,17 +86,6 @@ void main() {
 vec3 applyMotion(float dt, vec3 motion, vec3 acceleration) {
 	float dt2 = dt * dt;
 	return dt * motion + 0.5 * dt2 * acceleration;
-}
-
-vec3 calculateHSV(float zDistance, float hueValue) {
-	float closeSaturation = 1.;
-	float farSaturation = 0.;
-	float farDistance = 1.5;
-	float vHue = hueValue;	//	range 0...1. (1 loops back to normal)
-	float distance = zDistance / 5000.;
-	float dValue = smoothstep(0.0, farDistance, distance) / farDistance;
-	return vec3(1.0 + vHue, (1.0 - dValue) * closeSaturation + dValue * farSaturation, min(1.5, max(0.0, .8 + distance * .8)));
-
 }
 
 float modClampFloat(float value, float low, float range) {
