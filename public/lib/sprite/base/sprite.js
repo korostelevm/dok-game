@@ -17,10 +17,7 @@ class Sprite {
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.z = data.z || 0;
-		this.size = [... engine.translate(data.size) || [1, 1, 1]];
-		for (let i = 0; i < 3; i++) {
-			this.size[i] = this.size[i] || 1;
-		}
+		this.size = [... engine.translate(data.size) || [1, 1]];
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.light = data.light !== undefined ? data.light : 1;
@@ -29,8 +26,8 @@ class Sprite {
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
 		this.slowdown = data.slowdown ?? 1;
-		this.isHud = data.isHud ? 1 : 0;
-		this.isSprite = data.isSprite ? 1 : 0;
+		this.spriteType = engine.translate(data.spriteType) || 0;
+		this.collisionFrame = data.collisionFrame || null;
 
 		this.direction = data.direction || 1;
 		this.ydirection = data.ydirection || 1;
@@ -62,10 +59,10 @@ class Sprite {
 			motionTime: time,
 			direction: time,
 			opacity: time,
-			isFlag: time,
 			motion: time,
 			acceleration: time,
 			light: time,
+			spriteType: time,
 		};
 		this.engine.updater.add(this);
 	}
@@ -106,7 +103,7 @@ class Sprite {
 			console.error("Anim not available for " + this.name);
 			return 0;
 		}
-		const animationElapsed = time - updated.animation;
+		const animationElapsed = (time || this.engine.lastTime) - updated.animation;
 		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
@@ -127,11 +124,10 @@ class Sprite {
 		return false;
 	}
 
-	changeSize(width, height, depth, time) {
-		if (this.size[0] !== width || this.size[1] !== height || this.size[2] !== depth) {
+	changeSize(width, height, time) {
+		if (this.size[0] !== width || this.size[1] !== height) {
 			this.size[0] = width;
 			this.size[1] = height;
-			this.size[2] = depth;
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
@@ -157,26 +153,6 @@ class Sprite {
 		if (this.opacity !== opacity) {
 			this.opacity = opacity;
 			this.updated.opacity = time || this.engine.lastTime;
-			this.needUpdate();
-			return true;
-		}
-		return false;
-	}
-
-	changeHud(isHud, time) {
-		if (this.isHud !== isHud) {
-			this.isHud = isHud;
-			this.updated.isFlag = time || this.engine.lastTime;
-			this.needUpdate();
-			return true;
-		}
-		return false;
-	}
-
-	changeSprite(isSprite, time) {
-		if (this.isSprite !== isSprite) {
-			this.isSprite = isSprite;
-			this.updated.isFlag = time || this.engine.lastTime;
 			this.needUpdate();
 			return true;
 		}
@@ -284,6 +260,17 @@ class Sprite {
 		this.updated.animation = animationTime;		
 	}
 
+	changeSpriteType(spriteType, time) {
+		const actualSpriteType = this.engine.translate(spriteType) || 0;
+		if (this.spriteType !== actualSpriteType) {
+			this.spriteType = actualSpriteType;
+			this.updated.spriteType = time || this.engine.lastTime;
+			this.needUpdate();
+			return true;
+		}
+		return false;
+	}
+
 	needUpdate() {
 		this.engine.updater.add(this);
 	}
@@ -311,19 +298,26 @@ class Sprite {
 	}
 
 	getCollisionBox(time) {
-		if (!this.collisionBox.dirty) {
+		if (this.collisionBox.time === time && !this.collisionBox.dirty) {
 			return this.collisionBox;
 		}
+
+		if (this.collisionFrame) {
+			this.calculateCollisonBoxFromFrame(this.collisionFrame);
+			return this.collisionBox;
+		}
+
 		const frame = this.getAnimationFrame(time);
 		if (this.collisionBox.frame === frame && !this.collisionBox.dirty) {
 			return this.collisionBox;
 		}
 		this.collisionBox.frame = frame;
-		const rect = this.anim.getCollisionBoxNormalized(frame);
-		if (!rect) {
+		this.collisionBox.time = time;
+		const animRect = this.anim.getCollisionBoxNormalized(frame);
+		if (!animRect) {
 			return null;
 		}
-		this.calculateCollisonBox(rect);
+		this.calculateCollisonBoxFromAnimation(animRect);
 		return this.collisionBox;
 	}
 
@@ -344,21 +338,30 @@ class Sprite {
 		}
 	}
 
-	calculateCollisonBox(rect) {
+	calculateCollisonBoxFromFrame(collisionFrame) {
+		const { x, y, z } = this;
+		this.collisionBox.left = collisionFrame.left + x;
+		this.collisionBox.right = collisionFrame.right + x;
+		this.collisionBox.top = collisionFrame.top + y;
+		this.collisionBox.bottom = collisionFrame.bottom + y;
+		this.collisionBox.close = collisionFrame.close + z;
+		this.collisionBox.far = collisionFrame.far + z;
+		this.collisionBox.dirty = false;
+	}
+
+	calculateCollisonBoxFromAnimation(animRect) {
 		const flipX = this.direction < 0;
 		const flipY = this.ydirection < 0;
-		const flipZ = this.zdirection < 0;
-		const rLeft = flipX ? 1 - rect.right : rect.left;
-		const rRight = flipX ? 1 - rect.left : rect.right;
-		const rTop = flipY ? 1 - rect.bottom : rect.top;
-		const rBottom = flipY ? 1 - rect.top : rect.bottom;
-		const rClose = rect.close;
-		const rFar = rect.far;
+		const rLeft = flipX ? 1 - animRect.right : animRect.left;
+		const rRight = flipX ? 1 - animRect.left : animRect.right;
+		const rTop = flipY ? 1 - animRect.bottom : animRect.top;
+		const rBottom = flipY ? 1 - animRect.top : animRect.bottom;
+		const rClose = animRect.close;
+		const rFar = animRect.far;
 
 		const collisionPadding = this.anim.collisionPadding ?? 0;
 		const width = this.size[0];
 		const height = this.size[1];
-		const depth = this.size[2];
 		const left = this.x - this.anim.hotspot[0] * width;
 		const top = this.y - this.anim.hotspot[1] * height;
 		const close = this.z;
@@ -366,8 +369,8 @@ class Sprite {
 		this.collisionBox.right = left + rRight * width + collisionPadding;
 		this.collisionBox.top = top + rTop * height - collisionPadding;
 		this.collisionBox.bottom = top + rBottom * height + collisionPadding;
-		this.collisionBox.close = close + rClose * depth;
-		this.collisionBox.far = close + rFar * depth;
+		this.collisionBox.close = close + rClose;
+		this.collisionBox.far = close + rFar;
 		this.collisionBox.dirty = false;
 	}
 }

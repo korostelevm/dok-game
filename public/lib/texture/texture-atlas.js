@@ -78,9 +78,9 @@ class TextureAtlas {
 		this.id = id;
 		this.onUpdateImage(image, animationData || {});
 
-		const { x, y, spriteWidth, spriteHeight } = this;
-		const tag = `${url} ${collision_url||""} ${collision_padding||""} ${texture_url||""} ${texture_alpha||""} ${texture_blend||""} ${x},${y} ${spriteWidth},${spriteHeight}`;
-		const { index } = this;
+		const { x, y, spriteWidth, spriteHeight, index } = this;
+
+		const tag = `${url} ${collision_url||""} ${collision_padding||""} ${texture_url||""} ${texture_alpha||""} ${texture_blend||""} ${x},${y} ${spriteWidth},${spriteHeight} ${index} ${this.startFrame} ${this.endFrame}`;
 		if (index >= 0) {
 			for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
 				const spriteImage = this.getSpriteImageForFrame(image, frame);
@@ -99,7 +99,7 @@ class TextureAtlas {
 		if (collision_url) {
 			this.collisionBoxes = await this.imageLoader.calculateCollisionBoxes(collision_url, this);
 		} else {
-			this.collisionBoxes = [];
+			this.collisionBoxes = null;
 		}
 
 		this.canvas.width = 0;
@@ -111,7 +111,7 @@ class TextureAtlas {
 	}
 
 	getCollisionBoxNormalized(frame) {
-		return this.collisionBoxes[frame];
+		return this.collisionBoxes ? this.collisionBoxes[frame] : null;
 	}
 
 	getTop(context, x, y, width, height) {

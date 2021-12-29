@@ -46,10 +46,10 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(this.attributes.acceleration, index, this.tempAcceleration);
 	}
 
-	setAnimation(index, anim, direction, vdirection, opacity, light) {
+	setAnimation(index, anim, direction, vdirection, opacity, light, spriteType) {
 		const attributes = this.attributes;
 		if (anim) {
-			this.bufferRenderer.setAttributeByte3(attributes.textureIndex, index, anim.index, light * 128, opacity * 128);
+			this.bufferRenderer.setAttributeByte4(attributes.textureIndex, index, anim.index, light * 128, opacity * 128, spriteType);
 			this.bufferRenderer.setAttribute(attributes.textureCoordinates, index, anim.getTextureCoordinates(direction, vdirection));
 			this.bufferRenderer.setAttribute(attributes.animationInfo, index, anim.getAnimationInfo());
 			this.bufferRenderer.setAttribute(attributes.spriteSheet, index, anim.getSpritesheetInfo());
@@ -61,10 +61,5 @@ class SpriteRenderer {
 		this.updateTimes[ANIM_INDEX] = animationTime;
 		this.updateTimes[MOTION_INDEX] = motionTime;
 		this.bufferRenderer.setAttribute(attributes.updateTime, index, this.updateTimes);
-	}
-
-	setFlag(index, isHud, isSprite) {
-		const attributes = this.attributes;
-		this.bufferRenderer.setAttributeByte2(attributes.isFlag, index, isHud, isSprite);
 	}
 }

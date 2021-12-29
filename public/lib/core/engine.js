@@ -981,9 +981,10 @@ class Engine {
 				|| sprite.updated.direction >= lastTime
 				|| sprite.updated.opacity >= lastTime
 				|| sprite.updated.active >= lastTime
-				|| sprite.updated.light >= lastTime) {
-				const {anim, direction, vdirection, opacity, active, light } = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light);
+				|| sprite.updated.light >= lastTime
+				|| sprite.updated.spriteType >= lastTime) {
+				const {anim, direction, vdirection, opacity, active, light, spriteType } = sprite;
+				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, spriteType);
 			}
 			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;
@@ -992,9 +993,6 @@ class Engine {
 			if (sprite.updated.updateTime >= lastTime
 				|| sprite.updated.motion >= lastTime) {
 				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
-			}
-			if (sprite.updated.isFlag >= lastTime) {
-				this.spriteRenderer.setFlag(spriteIndex, sprite.isHud, sprite.isSprite);
 			}
 		});
 		this.updater.clear();	
@@ -1047,6 +1045,10 @@ class Engine {
 				return this.config.viewport.size[0];
 			case "viewportHeight":
 				return this.config.viewport.size[1];
+			case "hud":
+				return 1;
+			case "sprite":
+				return 2;
 			default:
 		}
 		return data;

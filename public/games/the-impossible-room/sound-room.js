@@ -580,7 +580,7 @@ class SoundRoom extends GameCore {
 		const cos = this.boombox.playing ? Math.cos(time / 80) : 0;
 		const width = 400 + sin * 20;
 		const height = 200 + cos * 10;
-		this.boombox.changeSize(width, height, 1, time);
+		this.boombox.changeSize(width, height, time);
 	}
 
 	setAudio(audio, turnOn, volume, ignore) {

@@ -72,7 +72,7 @@ class FlatLand extends GameBase {
 				anim: this.atlas.mazoo_still,
 				size: [32, 32],
 				x, y, z,
-				isSprite: 1,
+				spriteType: "sprite",
 			}, {
 				goal: [
 					Math.random() * viewportWidth,

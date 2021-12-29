@@ -11,24 +11,24 @@ const int MOTION_UPDATE_INDEX = 1;
 const int TEXTURE_INDEX = 0;
 const int LIGHT_INDEX = 1;
 const int OPACITY_INDEX = 2;
+const int SPRITE_TYPE_INDEX = 3;
 
-const int IS_HUD_INDEX = 0;
-const int IS_SPRITE_INDEX = 1;
+const float IS_HUD = 1.;
+const float IS_SPRITE = 2.;
 
 const mat4 IDENTITY = mat4(1.0);
 
 
 attribute vec2 vertexPosition;			
 //attribute vec3 normal;
-attribute mat4 matrix;				//	4
+attribute mat4 matrix;				//	4x4
 attribute vec3 motion;
 attribute vec3 acceleration;
-attribute vec3 textureIndex;
-attribute mat4 textureCoordinates;	//	4
-attribute vec4 animationInfo;
-attribute vec4 spriteSheet;
-attribute vec4 updateTime;
-attribute vec2 isFlag;
+attribute vec4 textureIndex;		//	[ubyte] TEXTURE_INDEX / LIGHT / OPACITY / SPRITE_TYPE
+attribute mat4 textureCoordinates;	//	4x4
+attribute vec4 animationInfo;		//	START,END,FRAMERATE,MAX_FRAME_COUNT
+attribute vec4 spriteSheet;			//	[ushort] col,(row),hotspot_x,hotspot_y
+attribute vec4 updateTime;			//	motion_update, animation_update
 
 uniform float isPerspective;
 uniform vec2 timeInfo;
@@ -62,8 +62,9 @@ void main() {
 	vec2 hotspot = spriteSheet.zw;
 	vec4 vertexPosition4 = vec4(vertexPosition.xy + hotspot * vec2(-.002, .002) + vec2(1., -1.), 0., 1.);
 
-	float isHud = isFlag[IS_HUD_INDEX];
-	float isSprite = isFlag[IS_SPRITE_INDEX];
+	float isFlag = textureIndex[SPRITE_TYPE_INDEX];
+	float isHud = max(0., 1. - abs(isFlag - IS_HUD));
+	float isSprite = max(0., 1. - abs(isFlag - IS_SPRITE));
 
 	mat4 finalView = isHud * hudView + (1. - isHud) * view;
 

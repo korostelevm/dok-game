@@ -43,10 +43,5 @@
 		"type": "FLOAT",
 		"usage": "DYNAMIC_DRAW",
 		"instances": 1
-	},
-	"isFlag": {
-		"type": "UNSIGNED_BYTE",
-		"usage": "STATIC_DRAW",
-		"instances": 1
 	}
 }

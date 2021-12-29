@@ -79,13 +79,20 @@ class WorldOfTurtle extends GameBase {
 				anim: this.atlas.turtle,
 				size: [100, 170],
 				x, y, z: z + 10,
-				isSprite: 1,
+				spriteType: "sprite",
 				slowdown: .5,
+				collisionFrame: {
+					left: 50, right: 50,
+					top: 100, bottom: 0,
+					close: 50, far: 50,
+				},
 			}, {
 				control: 1,
 				onControl: (turtle, dx, dy) => {
 					const speed = 200;
-					turtle.changeMotion(dx * speed, 0, dy * speed);
+					const dist = Math.sqrt(dx * dx + dy * dy);
+					const speedMul = dist ? speed / dist : 0;
+					turtle.changeMotion(dx * speedMul, 0, dy * speedMul);
 					turtle.shadow.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
 					turtle.collision.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
 					if (dx !== 0) {
@@ -127,7 +134,7 @@ class WorldOfTurtle extends GameBase {
 				anim: this.atlas.peng,
 				size: [100, 120],
 				x, y, z,
-				isSprite: 1,
+				spriteType: "sprite",
 			});
 			this.pengs.push(peng);			
 			peng.shadow = this.spriteFactory.create({
@@ -142,7 +149,7 @@ class WorldOfTurtle extends GameBase {
 				anim: this.atlas.redsquare,
 				size: [100, 100],
 				x, y, z,
-				rotation: [-90, 0, 0],					
+				rotation: [-90, 0, 0],			
 			});
 		}
 

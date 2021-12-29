@@ -319,7 +319,7 @@ class SpriteMapper {
 
 							const preWidth = platform.size[0];
 							const preRelativeX = lander ? (lander.x - platform.x) : 0;
-							platform.changeSize(w, h, 1);
+							platform.changeSize(w, h);
 
 							if (lander) {
 								const newRelativeX = preRelativeX / preWidth * w;
