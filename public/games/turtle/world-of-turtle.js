@@ -82,9 +82,9 @@ class WorldOfTurtle extends GameBase {
 				spriteType: "sprite",
 				slowdown: .5,
 				collisionFrame: {
-					left: 50, right: 50,
+					left: -50, right: 50,
 					top: 100, bottom: 0,
-					close: 50, far: 50,
+					close: -50, far: 50,
 				},
 			}, {
 				control: 1,
