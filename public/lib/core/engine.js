@@ -978,13 +978,17 @@ class Engine {
 				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation);
 			}
 			if (sprite.updated.animation >= lastTime
-				|| sprite.updated.direction >= lastTime
 				|| sprite.updated.opacity >= lastTime
 				|| sprite.updated.active >= lastTime
 				|| sprite.updated.light >= lastTime
 				|| sprite.updated.spriteType >= lastTime) {
-				const {anim, direction, vdirection, opacity, active, light, spriteType } = sprite;
-				this.spriteRenderer.setAnimation(spriteIndex, anim, direction, vdirection, active ? opacity : 0, light, spriteType);
+				const {anim, direction, active, opacity, light, spriteType } = sprite;
+				this.spriteRenderer.setTextureIndex(spriteIndex, anim, active ? opacity : 0, light, spriteType);
+			}
+			if (sprite.updated.animation >= lastTime
+				|| sprite.updated.direction >= lastTime) {
+				const {anim, direction, vdirection, } = sprite;
+				this.spriteRenderer.setAnimationInfo(spriteIndex, anim, direction, vdirection);
 			}
 			if (sprite.updated.motion >= lastTime) {
 				const {motion, acceleration} = sprite;
