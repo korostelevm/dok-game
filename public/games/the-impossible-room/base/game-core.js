@@ -1457,7 +1457,7 @@ class GameCore extends GameBase {
 			}
 			if (sprite.actions || sprite.onMouseDown || sprite.self && this.selectedItem) {
 				const collisionBox = sprite.getCollisionBox(lastTime);
-				if (collisionBox && engine.pointContains(x, y, collisionBox)) {
+				if (collisionBox && collisionBox.containsPoint(x, y)) {
 					hovering = sprite;
 					break;
 				}

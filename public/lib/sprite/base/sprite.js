@@ -18,6 +18,7 @@ class Sprite {
 		this.x = data.x || 0;
 		this.y = data.y || 0;
 		this.z = data.z || 0;
+		this.positionCache = [this.x, this.y, this.z];
 		this.size = [... engine.translate(data.size) || [1, 1]];
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
@@ -26,7 +27,6 @@ class Sprite {
 		this.remember = data.remember || false;
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
-		this.slowdown = data.slowdown ?? 1;
 		this.spriteType = engine.translate(data.spriteType) || 0;
 
 		this.direction = data.direction || 1;
@@ -37,12 +37,16 @@ class Sprite {
 		}
 
 		this.collisionBox = new CollisionBox(this, data.collisionFrame);
+		if (data.collisionFrame?.show) {
+			this.collisionBox.show();
+		}
 		this.properties = properties || {};
 		this.onChange = {
 			position: (self, {x, y, z}) => {
 				self.changePosition(x, y, z);
 			},
 		};
+		this.followers = new Set();
 
 		this.updated = {
 			sprite: time,
@@ -187,6 +191,7 @@ class Sprite {
 			this.active = value;
 			this.updated.active = time || this.engine.lastTime;
 			this.needUpdate();
+			this.collisionBox.dirty = true;
 			return true;
 		}
 		return false;
@@ -211,6 +216,7 @@ class Sprite {
 			this.motion[1] = dy;
 			this.motion[2] = dz;
 			this.updated.motion = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			this.needUpdate();
 			return true;
 		}
@@ -224,20 +230,11 @@ class Sprite {
 			this.acceleration[1] = ay;
 			this.acceleration[2] = az;
 			this.updated.motion = time || this.engine.lastTime;
+			this.collisionBox.dirty = true;
 			this.needUpdate();
 			return true;
 		}
 		return false;
-	}
-
-	changeSlowdown(slowdown, time) {
-		if (this.slowdown !== slowdown) {
-			this.recalculatePosition(time);
-			this.slowdown = slowdown;
-			this.updated.motion = time || this.engine.lastTime;
-			this.needUpdate();
-			return true;			
-		}
 	}
 
 	changeAnimationTime(animationTime, time) {
@@ -273,31 +270,46 @@ class Sprite {
 	}
 
 	getCenterX(time) {
-		return this.collisionBox.getCenterX(time);
+		return this.getCollisionBox(time).centerX;
 	}
 
 	getCenterY(time) {
-		return this.collisionBox.getCenterY(time);
+		return this.getCollisionBox(time).centerY;
 	}
 
 	getCollisionBox(time) {
 		return this.collisionBox.getCollisionBox(time);
 	}
 
-	recalculatePosition(time) {
-		const t = time || this.engine.lastTime;
-		if (this.updated.motion !== t) {
-			const dt = (t - this.updated.motion) / 1000;
+	getRealPosition(t) {
+		const time = t || this.engine.lastTime;
+		const dt = (time - this.updated.motion) / 1000;
+		const dt2 = dt * dt;
+		this.positionCache[0] = this.x + this.motion[0] * dt + .5 * dt2 * this.acceleration[0];
+		this.positionCache[1] = this.y + this.motion[1] * dt + .5 * dt2 * this.acceleration[1];
+		this.positionCache[2] = this.z + this.motion[2] * dt + .5 * dt2 * this.acceleration[2];
+		return this.positionCache;
+	}
+
+	recalculatePosition(t) {
+		const time = t || this.engine.lastTime;
+		if (this.updated.motion !== time) {
+			const dt = (time - this.updated.motion) / 1000;
 			const dt2 = dt * dt;
-			const x = this.x + this.motion[0] * dt + .5 * dt2 * this.acceleration[0];
-			const y = this.y + this.motion[1] * dt + .5 * dt2 * this.acceleration[1];
-			const z = this.z + this.motion[2] * dt + .5 * dt2 * this.acceleration[2];
+			const position = this.getRealPosition(time);
+			const x = position[0];
+			const y = position[1];
+			const z = position[2];
 			const vx = this.motion[0] + dt * this.acceleration[0];
 			const vy = this.motion[1] + dt * this.acceleration[1];
 			const vz = this.motion[2] + dt * this.acceleration[2];
-			this.changePosition(x, y, z, t);
-			this.changeMotion(vx, vy, vz, t, true);
-			this.updated.motion = t;
+			this.changePosition(x, y, z, time);
+			this.changeMotion(vx, vy, vz, time, true);
+			this.updated.motion = time;
 		}
+	}
+
+	follow(sprite) {
+		sprite.followers.add(this);
 	}
 }

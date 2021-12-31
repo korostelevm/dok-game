@@ -13,14 +13,35 @@ class CollisionBox {
 		this.time = 0;
 	}
 
-	getCenterX(time) {
-		const box = this.getCollisionBox(time);
-		return (box.left + box.right) / 2;
+	get centerX() {
+		return (this.left + this.right) / 2;
 	}
 
-	getCenterY(time) {
-		const box = this.getCollisionBox(time);
-		return (box.top + box.bottom) / 2;
+	get centerY() {
+		return (this.top + this.bottom) / 2;
+	}
+
+	get centerZ() {
+		return (this.close + this.far) / 2;
+	}
+
+	get width() {
+		return this.right - this.left;
+	}
+
+	get height() {
+		return this.bottom - this.top;
+	}
+
+	get depth() {
+		return this.far - this.close;
+	}
+
+	containsPoint(x, y, z) {
+		const px = x || 0, py = y || 0, pz = z || 0;
+		return this.left <= px && px <= this.right
+			&& this.top <= py && py <= this.bottom
+			&& this.close <= pz && pz <= this.far;
 	}
 
 	getCollisionBox(t) {
@@ -45,18 +66,36 @@ class CollisionBox {
 			return null;
 		}
 		this.calculateCollisonBoxFromAnimation(animRect);
+
+
+		if (this.display) {
+			this.display.onRefresh(time);
+		}
 		return this;
 	}
 
+	show() {
+		if (!this.display) {
+			this.display = new CollisionBoxDisplay(this);
+		}
+		this.display.show();
+	}
+
+	hide() {
+		if (this.display) {
+			this.display.hide();
+		}
+	}
+
 	calculateCollisonBoxFromFrame(collisionFrame) {
-		const { x, y, z } = this.sprite;
-		this.left = collisionFrame.left + x;
-		this.right = collisionFrame.right + x;
-		this.top = collisionFrame.top + y;
-		this.bottom = collisionFrame.bottom + y;
-		this.close = collisionFrame.close + z;
-		this.far = collisionFrame.far + z;
-		this.dirty = false;
+		const spritePosition = this.sprite.getRealPosition(this.time);
+		this.left = collisionFrame.left + spritePosition[0];
+		this.right = collisionFrame.right + spritePosition[0];
+		this.top = collisionFrame.top + spritePosition[1];
+		this.bottom = collisionFrame.bottom + spritePosition[1];
+		this.close = collisionFrame.close + spritePosition[2];
+		this.far = collisionFrame.far + spritePosition[2];
+		this.dirty = true;
 	}
 
 	calculateCollisonBoxFromAnimation(animRect) {
@@ -73,9 +112,10 @@ class CollisionBox {
 		const collisionPadding = sprite.anim.collisionPadding ?? 0;
 		const width = sprite.size[0];
 		const height = sprite.size[1];
-		const left = sprite.x - sprite.anim.hotspot[0] * width;
-		const top = sprite.y - sprite.anim.hotspot[1] * height;
-		const close = sprite.z;
+		const spritePosition = sprite.getRealPosition(this.time);
+		const left = spritePosition[0] - sprite.anim.hotspot[0] * width;
+		const top = spritePosition[1] - sprite.anim.hotspot[1] * height;
+		const close = spritePosition[2];
 		this.left = left + rLeft * width - collisionPadding;
 		this.right = left + rRight * width + collisionPadding;
 		this.top = top + rTop * height - collisionPadding;

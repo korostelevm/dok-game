@@ -702,11 +702,6 @@ class Engine {
 		this.gl.uniformMatrix3fv(uniforms.clamp.location, false, clampMatrix);
 	}
 
-	pointContains(x, y, collisionBox) {
-		const px = x, py = y;
-		return collisionBox.left <= px && px <= collisionBox.right && collisionBox.top <= py && py <= collisionBox.bottom;
-	}
-
 	configShader(gl, {webgl: {cullFace, depth}}) {
 		switch(cullFace) {
 			case "front":

@@ -18,8 +18,7 @@
 			"spriteWidth": 238, "spriteHeight": 409,
 			"range":[6],
 			"frameRate": 10,
-			"size": [100, 170],
-			"hotspot": [0.5, 0.96]
+			"hotspot": [0.5, 0.90]
 		},
 		"turtle_run": {
 			"url": "assets/turtle-spritesheet-rescaled.png",
@@ -46,11 +45,21 @@
 			"url": "assets/peng-spritesheet-rescaled.png",
 			"spriteWidth": 349, "spriteHeight": 409,
 			"range":[0],
-			"hotspot": [0.5, 0.9]
+			"hotspot": [0.4, 0.8]
 		},
 		"redsquare": {
 			"url": "assets/red-square.png",
 			"hotspot": "hotspot_center"
 		}
+	},
+	"cameras": {
+	    "normal": {
+	      "default": true,
+	      "xOffset": 0,
+	      "yOffset": 1000,
+	      "zOffset": 550,
+	      "zoom": 1,
+	      "rotation": [60, 0, 0]
+	    }
 	}
 }

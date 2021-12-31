@@ -216,7 +216,7 @@ class Selection extends GameBase {
 				continue;
 			}
 			const collisionBox = sprite.getCollisionBox(this.engine.lastTime);
-			if (collisionBox && engine.pointContains(x, y, collisionBox)) {
+			if (collisionBox && collisionBox.containsPoint(x, y)) {
 				hovering = sprite;
 				break;
 			}

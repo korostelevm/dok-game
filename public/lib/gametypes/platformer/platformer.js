@@ -49,7 +49,6 @@ class Platformer extends GameBase {
 	}
 
 	onExit(engine) {
-
 	}
 
 	handleMouse(e) {

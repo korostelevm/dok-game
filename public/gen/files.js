@@ -329,6 +329,7 @@ const globalFiles=[
 					"movement.js",
 					{
 						"utils": [
+							"collision-box-display.js",
 							"collision-box.js",
 							"collision-merger.js"
 						]
@@ -382,6 +383,7 @@ const globalFiles=[
 					"keyboard-handler.js",
 					"player-overlay.js",
 					"scene-tab.js",
+					"side-bar.js",
 					"tip-box.js"
 				]
 			},

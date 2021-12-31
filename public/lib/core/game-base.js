@@ -3,6 +3,7 @@ class GameBase {
 		this.path = path;		
 		this.physics = [];
 		this.audio = {};
+		this.atlas = {};
 	}
 
 	async init(engine, gameName) {
@@ -26,7 +27,7 @@ class GameBase {
 		this.gameModel = await engine.fileUtils.load(this.path);
 		ChronoUtils.tick();
 		if (this.gameModel) {
-			this.atlas = await TextureAtlas.makeAtlases(engine, engine.translate(this.gameModel.atlas));
+			this.atlas = {...(await TextureAtlas.makeAtlases(engine, engine.translate(this.gameModel.atlas)) || {})};
 			ChronoUtils.tick();
 			this.cameras = this.gameModel.cameras;
 			for (let id in this.cameras) {
@@ -44,6 +45,9 @@ class GameBase {
 				this[id] = this.spriteFactory.create(this.gameModel.world[id]);
 			}
 		}
+		this.atlas.collisionBox = await engine.addTexture({
+			url: "assets/red-square.png",
+		});
 	}
 
 	addPhysics(physics) {
@@ -96,7 +100,9 @@ class GameBase {
 		this.engine.enableSidebar(true);
 		this.engine.setPerspective(this.isPerpective());
 		await this.engine.changeCursor(null, true);
-		if (this.getInitialShift()) {
+		if (this.camera) {
+			this.applyCamera(this.camera);
+		} else if (this.getInitialShift()) {
 			const { x, y, z, rotation, light, zoom } = this.getInitialShift() || {};
 			const [rotX, rotY, rotZ] = rotation || [];
 			this.engine.shift.goal.x = x || 0;
@@ -107,6 +113,37 @@ class GameBase {
 			this.engine.shift.goal.rotation[2] = rotZ || 0;
 			this.engine.shift.goal.light = light ?? 1;
 			this.engine.shift.goal.zoom = zoom ?? 1;
+		}
+	}
+
+	applyCamera(camera) {
+		const cameraConfig = this.cameras[camera];
+		const zoom = cameraConfig.zoom;
+		const shift = this.engine.shift;
+		shift.goal.x = cameraConfig.xOffset;
+		shift.goal.y = cameraConfig.yOffset;
+		shift.goal.z = cameraConfig.zOffset;
+		shift.goal.zoom = zoom;
+		shift.goal.rotation[0] = cameraConfig.rotation[0];
+		shift.goal.rotation[1] = cameraConfig.rotation[1];
+		shift.goal.rotation[2] = cameraConfig.rotation[2];
+		if (typeof(cameraConfig.minX) !== "undefined") {
+			shift.goal.x = Math.max(cameraConfig.minX, shift.goal.x);
+		}
+		if (typeof(cameraConfig.minY) !== "undefined") {
+			shift.goal.y = Math.max(cameraConfig.minY, shift.goal.y);			
+		}
+		if (typeof(cameraConfig.minZ) !== "undefined") {
+			shift.goal.z = Math.max(cameraConfig.minZ, shift.goal.z);			
+		}
+		if (typeof(cameraConfig.maxX) !== "undefined") {
+			shift.goal.x = Math.min(cameraConfig.maxX, shift.goal.x);
+		}
+		if (typeof(cameraConfig.maxY) !== "undefined") {
+			shift.goal.y = Math.max(cameraConfig.maxY, shift.goal.y);			
+		}
+		if (typeof(cameraConfig.maxZ) !== "undefined") {
+			shift.goal.z = Math.max(cameraConfig.maxZ, shift.goal.z);			
 		}
 	}
 

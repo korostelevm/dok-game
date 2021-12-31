@@ -32,11 +32,11 @@ class WorldOfTurtle extends GameBase {
 				size: [100, 170],
 				x, y, z: z + 10,
 				spriteType: "sprite",
-				slowdown: .5,
 				collisionFrame: {
-					left: -50, right: 50,
-					top: 100, bottom: 0,
-					close: -50, far: 50,
+					left: -30, right: 30,
+					top: 0, bottom: -60,
+					close: -30, far: 30,
+					show: true,
 				},
 			}, {
 				control: 1,
@@ -46,7 +46,6 @@ class WorldOfTurtle extends GameBase {
 					const speedMul = dist ? speed / dist : 0;
 					turtle.changeMotion(dx * speedMul, 0, dy * speedMul);
 					turtle.shadow.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
-					turtle.collision.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
 					if (dx !== 0) {
 						turtle.changeDirection(dx);
 						turtle.shadow.changeDirection(turtle.direction);
@@ -69,12 +68,6 @@ class WorldOfTurtle extends GameBase {
 				opacity: .5,
 				rotation: [-90, 0, 0],					
 			});
-			this.turtle.collision = this.spriteFactory.create({
-				anim: this.atlas.redsquare,
-				size: [100, 100],
-				x, y, z,
-				rotation: [-90, 0, 0],					
-			});
 		}
 
 		this.pengs = [];
@@ -87,6 +80,12 @@ class WorldOfTurtle extends GameBase {
 				size: [100, 120],
 				x, y, z,
 				spriteType: "sprite",
+				collisionFrame: {
+					left: -40, right: 40,
+					top: 0, bottom: -80,
+					close: -40, far: 40,
+					show: true,
+				},
 			});
 			this.pengs.push(peng);			
 			peng.shadow = this.spriteFactory.create({
@@ -96,12 +95,6 @@ class WorldOfTurtle extends GameBase {
 				light: 0,
 				opacity: .5,
 				rotation: [-90, 0, 0],					
-			});
-			peng.collision = this.spriteFactory.create({
-				anim: this.atlas.redsquare,
-				size: [100, 100],
-				x, y, z,
-				rotation: [-90, 0, 0],			
 			});
 		}
 
@@ -119,19 +112,6 @@ class WorldOfTurtle extends GameBase {
 			}
 		}
 
-		this.cameras = {
-		    "normal": {
-		      "default": true,
-		      "xOffset": 0,
-		      "yOffset": 1000,
-		      "zOffset": 550,
-		      "zoom": 1,
-		      "rotation": [60, 0, 0],
-		    },			
-		};
-		this.camera = "normal";
-		this.applyCamera(this.camera);
-		
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
@@ -149,44 +129,6 @@ class WorldOfTurtle extends GameBase {
 		return {
 			pixelScale: 0,	//	autodetect
 			viewportSize: [900, 600],
-		}
-	}
-
-	// getInitialShift() {
-	// 	return {
-	// 		x: 0, y: 1000, z: 550,
-	// 		rotation: [60, 0, 0],
-	// 	};
-	// }
-
-	applyCamera(camera) {
-		const cameraConfig = this.cameras[camera];
-		const zoom = cameraConfig.zoom;
-		const shift = this.engine.shift;
-		shift.goal.x = cameraConfig.xOffset;
-		shift.goal.y = cameraConfig.yOffset;
-		shift.goal.z = cameraConfig.zOffset;
-		shift.goal.zoom = zoom;
-		shift.goal.rotation[0] = cameraConfig.rotation[0];
-		shift.goal.rotation[1] = cameraConfig.rotation[1];
-		shift.goal.rotation[2] = cameraConfig.rotation[2];
-		if (typeof(cameraConfig.minX) !== "undefined") {
-			shift.goal.x = Math.max(cameraConfig.minX, shift.goal.x);
-		}
-		if (typeof(cameraConfig.minY) !== "undefined") {
-			shift.goal.y = Math.max(cameraConfig.minY, shift.goal.y);			
-		}
-		if (typeof(cameraConfig.minZ) !== "undefined") {
-			shift.goal.z = Math.max(cameraConfig.minZ, shift.goal.z);			
-		}
-		if (typeof(cameraConfig.maxX) !== "undefined") {
-			shift.goal.x = Math.min(cameraConfig.maxX, shift.goal.x);
-		}
-		if (typeof(cameraConfig.maxY) !== "undefined") {
-			shift.goal.y = Math.max(cameraConfig.maxY, shift.goal.y);			
-		}
-		if (typeof(cameraConfig.maxZ) !== "undefined") {
-			shift.goal.z = Math.max(cameraConfig.maxZ, shift.goal.z);			
 		}
 	}
 
