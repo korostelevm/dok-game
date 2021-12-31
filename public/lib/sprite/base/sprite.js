@@ -33,7 +33,7 @@ class Sprite {
 		this.ydirection = data.ydirection || 1;
 		this.anim = data.anim;
 		if (!this.anim) {
-			console.warn("Anim doesn't exist.");
+			console.error("Anim doesn't exist.");
 		}
 
 		this.collisionBox = new CollisionBox(this, data.collisionFrame);
@@ -82,20 +82,12 @@ class Sprite {
 
 	getAnimationTime() {
 		const { anim, updated } = this;
-		if (!anim) {
-			console.error("Anim not available for " + this.name);
-			return 0;
-		}
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		return updated.animation - frameOffset * anim.frameDuration;
 	}
 
 	getAnimationFrame(time) {
 		const { anim, updated } = this;
-		if (!anim) {
-			console.error("Anim not available for " + this.name);
-			return 0;
-		}
 		const animationElapsed = (time || this.engine.lastTime) - updated.animation;
 		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
 		const frameOffset = anim.firstFrame - anim.startFrame;
