@@ -1733,7 +1733,7 @@ class GameCore extends GameBase {
 			const voiceDrop = document.getElementById("voice-drop");
 			voiceDrop.addEventListener("change",e => {
 //				console.log(e.currentTarget.value);
-				engine.swapVoice(e.currentTarget.value);
+				engine.voiceManager.swapVoice(e.currentTarget.value);
 			});
 			voices.forEach(voice => {
 				const option = voiceDrop.appendChild(document.createElement("option"));
@@ -1750,7 +1750,7 @@ class GameCore extends GameBase {
 		const { engine } = this;
 		const { lastTime } = engine;
 		sprite = sprite || this.monkor;
-		const utterance = engine.getUterrance(msg, voiceName, sprite === this.monkor);
+		const utterance = engine.voiceManager.getUterrance(msg, voiceName, sprite === this.monkor);
 		const reallyIgnoreSpeechBoundary = ignoreSpeechBoundary || utterance && utterance.replacedVoice;
 		if (reallyIgnoreSpeechBoundary) {
 //			console.log("ignore speech boundary.");

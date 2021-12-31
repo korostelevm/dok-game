@@ -258,6 +258,6 @@ function getPhoneme(msg, voice) {
 	const m = msg.split(" ").map(word => {
 		return words[word] || word;
 	}).join(" ").replaceAll("' ", "'");
-//	console.log(`window.speechSynthesis.speak(engine.getUterrance("${m}", "Thomas"));`);
+//	console.log(`window.speechSynthesis.speak(engine.voiceManager.getUterrance("${m}", "Thomas"));`);
 	return m;
 }

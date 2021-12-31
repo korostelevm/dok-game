@@ -344,7 +344,8 @@ const globalFiles=[
 				"sound": [
 					".DS_Store",
 					"music.js",
-					"sound.js"
+					"sound.js",
+					"voice-manager.js"
 				]
 			},
 			{
@@ -353,7 +354,6 @@ const globalFiles=[
 					{
 						"base": [
 							".DS_Store",
-							"sprite-state.js",
 							"sprite.js"
 						]
 					},
