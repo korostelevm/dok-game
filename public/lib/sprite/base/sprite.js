@@ -281,13 +281,11 @@ class Sprite {
 	}
 
 	getCenterX(time) {
-		const box = this.getCollisionBox(time);
-		return (box.left + box.right) / 2;
+		return this.collisionBox.getCenterX(time);
 	}
 
 	getCenterY(time) {
-		const box = this.getCollisionBox(time);
-		return (box.top + box.bottom) / 2;
+		return this.collisionBox.getCenterY(time);
 	}
 
 	getCollisionBox(time) {

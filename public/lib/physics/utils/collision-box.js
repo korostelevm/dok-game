@@ -13,7 +13,18 @@ class CollisionBox {
 		this.time = 0;
 	}
 
-	getCollisionBox(time) {
+	getCenterX(time) {
+		const box = this.getCollisionBox(time);
+		return (box.left + box.right) / 2;
+	}
+
+	getCenterY(time) {
+		const box = this.getCollisionBox(time);
+		return (box.top + box.bottom) / 2;
+	}
+
+	getCollisionBox(t) {
+		const time = t || this.sprite.game.engine.lastTime
 		if (this.time === time && !this.dirty) {
 			return this;
 		}
