@@ -7,10 +7,10 @@ class SpriteFactory {
 	}
 
 	create(data, attributes, initCallback) {
-		const id = (typeof(data.name) !== "function" ? data.name : null) || this.game.constructor.name + this.index;
+		const id = data.id || (typeof(data.name) !== "function" ? data.name : null) || this.game.constructor.name + this.index;
 		const properties = this.spriteData[id] || (this.spriteData[id] = {});
 		this.index++;
-		const sprite = this.spriteCollection.create(id, data, attributes, properties);
+		const sprite = this.spriteCollection.create(id, data, attributes, properties, this.game);
 		if (initCallback) {
 			initCallback(sprite);
 		}

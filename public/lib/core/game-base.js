@@ -1,6 +1,8 @@
 class GameBase {
-	constructor() {
+	constructor(path) {
+		this.path = path;		
 		this.physics = [];
+		this.audio = {};
 	}
 
 	async init(engine, gameName) {
@@ -13,13 +15,35 @@ class GameBase {
 		this.sceneData = this.data[this.sceneName] || (this.data[this.sceneName] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
-		this.audio = {};
 		if (!this.data.gender) {
 			this.data.gender = (this.engine.inception ? null : localStorage.getItem("playerGender")) || "M";
 		}
 		this.data.sceneName = this.sceneName;
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;
 		this.swapData = engine?.swapData?.TheImpossibleRoom;
+
+		ChronoUtils.tick();
+		this.gameModel = await engine.fileUtils.load(this.path);
+		ChronoUtils.tick();
+		if (this.gameModel) {
+			this.atlas = await TextureAtlas.makeAtlases(engine, engine.translate(this.gameModel.atlas));
+			ChronoUtils.tick();
+			this.cameras = this.gameModel.cameras;
+			for (let id in this.cameras) {
+				if (this.cameras[id].default || !this.camera) {
+					this.camera = id;
+				}
+			}
+
+			for (let id in this.gameModel.audio) {
+				const { src, volume } = this.gameModel.audio[id];
+				this.audio[id] = new Sound(src, volume || 1);
+			}
+
+			for (let id in this.gameModel.world) {
+				this[id] = this.spriteFactory.create(this.gameModel.world[id]);
+			}
+		}
 	}
 
 	addPhysics(physics) {
@@ -72,16 +96,18 @@ class GameBase {
 		this.engine.enableSidebar(true);
 		this.engine.setPerspective(this.isPerpective());
 		await this.engine.changeCursor(null, true);
-		const { x, y, z, rotation, light, zoom } = this.getInitialShift() || {};
-		const [rotX, rotY, rotZ] = rotation || [];
-		this.engine.shift.goal.x = x || 0;
-		this.engine.shift.goal.y = y || 0;
-		this.engine.shift.goal.z = z || 0;
-		this.engine.shift.goal.rotation[0] = rotX || 0;
-		this.engine.shift.goal.rotation[1] = rotY || 0;
-		this.engine.shift.goal.rotation[2] = rotZ || 0;
-		this.engine.shift.goal.light = light ?? 1;
-		this.engine.shift.goal.zoom = zoom ?? 1;
+		if (this.getInitialShift()) {
+			const { x, y, z, rotation, light, zoom } = this.getInitialShift() || {};
+			const [rotX, rotY, rotZ] = rotation || [];
+			this.engine.shift.goal.x = x || 0;
+			this.engine.shift.goal.y = y || 0;
+			this.engine.shift.goal.z = z || 0;
+			this.engine.shift.goal.rotation[0] = rotX || 0;
+			this.engine.shift.goal.rotation[1] = rotY || 0;
+			this.engine.shift.goal.rotation[2] = rotZ || 0;
+			this.engine.shift.goal.light = light ?? 1;
+			this.engine.shift.goal.zoom = zoom ?? 1;
+		}
 	}
 
 	get sceneName() {
@@ -89,7 +115,8 @@ class GameBase {
 	}
 
 	async getWindowSize(engine) {
-		return [1000, 600];
+		const json = await engine.fileUtils.load(this.path);
+		return json?.windowSize || [1000, 600];
 	}
 
 	async getViewportSize(engine) {
@@ -100,9 +127,7 @@ class GameBase {
 	}
 
 	getInitialShift() {
-		return {
-			x: 0, y: 0, z: 0,
-		};
+		return null;
 	}
 
 	async onExit(engine) {

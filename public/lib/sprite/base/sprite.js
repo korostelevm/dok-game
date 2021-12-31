@@ -8,9 +8,10 @@
 
 
 class Sprite {
-	constructor(data, time, properties, engine) {
+	constructor(data, time, properties, engine, game) {
 		this.data = data;
 		this.engine = engine;
+		this.game = game;
 		this.type = this.constructor.name;
 		this.id = data.id;
 		this.name = data.name || "";
@@ -27,7 +28,6 @@ class Sprite {
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
 		this.slowdown = data.slowdown ?? 1;
 		this.spriteType = engine.translate(data.spriteType) || 0;
-		this.collisionFrame = data.collisionFrame || null;
 
 		this.direction = data.direction || 1;
 		this.ydirection = data.ydirection || 1;
@@ -35,15 +35,8 @@ class Sprite {
 		if (!this.anim) {
 			console.warn("Anim doesn't exist.");
 		}
-		this.collisionBox = {
-			top:0,
-			left:0,
-			bottom:0,
-			right:0,
-			close:0,
-			far:0,
-			dirty: true,
-		};
+
+		this.collisionBox = new CollisionBox(this, data.collisionFrame);
 		this.properties = properties || {};
 		this.onChange = {
 			position: (self, {x, y, z}) => {
@@ -298,27 +291,7 @@ class Sprite {
 	}
 
 	getCollisionBox(time) {
-		if (this.collisionBox.time === time && !this.collisionBox.dirty) {
-			return this.collisionBox;
-		}
-
-		if (this.collisionFrame) {
-			this.calculateCollisonBoxFromFrame(this.collisionFrame);
-			return this.collisionBox;
-		}
-
-		const frame = this.getAnimationFrame(time);
-		if (this.collisionBox.frame === frame && !this.collisionBox.dirty) {
-			return this.collisionBox;
-		}
-		this.collisionBox.frame = frame;
-		this.collisionBox.time = time;
-		const animRect = this.anim.getCollisionBoxNormalized(frame);
-		if (!animRect) {
-			return null;
-		}
-		this.calculateCollisonBoxFromAnimation(animRect);
-		return this.collisionBox;
+		return this.collisionBox.getCollisionBox(time);
 	}
 
 	recalculatePosition(time) {
@@ -336,41 +309,5 @@ class Sprite {
 			this.changeMotion(vx, vy, vz, t, true);
 			this.updated.motion = t;
 		}
-	}
-
-	calculateCollisonBoxFromFrame(collisionFrame) {
-		const { x, y, z } = this;
-		this.collisionBox.left = collisionFrame.left + x;
-		this.collisionBox.right = collisionFrame.right + x;
-		this.collisionBox.top = collisionFrame.top + y;
-		this.collisionBox.bottom = collisionFrame.bottom + y;
-		this.collisionBox.close = collisionFrame.close + z;
-		this.collisionBox.far = collisionFrame.far + z;
-		this.collisionBox.dirty = false;
-	}
-
-	calculateCollisonBoxFromAnimation(animRect) {
-		const flipX = this.direction < 0;
-		const flipY = this.ydirection < 0;
-		const rLeft = flipX ? 1 - animRect.right : animRect.left;
-		const rRight = flipX ? 1 - animRect.left : animRect.right;
-		const rTop = flipY ? 1 - animRect.bottom : animRect.top;
-		const rBottom = flipY ? 1 - animRect.top : animRect.bottom;
-		const rClose = animRect.close;
-		const rFar = animRect.far;
-
-		const collisionPadding = this.anim.collisionPadding ?? 0;
-		const width = this.size[0];
-		const height = this.size[1];
-		const left = this.x - this.anim.hotspot[0] * width;
-		const top = this.y - this.anim.hotspot[1] * height;
-		const close = this.z;
-		this.collisionBox.left = left + rLeft * width - collisionPadding;
-		this.collisionBox.right = left + rRight * width + collisionPadding;
-		this.collisionBox.top = top + rTop * height - collisionPadding;
-		this.collisionBox.bottom = top + rBottom * height + collisionPadding;
-		this.collisionBox.close = close + rClose;
-		this.collisionBox.far = close + rFar;
-		this.collisionBox.dirty = false;
 	}
 }

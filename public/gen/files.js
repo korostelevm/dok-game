@@ -215,7 +215,13 @@ const globalFiles=[
 			},
 			{
 				"turtle": [
-					"world-of-turtle.js"
+					".DS_Store",
+					{
+						"base": [
+							"world-of-turtle.js"
+						]
+					},
+					"world-of-turtle.json"
 				]
 			},
 			{
@@ -235,6 +241,7 @@ const globalFiles=[
 			".DS_Store",
 			{
 				"core": [
+					"config.js",
 					"engine.js",
 					"game-base.js"
 				]
@@ -322,6 +329,7 @@ const globalFiles=[
 					"movement.js",
 					{
 						"utils": [
+							"collision-box.js",
 							"collision-merger.js"
 						]
 					}
@@ -383,6 +391,7 @@ const globalFiles=[
 					"chrono-utils-self-load.js",
 					"constants.js",
 					"file-utils.js",
+					"perspective-refresher.js",
 					"random-utils.js",
 					"string.js"
 				]

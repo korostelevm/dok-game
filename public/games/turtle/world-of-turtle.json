@@ -1,0 +1,56 @@
+{
+	"className": "WorldOfTurtle",
+	"windowSize": [1000, 700],
+	"atlas": {
+		"backwall": {
+			"url": "assets/backwall.jpg",
+			"hotspot":"hotspot_center"
+		},
+		"hex": {
+			"url": "assets/hex.png",
+			"collision_url": "assets/hex.png",
+			"cols": 2, "rows": 2,
+			"range": [0],
+			"hotspot": "hotspot_center"
+		},
+		"turtle": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[6],
+			"frameRate": 10,
+			"size": [100, 170],
+			"hotspot": [0.5, 0.96]
+		},
+		"turtle_run": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[16, 23],
+			"frameRate": 24,
+			"hotspot": [0.5, 0.96]
+		},
+		"turtle_run_up": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[71, 79],
+			"frameRate": 24,
+			"hotspot": [0.5, 0.96]
+		},
+		"turtle_run_down": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[61, 70],
+			"frameRate": 24,
+			"hotspot": [0.5, 0.96]
+		},
+		"peng": {
+			"url": "assets/peng-spritesheet-rescaled.png",
+			"spriteWidth": 349, "spriteHeight": 409,
+			"range":[0],
+			"hotspot": [0.5, 0.9]
+		},
+		"redsquare": {
+			"url": "assets/red-square.png",
+			"hotspot": "hotspot_center"
+		}
+	}
+}

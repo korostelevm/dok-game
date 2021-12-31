@@ -1,7 +1,7 @@
 class Hud extends Sprite {
-	constructor(data, time, properties, engine) {
+	constructor(data, time, properties, engine, game) {
 		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = engine.config;
-		super({...data, size:[viewportWidth, 131]}, time, properties, engine);
+		super({...data, size:[viewportWidth, 131]}, time, properties, engine, game);
 		this.viewportWidth = viewportWidth;
 		this.viewportHeight =viewportHeight;
 		this.animDuration = data.animDuration || 150;

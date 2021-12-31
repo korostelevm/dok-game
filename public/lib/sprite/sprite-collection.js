@@ -22,13 +22,13 @@ class SpriteCollection {
 		return root;
 	}
 
-	create(id, data, attributes, spriteData) {
+	create(id, data, attributes, spriteData, game) {
 		const type = data.type ? eval(data.type) : Sprite;
 		const sprite = new type({
 			id,
 			...data,
 			anim: typeof(data.anim) === "string" ? SpriteCollection.fetchAnim(this.engine.game.atlas, data.anim) : data.anim,
-		}, this.engine.lastTime, spriteData, this.engine);
+		}, this.engine.lastTime, spriteData, this.engine, game);
 		sprite.spriteIndex = this.sprites.length;
 		this.sprites.push(sprite);
 		

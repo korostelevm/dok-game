@@ -1,6 +1,6 @@
 {
   "className": "Platformer",
-  "size": [900, 500],
+  "windowSize": [900, 500],
   "world": {
     "overlayHud": {
       "type": "Hud",

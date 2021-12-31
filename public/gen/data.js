@@ -60,7 +60,8 @@ const globalData={
 			"depth": true,
 			"stencil": false,
 			"desynchronized": true,
-			"premultipliedAlpha": true
+			"premultipliedAlpha": true,
+			"cullFace": "none"
 		},
 		"newgrounds": {
 			"game": "The Impossible Room",

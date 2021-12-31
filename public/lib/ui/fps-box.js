@@ -21,7 +21,7 @@ class FpsBox extends UiComponent {
 		document.body.appendChild(this.input);
 	}
 
-	onRefresh(time, dt, actualTime) {
+	onRefresh(self, time, dt, actualTime) {
 		this.perfTimers[this.perfIndex] = actualTime;
 		this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
 		const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];

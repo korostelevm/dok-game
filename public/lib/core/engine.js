@@ -187,6 +187,10 @@ class Engine {
 		this.uiComponents.push(component);
 	}
 
+	restoreUIComponents() {
+		this.uiComponents.filter(({onRefresh}) => onRefresh).forEach(component => this.refresher.add(component));
+	}
+
 	countUnlocked() {
 		let count = 0;
 		this.sidebars.forEach(({ game, name, disabled, hideSidebar }, index) => {
@@ -410,7 +414,7 @@ class Engine {
 
 		this.textureManager.generateAllMipMaps();
 
-		this.uiComponents.filter(component => component).forEach(component => component.init());
+		this.uiComponents.forEach(component => component.init());
 
 		this.ready = true;
 		Engine.trigger(this);
@@ -493,6 +497,7 @@ class Engine {
 			await this.changeCursor("wait");
 		}
 		await this.resetScene();
+		this.restoreUIComponents();
 
 		this.game = game;
 		if (this.ready) {
@@ -516,9 +521,7 @@ class Engine {
 
 	async wait(ms) {
 		return new Promise(resolve => {
-			setTimeout(() => {
-				resolve();
-			}, ms);
+			setTimeout(() => resolve(), ms);
 		});
 	}
 
@@ -549,8 +552,6 @@ class Engine {
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
-		///		this.resize(viewportWidth, viewportHeight);
-
 
 		ChronoUtils.log();
 		this.setupMouseListeners();
@@ -686,11 +687,11 @@ class Engine {
 		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);		
 	}
 
-	setPerspective(perspective) {
+	setPerspective(perspective, delay) {
 		console.log("Perspective:", perspective);
 		this.isPerspective = perspective;
 		const uniforms = this.shaders[0].uniforms;
-		this.gl.uniform1f(uniforms.isPerspective.location, perspective ? 1 : 0);		
+		this.gl.uniform1f(uniforms.isPerspective.location, perspective ? 1 : 0);
 	}
 
 	setClamp(minX, maxX, minY, maxY, minZ, maxZ) {
@@ -707,9 +708,19 @@ class Engine {
 		return collisionBox.left <= px && px <= collisionBox.right && collisionBox.top <= py && py <= collisionBox.bottom;
 	}
 
-	configShader(gl, {webgl: {depth}}) {
-		gl.enable(gl.CULL_FACE);
-		gl.cullFace(gl.BACK);
+	configShader(gl, {webgl: {cullFace, depth}}) {
+		switch(cullFace) {
+			case "front":
+				gl.enable(gl.CULL_FACE);
+				gl.cullFace(gl.FRONT);
+				break;
+			case "back":
+				gl.enable(gl.CULL_FACE);
+				gl.cullFace(gl.BACK);
+				break;
+			default:
+				gl.disable(gl.CULL_FACE);
+		}
 		gl.enable(gl.BLEND);
 		gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
@@ -768,7 +779,7 @@ class Engine {
 	}
 
 	handleOnRefreshes(time, dt, actualTime) {
-		this.refresher.forEach(refresh => refresh.onRefresh(refresh, time, dt, actualTime));
+		this.refresher.forEach(item => item.onRefresh(item, time, dt, actualTime));
 	}
 
 	handleOnFrame(sprite, frame, previousFrame) {
@@ -887,12 +898,12 @@ class Engine {
 
 			//	Handle special frame actions
 			this.handleFrames(time);
-			this.handleOnRefreshes(time);
 		}
+		this.handleOnRefreshes(time, dt, actualTime);
 		this.handleViewUpdate(time, this.shaders[0]);
 		this.handleSpriteUpdate(this.lastTime);
 		this.render(time, dt);
-		this.handlePostRefresh(time, dt, actualTime);
+		this.lastTime = time;
 	}
 
 	handleViewUpdate(time, shader) {
@@ -1012,15 +1023,6 @@ class Engine {
 		this.gl.uniform2f(uniforms.timeInfo.location, time, dt);		
 	}
 
-	handlePostRefresh(time, dt, actualTime) {
-		for (let i = 0; i < this.uiComponents.length; i++) {
-			if (this.uiComponents[i].onRefresh) {
-				this.uiComponents[i].onRefresh(time, dt, actualTime);
-			}
-		}
-		this.lastTime = time;
-	}
-
 	postScore(score, callback) {
 		if (score <= this.score) {
 			return;
@@ -1042,6 +1044,12 @@ class Engine {
 	translate(data) {
 		if (Array.isArray(data)) {
 			return data.map(d => this.translate(d));
+		} else if (typeof(data) === "object") {
+			const translatedData = {};
+			for (let a in data) {
+				translatedData[a] = this.translate(data[a]);
+			}
+			return translatedData;
 		}
 		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
 		switch (data) {
@@ -1053,6 +1061,8 @@ class Engine {
 				return 1;
 			case "sprite":
 				return 2;
+			case "hotspot_center":
+				return HOTSPOT_CENTER;
 			default:
 		}
 		return data;
