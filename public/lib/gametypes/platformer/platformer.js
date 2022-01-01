@@ -45,18 +45,6 @@ class Platformer extends GameBase {
 		}
 	}
 
-	onChange(key, value) {
-	}
-
-	onExit(engine) {
-	}
-
-	handleMouse(e) {
-	}
-
-	onDropOnOverlay(e) {
-	}
-
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.applyCamera(this.camera);

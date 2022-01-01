@@ -579,6 +579,10 @@
 				}, 5000 * time);
 			}
 		</script>
+		<script>
+			addEventListener('online', () => console.log('Online:' + navigator.onLine));
+			addEventListener('offline', () => console.log('Online:' + navigator.onLine));
+		</script>
 	</head>
 	<body>
 		<div id="game-tab" style="margin-left: 80px;"></div>

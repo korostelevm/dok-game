@@ -8,8 +8,8 @@ class WorldOfTurtle extends GameBase {
 
 		const { gl, config } = engine;
 
-		const control = this.addPhysics(new Control8());
-		const collision = this.addPhysics(new Collision(true, true, true));
+		this.control = this.addPhysics(new Control8());
+		this.collision = this.addPhysics(new Collision(true, true, true));
 
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
@@ -34,6 +34,7 @@ class WorldOfTurtle extends GameBase {
 				size: [100, 170],
 				x, y, z: z + 10,
 				spriteType: "sprite",
+				shadow: 1,
 				collisionFrame: {
 					left: -30, right: 30,
 					top: -60, bottom: 0,
@@ -43,40 +44,26 @@ class WorldOfTurtle extends GameBase {
 			}, {
 				control: 1,
 				collide: 1,
-				onControl: (turtle, dx, dy) => {
-					const speed = 200;
-					const dist = Math.sqrt(dx * dx + dy * dy);
-					const speedMul = dist ? speed / dist : 0;
-					turtle.changeMotion(dx * speedMul, 0, dy * speedMul);
-					if (dx !== 0) {
-						turtle.changeDirection(dx);
-						turtle.shadow.changeDirection(turtle.direction);
-						turtle.changeAnimation(this.atlas.turtle_run);
-					} else if (dy < 0) {
-						turtle.changeAnimation(this.atlas.turtle_run_up);
-					} else if (dy > 0) {
-						turtle.changeAnimation(this.atlas.turtle_run_down);
-					} else {
-						turtle.changeAnimation(this.atlas.turtle);						
-					}
-					turtle.shadow.changeAnimation(turtle.anim);
+				onControl: (self, dx, dy) => {
+					this.updateControl(self, dx, dy);
 				},
 				onEnter: (self, sprite) => {
 					console.log(sprite.id);
 				},
 				onCollide: (self, sprite, xPush, yPush, zPush) => {
-					console.log(sprite.id, xPush, yPush, zPush);
+					//	VERTICAL COLLIDE
+					if (Math.abs(zPush) < Math.abs(xPush)) {
+						self.changeMotion(self.motion[0], self.motion[1], 0);
+						self.changePosition(self.x, self.y, self.z + zPush * 2);
+					} else {
+						self.changeMotion(0, self.motion[1], self.motion[2]);
+						self.changePosition(self.x + xPush * 2, self.y, self.z);
+					}					
+				},
+				onStopCollide: (self) => {
+					this.updateControl(self, this.control.dx, this.control.dy);
 				},
 			});
-			this.turtle.shadow = this.spriteFactory.create({
-				anim: this.atlas.turtle,
-				size: [100, 170],
-				x, y: y + 5, z,
-				light: 0,
-				opacity: .5,
-				rotation: [-90, 0, 0],					
-			});
-			this.turtle.shadow.follow(this.turtle);
 		}
 
 		this.pengs = [];
@@ -96,19 +83,11 @@ class WorldOfTurtle extends GameBase {
 					close: -40, far: 40,
 					show: true,
 				},
+				shadow: 1,
 			}, {
 				collide: 1,				
 			});
 			this.pengs.push(peng);			
-			peng.shadow = this.spriteFactory.create({
-				anim: this.atlas.peng,
-				size: [100, 120],
-				x, y: y + 5, z,
-				light: 0,
-				opacity: .5,
-				rotation: [-90, 0, 0],					
-			});
-			peng.shadow.follow(peng);
 		}
 
 		for (let row = 0; row < 11; row++) {
@@ -128,6 +107,23 @@ class WorldOfTurtle extends GameBase {
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
+	}
+
+	updateControl(turtle, dx, dy) {
+		const speed = 200;
+		const dist = Math.sqrt(dx * dx + dy * dy);
+		const speedMul = dist ? speed / dist : 0;
+		turtle.changeMotion(dx * speedMul, 0, dy * speedMul);
+		if (dx !== 0) {
+			turtle.changeDirection(dx);
+			turtle.changeAnimation(this.atlas.turtle_run);
+		} else if (dy < 0) {
+			turtle.changeAnimation(this.atlas.turtle_run_up);
+		} else if (dy > 0) {
+			turtle.changeAnimation(this.atlas.turtle_run_down);
+		} else {
+			turtle.changeAnimation(this.atlas.turtle);						
+		}
 	}
 
 	isPerpective() {

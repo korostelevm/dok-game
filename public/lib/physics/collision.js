@@ -9,6 +9,7 @@ class Collision extends PhysicsBase {
 
 		this.BOTH = (horizontal ? this.H : 0) | (vertical ? this.V : 0) | (deep ? this.D : 0);
 		this.countType = [horizontal, vertical, deep];
+		this.lastCollided = new Map();
 	}
 
 	async init(sprites, game) {
@@ -111,15 +112,18 @@ class Collision extends PhysicsBase {
 					this.removeOpenCollider(sprite);
 				}
 			}
-
-			if (this.openColliders.length) {
-				console.log(m, "AXIS", markers.length);
-				console.warn(this.openColliders.length);
-				this.openColliders.forEach((collider, index) => console.log(index, collider));
-				throw new Error("");
-			}
 		}
 		this.applyCollisionsOnAllSprites(time);
+		this.addressLastCollisions(time);
+	}
+
+	addressLastCollisions(time) {
+		this.lastCollided.forEach((collideTime, sprite) => {
+			if (time !== collideTime) {
+				this.lastCollided.delete(sprite);
+				sprite.onStopCollide(sprite);
+			}
+		});	
 	}
 
 	addOpenCollider(sprite) {
@@ -171,6 +175,9 @@ class Collision extends PhysicsBase {
 		const zPush = closePush < farPush ? -closePush : farPush;
 		if (sprite.onCollide) {
 			sprite.onCollide(sprite, secondSprite, xPush, yPush, zPush);
+			if (sprite.onStopCollide) {
+	//			this.lastCollided.set(sprite, time);
+			}
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
 			if (sprite.onEnter) {

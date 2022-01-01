@@ -52,6 +52,13 @@ class Sprite extends Body {
 			spriteType: time,
 		};
 		this.engine.updater.add(this);
+
+		if (data.shadow) {
+			game.spriteFactory.create({
+				type: "Shadow",
+				sprite: this,
+			});
+		}
 	}
 
 	onExit(game) {
@@ -141,17 +148,23 @@ class Sprite extends Body {
 			this.updated.direction = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
+			if (this.shadow) {
+				this.shadow.changeDirection(direction, time);
+			}
 			return true;
 		}
 		return false;
 	}
 
-	changeYDirection(ydirection, time) {
-		if (this.ydirection !== ydirection) {
-			this.ydirection = ydirection;
+	changeYDirection(direction, time) {
+		if (this.ydirection !== direction) {
+			this.ydirection = direction;
 			this.updated.direction = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
+			if (this.shadow) {
+				this.shadow.changeYDirection(direction, time);
+			}
 			return true;
 		}
 		return false;
@@ -168,6 +181,9 @@ class Sprite extends Body {
 			this.updated.updateTime = updateTime || time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
+			if (this.shadow) {
+				this.shadow.changeAnimation(anim, time, updateTime);
+			}
 			return true;
 		}
 		return false;
