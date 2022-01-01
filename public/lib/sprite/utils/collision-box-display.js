@@ -1,0 +1,83 @@
+class CollisionBoxDisplay {
+	constructor(collisionBox) {
+		this.collisionBox = collisionBox;
+		const game = collisionBox.sprite.game;
+		this.engine = game.engine;
+		this.sprites = [
+			this.generateBox(game, collisionBox, [90, 0 ,0]),
+			this.generateBox(game, collisionBox, [-90, 0 ,0]),
+			this.generateBox(game, collisionBox, [0, 180 ,0]),
+			this.generateBox(game, collisionBox, [0, 0 ,0]),
+			this.generateBox(game, collisionBox, [0, 90 ,0]),
+			this.generateBox(game, collisionBox, [0, -90 ,0]),
+		];
+
+		this.repositionSprites(engine.lastTime);
+		this.sprites.forEach(sprite => {
+			sprite.follow(this.collisionBox.sprite);
+		});
+	}
+
+	generateBox(game, collisionBox, rotation) {
+		return game.spriteFactory.create({
+			anim: game.atlas.collisionBox,
+			size: [1, 1],
+			x: collisionBox.sprite.x,
+			y: collisionBox.sprite.y,
+			z: collisionBox.sprite.z,
+			rotation,
+		});
+	}
+
+	repositionSprites(time) {
+		const collisionBox = this.collisionBox.getCollisionBox(time);
+		this.sprites[0].changeSize(collisionBox.width, collisionBox.depth, time);
+		this.sprites[0].changePosition(
+			collisionBox.left,
+			collisionBox.bottom,
+			collisionBox.far,
+			time);
+		this.sprites[1].changeSize(collisionBox.width, collisionBox.depth, time);
+		this.sprites[1].changePosition(
+			collisionBox.left,
+			collisionBox.top,
+			collisionBox.close,
+			time);
+		this.sprites[2].changeSize(collisionBox.width, collisionBox.height, time);
+		this.sprites[2].changePosition(
+			collisionBox.right,
+			collisionBox.top,
+			collisionBox.close,
+			time);
+		this.sprites[3].changeSize(collisionBox.width, collisionBox.height, time);
+		this.sprites[3].changePosition(
+			collisionBox.left,
+			collisionBox.top,
+			collisionBox.far,
+			time);
+		this.sprites[4].changeSize(collisionBox.width, collisionBox.height, time);
+		this.sprites[4].changePosition(
+			collisionBox.right,
+			collisionBox.top,
+			collisionBox.far,
+			time);
+		this.sprites[5].changeSize(collisionBox.width, collisionBox.height, time);
+		this.sprites[5].changePosition(
+			collisionBox.left,
+			collisionBox.top,
+			collisionBox.close,
+			time);		
+	}
+
+	show() {
+		for (let i = 0; i < this.sprites.length; i++) {
+			this.sprites[i].changeActive(true);
+		}
+	}
+
+	hide() {
+		for (let i = 0; i < this.sprites.length; i++) {
+			this.sprites[i].changeActive(false);
+		}
+	}
+}

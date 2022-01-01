@@ -48,6 +48,9 @@ class GameBase {
 		this.atlas.collisionBox = await engine.addTexture({
 			url: "assets/red-square.png",
 		});
+		this.atlas.empty = await engine.addTexture({
+			spriteWidth: 0, spriteHeight: 0,
+		});
 	}
 
 	addPhysics(physics) {
@@ -157,10 +160,10 @@ class GameBase {
 	}
 
 	async getViewportSize(engine) {
-		return {
-			pixelScale: 0,	//	autodetect
+		const json = await engine.fileUtils.load(this.path);
+		return json?.viewport || {
 			viewportSize: [800, 400],
-		}
+		};
 	}
 
 	getInitialShift() {

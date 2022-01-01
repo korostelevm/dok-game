@@ -14,13 +14,10 @@ class Collision extends PhysicsBase {
 	async init(sprites, game) {
 		this.game = game;
 		this.sprites = sprites.filter(({collide}) => collide);
-		this.horizontal = [];
-		this.vertical = [];
-		this.deep = [];
 		this.axis = [
-			this.horizontal,
-			this.vertical,
-			this.deep,
+			this.horizontal = [],
+			this.vertical = [],
+			this.deep = [],
 		];
 		this.openColliders = [];
 		this.countedColliders = [];
@@ -47,11 +44,6 @@ class Collision extends PhysicsBase {
 				openColliderIndex: 0,
 			};
 		});
-
-		this.perf = {
-			count: 0,
-			time: 0,
-		};
 	}
 
 	countCollision(sprite, secondSprite, type) {
@@ -75,19 +67,20 @@ class Collision extends PhysicsBase {
 		}
 		for (let i = 0; i < this.horizontal.length; i++) {
 			const marker = this.horizontal[i];
-			marker.x = (marker.topLeftClose ?  marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
+			marker.x = (marker.topLeftClose ? marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
 		}
 		for (let i = 0; i < this.vertical.length; i++) {
 			const marker = this.vertical[i];
-			marker.y = (marker.topLeftClose ?  marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
+			marker.y = (marker.topLeftClose ? marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
 		}
 		for (let i = 0; i < this.deep.length; i++) {
 			const marker = this.deep[i];
-			marker.z = (marker.topLeftClose ?  marker.sprite.collisionBox.close : marker.sprite.collisionBox.far);
+			marker.z = (marker.topLeftClose ? marker.sprite.collisionBox.close : marker.sprite.collisionBox.far);
 		}
-		ArrayUtils.sort(this.horizontal, this.compareHorizontal);
-		ArrayUtils.sort(this.vertical, this.compareVertical);
-		ArrayUtils.sort(this.deep, this.compareDepth);
+
+		this.horizontal.sort(this.compareHorizontal);
+		this.vertical.sort(this.compareVertical);
+		this.deep.sort(this.compareDepth);
 	}
 
 	refresh(time, dt) {
@@ -97,12 +90,14 @@ class Collision extends PhysicsBase {
 			}
 		}
 		this.calculateCollisionMarkers(time);
+
 		for (let m = 0; m < this.axis.length; m++) {
 			const markers = this.axis[m];
+
 			for (let i = 0; i < markers.length; i++) {
 				const marker = markers[i];
 				const sprite = marker.sprite;
-				if (sprite.disabled) {
+				if (!sprite.active) {
 					continue;
 				}
 
@@ -115,6 +110,13 @@ class Collision extends PhysicsBase {
 					//	Close colliders
 					this.removeOpenCollider(sprite);
 				}
+			}
+
+			if (this.openColliders.length) {
+				console.log(m, "AXIS", markers.length);
+				console.warn(this.openColliders.length);
+				this.openColliders.forEach((collider, index) => console.log(index, collider));
+				throw new Error("");
 			}
 		}
 		this.applyCollisionsOnAllSprites(time);
@@ -129,7 +131,9 @@ class Collision extends PhysicsBase {
 	removeOpenCollider(sprite) {
 		const openColliders = this.openColliders;
 		const openColliderIndex = sprite.collisionData.openColliderIndex;
-		openColliders[openColliderIndex] = openColliders[openColliders.length - 1];
+		if (openColliderIndex < openColliders.length) {
+			openColliders[openColliderIndex] = openColliders[openColliders.length - 1];
+		}
 		openColliders.pop();
 		if (openColliderIndex < openColliders.length) {
 			const replacement = openColliders[openColliderIndex];

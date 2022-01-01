@@ -9,11 +9,13 @@ class WorldOfTurtle extends GameBase {
 		const { gl, config } = engine;
 
 		const control = this.addPhysics(new Control8());
+		const collision = this.addPhysics(new Collision(true, true, true));
+
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
 		this.backwall = this.spriteFactory.create({
-			anim: this.atlas.backwall,
+			anim: "backwall",
 			size: [viewportWidth * 3, viewportHeight * 3],
 			opacity: .5,
 			x: viewportWidth / 2, y: viewportHeight + 10,
@@ -34,18 +36,18 @@ class WorldOfTurtle extends GameBase {
 				spriteType: "sprite",
 				collisionFrame: {
 					left: -30, right: 30,
-					top: 0, bottom: -60,
+					top: -60, bottom: 0,
 					close: -30, far: 30,
 					show: true,
 				},
 			}, {
 				control: 1,
+				collide: 1,
 				onControl: (turtle, dx, dy) => {
 					const speed = 200;
 					const dist = Math.sqrt(dx * dx + dy * dy);
 					const speedMul = dist ? speed / dist : 0;
 					turtle.changeMotion(dx * speedMul, 0, dy * speedMul);
-					turtle.shadow.changeMotion(turtle.motion[0], turtle.motion[1], turtle.motion[2]);
 					if (dx !== 0) {
 						turtle.changeDirection(dx);
 						turtle.shadow.changeDirection(turtle.direction);
@@ -59,6 +61,12 @@ class WorldOfTurtle extends GameBase {
 					}
 					turtle.shadow.changeAnimation(turtle.anim);
 				},
+				onEnter: (self, sprite) => {
+					console.log(sprite.id);
+				},
+				onCollide: (self, sprite, xPush, yPush, zPush) => {
+					console.log(sprite.id, xPush, yPush, zPush);
+				},
 			});
 			this.turtle.shadow = this.spriteFactory.create({
 				anim: this.atlas.turtle,
@@ -68,6 +76,7 @@ class WorldOfTurtle extends GameBase {
 				opacity: .5,
 				rotation: [-90, 0, 0],					
 			});
+			this.turtle.shadow.follow(this.turtle);
 		}
 
 		this.pengs = [];
@@ -76,16 +85,19 @@ class WorldOfTurtle extends GameBase {
 			const z = - RandomUtils.random(i, 888) * 2000;
 			const y = 400;
 			const peng = this.spriteFactory.create({
+				name: peng => `peng-${i}`,
 				anim: this.atlas.peng,
 				size: [100, 120],
 				x, y, z,
 				spriteType: "sprite",
 				collisionFrame: {
 					left: -40, right: 40,
-					top: 0, bottom: -80,
+					top: -80, bottom: 0,
 					close: -40, far: 40,
 					show: true,
 				},
+			}, {
+				collide: 1,				
 			});
 			this.pengs.push(peng);			
 			peng.shadow = this.spriteFactory.create({
@@ -96,6 +108,7 @@ class WorldOfTurtle extends GameBase {
 				opacity: .5,
 				rotation: [-90, 0, 0],					
 			});
+			peng.shadow.follow(peng);
 		}
 
 		for (let row = 0; row < 11; row++) {
@@ -119,20 +132,5 @@ class WorldOfTurtle extends GameBase {
 
 	isPerpective() {
 		return true;
-	}
-
-	getWindowSize(engine) {
-		return [1000, 700];
-	}
-
-	async getViewportSize(engine) {
-		return {
-			pixelScale: 0,	//	autodetect
-			viewportSize: [900, 600],
-		}
-	}
-
-	refresh(time, dt) {
-		super.refresh(time, dt);
 	}
 }

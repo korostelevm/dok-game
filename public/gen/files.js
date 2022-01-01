@@ -326,14 +326,7 @@ const globalFiles=[
 					"control.js",
 					"gravity.js",
 					"jump.js",
-					"movement.js",
-					{
-						"utils": [
-							"collision-box-display.js",
-							"collision-box.js",
-							"collision-merger.js"
-						]
-					}
+					"movement.js"
 				]
 			},
 			{
@@ -355,12 +348,21 @@ const globalFiles=[
 					{
 						"base": [
 							".DS_Store",
+							"body.js",
 							"sprite.js"
 						]
 					},
 					"hud.js",
+					"shadow.js",
 					"sprite-collection.js",
-					"sprite-factory.js"
+					"sprite-factory.js",
+					{
+						"utils": [
+							"collision-box-display.js",
+							"collision-box.js",
+							"collision-merger.js"
+						]
+					}
 				]
 			},
 			{

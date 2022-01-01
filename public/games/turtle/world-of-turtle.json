@@ -1,6 +1,10 @@
 {
 	"className": "WorldOfTurtle",
 	"windowSize": [1000, 700],
+	"viewport": {
+		"pixelScale": 0,
+		"viewportSize": [900, 600]
+	},
 	"atlas": {
 		"backwall": {
 			"url": "assets/backwall.jpg",

@@ -1,8 +1,4 @@
 class ArrayUtils {
-	static sort(array, callback) {
-		array.sort(callback);
-	}
-
 	static shuffle(array) {
 		for (let i = 0; i < array.length; i++) {
 			const n = Math.floor(Math.random() * array.length);

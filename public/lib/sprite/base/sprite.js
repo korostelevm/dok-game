@@ -7,26 +7,18 @@
 //	- anim (cols, rows, frameRate)
 
 
-class Sprite {
+class Sprite extends Body {
 	constructor(data, time, properties, engine, game) {
-		this.data = data;
-		this.engine = engine;
+		super(data, time, engine);
 		this.game = game;
 		this.type = this.constructor.name;
-		this.id = data.id;
 		this.name = data.name || "";
-		this.x = data.x || 0;
-		this.y = data.y || 0;
-		this.z = data.z || 0;
-		this.positionCache = [this.x, this.y, this.z];
+		this.id = data.id || data.name;
 		this.size = [... engine.translate(data.size) || [1, 1]];
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.light = data.light !== undefined ? data.light : 1;
-		this.active = true;
 		this.remember = data.remember || false;
-		this.motion = [... data.motion || [0, 0, 0]];
-		this.acceleration = [... data.acceleration || [0, 0, 0]];
 		this.spriteType = engine.translate(data.spriteType) || 0;
 
 		this.direction = data.direction || 1;
@@ -46,17 +38,15 @@ class Sprite {
 				self.changePosition(x, y, z);
 			},
 		};
-		this.followers = new Set();
 
 		this.updated = {
+			... this.updated,
 			sprite: time,
 			spriteSheet: time,
 			animation: time,
 			updateTime: time,
-			motionTime: time,
 			direction: time,
 			opacity: time,
-			motion: time,
 			acceleration: time,
 			light: time,
 			spriteType: time,
@@ -100,14 +90,11 @@ class Sprite {
 		return currentFrame;
 	}
 
-	changePosition(x, y, z, time) {
-		if (this.x !== x || this.y !== y || this.z !== z) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
+	changePosition(x, y, z, time, skipRecalculate) {
+		if (super.changePosition(x, y, z, time, skipRecalculate)) {
 			this.updated.sprite = time || this.engine.lastTime;
 			this.collisionBox.dirty = true;
-			this.needUpdate();
+			this.needUpdate();			
 			return true;
 		}
 		return false;
@@ -187,9 +174,7 @@ class Sprite {
 	}
 
 	changeActive(value, time) {
-		if (this.active !== value) {
-			this.active = value;
-			this.updated.active = time || this.engine.lastTime;
+		if (super.changeActive(value, time)) {
 			this.needUpdate();
 			this.collisionBox.dirty = true;
 			return true;
@@ -208,31 +193,19 @@ class Sprite {
 	}
 
 	changeMotion(dx, dy, dz, time, skipRecalculate) {
-		if (this.motion[0] !== dx || this.motion[1] !== dy || this.motion[2] !== dz) {
-			if (!skipRecalculate) {
-				this.recalculatePosition(time || this.engine.lastTime);
-			}
-			this.motion[0] = dx;
-			this.motion[1] = dy;
-			this.motion[2] = dz;
-			this.updated.motion = time || this.engine.lastTime;
+		if (super.changeMotion(dx, dy, dz, time, skipRecalculate)) {
 			this.collisionBox.dirty = true;
 			this.needUpdate();
-			return true;
+			return true;			
 		}
 		return false;
 	}
 
 	changeAcceleration(ax, ay, az, time) {
-		if (this.acceleration[0] !== ax || this.acceleration[1] !== ay || this.acceleration[2] !== az) {
-			this.recalculatePosition(time);
-			this.acceleration[0] = ax;
-			this.acceleration[1] = ay;
-			this.acceleration[2] = az;
-			this.updated.motion = time || this.engine.lastTime;
+		if (super.changeAcceleration(ax, ay, az, time)) {
 			this.collisionBox.dirty = true;
 			this.needUpdate();
-			return true;
+			return true;			
 		}
 		return false;
 	}
@@ -279,37 +252,5 @@ class Sprite {
 
 	getCollisionBox(time) {
 		return this.collisionBox.getCollisionBox(time);
-	}
-
-	getRealPosition(t) {
-		const time = t || this.engine.lastTime;
-		const dt = (time - this.updated.motion) / 1000;
-		const dt2 = dt * dt;
-		this.positionCache[0] = this.x + this.motion[0] * dt + .5 * dt2 * this.acceleration[0];
-		this.positionCache[1] = this.y + this.motion[1] * dt + .5 * dt2 * this.acceleration[1];
-		this.positionCache[2] = this.z + this.motion[2] * dt + .5 * dt2 * this.acceleration[2];
-		return this.positionCache;
-	}
-
-	recalculatePosition(t) {
-		const time = t || this.engine.lastTime;
-		if (this.updated.motion !== time) {
-			const dt = (time - this.updated.motion) / 1000;
-			const dt2 = dt * dt;
-			const position = this.getRealPosition(time);
-			const x = position[0];
-			const y = position[1];
-			const z = position[2];
-			const vx = this.motion[0] + dt * this.acceleration[0];
-			const vy = this.motion[1] + dt * this.acceleration[1];
-			const vz = this.motion[2] + dt * this.acceleration[2];
-			this.changePosition(x, y, z, time);
-			this.changeMotion(vx, vy, vz, time, true);
-			this.updated.motion = time;
-		}
-	}
-
-	follow(sprite) {
-		sprite.followers.add(this);
 	}
 }
