@@ -3,7 +3,7 @@ class Shadow extends Sprite {
 		super({
 			anim: data.sprite.anim,
 			size: data.sprite.size,
-			x: data.sprite.x, y: data.sprite.y + 5, z: data.sprite.z,
+			x: data.sprite.x, y: data.sprite.y + 3, z: data.sprite.z,
 			light: 0,
 			opacity: .5,
 			rotation: [-90, 0, 0],					

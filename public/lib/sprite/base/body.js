@@ -17,21 +17,16 @@ class Body {
 		this.followers = new Set();
 	}
 
-	changePosition(x, y, z, time, skipRecalculate) {
-		const dx = x - this.x;
-		const dy = y - this.y;
-		const dz = z - this.z;
-		return this.movePosition(dx, dy, dz, time, skipRecalculate);
-	}
 
-	movePosition(dx, dy, dz, time, skipRecalculate) {
-		if (dx !== 0 || dy !== 0 || dz !== 0) {
+	changePosition(x, y, z, time, skipRecalculate) {
+		if (this.x !== x || this.y !== y || this.z !== z) {
 			if (!skipRecalculate) {
 				this.recalculatePosition(time || this.engine.lastTime);				
 			}
-			this.x += dx;
-			this.y += dy;
-			this.z += dz;
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			this.followers.forEach(follower => follower.adjustFollowerPosition(time));
 			return true;
 		}
 		return false;
@@ -108,7 +103,24 @@ class Body {
 		}
 	}
 
-	follow(sprite) {
-		sprite.followers.add(this);
+	follow(target, offsetX, offsetY, offsetZ) {
+		if (this.following) {
+			if (this.following.target === target) {
+				return;
+			}
+			this.following.target.followers.delete(this);
+		}
+		this.following = {
+			target,
+			offsetX: offsetX ?? this.x - target.x,
+			offsetY: offsetY ?? this.y - target.y,
+			offsetZ: offsetZ ?? this.z - target.z,
+		};
+		target.followers.add(this);
+	}
+
+	adjustFollowerPosition(time) {
+		const { target, offsetX, offsetY, offsetZ } = this.following;
+		this.changePosition(target.x + offsetX, target.y + offsetY, target.z + offsetZ, time);
 	}
 }

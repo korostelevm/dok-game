@@ -114,16 +114,6 @@ class Collision extends PhysicsBase {
 			}
 		}
 		this.applyCollisionsOnAllSprites(time);
-		this.addressLastCollisions(time);
-	}
-
-	addressLastCollisions(time) {
-		this.lastCollided.forEach((collideTime, sprite) => {
-			if (time !== collideTime) {
-				this.lastCollided.delete(sprite);
-				sprite.onStopCollide(sprite);
-			}
-		});	
 	}
 
 	addOpenCollider(sprite) {
@@ -175,9 +165,6 @@ class Collision extends PhysicsBase {
 		const zPush = closePush < farPush ? -closePush : farPush;
 		if (sprite.onCollide) {
 			sprite.onCollide(sprite, secondSprite, xPush, yPush, zPush);
-			if (sprite.onStopCollide) {
-	//			this.lastCollided.set(sprite, time);
-			}
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
 			if (sprite.onEnter) {

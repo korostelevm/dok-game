@@ -60,9 +60,6 @@ class WorldOfTurtle extends GameBase {
 						self.changePosition(self.x + xPush * 2, self.y, self.z);
 					}					
 				},
-				onStopCollide: (self) => {
-					this.updateControl(self, this.control.dx, this.control.dy);
-				},
 			});
 		}
 
