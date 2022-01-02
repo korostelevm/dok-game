@@ -53,11 +53,15 @@ class WorldOfTurtle extends GameBase {
 				onCollide: (self, sprite, xPush, yPush, zPush) => {
 					//	VERTICAL COLLIDE
 					if (Math.abs(zPush) < Math.abs(xPush)) {
-						self.changeMotion(self.motion[0], self.motion[1], 0);
-						self.changePosition(self.x, self.y, self.z + zPush * 2);
+						if (self.motion[2] * zPush < 0) {
+							self.changeMotion(self.motion[0], self.motion[1], 0);
+						}
+						self.changePosition(self.x, self.y, self.z + zPush);
 					} else {
-						self.changeMotion(0, self.motion[1], self.motion[2]);
-						self.changePosition(self.x + xPush * 2, self.y, self.z);
+						if (self.motion[0] * xPush < 0) {
+							self.changeMotion(0, self.motion[1], self.motion[2]);
+						}
+						self.changePosition(self.x + xPush, self.y, self.z);
 					}					
 				},
 			});

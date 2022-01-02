@@ -101,7 +101,6 @@ class Entrance extends GameCore {
 					range:[3],
 				}),
 		};
-//		this.imageLoader.unload();
 
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 

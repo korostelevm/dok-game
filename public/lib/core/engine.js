@@ -347,7 +347,7 @@ class Engine {
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
 
-		this.tipBox = new TipBox(this.canvas);
+		this.tipBox = new TipBox(this);
 
 		this.overlay = document.getElementById("overlay");
 

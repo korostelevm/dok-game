@@ -1,5 +1,6 @@
 class TipBox {
-	constructor(canvas) {
+	constructor(engine) {
+		const canvas = engine.canvas;
 		this.id = null;
 		this.messages = {};
 		this.div = document.getElementById("tip-box") || canvas.parentElement.insertBefore(document.createElement("div"), canvas.nextSibling);
@@ -18,9 +19,10 @@ class TipBox {
 			"[E]": "assets/button_e.png",
 		};
 		Object.keys(this.imageReplacements).forEach(key => {
-			const img = new Image();
-			img.addEventListener("load", e => this.imageReplacements[key] = img.src);
-			img.src = this.imageReplacements[key];
+			engine.imageLoader.getBlobUrl(this.imageReplacements[key]).then(src => {
+				console.log(src);
+				this.imageReplacements[key] = src;
+			});
 		});
 	}
 

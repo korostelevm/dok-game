@@ -5,22 +5,9 @@ class ImageLoader {
 		this.preserve = {
 			"assets/mouse-cursor.png": true,
 			"assets/pointer-cursor.png": true,
+			"assets/button_e.png": true,
 		};
 		this.canvas = document.createElement("canvas");
-	}
-
-	unload() {
-		this.unloadStockExceptUrls([]);
-	}
-
-	unloadStockExceptUrls(exceptUrls) {
-		const hash = {};
-		exceptUrls.forEach(url => hash[url] = true);
-		for (let url in this.imageStock) {
-			if (!hash[url]) {
-				delete this.imageStock[url];
-			}
-		}
 	}
 
 	async getBlobUrl(url) {
