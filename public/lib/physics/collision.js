@@ -1,7 +1,7 @@
 const HORIZONTAL = 0, VERTICAL = 1, DEEP = 2;
 
 class Collision extends PhysicsBase {
-	constructor(horizontal, vertical, deep) {
+	constructor({horizontal, vertical, deep}) {
 		super();
 		this.H = 1 << HORIZONTAL;
 		this.V = 1 << VERTICAL;
@@ -9,7 +9,6 @@ class Collision extends PhysicsBase {
 
 		this.BOTH = (horizontal ? this.H : 0) | (vertical ? this.V : 0) | (deep ? this.D : 0);
 		this.countType = [horizontal, vertical, deep];
-		this.lastCollided = new Map();
 	}
 
 	async init(sprites, game) {
@@ -79,6 +78,10 @@ class Collision extends PhysicsBase {
 			marker.z = (marker.topLeftClose ? marker.sprite.collisionBox.close : marker.sprite.collisionBox.far);
 		}
 
+		this.sortMarkers();
+	}
+
+	sortMarkers() {
 		this.horizontal.sort(this.compareHorizontal);
 		this.vertical.sort(this.compareVertical);
 		this.deep.sort(this.compareDepth);
@@ -93,27 +96,29 @@ class Collision extends PhysicsBase {
 		this.calculateCollisionMarkers(time);
 
 		for (let m = 0; m < this.axis.length; m++) {
-			const markers = this.axis[m];
-
-			for (let i = 0; i < markers.length; i++) {
-				const marker = markers[i];
-				const sprite = marker.sprite;
-				if (!sprite.active) {
-					continue;
-				}
-
-				this.countNewCollisionsWithOpenColliders(sprite, m);
-
-				if (marker.topLeftClose) {
-					//	Open the new colliders
-					this.addOpenCollider(sprite);
-				} else {
-					//	Close colliders
-					this.removeOpenCollider(sprite);
-				}
-			}
+			this.countCollisionFromMarkers(this.axis[m], m);
 		}
 		this.applyCollisionsOnAllSprites(time);
+	}
+
+	countCollisionFromMarkers(markers, type) {
+		for (let i = 0; i < markers.length; i++) {
+			const marker = markers[i];
+			const sprite = marker.sprite;
+			if (!sprite.active) {
+				continue;
+			}
+
+			this.countNewCollisionsWithOpenColliders(sprite, type);
+
+			if (marker.topLeftClose) {
+				//	Open the new colliders
+				this.addOpenCollider(sprite);
+			} else {
+				//	Close colliders
+				this.removeOpenCollider(sprite);
+			}
+		}
 	}
 
 	addOpenCollider(sprite) {
@@ -165,6 +170,7 @@ class Collision extends PhysicsBase {
 		const zPush = closePush < farPush ? -closePush : farPush;
 		if (sprite.onCollide) {
 			sprite.onCollide(sprite, secondSprite, xPush, yPush, zPush);
+			sprite.trackCollision(secondSprite, time);
 		}
 		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
 			if (sprite.onEnter) {

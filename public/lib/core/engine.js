@@ -683,14 +683,27 @@ class Engine {
 		const viewportHeight = gl.drawingBufferHeight / pixelScaleMultiplier;
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
-		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);		
+		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
+
+		console.log(orthoMatrix);
+		console.log(perspectiveMatrix);
 	}
 
-	setPerspective(perspective, delay) {
-		console.log("Perspective:", perspective);
-		this.isPerspective = perspective;
-		const uniforms = this.shaders[0].uniforms;
-		this.gl.uniform1f(uniforms.isPerspective.location, perspective ? 1 : 0);
+	setPerspective(perspective) {
+		if (this.isPerspective !== perspective) {
+			console.log("Perspective:", perspective);
+			this.isPerspective = perspective;
+
+			new ValueRefresher(this, {
+				start: perspective ? 0 : .001,
+				end: perspective ? .001 : 0,
+				duration: 300,
+				callback: value => {
+					const uniforms = this.shaders[0].uniforms;
+					this.gl.uniform1f(uniforms.isPerspective.location, value === 1 ? 1 : value);
+				},
+			});
+		}
 	}
 
 	setClamp(minX, maxX, minY, maxY, minZ, maxZ) {

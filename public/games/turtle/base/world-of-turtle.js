@@ -8,17 +8,14 @@ class WorldOfTurtle extends GameBase {
 
 		const { gl, config } = engine;
 
-		this.control = this.addPhysics(new Control8());
-		this.collision = this.addPhysics(new Collision(true, true, true));
-
-
 		const [viewportWidth, viewportHeight] = config.viewport.size;
 
 		this.backwall = this.spriteFactory.create({
 			anim: "backwall",
 			size: [viewportWidth * 3, viewportHeight * 3],
 			opacity: .5,
-			x: viewportWidth / 2, y: viewportHeight + 10,
+			x: viewportWidth / 2,
+			y: viewportHeight + 20,
 			z: -450,
 			rotation: [-90, 0, 0],
 		});
@@ -38,20 +35,35 @@ class WorldOfTurtle extends GameBase {
 				collisionFrame: {
 					left: -30, right: 30,
 					top: -60, bottom: 0,
-					close: -30, far: 30,
+					close: -50, far: 10,
 					show: true,
 				},
 			}, {
 				control: 1,
 				collide: 1,
+				lastJump: 0,
+				manualRefresh: 1,
+				dxMul: 1,
+				dyMul: 1,
 				onControl: (self, dx, dy) => {
-					this.updateControl(self, dx, dy);
+					if (!self.airborne) {
+						self.updateControl(self, dx, dy);
+					}
+				},
+				onAction: (self, e) => {
+					if (e.type === "keydown" && !self.airborne) {
+						self.airborne = 1;
+						self.lastJump = self.engine.lastTime;
+						self.engine.refresher.add(self);
+						self.updateControl(self, this.control.dx, this.control.dy, true);
+					}
 				},
 				onEnter: (self, sprite) => {
 					console.log(sprite.id);
 				},
 				onCollide: (self, sprite, xPush, yPush, zPush) => {
 					//	VERTICAL COLLIDE
+					self.recalculatePosition();
 					if (Math.abs(zPush) < Math.abs(xPush)) {
 						if (self.motion[2] * zPush < 0) {
 							self.changeMotion(self.motion[0], self.motion[1], 0);
@@ -63,6 +75,61 @@ class WorldOfTurtle extends GameBase {
 						}
 						self.changePosition(self.x + xPush, self.y, self.z);
 					}					
+				},
+				onStopCollision: (self, sprite) => {
+					if (!self.airborne) {
+						self.updateControl(self, this.control.dx, this.control.dy);
+					}
+				},
+				onRefresh: (self, time, dt) => {
+					const position = self.getRealPosition(time);
+					const shadowOpacity = Math.max(0, 1 - (400 - position[1]) / 150);
+					self.shadow.changeOpacity(shadowOpacity);
+					if (position[1] >= 400) {
+						self.airborne = 0;
+						self.updateControl(self, this.control.dx, this.control.dy);
+						self.engine.refresher.delete(self);
+					}
+				},
+				updateControl: (self, dx, dy, jumping) => {
+					const speed = 200;
+					if (jumping) {
+						if (self.dxMul < self.dyMul) {
+							self.dxMul = 0;
+						} else {
+							self.dyMul = 0;
+						}	
+					}
+					if (!dx && dy) {
+						self.dxMul = 2.5;
+						self.dyMul = 1;
+					} else if (dx && !dy) {
+						self.dxMul = 1;
+						self.dyMul = 2.5;
+					}
+					dx *= self.dxMul;
+					dy *= self.dyMul;
+
+					const dist = Math.sqrt(dx * dx + dy * dy);
+					const speedMul = dist ? speed / dist * (jumping ? 1.5 : 1) : 0;
+					self.changeMotion(dx * speedMul, jumping ? -800 : 0, dy * speedMul);
+					self.changeAcceleration(0, jumping ? 3000 : 0, 0);
+					if (dx !== 0) {
+						self.changeDirection(dx);
+					}
+
+					if (Math.abs(dx) > Math.abs(dy)) {
+						self.changeAnimation(jumping ? this.atlas.turtle_jump : this.atlas.turtle_run);
+					} else if (dy < 0) {
+						self.changeAnimation(jumping ? this.atlas.turtle_jump_up : this.atlas.turtle_run_up);
+					} else if (dy > 0) {
+						self.changeAnimation(jumping ? this.atlas.turtle_jump_down : this.atlas.turtle_run_down);
+					} else {
+						self.changeAnimation(jumping ? this.atlas.turtle_jump : this.atlas.turtle);						
+					}
+				},
+				canJump: (self) => {
+					return !self.airborne;
 				},
 			});
 		}
@@ -79,9 +146,9 @@ class WorldOfTurtle extends GameBase {
 				x, y, z,
 				spriteType: "sprite",
 				collisionFrame: {
-					left: -40, right: 40,
+					left: -30, right: 30,
 					top: -80, bottom: 0,
-					close: -40, far: 40,
+					close: -40, far: 20,
 					show: true,
 				},
 				shadow: 1,
@@ -108,23 +175,6 @@ class WorldOfTurtle extends GameBase {
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
-	}
-
-	updateControl(turtle, dx, dy) {
-		const speed = 200;
-		const dist = Math.sqrt(dx * dx + dy * dy);
-		const speedMul = dist ? speed / dist : 0;
-		turtle.changeMotion(dx * speedMul, 0, dy * speedMul);
-		if (dx !== 0) {
-			turtle.changeDirection(dx);
-			turtle.changeAnimation(this.atlas.turtle_run);
-		} else if (dy < 0) {
-			turtle.changeAnimation(this.atlas.turtle_run_up);
-		} else if (dy > 0) {
-			turtle.changeAnimation(this.atlas.turtle_run_down);
-		} else {
-			turtle.changeAnimation(this.atlas.turtle);						
-		}
 	}
 
 	isPerpective() {

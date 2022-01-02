@@ -44,6 +44,27 @@ class GameBase {
 			for (let id in this.gameModel.world) {
 				this[id] = this.spriteFactory.create(this.gameModel.world[id]);
 			}
+
+			if (this.gameModel.physics) {
+				this.gameModel.physics.forEach(physic => {
+					const { id, type, config } = physic;
+					const classObj = eval(type);
+					this[id] = this.addPhysics(new classObj(config));
+				});
+			}
+
+			if (this.gameModel.gridData) {
+				const mapperClass = eval(this.gameModel.gridData.mapper);
+				const mapper = new mapperClass(this);
+				await mapper.init(engine);
+				const spriteGrid = new SpriteGrid(this, mapper);
+				await spriteGrid.init();
+
+				const { grid, cols, rows } = spriteGrid.generate(this.gameModel.gridData.grid);
+
+				const collisionMerger = new CollisionMerger();
+				collisionMerger.merge(grid, cols, rows);
+			}
 		}
 		this.atlas.collisionBox = await engine.addTexture({
 			url: "assets/red-square.png",

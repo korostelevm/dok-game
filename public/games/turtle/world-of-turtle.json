@@ -5,6 +5,20 @@
 		"pixelScale": 0,
 		"viewportSize": [900, 600]
 	},
+	"physics": [
+	  {
+	    "type": "Control8",
+	    "id": "control"
+	  },
+	  {
+	    "type": "Collision",
+	    "id": "collision",
+	    "config": {
+	      "horizontal":true,
+	      "deep":true
+	    }
+	  }
+	],
 	"atlas": {
 		"backwall": {
 			"url": "assets/backwall.jpg",
@@ -43,6 +57,27 @@
 			"spriteWidth": 238, "spriteHeight": 409,
 			"range":[61, 70],
 			"frameRate": 24,
+			"hotspot": [0.5, 0.96]
+		},
+		"turtle_jump": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[32, 40],
+			"frameRate": 15,
+			"hotspot": [0.5, 0.96]
+		},
+		"turtle_jump_up": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[44, 51],
+			"frameRate": 15,
+			"hotspot": [0.5, 0.96]
+		},
+		"turtle_jump_down": {
+			"url": "assets/turtle-spritesheet-rescaled.png",
+			"spriteWidth": 238, "spriteHeight": 409,
+			"range":[52, 59],
+			"frameRate": 15,
 			"hotspot": [0.5, 0.96]
 		},
 		"peng": {

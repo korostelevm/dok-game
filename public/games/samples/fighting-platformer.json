@@ -1,6 +1,29 @@
 {
   "className": "Platformer",
   "windowSize": [900, 500],
+  "physics": [
+      {
+        "type": "PlatformJump",
+        "id": "jump"
+      },
+      {
+        "type": "Control",
+        "id": "control"
+      },
+      {
+        "type": "Gravity"
+      },
+      {
+        "type": "Movement"
+      },
+      {
+        "type": "Collision",
+        "config": {
+          "horizontal":true,
+          "vertical":true
+        }
+      }
+  ],
   "world": {
     "overlayHud": {
       "type": "Hud",
@@ -23,17 +46,20 @@
       "spriteType": "hud"
     }
   },
-  "grid": [
-    "[]                                        []",
-    "[]                                        []",
-    "[]                                        []",
-    "[]                                        []",
-    "[]              [][][][]                  []",
-    "[]        8                               []",
-    "[]      [][]                    [][]      []",
-    "[]                                        []",
-    "[][][][][][][][][][][][][][][][][][][][][][]"
-  ],
+  "gridData": {
+    "mapper": "PlatformMapper",
+    "grid": [
+      "[]                                        []",
+      "[]                                        []",
+      "[]                                        []",
+      "[]                                        []",
+      "[]              [][][][]                  []",
+      "[]        8                               []",
+      "[]      [][]                    [][]      []",
+      "[]                                        []",
+      "[][][][][][][][][][][][][][][][][][][][][][]"
+    ]
+  },
   "audio": {
     "scream": {
       "src": "audio/scream.mp3",

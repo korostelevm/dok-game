@@ -3,26 +3,6 @@ class Platformer extends GameBase {
 		super(path);
 	}
 
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
-		const { gl, config } = engine;
-		const jump = this.addPhysics(new Jump());
-		const control = this.addPhysics(new Control());
-		const gravity = this.addPhysics(new Gravity());
-		const movement = this.addPhysics(new Movement());
-		const collision = this.addPhysics(new Collision(true, true, false));
-
-		const spriteMapper = new SpriteMapper(this, this.spriteFactory, this.atlas, control, this.audio, jump);
-		await spriteMapper.init(engine);
-		const spriteGrid = new SpriteGrid(this, this.spriteFactory, spriteMapper);
-		await spriteGrid.init();
-
-		const { grid, cols, rows } = spriteGrid.generate(this.gameModel.grid);
-
-		const collisionMerger = new CollisionMerger();
-		collisionMerger.merge(grid, cols, rows);
-	}
-
 	applyCamera(camera) {
 		const cameraConfig = this.cameras[camera];
 		const followed = this[cameraConfig.follow];

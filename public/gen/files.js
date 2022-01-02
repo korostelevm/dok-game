@@ -91,6 +91,7 @@ const globalFiles=[
 			"red-line.png",
 			"red-square.png",
 			"restaurant.png",
+			"sand.png",
 			"select-cursor.png",
 			"sign.png",
 			"skin-texture.jpg",
@@ -274,8 +275,8 @@ const globalFiles=[
 					},
 					{
 						"platformer": [
-							"platformer.js",
-							"sprite-mapper.js"
+							"platform-mapper.js",
+							"platformer.js"
 						]
 					}
 				]
@@ -325,8 +326,8 @@ const globalFiles=[
 					"control-8.js",
 					"control.js",
 					"gravity.js",
-					"jump.js",
-					"movement.js"
+					"movement.js",
+					"platform-jump.js"
 				]
 			},
 			{
@@ -349,6 +350,11 @@ const globalFiles=[
 						"base": [
 							".DS_Store",
 							"body.js",
+							{
+								"mapper": [
+									"sprite-mapper.js"
+								]
+							},
 							"sprite.js"
 						]
 					},
@@ -358,6 +364,7 @@ const globalFiles=[
 					"sprite-factory.js",
 					{
 						"utils": [
+							"collider-set.js",
 							"collision-box-display.js",
 							"collision-box.js",
 							"collision-merger.js"
@@ -395,9 +402,9 @@ const globalFiles=[
 					"chrono-utils-self-load.js",
 					"constants.js",
 					"file-utils.js",
-					"perspective-refresher.js",
 					"random-utils.js",
-					"string.js"
+					"string.js",
+					"value-refresher.js"
 				]
 			}
 		]

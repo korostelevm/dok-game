@@ -51,11 +51,12 @@ class ImageLoader {
 								if (!this.preserve[url]) {
 									URL.revokeObjectURL(imageURL);
 								}
-								resolve(img);
 								this.imageStock[url].progress = 1;
 								this.imageStock[url].loaded = true;
-								this.imageStock[url].onLoadListeners.forEach(callback => callback(img));
+								const listeners = this.imageStock[url].onLoadListeners;
 								delete this.imageStock[url].onLoadListeners;
+								resolve(img);
+								listeners.forEach(callback => callback(img));
 							});
 							img.src = imageURL;
 						} else {

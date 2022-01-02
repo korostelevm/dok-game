@@ -81,7 +81,7 @@ void main() {
 	v_opacity = textureIndex[OPACITY_INDEX] / 128.;
 
 	float isOrtho = max(isHud, 1. - isPerspective);
-	mat4 projection = (ortho * isOrtho + perspective * (1. - isOrtho));
+	mat4 projection = ortho * isOrtho + perspective * (1. - isOrtho);
 	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * IDENTITY;
 	vec4 position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
 

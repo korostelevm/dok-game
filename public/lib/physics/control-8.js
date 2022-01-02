@@ -11,10 +11,13 @@ class Control8 extends PhysicsBase {
 			],
 			onDown: [
 			],
+			onAction: [
+			],
 		};
 
 		this.dx = 0;
 		this.dy = 0;
+		this.action = 0;
 		this.lastControl = 0;
 		this.onLeft = e => {
 			if (e.type === "keydown") {
@@ -42,7 +45,7 @@ class Control8 extends PhysicsBase {
 			}			
 			this.lastControl = game.engine.lastTime;
 			this.forwardEvents("onUp", e);
-		}
+		};
 		this.onDown = e => {
 			if (e.type === "keydown") {
 				this.dy ++;
@@ -52,6 +55,15 @@ class Control8 extends PhysicsBase {
 			this.lastControl = game.engine.lastTime;
 			this.forwardEvents("onDown", e);
 		}
+		this.onAction = e => {
+			if (e.type === "keydown") {
+				this.action ++
+			} else {
+				this.action--;
+			}
+			this.lastControl = game.engine.lastTime;
+			this.forwardEvents("onAction", e);			
+		};
 		game.engine.keyboardHandler.addKeyDownListener(['a','ArrowLeft'], this.onLeft);
 		game.engine.keyboardHandler.addKeyUpListener(['a','ArrowLeft'], this.onLeft);
 		game.engine.keyboardHandler.addKeyDownListener(['d','ArrowRight'], this.onRight);
@@ -60,6 +72,8 @@ class Control8 extends PhysicsBase {
 		game.engine.keyboardHandler.addKeyUpListener(['w','ArrowUp'], this.onUp);
 		game.engine.keyboardHandler.addKeyDownListener(['s','ArrowDown'], this.onDown);
 		game.engine.keyboardHandler.addKeyUpListener(['s','ArrowDown'], this.onDown);
+		game.engine.keyboardHandler.addKeyDownListener([' ', 'Shift'], this.onAction);
+		game.engine.keyboardHandler.addKeyUpListener([' ', 'Shift'], this.onAction);
 
 		this.sprites.forEach(sprite => {
 			for (let event in this.onKeyActions) {
