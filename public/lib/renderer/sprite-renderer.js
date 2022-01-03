@@ -25,9 +25,9 @@ class SpriteRenderer {
 		return mat4.fromRotationTranslationScale(
 			this.tempMatrix,
 			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),
-			vec3.set(this.tempTranslation, (x * MUL - viewportWidth), -(y * MUL - viewportHeight), (z * MUL)),
+			vec3.set(this.tempTranslation, (x * MUL - viewportWidth), -(y * MUL - viewportHeight), z * MUL),
 			vec3.set(this.tempScale, width, height, 1)
-		);		
+		);
 	}
 
 	setAttributeSprite(index, x, y, z, width, height, hotX, hotY, rotation) {

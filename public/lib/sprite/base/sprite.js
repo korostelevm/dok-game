@@ -14,12 +14,12 @@ class Sprite extends Body {
 		this.type = this.constructor.name;
 		this.name = data.name || "";
 		this.id = data.id || data.name;
-		this.size = [... engine.translate(data.size) || [1, 1]];
+		this.size = [... data.size || [1, 1]];
 		this.rotation = [... data.rotation || [0, 0, 0]];
 		this.opacity = data.opacity !== undefined ? data.opacity : 1;
 		this.light = data.light !== undefined ? data.light : 1;
 		this.remember = data.remember || false;
-		this.spriteType = engine.translate(data.spriteType) || 0;
+		this.spriteType = Constants.SPRITE_TYPES[data.spriteType] || data.spriteType;
 
 		this.direction = data.direction || 1;
 		this.ydirection = data.ydirection || 1;
@@ -243,7 +243,7 @@ class Sprite extends Body {
 	}
 
 	changeSpriteType(spriteType, time) {
-		const actualSpriteType = this.engine.translate(spriteType) || 0;
+		const actualSpriteType = Constants.SPRITE_TYPES[spriteType] || spriteType;
 		if (this.spriteType !== actualSpriteType) {
 			this.spriteType = actualSpriteType;
 			this.updated.spriteType = time || this.engine.lastTime;

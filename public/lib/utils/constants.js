@@ -7,3 +7,8 @@ Constants.HOTSPOT_BOTTOM = [.5, 1];
 Constants.HORIZONTAL_MERGE = 1;
 Constants.VERTICAL_MERGE = 2;
 
+Constants.SPRITE_TYPES = {
+	none: 0,
+	hud: 1,
+	sprite: 2,
+};

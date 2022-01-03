@@ -234,7 +234,7 @@ class PlatformMapper extends SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: "horizontal_merge",
+					canMerge: "{horizontal_merge}",
 					collide: 1, crate: 1, canLand: true,
 				});
 			}),
@@ -341,7 +341,7 @@ class PlatformMapper extends SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: Constants.HORIZONTAL_MERGE,
+					canMerge: "{horizontal_merge}",
 					collide: 1, lowceiling: 1,
 					init: (self, col, row, grid) => {
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {

@@ -25,9 +25,10 @@ class GameBase {
 
 		ChronoUtils.tick();
 		this.gameModel = await engine.fileUtils.load(this.path);
+		this.gameModel = await engine.translate(this.gameModel, this);
 		ChronoUtils.tick();
 		if (this.gameModel) {
-			this.atlas = {...(await TextureAtlas.makeAtlases(engine, engine.translate(this.gameModel.atlas)) || {})};
+			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};
 			ChronoUtils.tick();
 			this.cameras = this.gameModel.cameras;
 			for (let id in this.cameras) {

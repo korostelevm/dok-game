@@ -8,18 +8,6 @@ class WorldOfTurtle extends GameBase {
 
 		const { gl, config } = engine;
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
-
-		this.backwall = this.spriteFactory.create({
-			anim: "backwall",
-			size: [viewportWidth * 3, viewportHeight * 3],
-			opacity: .5,
-			x: viewportWidth / 2,
-			y: viewportHeight + 20,
-			z: -450,
-			rotation: [-90, 0, 0],
-		});
-
 		{
 			const x = 450;
 			const z = -400;
@@ -134,7 +122,8 @@ class WorldOfTurtle extends GameBase {
 			});
 		}
 
-		this.pengs = [];
+		const [viewportWidth, viewportHeight] = config.viewport.size;
+
 		for (let i = 0; i < 100; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
 			const z = - RandomUtils.random(i, 888) * 2000;
@@ -155,7 +144,6 @@ class WorldOfTurtle extends GameBase {
 			}, {
 				collide: 1,				
 			});
-			this.pengs.push(peng);			
 		}
 
 		for (let row = 0; row < 11; row++) {

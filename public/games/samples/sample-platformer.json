@@ -29,7 +29,7 @@
       "type": "Hud",
       "anim": "debugGradient",
       "x": 0,
-      "y": "viewportHeight",
+      "y": "{viewportHeight}",
       "z": 10,
       "opacity": 0,
       "manualRefresh": true,
@@ -39,8 +39,8 @@
       "anim": "backwall",
       "z": -500,
       "size": [
-        "viewportWidth",
-        "viewportHeight"
+        "{viewportWidth}",
+        "{viewportHeight}"
       ],
       "opacity": 0.3,
       "spriteType": "hud"

@@ -965,33 +965,32 @@ class Engine {
 		});
 	}
 
-	translate(data) {
-		if (Array.isArray(data)) {
-			return data.map(d => this.translate(d));
+	async translate(data, game) {
+		if (!data) {
+			return data;
+		} else if (Array.isArray(data)) {
+			return Promise.all(data.map(d => this.translate(d, game)));
 		} else if (typeof(data) === "object") {
 			const translatedData = {};
 			for (let a in data) {
-				translatedData[a] = this.translate(data[a]);
+				translatedData[a] = await this.translate(data[a], game);
 			}
 			return translatedData;
 		}
-		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
-		switch (data) {
-			case "viewportWidth":
-				return this.config.viewport.size[0];
-			case "viewportHeight":
-				return this.config.viewport.size[1];
-			case "hud":
-				return 1;
-			case "sprite":
-				return 2;
-			case "hotspot_center":
-				return Constants.HOTSPOT_CENTER;
-			case "horizontal_merge":
-				return Constants.HORIZONTAL_MERGE;
-			case "vertical_merge":
-				return Constants.VERTICAL_MERGE;
-			default:
+
+		if (typeof(data)==="string") {
+			const group = data.match(/^{([^}]+)}$/);
+			if (group) {
+				const value = math.evaluate(group[1], {
+					viewportWidth: (await game.getViewportSize(game.engine)).viewportSize[0],
+					viewportHeight: (await game.getViewportSize(game.engine)).viewportSize[1],
+					hotspot_center: Constants.HOTSPOT_CENTER,
+					hotspot_bottom: Constants.HOTSPOT_BOTTOM,
+					horizontal_merge: Constants.HORIZONTAL_MERGE,
+					vertical_merge: Constants.VERTICAL_MERGE,
+				});
+				return value;
+			}
 		}
 		return data;
 	}
