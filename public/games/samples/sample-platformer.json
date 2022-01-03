@@ -1,6 +1,8 @@
 {
   "className": "Platformer",
-  "windowSize": [900, 500],
+  "settings": {
+    "windowSize": [900, 500]
+  },
   "physics": [
       {
         "type": "PlatformJump",

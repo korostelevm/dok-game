@@ -234,10 +234,6 @@ class Smurf extends GameBase {
 		}
 	}
 
-	isPerpective() {
-		return true;
-	}
-
 	moveMazoos(time) {
 		const gl = engine.gl;
 		const config = engine.config;
@@ -275,15 +271,15 @@ class Smurf extends GameBase {
 		}
 	}
 
+	async isPerspective(engine) {
+		return true;
+	}
+
 	getInitialShift() {
 		return {
 			x: 0, y: 1000, z: 450,
 			rotation: [45, 0, 0],
 		};
-	}
-
-	async getWindowSize(engine) {
-		return [900, 600];
 	}
 
 	refresh(time, dt) {

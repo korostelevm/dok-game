@@ -500,15 +500,14 @@ class Engine {
 	}
 
 	async adjustWindowSize(game) {
-		const [windowWidth, windowHeight] = await game.getWindowSize(this);
+		const {windowSize:[windowWidth, windowHeight], viewportSize:[viewportWidth, viewportHeight]} = await game.getSettings(this);
 		document.body.style.width = `${windowWidth}px`;
 		document.body.style.height = `${windowHeight}px`;
-		const {viewportSize: [viewportWidth, viewportHeight], pixelScale } = await game.getViewportSize(this);
 		this.canvas.style.left = `${(windowWidth - viewportWidth) / 2}px`;
 	}
 
 	async adjustViewportSize(game) {
-		const {viewportSize: [viewportWidth, viewportHeight], pixelScale } = await game.getViewportSize(this);
+		const {viewportSize: [viewportWidth, viewportHeight], pixelScale } = await game.getSettings(this);
 		this.resize(viewportWidth, viewportHeight, pixelScale||0);
 	}
 
@@ -981,9 +980,10 @@ class Engine {
 		if (typeof(data)==="string") {
 			const group = data.match(/^{([^}]+)}$/);
 			if (group) {
+				const settings = await game.getSettings(this);
 				const value = math.evaluate(group[1], {
-					viewportWidth: (await game.getViewportSize(game.engine)).viewportSize[0],
-					viewportHeight: (await game.getViewportSize(game.engine)).viewportSize[1],
+					viewportWidth: settings.viewportSize[0],
+					viewportHeight: settings.viewportSize[1],
 					hotspot_center: Constants.HOTSPOT_CENTER,
 					hotspot_bottom: Constants.HOTSPOT_BOTTOM,
 					horizontal_merge: Constants.HORIZONTAL_MERGE,

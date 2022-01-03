@@ -44,10 +44,10 @@ class StartScreen extends GameBase {
 		});
 	}
 
-	async getWindowSize(engine) {
-		const { classObj, gameConfig } = this.nextGame || { classObj: GameTitle };
+	async getSettings(engine) {
+		const { gameConfig } = this.nextGame || { classObj: GameTitle };
 		const json = await engine.fileUtils.load(gameConfig);
-		return (json && json.size) || super.getWindowSize(engine);
+		return (json && json.settings) || super.getSettings(engine);
 	}
 
 	async postInit() {

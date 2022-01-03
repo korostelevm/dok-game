@@ -57,7 +57,7 @@ void main() {
 	float time = timeInfo[0];
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
-	v_textureCoord = (textureInfo.xy + textureShift) / 4095.;
+	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;
 	v_index = textureIndex[TEXTURE_INDEX];
 	vec2 hotspot = spriteSheet.zw;
 	vec4 vertexPosition4 = vec4(vertexPosition.xy + hotspot * vec2(-.002, .002) + vec2(1., -1.), 0., 1.);

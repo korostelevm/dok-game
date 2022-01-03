@@ -105,10 +105,6 @@ class GameBase {
 		return this.sceneData.seenTime === 1;
 	}
 
-	isPerpective() {
-		return false;
-	}
-
 	setProperty(key, value) {
 		if (this.properties[key] !== value) {
 			this.properties[key] = value;
@@ -125,7 +121,7 @@ class GameBase {
 		}
 		this.spriteFactory.postCreate();
 		this.engine.enableSidebar(true);
-		this.engine.setPerspective(this.isPerpective());
+		this.engine.setPerspective(await this.isPerspective());
 		await this.engine.changeCursor(null, true);
 		if (this.camera) {
 			this.applyCamera(this.camera);
@@ -178,16 +174,20 @@ class GameBase {
 		return this.constructor.name;
 	}
 
-	async getWindowSize(engine) {
+	async getSettings(engine) {
 		const json = await engine.fileUtils.load(this.path);
-		return json?.windowSize || [1000, 600];
+		const settings = json?.settings || {};		
+		if (!settings.viewportSize) {
+			settings.viewportSize = [800, 400];
+		}
+		if (!settings.windowSize) {
+			settings.windowSize = [settings.viewportSize[0] + 200, settings.viewportSize[1] + 200];
+		}
+		return settings;
 	}
 
-	async getViewportSize(engine) {
-		const json = await engine.fileUtils.load(this.path);
-		return json?.viewport || {
-			viewportSize: [800, 400],
-		};
+	async isPerspective() {
+		return (await this.getSettings(this.engine)).perspective;
 	}
 
 	getInitialShift() {

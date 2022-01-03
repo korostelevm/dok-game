@@ -217,11 +217,7 @@ const globalFiles=[
 			{
 				"turtle": [
 					".DS_Store",
-					{
-						"base": [
-							"world-of-turtle.js"
-						]
-					},
+					"world-of-turtle.js",
 					"world-of-turtle.json"
 				]
 			}

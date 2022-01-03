@@ -164,8 +164,4 @@ class WorldOfTurtle extends GameBase {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
 	}
-
-	isPerpective() {
-		return true;
-	}
 }

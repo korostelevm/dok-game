@@ -93,10 +93,6 @@ class Overworld extends GameBase {
 	onDropOnOverlay(e) {
 	}
 
-	getWindowSize() {
-		return [900, 500];
-	}
-
 	refresh(time, dt) {
 		super.refresh(time, dt);
 		this.applyCamera(this.camera);

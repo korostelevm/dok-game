@@ -99,14 +99,6 @@ class FlatLand extends GameBase {
 
 	}
 
-	onExit(engine) {
-//		this.engine.keyboardHandler.removeListeners
-	}
-
-	isPerpective() {
-		return true;
-	}
-
 	moveMazoos(time) {
 		const gl = engine.gl;
 		const config = engine.config;
@@ -144,8 +136,8 @@ class FlatLand extends GameBase {
 		}
 	}
 
-	getWindowSize(engine) {
-		return [900, 600];
+	async isPerspective(engine) {
+		return true;
 	}
 
 	getInitialShift() {

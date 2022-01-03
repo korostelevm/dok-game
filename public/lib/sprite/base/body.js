@@ -142,6 +142,7 @@ class Body {
 				const y = positionCache[1];
 				const z = positionCache[2];
 				this.changePosition(x, y, z, time, true);
+				this.updated.motion = time;
 			}
 
 			if (this.canRecalculateMotion) {
@@ -150,6 +151,7 @@ class Body {
 				const vy = motionCache[1];
 				const vz = motionCache[2];
 				this.changeMotion(vx, vy, vz, time, true);
+				this.updated.motion = time;
 			}
 		}
 	}
