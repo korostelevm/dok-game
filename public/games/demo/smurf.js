@@ -6,27 +6,27 @@ class Smurf extends GameBase {
 		this.atlas = {
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			smurf_still: await engine.addTexture({
 				url: "assets/smurf.png",
 				spriteWidth: 256, spriteHeight: 256,
 				range:[1],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			smurf_walk: await engine.addTexture({
 				url: "assets/smurf.png",
 				spriteWidth: 256, spriteHeight: 256,
 				range:[0, 1],
 				frameRate: 5,
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			hex: await engine.addTexture({
 				url: "assets/hex.png",
 				collision_url: "assets/hex.png",
 				cols: 2, rows: 2,
 				range: [0],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			red_line: await engine.addTexture({
 				url: "assets/red-line.png",
@@ -44,31 +44,31 @@ class Smurf extends GameBase {
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[0],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			big_mushroom: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[1],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			flower_mushroom: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[2],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mushroom_lab: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[3],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mushroom_workshop: await engine.addTexture({
 				url: "assets/mushrooms.png",
 				spriteWidth: 512, spriteHeight: 512,
 				range:[4],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			meter: await engine.addTexture({
 				url: "assets/meter.png",

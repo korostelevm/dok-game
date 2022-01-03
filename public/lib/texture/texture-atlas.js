@@ -1,14 +1,13 @@
 const MAX_FRAME_COUNT = Number.MAX_SAFE_INTEGER;
 
 class TextureAtlas {
-	constructor(textureManager, index, width, height, imageLoader) {
+	constructor(textureManager, index, imageLoader) {
 		this.textureManager = textureManager;
 		this.index = index || 0;
 		this.maxTextureIndex = 0;
 		this.x = 0;
 		this.y = 0;
 		this.imageLoader = imageLoader;
-		this.canvas = this.imageLoader.canvas;
 		this.spriteWidth = 0;
 		this.spriteHeight = 0;
 		this.startIndex = 0;
@@ -25,7 +24,7 @@ class TextureAtlas {
 	}
 
 	textureMix(image, texture, texture_alpha, texture_blend) {
-		const canvas = this.canvas;
+		const canvas = this.imageLoader.canvas;
 		const context = canvas.getContext("2d");
 		if (canvas !== image) {
 			this.getCanvasImage(image);
@@ -62,7 +61,7 @@ class TextureAtlas {
 		const { spriteWidth, spriteHeight } = this;
 		const col = frame % this.cols;
 		const row = Math.floor(frame / this.cols);
-		const { canvas } = this;
+		const canvas = this.imageLoader.canvas;
 		canvas.width = spriteWidth;
 		canvas.height = spriteHeight;
 
@@ -80,20 +79,19 @@ class TextureAtlas {
 
 		const { x, y, spriteWidth, spriteHeight, index } = this;
 
-		const tag = `${url} ${collision_url||""} ${collision_padding||""} ${texture_url||""} ${texture_alpha||""} ${texture_blend||""} ${x},${y} ${spriteWidth},${spriteHeight} ${index} ${this.startFrame} ${this.endFrame}`;
-		if (index >= 0) {
-			for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
-				const spriteImage = this.getSpriteImageForFrame(image, frame);
-				const blendedImage = texture_url ? this.textureMix(spriteImage, textureImage, texture_alpha, texture_blend) : spriteImage;
-				if (!blendedImage) {
-					continue;
-				}
+		const tag = `${url}-${collision_url||""}-${collision_padding||""}-${texture_url||""}-${texture_alpha||""}-${texture_blend||""}-${x},${y}-${spriteWidth},${spriteHeight}-${index}-${this.startFrame}-${this.endFrame}`;
+		//	check tag to avoid duplicate loads
 
-				const col = frame % this.cols;
-				const row = Math.floor(frame / this.cols);
-				this.textureManager.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
+		for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
+			const spriteImage = this.getSpriteImageForFrame(image, frame);
+			const blendedImage = texture_url ? this.textureMix(spriteImage, textureImage, texture_alpha, texture_blend) : spriteImage;
+			if (!blendedImage) {
+				continue;
 			}
-			console.log("Tex#" + index, "=", spriteWidth * this.cols + "x" + spriteHeight * this.rows, "(" + tag + ")");
+
+			const col = frame % this.cols;
+			const row = Math.floor(frame / this.cols);
+			this.textureManager.saveTexture(index, x + col * spriteWidth, y + row * spriteHeight, blendedImage);
 		}
 
 		if (collision_url) {
@@ -102,11 +100,12 @@ class TextureAtlas {
 			this.collisionBoxes = null;
 		}
 
-		this.canvas.width = 0;
-		this.canvas.height = 0;
 		this.collisionPadding = collision_padding;
 		this.hotspot = hotspot || [0, 0];
 
+
+		this.imageLoader.canvas.width = 0;
+		this.imageLoader.canvas.height = 0;
 		return this;
 	}
 

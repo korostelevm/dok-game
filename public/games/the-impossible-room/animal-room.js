@@ -563,7 +563,7 @@ class AnimalRoom extends GameCore {
 				},
 			};
 			this.pedestalIdols[i] = this.spriteFactory.create({
-				name: item => `${item.properties.idol || "idol"} on a pedestal`,
+				name: item => item ? `${item.properties.idol || "idol"} on a pedestal` : null,
 				anim: this.atlas.idols.crab,
 				size: [50, 50],
 				x: xpos,

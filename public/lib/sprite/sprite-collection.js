@@ -23,7 +23,7 @@ class SpriteCollection {
 	}
 
 	create(id, data, attributes, spriteData, game) {
-		const type = data.type ? eval(data.type) : Sprite;
+		const type = data.type ? nameToClass(data.type) : Sprite;
 		const sprite = new type({
 			id,
 			...data,

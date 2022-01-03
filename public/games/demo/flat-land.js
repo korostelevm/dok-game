@@ -6,34 +6,34 @@ class FlatLand extends GameBase {
 		this.atlas = {
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			mazoo_still: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				range:[0],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_down: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[0, 3],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_up: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[4, 7],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_right: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[8, 11],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_left: await engine.addTexture({
 				url: "assets/mazoo.png",
@@ -41,14 +41,14 @@ class FlatLand extends GameBase {
 				range:[8, 11],
 				frameRate: 10,
 				direction: -1,
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			hex: await engine.addTexture({
 				url: "assets/hex.png",
 				collision_url: "assets/hex.png",
 				cols: 2, rows: 2,
 				range: [0],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 		};
 

@@ -12,28 +12,28 @@ class GameRing extends GameBase {
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				range:[0],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_down: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[0, 3],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_up: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[4, 7],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_right: await engine.addTexture({
 				url: "assets/mazoo.png",
 				cols: 3, rows: 4,
 				frameRate: 10,
 				range:[8, 11],
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 			mazoo_left: await engine.addTexture({
 				url: "assets/mazoo.png",
@@ -41,7 +41,7 @@ class GameRing extends GameBase {
 				range:[8, 11],
 				frameRate: 10,
 				direction: -1,
-				hotspot: HOTSPOT_BOTTOM,
+				hotspot: Constants.HOTSPOT_BOTTOM,
 			}),
 		};
 

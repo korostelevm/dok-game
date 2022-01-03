@@ -20,7 +20,8 @@ class SpriteRenderer {
 	}
 
 	makeMatrix(x, y, z, width, height, hotX, hotY, rotation) {
-		const [viewportWidth, viewportHeight] = this.size;
+		const viewportWidth = this.size[0];
+		const viewportHeight = this.size[1];
 		return mat4.fromRotationTranslationScale(
 			this.tempMatrix,
 			quat.fromEuler(this.tempQuat, rotation[0], rotation[1], rotation[2]),

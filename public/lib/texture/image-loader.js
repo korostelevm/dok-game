@@ -83,7 +83,7 @@ class ImageLoader {
 		if (this.collisionBoxes[tag]) {
 			return this.collisionBoxes[tag];
 		}
-		const { canvas } = textureAtlas;
+		const canvas = this.canvas;
 		const collisionBoxes = [];
 		const collisionImage = await this.loadImage(collision_url);
 		canvas.width = collisionImage.naturalWidth;

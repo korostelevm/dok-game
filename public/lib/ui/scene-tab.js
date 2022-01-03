@@ -30,14 +30,14 @@ class SceneTab {
 									const className = StringUtil.kebabToClass(scene);
 									gameList[name].push({
 										name: className,
-										classObj: eval(className),
+										classObj: nameToClass(className),
 									});
 								} else if (extension === "json") {
 									const configFile = `games/${name}/${sceneFile}`;
 									const gameConfig = await engine.fileUtils.load(configFile);
 									gameList[name].push({
 										name: scene,
-										classObj: eval(gameConfig.className),
+										classObj: nameToClass(gameConfig.className),
 										configFile,
 									});
 								}

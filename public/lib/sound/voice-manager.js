@@ -67,7 +67,7 @@ class VoiceManager {
 			// console.log(voice);
 		}
 		const utterance = this.utterrances[voice.name];
-		utterance.text = getPhoneme(msg, voice.name);
+		utterance.text = TranslateVoice.getPhoneme(msg, voice.name);
 		utterance.replacedVoice = replacedVoice;
 		return utterance;
 	}

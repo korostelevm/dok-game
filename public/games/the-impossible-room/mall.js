@@ -36,14 +36,14 @@ class Mall extends GameCore {
 					url: person2Url,
 					cols: 5,
 					rows: 5,
-					hotspot: HOTSPOT_BOTTOM,
+					hotspot: Constants.HOTSPOT_BOTTOM,
 				}),
 			person3_still: await engine.addTexture(
 				{
 					url: person3Url,
 					cols: person3Gender === "T" ? 6 : 5,
 					rows: person3Gender === "T" ? 6 : 5,
-					hotspot: HOTSPOT_BOTTOM,
+					hotspot: Constants.HOTSPOT_BOTTOM,
 				}),
 			person2_talk: await engine.addTexture(
 				{
@@ -52,7 +52,7 @@ class Mall extends GameCore {
 					rows: 5,
 					frameRate:10,
 					range: person2Gender==="T" ? [21, 25] : [13, 16],
-					hotspot: HOTSPOT_BOTTOM,
+					hotspot: Constants.HOTSPOT_BOTTOM,
 				}),
 			person2_walk_right: await engine.addTexture(
 				{
@@ -61,7 +61,7 @@ class Mall extends GameCore {
 					rows: 5,
 					frameRate:10,
 					range: person2Gender === 'T' ? [9, 12] : [9, 12],
-					hotspot: HOTSPOT_BOTTOM,
+					hotspot: Constants.HOTSPOT_BOTTOM,
 				}),
 			person3_talk: await engine.addTexture(
 				{
@@ -70,7 +70,7 @@ class Mall extends GameCore {
 					rows: person3Gender === "T" ? 6 : 5,
 					frameRate:10,
 					range: person3Gender==="T" ? [21, 25] : [13, 16],
-					hotspot: HOTSPOT_BOTTOM,
+					hotspot: Constants.HOTSPOT_BOTTOM,
 				}),
 			person3_walk_right: await engine.addTexture(
 				{
@@ -79,7 +79,7 @@ class Mall extends GameCore {
 					rows: person3Gender === "T" ? 6 : 5,
 					frameRate:10,
 					range: person3Gender === 'T' ? [9, 12] : [9, 12],
-					hotspot: HOTSPOT_BOTTOM,
+					hotspot: Constants.HOTSPOT_BOTTOM,
 				}),
 			backwall: await engine.addTexture({
 				url: "assets/backwall.jpg",
@@ -89,35 +89,35 @@ class Mall extends GameCore {
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [4],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			ng: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [0],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			twitter: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [1],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			youtube: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [2],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			github: await engine.addTexture({
 				url: "assets/logos.png",
 				collision_url: "assets/logos.png",
 				cols: 2, rows: 3,
 				range: [3],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 		};
 		this.backwall = this.spriteFactory.create({
@@ -358,7 +358,7 @@ class Mall extends GameCore {
 						setTimeout(() => {
 							this.monkor.goal.x = 1000;
 							this.fadeStart = this.engine.lastTime;
-							document.getElementById("thank-you").style.display = "";
+							this.showThankYou();
 							this.monkor.setProperty("paused", false);
 							setTimeout(() => {
 								this.socialMediaButtons.forEach(button => button.changeOpacity(1, this.engine.lastTime));
@@ -368,6 +368,20 @@ class Mall extends GameCore {
 				},
 			]);			
 		};
+	}
+
+	showThankYou() {
+		const thankYouDiv = document.getElementById("thank-you") || document.getElementById("container").appendChild(document.createElement("div"));
+		thankYouDiv.id = "thank-you";
+		thankYouDiv.style.position = "absolute";
+		thankYouDiv.style.top = "130px";
+		thankYouDiv.style.left = "310px";
+		thankYouDiv.style.zIndex = 300;
+		thankYouDiv.style.display = "";
+		thankYouDiv.innerText = "";
+
+		const img = thankYouDiv.appendChild(document.createElement("img"));
+		img.src = "assets/thank-you.gif";
 	}
 
 	processDialog(dialogArray, index) {
@@ -396,7 +410,7 @@ class Mall extends GameCore {
 	}
 
 	async onExit(engine) {
-		document.getElementById("thank-you").style.display = "none";		
+		document.getElementById("container").removeChild(document.getElementById("thank-you"));
 		return await super.onExit(engine);
 	}
 

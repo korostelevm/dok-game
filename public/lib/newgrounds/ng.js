@@ -1,3 +1,7 @@
+class Ng {
+    //  Dummy.
+}
+
 window.addEventListener("DOMContentLoaded", () => {
     function getMedal(medal_name, callback) {
         unlockMedal(ngio, medal_name, (medal, unlocked) => {

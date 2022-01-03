@@ -250,14 +250,16 @@ const PHONEME = {
 	},
 };
 
-function getPhoneme(msg, voice) {
-	const words = PHONEME[voice];
-	if (!words) {
-		return msg;
+class TranslateVoice {
+	static getPhoneme(msg, voice) {
+		const words = PHONEME[voice];
+		if (!words) {
+			return msg;
+		}
+		const m = msg.split(" ").map(word => {
+			return words[word] || word;
+		}).join(" ").replaceAll("' ", "'");
+	//	console.log(`window.speechSynthesis.speak(engine.voiceManager.getUterrance("${m}", "Thomas"));`);
+		return m;
 	}
-	const m = msg.split(" ").map(word => {
-		return words[word] || word;
-	}).join(" ").replaceAll("' ", "'");
-//	console.log(`window.speechSynthesis.speak(engine.voiceManager.getUterrance("${m}", "Thomas"));`);
-	return m;
 }

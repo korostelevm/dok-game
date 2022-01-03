@@ -16,7 +16,7 @@ class DesertFar extends GameCore {
 				collision_url: "assets/desert-far.png",
 				cols: 2, rows: 6,
 				range: [0],
-				hotspot: HOTSPOT_CENTER,
+				hotspot: Constants.HOTSPOT_CENTER,
 			}),
 			desert_far_foreground: await engine.addTexture({
 				url: "assets/desert-far.png",

@@ -85,10 +85,6 @@
 			"spriteWidth": 349, "spriteHeight": 409,
 			"range":[0],
 			"hotspot": [0.4, 0.8]
-		},
-		"redsquare": {
-			"url": "assets/red-square.png",
-			"hotspot": "hotspot_center"
 		}
 	},
 	"cameras": {

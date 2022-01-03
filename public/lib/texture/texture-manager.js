@@ -5,6 +5,8 @@ class TextureManager {
 		this.textureSize = 4096;
 		this.textureAtlas = [];
 		this.maxTextureIndex = 0;
+		this.textureCache = {};
+		this.nextTextureIndex = 0;
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {
@@ -25,8 +27,8 @@ class TextureManager {
 		gl.uniform1iv(uniforms.uTextures.location, new Array(maxTextureUnits).fill(null).map((a, index) => index));
 	}
 
-	createAtlas(index, imageLoader, width, height) {
-		const atlas = new TextureAtlas(this, index, width, height, imageLoader);
+	createAtlas(index, imageLoader) {
+		const atlas = new TextureAtlas(this, index, imageLoader);
 		this.textureAtlas.push(atlas);
 		return atlas;
 	}
@@ -34,6 +36,8 @@ class TextureManager {
 	clear() {
 		this.textureAtlas.length = 0;
 		this.maxTextureIndex = 0;
+		this.textureCache = {};
+		this.nextTextureIndex = 0;
 	}
 
 	generateMipMap(index) {

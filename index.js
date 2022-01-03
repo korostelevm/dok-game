@@ -117,7 +117,22 @@ async function regenerateIndex() {
 	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
 	indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
-	fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
+	await fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
+
+	//	Generate class mapping for classes in games folder
+	const classNameMapper = "const NAME_TO_CLASS = {};\ndocument.addEventListener('DOMContentLoaded', () => {\n" + paths.map(path => {
+		const className = kebabToClassName(path);
+		if (path.indexOf("lib/external/") >= 0 || path.indexOf("gen/") >= 0 || path.split("/").length <= 1) {
+			return null;
+		}
+		return `  NAME_TO_CLASS["${className}"] = ${className};		// ${path}\n`;
+	}).filter(a => a).join("") + "});\nfunction nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }\n";
+	return fs.promises.writeFile(`${__dirname}/public/gen/nameToClass.js`, classNameMapper)
+}
+
+function kebabToClassName(path) {
+	const input = path.split("/").pop().split(".")[0];
+    return input.replace(/-?\b([a-z0-9])/g, g => g[g.length - 1].toUpperCase());
 }
 
 function tabToSpaces(string) {

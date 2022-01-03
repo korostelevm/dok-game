@@ -596,7 +596,7 @@ class GameCore extends GameBase {
 						action: item => {
 							if (this.monkor.properties.joker) {
 								this.audio.drink.play();
-								const classObj = eval(this.monkor.properties.joker);
+								const classObj = nameToClass(this.monkor.properties.joker);
 								this.monkor.setProperty("jokerReturn", this.constructor.name);
 								engine.setGame(new classObj());
 							}
@@ -2019,7 +2019,7 @@ class GameCore extends GameBase {
 			if (monkor.properties.jokerReturn) {
 				this.updateJokerLocalStorage();
 				const nextRoom = monkor.properties.jokerReturn;
-				const classObj = eval(nextRoom);
+				const classObj = nameToClass(nextRoom);
 				engine.setGame(new classObj());
 			} else if (this.nextLevelRight) {
 				if (!this.butler || this.butler.x > 800) {

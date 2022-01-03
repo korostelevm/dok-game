@@ -224,16 +224,14 @@ const globalFiles=[
 					},
 					"world-of-turtle.json"
 				]
-			},
-			{
-				"winter": []
 			}
 		]
 	},
 	{
 		"gen": [
 			"data.js",
-			"files.js"
+			"files.js",
+			"nameToClass.js"
 		]
 	},
 	"index.html",
@@ -250,6 +248,15 @@ const globalFiles=[
 			{
 				"external": [
 					".DS_Store",
+					{
+						"math": [
+							".DS_Store",
+							"gl-matrix-min.js",
+							"gl-matrix.js",
+							"math.js",
+							"math.js.map"
+						]
+					},
 					{
 						"newgrounds": [
 							"newgroundsio.min.js",
@@ -275,7 +282,7 @@ const globalFiles=[
 					},
 					{
 						"platformer": [
-							"platform-mapper.js",
+							".DS_Store",
 							"platformer.js"
 						]
 					}
@@ -288,16 +295,32 @@ const globalFiles=[
 			},
 			{
 				"map": [
-					"sprite-grid.js"
-				]
-			},
-			{
-				"math": [
 					".DS_Store",
-					"gl-matrix-min.js",
-					"gl-matrix.js",
-					"math.js",
-					"math.js.map"
+					{
+						"generator": [
+							".DS_Store",
+							{
+								"base": [
+									".DS_Store",
+									"generator.js"
+								]
+							},
+							"generator-with-callback.js",
+							"null-generator.js"
+						]
+					},
+					{
+						"mapper": [
+							".DS_Store",
+							{
+								"base": [
+									"sprite-mapper.js"
+								]
+							},
+							"platform-mapper.js"
+						]
+					},
+					"sprite-grid.js"
 				]
 			},
 			{
@@ -350,11 +373,6 @@ const globalFiles=[
 						"base": [
 							".DS_Store",
 							"body.js",
-							{
-								"mapper": [
-									"sprite-mapper.js"
-								]
-							},
 							"sprite.js"
 						]
 					},

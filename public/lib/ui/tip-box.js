@@ -20,7 +20,6 @@ class TipBox {
 		};
 		Object.keys(this.imageReplacements).forEach(key => {
 			engine.imageLoader.getBlobUrl(this.imageReplacements[key]).then(src => {
-				console.log(src);
 				this.imageReplacements[key] = src;
 			});
 		});

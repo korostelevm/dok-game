@@ -17,13 +17,15 @@ class Body {
 			motionCache: 0,
 		};
 		this.followers = new Set();
+		this.canRecalculatePosition = false;
+		this.canRecalculateMotion = false;
 	}
 
-
-	changePosition(x, y, z, time, skipRecalculate) {
+	changePosition(x, y, z, t, skipRecalculate) {
 		if (this.x !== x || this.y !== y || this.z !== z) {
+			const time = t || this.engine.lastTime;
 			if (!skipRecalculate) {
-				this.recalculatePosition(time || this.engine.lastTime);				
+				this.recalculatePosition(time);
 			}
 			this.x = x;
 			this.y = y;
@@ -34,20 +36,25 @@ class Body {
 		return false;
 	}
 
-	changeMotion(dx, dy, dz, time, skipRecalculate) {
+	changeMotion(dx, dy, dz, t, skipRecalculate) {
 		if (this.motion[0] !== dx || this.motion[1] !== dy || this.motion[2] !== dz) {
+			const time = t || this.engine.lastTime;
 			if (!skipRecalculate) {
-				this.recalculatePosition(time || this.engine.lastTime);
+				this.recalculatePosition(time);
 			}
 			this.motion[0] = dx;
 			this.motion[1] = dy;
 			this.motion[2] = dz;
-			this.cacheUpdateTime = 0;
-			this.updated.motion = time || this.engine.lastTime;
-			this.followers.forEach(follower => follower.followMotion(time));
+			this.onMotionChanged(time);
 			return true;
 		}
 		return false;
+	}
+
+	onMotionChanged(time) {
+		this.updated.motion = time;
+		this.followers.forEach(follower => follower.followMotion(time));
+		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
 	}
 
 	followMotion(time) {
@@ -60,18 +67,24 @@ class Body {
 			time);
 	}
 
-	changeAcceleration(ax, ay, az, time) {
+	changeAcceleration(ax, ay, az, t) {
 		if (this.acceleration[0] !== ax || this.acceleration[1] !== ay || this.acceleration[2] !== az) {
+			const time = t || this.engine.lastTime;
 			this.recalculatePosition(time);
 			this.acceleration[0] = ax;
 			this.acceleration[1] = ay;
 			this.acceleration[2] = az;
-			this.cacheUpdateTime = 0;
-			this.updated.motion = time || this.engine.lastTime;
-			this.followers.forEach(follower => follower.followAcceleration(time));
+			this.onAccelerationChanged(time);
 			return true;
 		}
 		return false;
+	}
+
+	onAccelerationChanged(time) {
+		this.updated.motion = time;
+		this.followers.forEach(follower => follower.followAcceleration(time));
+		this.canRecalculateMotion = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
+		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
 	}
 
 	followAcceleration(time) {
@@ -113,9 +126,9 @@ class Body {
 			return this.motionCache;
 		}
 		const dt = (time - this.updated.motion) / 1000;
-		this.motionCache[0] = dt * this.acceleration[0];
-		this.motionCache[1] = dt * this.acceleration[1];
-		this.motionCache[2] = dt * this.acceleration[2];
+		this.motionCache[0] = this.motion[0] + dt * this.acceleration[0];
+		this.motionCache[1] = this.motion[1] + dt * this.acceleration[1];
+		this.motionCache[2] = this.motion[2] + dt * this.acceleration[2];
 		this.updated.motionCache = time;
 		return this.motionCache;		
 	}
@@ -123,18 +136,21 @@ class Body {
 	recalculatePosition(t) {
 		const time = t || this.engine.lastTime;
 		if (this.updated.motion !== time) {
-			const dt = (time - this.updated.motion) / 1000;
-			const dt2 = dt * dt;
-			const position = this.getRealPosition(time);
-			const x = position[0];
-			const y = position[1];
-			const z = position[2];
-			const vx = this.motion[0] + dt * this.acceleration[0];
-			const vy = this.motion[1] + dt * this.acceleration[1];
-			const vz = this.motion[2] + dt * this.acceleration[2];
-			this.changePosition(x, y, z, time, true);
-			this.changeMotion(vx, vy, vz, time, true);
-			this.updated.motion = time;
+			if (this.canRecalculatePosition) {
+				const positionCache = this.getRealPosition(time);
+				const x = positionCache[0];
+				const y = positionCache[1];
+				const z = positionCache[2];
+				this.changePosition(x, y, z, time, true);
+			}
+
+			if (this.canRecalculateMotion) {
+				const motionCache = this.getRealMotion(time);
+				const vx = motionCache[0];
+				const vy = motionCache[1];
+				const vz = motionCache[2];
+				this.changeMotion(vx, vy, vz, time, true);
+			}
 		}
 	}
 

@@ -265,6 +265,8 @@ class MathRoom extends GameCore {
 
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 
+		this.showMathGroup();
+
 		this.mathBoard = document.getElementById("math-board");
 		this.mathX = Math.floor(Math.random() * 1000);
 		this.mathY = Math.floor(Math.random() * 100);
@@ -337,11 +339,31 @@ class MathRoom extends GameCore {
 
 	async postInit() {
 		await super.postInit();
-		document.getElementById("math-group").style.display = "block";
+	}
+
+	showMathGroup() {
+		const mathGroup = document.getElementById("container").appendChild(document.createElement("div"));
+		mathGroup.id = "math-group";
+		mathGroup.classList.add("math");
+		mathGroup.style.display = "block";
+		const mathBoard = mathGroup.appendChild(document.createElement("div"));
+		mathBoard.id = "math-board";
+		const mathChunk = mathGroup.appendChild(document.createElement("div"));
+		const span = mathChunk.appendChild(document.createElement("span"));
+		span.innerText = "x = ";
+		const input = mathChunk.appendChild(document.createElement("input"));
+		input.classList.add("math-result");
+		input.id = "math-result";
+		input.type = "number";
+		input.setAttribute("autocomplete", "off");
+
+
+		mathGroup.style.display = "block";		
 	}
 
 	async onExit(engine) {
-		document.getElementById("math-group").style.display = "none";		
+		const mathGroup = document.getElementById("math-group");
+		mathGroup.parentElement.removeChild(mathGroup);
 		return super.onExit(engine);
 	}
 

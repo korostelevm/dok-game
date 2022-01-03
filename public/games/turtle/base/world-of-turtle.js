@@ -83,7 +83,7 @@ class WorldOfTurtle extends GameBase {
 				},
 				onRefresh: (self, time, dt) => {
 					const position = self.getRealPosition(time);
-					const shadowOpacity = Math.max(0, 1 - (400 - position[1]) / 150);
+					const shadowOpacity = .5 * Math.max(0, 1 - (400 - position[1]) / 150);
 					self.shadow.changeOpacity(shadowOpacity);
 					if (position[1] >= 400) {
 						self.airborne = 0;

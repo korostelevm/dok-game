@@ -48,13 +48,13 @@ class GameBase {
 			if (this.gameModel.physics) {
 				this.gameModel.physics.forEach(physic => {
 					const { id, type, config } = physic;
-					const classObj = eval(type);
+					const classObj = nameToClass(type);
 					this[id] = this.addPhysics(new classObj(config));
 				});
 			}
 
 			if (this.gameModel.gridData) {
-				const mapperClass = eval(this.gameModel.gridData.mapper);
+				const mapperClass = nameToClass(this.gameModel.gridData.mapper);
 				const mapper = new mapperClass(this);
 				await mapper.init(engine);
 				const spriteGrid = new SpriteGrid(this, mapper);
@@ -72,6 +72,8 @@ class GameBase {
 		this.atlas.empty = await engine.addTexture({
 			spriteWidth: 0, spriteHeight: 0,
 		});
+		const mouseCursor = await engine.imageLoader.getBlobUrl("assets/pointer-cursor.png");
+		this.mouseCursorUrl = `url(${mouseCursor}), auto`;
 	}
 
 	addPhysics(physics) {
@@ -95,7 +97,7 @@ class GameBase {
 	}
 
 	getMouseCursor() {
-		return "url(assets/pointer-cursor.png), auto";
+		return this.mouseCursorUrl;
 	}
 
 	isFirstTime() {

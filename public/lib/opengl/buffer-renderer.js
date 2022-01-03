@@ -12,13 +12,6 @@ class BufferRenderer {
 		this.size = config.viewport.size;
 		this.tempBytes = new Uint8Array(4);
 		this.tempSingleByte = new Uint8Array(1);
-		this.tempVec3 = vec3.create();
-	}
-
-	setAttributeVec2(attribute, index, x, y) {
-		this.tempVec2[0] = x;
-		this.tempVec2[1] = y;
-		this.setAttribute(attribute, index, this.tempVec2);
 	}
 
 	setAttributeByte(attribute, index, byte) {

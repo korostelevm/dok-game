@@ -90,14 +90,17 @@ class Sprite extends Body {
 	}
 
 	getAnimationTime() {
-		const { anim, updated } = this;
+		const anim = this.anim;
+		const updated = this.updated;
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		return updated.animation - frameOffset * anim.frameDuration;
 	}
 
-	getAnimationFrame(time) {
-		const { anim, updated } = this;
-		const animationElapsed = (time || this.engine.lastTime) - updated.animation;
+	getAnimationFrame(t) {
+		const time = t || this.engine.lastTime;
+		const anim = this.anim;
+		const updated = this.updated;
+		const animationElapsed = time - updated.animation;
 		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;

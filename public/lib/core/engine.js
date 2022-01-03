@@ -230,7 +230,7 @@ class Engine {
 		let doHideSidebar = false;
 		const allRows = [];
 		this.sidebars.forEach(({ game, name, disabled, hideSidebar, onClick }, index) => {
-			const classObj = eval(game);
+			const classObj = nameToClass(game);
 			const row = sidebar.appendChild(document.createElement("div"));
 			allRows.push(row);
 			row.classList.add("sidebar-room");
@@ -383,7 +383,6 @@ class Engine {
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection(this, this.refresher);
-		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
 
 		/* Setup game tab. */
@@ -470,11 +469,6 @@ class Engine {
 							});
 						}
 					}
-				});
-			}
-			if (music) {
-				music.forEach(mp3 => {
-					console.log(mp3);
 				});
 			}
 		});
@@ -612,7 +606,6 @@ class Engine {
 		if (this.updater) {
 			this.updater.clear();
 		}
-		this.nextTextureIndex = 0;
 		this.urlToTextureIndex = {};
 		this.shift.x = 0;
 		this.shift.y = 0;
@@ -640,7 +633,7 @@ class Engine {
 	}
 
 	async addTexture(imageConfig) {
-		const index = !imageConfig.url ? -1 : (this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.nextTextureIndex++));
+		const index = !imageConfig.url ? -1 : (this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.textureManager.nextTextureIndex++));
 		return this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
 	}
 
@@ -684,9 +677,6 @@ class Engine {
 		const orthoMatrix = mat4.ortho(mat4.create(), -viewportWidth, viewportWidth, -viewportHeight, viewportHeight, zNear, zFar);		
 		gl.uniformMatrix4fv(uniforms.ortho.location, false, orthoMatrix);
 		gl.uniformMatrix4fv(uniforms.perspective.location, false, perspectiveMatrix);
-
-		console.log(orthoMatrix);
-		console.log(perspectiveMatrix);
 	}
 
 	setPerspective(perspective) {
@@ -800,13 +790,13 @@ class Engine {
 	}
 
 	onDropOnOverlay(event) {
-		if (this.game) {
+		if (this.game && this.game.onDropOnOverlay) {
 			this.game.onDropOnOverlay(event);
 		}
 	}
 
 	onDragOver(event) {
-		if (this.game) {
+		if (this.game && this.game.onDragOver) {
 			this.game.onDragOver(event);
 		}
 	}
@@ -940,8 +930,7 @@ class Engine {
 				const {motion, acceleration} = sprite;
 				this.spriteRenderer.setMotion(spriteIndex, motion, acceleration);
 			}
-			if (sprite.updated.updateTime >= lastTime
-				|| sprite.updated.motion >= lastTime) {
+			if (sprite.updated.updateTime >= lastTime || sprite.updated.motion >= lastTime) {
 				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
 			}
 		});
@@ -997,7 +986,11 @@ class Engine {
 			case "sprite":
 				return 2;
 			case "hotspot_center":
-				return HOTSPOT_CENTER;
+				return Constants.HOTSPOT_CENTER;
+			case "horizontal_merge":
+				return Constants.HORIZONTAL_MERGE;
+			case "vertical_merge":
+				return Constants.VERTICAL_MERGE;
 			default:
 		}
 		return data;
