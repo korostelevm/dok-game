@@ -42,6 +42,9 @@ class ConfigTranslator {
 		} else if (Array.isArray(data)) {
 			return Promise.all(data.map(d => this.translate(d, game)));
 		} else if (typeof(data) === "object") {
+			if (data.IGNORE) {
+				return null;
+			}
 			const translatedData = {};
 
 			for (let a in data) {
