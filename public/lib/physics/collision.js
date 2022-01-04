@@ -44,9 +44,10 @@ class Collision extends PhysicsBase {
 				openColliderIndex: 0,
 			};
 		});
+		this.preCollisionSprites = sprites.filter(({preCollisionCheck}) => preCollisionCheck);
 	}
 
-	countCollision(sprite, secondSprite, type) {
+	countCollision(sprite, secondSprite, bits) {
 		if (!sprite.collisionData.countCollision) {
 			return;
 		}
@@ -59,7 +60,7 @@ class Collision extends PhysicsBase {
 			}
 			colliders.push(colIndex);
 		}
-		collisions[colIndex] |= 1 << type; 
+		collisions[colIndex] |= bits; 
 	}
 
 	calculateCollisionMarkers(time) {
@@ -89,10 +90,9 @@ class Collision extends PhysicsBase {
 	}
 
 	refresh(time, dt) {
-		for (let i = 0; i < this.sprites.length; i++) {
-			if (this.sprites[i].preCollisionCheck) {
-				this.sprites[i].preCollisionCheck(this.sprites[i]);
-			}
+		for (let i = 0; i < this.preCollisionSprites.length; i++) {
+			const sprite = this.preCollisionSprites[i];
+			sprite.preCollisionCheck(sprite);
 		}
 		this.calculateCollisionMarkers(time);
 
@@ -142,18 +142,19 @@ class Collision extends PhysicsBase {
 	}
 
 	countNewCollisionsWithOpenColliders(sprite, type) {
+		const bits = 1 << type;
 		const openColliders = this.openColliders;
 		for (let i = 0; i < openColliders.length; i++) {
 			const openCollider = openColliders[i];
 			if (openCollider.id !== sprite.id) {
-				this.countCollision(openCollider, sprite, type);
+				this.countCollision(openCollider, sprite, bits);
 			}
 		}
 		if (sprite.collisionData.countCollision) {
 			for (let i = 0; i < openColliders.length; i++) {
 				const openCollider = openColliders[i];
 				if (openCollider.id !== sprite.id) {
-					this.countCollision(sprite, openCollider, type);
+					this.countCollision(sprite, openCollider, bits);
 				}
 			}
 		}

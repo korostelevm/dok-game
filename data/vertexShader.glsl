@@ -76,14 +76,17 @@ void main() {
 	shift[3].xyz = modClampPosition(shift[3].xyz + applyMotion(dt, motion, acceleration), clamp);
 	mat[3].xyz = vec3(0, 0, 0);
 
-	float lightDistance = .7 + -300.0 / shift[3].z;
-	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * lightDistance;
 	v_opacity = textureIndex[OPACITY_INDEX] / 128.;
 
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = ortho * isOrtho + perspective * (1. - isOrtho);
 	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * IDENTITY;
-	vec4 position = projection * finalView * shift * spMatrix * mat * vertexPosition4;
+	vec4 relativePosition = finalView * shift * spMatrix * mat * vertexPosition4;
+
+	float lightDistance = .7 + -300.0 / relativePosition.z;
+	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * lightDistance;
+
+	vec4 position = projection * relativePosition;
 
 	gl_Position = position;
 }
