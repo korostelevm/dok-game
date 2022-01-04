@@ -56,12 +56,12 @@ class WorldOfTurtle extends GameBase {
 						if (self.motion[2] * zPush < 0) {
 							self.changeMotion(self.motion[0], self.motion[1], 0);
 						}
-						self.changePosition(self.x, self.y, self.z + zPush);
+						self.changePosition(self.x, self.y, self.z + zPush * 1.5);
 					} else {
 						if (self.motion[0] * xPush < 0) {
 							self.changeMotion(0, self.motion[1], self.motion[2]);
 						}
-						self.changePosition(self.x + xPush, self.y, self.z);
+						self.changePosition(self.x + xPush * 1.5, self.y, self.z);
 					}					
 				},
 				onStopCollision: (self, sprite) => {
