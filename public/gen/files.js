@@ -319,6 +319,7 @@ const globalFiles=[
 									"sprite-mapper.js"
 								]
 							},
+							"overworld-mapper.js",
 							"platform-mapper.js"
 						]
 					},
@@ -350,8 +351,9 @@ const globalFiles=[
 					"collision.js",
 					"control-8.js",
 					"control.js",
-					"gravity.js",
 					"movement.js",
+					"overworld-gravity.js",
+					"platform-gravity.js",
 					"platform-jump.js"
 				]
 			},

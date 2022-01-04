@@ -26,7 +26,7 @@ class Platformer extends GameBase {
 	}
 
 	refresh(time, dt) {
-		super.refresh(time, dt);
+//		super.refresh(time, dt);
 		this.applyCamera(this.camera);
 	}
 }

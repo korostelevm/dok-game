@@ -883,11 +883,11 @@ class Engine {
 			mat4.identity(this.viewMatrix);
 			const coef = shift.zoom;
 			const coef2 = coef * coef;
-			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
 			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
 			mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
 			mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
 			mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
+			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
 			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 			gl.uniform1f(uniforms.globalLight.location, shift.light);
 

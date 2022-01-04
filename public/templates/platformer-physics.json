@@ -9,7 +9,7 @@
       "id": "control"
     },
     {
-      "type": "Gravity"
+      "type": "PlatformGravity"
     },
     {
       "type": "Movement"

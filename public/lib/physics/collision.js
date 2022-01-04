@@ -50,8 +50,9 @@ class Collision extends PhysicsBase {
 		if (!sprite.collisionData.countCollision) {
 			return;
 		}
-		const { colIndex } = secondSprite.collisionData;
-		const { collisions, colliders } = sprite.collisionData;
+		const colIndex = secondSprite.collisionData.colIndex;
+		const collisions = sprite.collisionData.collisions;
+		const colliders = sprite.collisionData.colliders;
 		if (!collisions[colIndex]) {
 			if (!colliders.length) {
 				this.countedColliders.push(sprite);
@@ -67,15 +68,15 @@ class Collision extends PhysicsBase {
 		}
 		for (let i = 0; i < this.horizontal.length; i++) {
 			const marker = this.horizontal[i];
-			marker.x = (marker.topLeftClose ? marker.sprite.collisionBox.left : marker.sprite.collisionBox.right);
+			marker.x = marker.topLeftClose ? marker.sprite.collisionBox.left : marker.sprite.collisionBox.right;
 		}
 		for (let i = 0; i < this.vertical.length; i++) {
 			const marker = this.vertical[i];
-			marker.y = (marker.topLeftClose ? marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom);
+			marker.y = marker.topLeftClose ? marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom;
 		}
 		for (let i = 0; i < this.deep.length; i++) {
 			const marker = this.deep[i];
-			marker.z = (marker.topLeftClose ? marker.sprite.collisionBox.close : marker.sprite.collisionBox.far);
+			marker.z = marker.topLeftClose ? marker.sprite.collisionBox.close : marker.sprite.collisionBox.far;
 		}
 
 		this.sortMarkers();
@@ -205,7 +206,8 @@ class Collision extends PhysicsBase {
 	}
 
 	leaveCollisions(sprite, time) {
-		const { overlappers, overlapping } = sprite.collisionData;
+		const overlappers = sprite.collisionData.overlappers;
+		const overlapping = sprite.collisionData.overlapping;
 		for (let i = overlappers.length - 1; i >= 0; i--) {
 			const overlapperIndex = overlappers[i];
 			if (overlapping[overlapperIndex] !== time) {

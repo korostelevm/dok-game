@@ -9,8 +9,12 @@
 	    "id": "collision",
 	    "config": {
 	      "horizontal":true,
+	      "vertical":true,
 	      "deep":true
 	    }
+	  },
+	  {
+	  	"type": "OverworldGravity"
 	  }
 	]
 }

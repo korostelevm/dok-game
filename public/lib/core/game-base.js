@@ -143,9 +143,12 @@ class GameBase {
 		const cameraConfig = this.cameras[camera];
 		const zoom = cameraConfig.zoom;
 		const shift = this.engine.shift;
-		shift.goal.x = cameraConfig.xOffset;
-		shift.goal.y = cameraConfig.yOffset;
-		shift.goal.z = cameraConfig.zOffset;
+		const followed = this[cameraConfig.follow];
+		const position = followed.getRealPosition();
+
+		shift.goal.x = cameraConfig.xOffset - position[0] * 2 + 800;
+		shift.goal.y = cameraConfig.yOffset - position[1] * 2 + 800;
+		shift.goal.z = cameraConfig.zOffset + position[2] * 2 - 500;
 		shift.goal.zoom = zoom;
 		shift.goal.rotation[0] = cameraConfig.rotation[0];
 		shift.goal.rotation[1] = cameraConfig.rotation[1];

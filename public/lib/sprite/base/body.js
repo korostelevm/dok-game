@@ -59,7 +59,8 @@ class Body {
 
 	followMotion(time) {
 		this.recalculatePosition(time);
-		const { target, followAxis } = this.following;
+		const target = this.following.target;
+		const followAxis = this.following.followAxis;
 		this.changeMotion(
 			followAxis[0] ? target.motion[0] : this.motion[0],
 			followAxis[1] ? target.motion[1] : this.motion[1],
@@ -89,7 +90,8 @@ class Body {
 
 	followAcceleration(time) {
 		this.recalculatePosition(time);
-		const { target, followAxis } = this.following;
+		const target = this.following.target;
+		const followAxis = this.following.followAxis;
 		this.changeAcceleration(
 			followAxis[0] ? target.acceleration[0] : this.acceleration[0],
 			followAxis[1] ? target.acceleration[1] : this.acceleration[1],
@@ -177,7 +179,9 @@ class Body {
 
 	adjustFollowerPosition(time) {
 		this.recalculatePosition(time);
-		const { target, offset, followAxis } = this.following;
+		const target = this.following.target;
+		const offset = this.following.offset;
+		const followAxis = this.following.followAxis;
 		this.changePosition(
 			followAxis[0] ? target.x + offset.x : this.x,
 			followAxis[1] ? target.y + offset.y : this.y,

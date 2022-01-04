@@ -6,7 +6,8 @@
 	      "yOffset": 1000,
 	      "zOffset": 550,
 	      "zoom": 1,
-	      "rotation": [60, 0, 0]
+	      "rotation": [60, 0, 0],
+	      "follow": "turtle"
 	    }
 	}
 }
