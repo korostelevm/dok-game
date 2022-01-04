@@ -1,42 +1,10 @@
 {
+  "templates": ["platformer-physics", "platformer-camera"],
   "className": "Platformer",
   "settings": {
     "windowSize": [900, 500]
   },
-  "physics": [
-      {
-        "type": "PlatformJump",
-        "id": "jump"
-      },
-      {
-        "type": "Control",
-        "id": "control"
-      },
-      {
-        "type": "Gravity"
-      },
-      {
-        "type": "Movement"
-      },
-      {
-        "type": "Collision",
-        "config": {
-          "horizontal":true,
-          "vertical":true
-        }
-      }
-  ],
   "world": {
-    "overlayHud": {
-      "type": "Hud",
-      "anim": "debugGradient",
-      "x": 1,
-      "y": "{viewportHeight}",
-      "z": 10,
-      "opacity": 0,
-      "manualRefresh": true,
-      "spriteType": "hud"
-    },
     "backwall": {
       "anim": "backwall",
       "z": -500,
@@ -106,23 +74,6 @@
     "jingle": {
       "src": "audio/jingle.mp3",
       "volume": 1
-    }
-  },
-  "cameras": {
-    "normal": {
-      "default": true,
-      "xOffset": 800,
-      "yOffset": 200,
-      "zoom": 1,
-      "maxX": 0,
-      "minY": 0,
-      "follow": "hero"
-    },
-    "zoom": {
-      "xOffset": 400,
-      "yOffset": 200,
-      "zoom": 2,
-      "follow": "hero"
     }
   },
   "atlas": {

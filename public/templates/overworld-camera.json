@@ -1,0 +1,12 @@
+{
+	"cameras": {
+	    "normal": {
+	      "default": true,
+	      "xOffset": 0,
+	      "yOffset": 1000,
+	      "zOffset": 550,
+	      "zoom": 1,
+	      "rotation": [60, 0, 0]
+	    }
+	}
+}

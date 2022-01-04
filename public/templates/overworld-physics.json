@@ -1,0 +1,16 @@
+{
+	"physics": [
+	  {
+	    "type": "Control8",
+	    "id": "control"
+	  },
+	  {
+	    "type": "Collision",
+	    "id": "collision",
+	    "config": {
+	      "horizontal":true,
+	      "deep":true
+	    }
+	  }
+	]
+}

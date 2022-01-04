@@ -21,6 +21,7 @@ class FileUtils {
             } else {
                 const req = new XMLHttpRequest();
                 this.fileStock[url] = {
+                    data: null,
                     url,
                     progress: 0,
                     onLoadListeners: [],

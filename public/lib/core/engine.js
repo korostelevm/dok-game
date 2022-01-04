@@ -8,6 +8,7 @@ class Engine {
 		this.setupEmojiCursors();
 
 		this.fileUtils = new FileUtils();
+		this.configTranslator = new ConfigTranslator(this);
 
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 		this.imageLoader = new ImageLoader();
@@ -962,37 +963,6 @@ class Engine {
 				callback(score);
 			}
 		});
-	}
-
-	async translate(data, game) {
-		if (!data) {
-			return data;
-		} else if (Array.isArray(data)) {
-			return Promise.all(data.map(d => this.translate(d, game)));
-		} else if (typeof(data) === "object") {
-			const translatedData = {};
-			for (let a in data) {
-				translatedData[a] = await this.translate(data[a], game);
-			}
-			return translatedData;
-		}
-
-		if (typeof(data)==="string") {
-			const group = data.match(/^{([^}]+)}$/);
-			if (group) {
-				const settings = await game.getSettings(this);
-				const value = math.evaluate(group[1], {
-					viewportWidth: settings.viewportSize[0],
-					viewportHeight: settings.viewportSize[1],
-					hotspot_center: Constants.HOTSPOT_CENTER,
-					hotspot_bottom: Constants.HOTSPOT_BOTTOM,
-					horizontal_merge: Constants.HORIZONTAL_MERGE,
-					vertical_merge: Constants.VERTICAL_MERGE,
-				});
-				return value;
-			}
-		}
-		return data;
 	}
 
 	showMessage(id, message) {

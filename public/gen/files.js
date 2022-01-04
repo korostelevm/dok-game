@@ -4,7 +4,6 @@ const globalFiles=[
 		"assets": [
 			".DS_Store",
 			"1570015905422-scanlines.png",
-			"2189123.png",
 			"Scanline_320x240x4.png",
 			"about-2.png",
 			"about-3.png",
@@ -217,7 +216,14 @@ const globalFiles=[
 			{
 				"turtle": [
 					".DS_Store",
-					"world-of-turtle.js",
+					{
+						"base": [
+							"world-of-turtle.js"
+						]
+					},
+					{
+						"templates": []
+					},
 					"world-of-turtle.json"
 				]
 			}
@@ -236,7 +242,7 @@ const globalFiles=[
 			".DS_Store",
 			{
 				"core": [
-					"config.js",
+					"config-translator.js",
 					"engine.js",
 					"game-base.js"
 				]
@@ -430,6 +436,15 @@ const globalFiles=[
 		]
 	},
 	"package.json",
+	{
+		"templates": [
+			"overlay-hud.json",
+			"overworld-camera.json",
+			"overworld-physics.json",
+			"platformer-camera.json",
+			"platformer-physics.json"
+		]
+	},
 	{
 		"video": []
 	}

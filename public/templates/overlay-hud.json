@@ -1,0 +1,14 @@
+{
+  "world": {
+    "overlayHud": {
+      "type": "Hud",
+      "anim": "debugGradient",
+      "x": 0,
+      "y": "{viewportHeight}",
+      "z": 10,
+      "opacity": 0,
+      "manualRefresh": true,
+      "spriteType": "hud"
+    }
+  }
+}

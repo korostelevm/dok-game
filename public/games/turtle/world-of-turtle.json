@@ -1,25 +1,12 @@
 {
 	"className": "WorldOfTurtle",
+	"templates": ["overworld-physics", "overworld-camera"],
 	"settings": {
 		"windowSize": [1000, 700],
 		"pixelScale": 0,
 		"viewportSize": [900, 600],
 		"perspective": true
 	},
-	"physics": [
-	  {
-	    "type": "Control8",
-	    "id": "control"
-	  },
-	  {
-	    "type": "Collision",
-	    "id": "collision",
-	    "config": {
-	      "horizontal":true,
-	      "deep":true
-	    }
-	  }
-	],
 	"world": {
 		"backwall": {
 			"anim": "backwall",
@@ -98,15 +85,5 @@
 			"range":[0],
 			"hotspot": [0.4, 0.8]
 		}
-	},
-	"cameras": {
-	    "normal": {
-	      "default": true,
-	      "xOffset": 0,
-	      "yOffset": 1000,
-	      "zOffset": 550,
-	      "zoom": 1,
-	      "rotation": [60, 0, 0]
-	    }
 	}
 }
