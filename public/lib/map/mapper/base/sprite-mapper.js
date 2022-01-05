@@ -22,7 +22,7 @@ class SpriteMapper {
 			}
 			return block;
 		} else {
-			console.warn("No generator for :" + cellType)
+			console.warn(`No generator for [${cellType}${option}] at [${col},${row}]`)
 		}
 		return null;
 	}
