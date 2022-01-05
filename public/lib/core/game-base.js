@@ -13,13 +13,13 @@ class GameBase {
 		engine.data = engine.data || (engine.data = {});
 		const gameData = engine.data[gameName] || (engine.data[gameName] = {});
 		this.data = gameData;
-		this.sceneData = this.data[this.sceneName] || (this.data[this.sceneName] = {});
+		this.sceneData = this.data[this.sceneTag] || (this.data[this.sceneTag] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
 		if (!this.data.gender) {
 			this.data.gender = (this.engine.inception ? null : localStorage.getItem("playerGender")) || "M";
 		}
-		this.data.sceneName = this.sceneName;
+		this.data.sceneTag = this.sceneTag;
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;
 		this.swapData = engine?.swapData?.TheImpossibleRoom;
 
@@ -173,8 +173,8 @@ class GameBase {
 		}
 	}
 
-	get sceneName() {
-		return this.constructor.name;
+	get sceneTag() {
+		return this.path?.split("/").pop() || this.constructor.name;
 	}
 
 	async getSettings(engine) {

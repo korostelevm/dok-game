@@ -1,8 +1,9 @@
 const MAX_FRAME_COUNT = Number.MAX_SAFE_INTEGER;
 
 class TextureAtlas {
-	constructor(textureManager, index, imageLoader) {
+	constructor(textureManager, index, imageLoader, collisionBoxCalculator) {
 		this.textureManager = textureManager;
+		this.collisionBoxCalculator = collisionBoxCalculator;
 		this.index = index || 0;
 		this.maxTextureIndex = 0;
 		this.x = 0;
@@ -27,7 +28,7 @@ class TextureAtlas {
 		const canvas = this.imageLoader.canvas;
 		const context = canvas.getContext("2d");
 		if (canvas !== image) {
-			this.getCanvasImage(image);
+			this.getCanvasImage(image, canvas);
 		}
 		context.globalCompositeOperation = texture_blend || "source-atop";
 		context.globalAlpha = texture_alpha || .5;
@@ -40,8 +41,7 @@ class TextureAtlas {
 		return canvas;
 	}
 
-	getCanvasImage(image) {
-		const { canvas } = this;
+	getCanvasImage(image, canvas) {
 		const sourceWidth = image.naturalWidth || image.width;
 		const sourceHeight = image.naturalHeight || image.height;
 		canvas.width = sourceWidth;
@@ -95,7 +95,7 @@ class TextureAtlas {
 		}
 
 		if (collision_url) {
-			this.collisionBoxes = await this.imageLoader.calculateCollisionBoxes(collision_url, this);
+			this.collisionBoxes = await this.collisionBoxCalculator.calculateCollisionBoxes(collision_url, this, this.imageLoader);
 		} else {
 			this.collisionBoxes = null;
 		}
@@ -113,47 +113,47 @@ class TextureAtlas {
 		return this.collisionBoxes ? this.collisionBoxes[frame] : null;
 	}
 
-	getTop(context, x, y, width, height) {
+	static getTop(context, x, y, width, height) {
 		for (let top = 0; top < height; top ++) {
 			const pixels = context.getImageData(x, y + top, width, 1).data;
-			if (this.hasOpaquePixel(pixels)) {
+			if (TextureAtlas.hasOpaquePixel(pixels)) {
 				return top;
 			}
 		}
 		return -1;
 	}
 
-	getBottom(context, x, y, width, height) {
+	static getBottom(context, x, y, width, height) {
 		for (let bottom = height-1; bottom >=0; bottom --) {
 			const pixels = context.getImageData(x, y + bottom, width, 1).data;
-			if (this.hasOpaquePixel(pixels)) {
+			if (TextureAtlas.hasOpaquePixel(pixels)) {
 				return bottom;
 			}
 		}
 		return -1;
 	}
 
-	getLeft(context, x, y, width, height) {
+	static getLeft(context, x, y, width, height) {
 		for (let left = 0; left < width; left ++) {
 			const pixels = context.getImageData(x + left, y, 1, height).data;
-			if (this.hasOpaquePixel(pixels)) {
+			if (TextureAtlas.hasOpaquePixel(pixels)) {
 				return left;
 			}
 		}
 		return -1;		
 	}
 
-	getRight(context, x, y, width, height) {
+	static getRight(context, x, y, width, height) {
 		for (let right = width-1; right >=0; right--) {
 			const pixels = context.getImageData(x + right, y, 1, height).data;
-			if (this.hasOpaquePixel(pixels)) {
+			if (TextureAtlas.hasOpaquePixel(pixels)) {
 				return right;
 			}
 		}
 		return -1;
 	}
 
-	hasOpaquePixel(pixels) {
+	static hasOpaquePixel(pixels) {
 		for (let i = 0; i < pixels.length; i+= 4) {
 			if (pixels[i + 3]) {
 				return true;

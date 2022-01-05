@@ -1,7 +1,6 @@
 const NAME_TO_CLASS = {};
 document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["ConfigTranslator"] = ConfigTranslator;		// lib/core/config-translator.js
-  NAME_TO_CLASS["Engine"] = Engine;		// lib/core/engine.js
   NAME_TO_CLASS["GameBase"] = GameBase;		// lib/core/game-base.js
   NAME_TO_CLASS["Generator"] = Generator;		// lib/map/generator/base/generator.js
   NAME_TO_CLASS["SpriteMapper"] = SpriteMapper;		// lib/map/mapper/base/sprite-mapper.js
@@ -16,10 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["PhysicsBase"] = PhysicsBase;		// lib/physics/base/physics-base.js
   NAME_TO_CLASS["Body"] = Body;		// lib/sprite/base/body.js
   NAME_TO_CLASS["Sprite"] = Sprite;		// lib/sprite/base/sprite.js
-  NAME_TO_CLASS["ColliderSet"] = ColliderSet;		// lib/sprite/utils/collider-set.js
-  NAME_TO_CLASS["CollisionBoxDisplay"] = CollisionBoxDisplay;		// lib/sprite/utils/collision-box-display.js
-  NAME_TO_CLASS["CollisionBox"] = CollisionBox;		// lib/sprite/utils/collision-box.js
-  NAME_TO_CLASS["CollisionMerger"] = CollisionMerger;		// lib/sprite/utils/collision-merger.js
+  NAME_TO_CLASS["ColliderSet"] = ColliderSet;		// lib/sprite/collision/collider-set.js
+  NAME_TO_CLASS["CollisionBoxDisplay"] = CollisionBoxDisplay;		// lib/sprite/collision/collision-box-display.js
+  NAME_TO_CLASS["CollisionBox"] = CollisionBox;		// lib/sprite/collision/collision-box.js
+  NAME_TO_CLASS["CollisionMerger"] = CollisionMerger;		// lib/sprite/collision/collision-merger.js
   NAME_TO_CLASS["UiComponent"] = UiComponent;		// lib/ui/base/ui-component.js
   NAME_TO_CLASS["StartScreen"] = StartScreen;		// games/common/start-screen.js
   NAME_TO_CLASS["FlatLand"] = FlatLand;		// games/demo/flat-land.js
@@ -71,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["Shadow"] = Shadow;		// lib/sprite/shadow.js
   NAME_TO_CLASS["SpriteCollection"] = SpriteCollection;		// lib/sprite/sprite-collection.js
   NAME_TO_CLASS["SpriteFactory"] = SpriteFactory;		// lib/sprite/sprite-factory.js
+  NAME_TO_CLASS["CollisionBoxCalculator"] = CollisionBoxCalculator;		// lib/texture/collision-box-calculator.js
   NAME_TO_CLASS["ImageLoader"] = ImageLoader;		// lib/texture/image-loader.js
   NAME_TO_CLASS["TextureAtlas"] = TextureAtlas;		// lib/texture/texture-atlas.js
   NAME_TO_CLASS["TextureManager"] = TextureManager;		// lib/texture/texture-manager.js
@@ -88,5 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["RandomUtils"] = RandomUtils;		// lib/utils/random-utils.js
   NAME_TO_CLASS["String"] = String;		// lib/utils/string.js
   NAME_TO_CLASS["ValueRefresher"] = ValueRefresher;		// lib/utils/value-refresher.js
+  NAME_TO_CLASS["DirectData"] = DirectData;		// data/direct-data.js
 });
 function nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }

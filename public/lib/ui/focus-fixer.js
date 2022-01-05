@@ -31,10 +31,8 @@ class FocusFixer {
 		input.setAttribute("readonly", "");
 		input.classList.add("focus-fixer-input");
 
-		window.addEventListener("DOMContentLoaded", () => {
-			document.body.appendChild(input);
-			this.gainFocus();
-		});
+		document.body.appendChild(input);
+		this.gainFocus();
 		window.addEventListener("focus", () => this.gainFocus());
 		window.addEventListener("blur", () => this.lostFocus());
 		this.canvas.addEventListener("mousedown", () => this.gainFocus());

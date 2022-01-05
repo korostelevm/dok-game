@@ -235,7 +235,7 @@ class ComputerRoom extends GameCore {
 
 	addMonkor() {
 		if (!this.engine.inception
-			&& this?.engine?.swapData?.TheImpossibleRoom?.sceneName === this.constructor.name
+			&& this?.engine?.swapData?.TheImpossibleRoom?.sceneTag === this.constructor.name
 			&& this?.engine?.swapData?.TheImpossibleRoom?.ComputerRoom?.monkor) {
 			const { x, y } = this.engine.swapData.TheImpossibleRoom.ComputerRoom.monkor;
 			const { gender, name } = this.engine.swapData["TheImpossibleRoom"];

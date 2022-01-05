@@ -9,6 +9,8 @@ class Engine {
 
 		this.fileUtils = new FileUtils();
 		this.configTranslator = new ConfigTranslator(this);
+		this.directData = new DirectData(this.fileUtils);
+
 
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 		this.imageLoader = new ImageLoader();
@@ -48,28 +50,28 @@ class Engine {
 				name: "entrance",
 				game: "Entrance",
 				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
 				},
 			},
 			{
 				name: "restroom",
 				game: "Restroom",
 				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
 				},
 			},
 			{
 				name: "lobby",
 				game: "Lobby",
 				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
 				},
 			},
 			{
 				name: "first room",
 				game: "LockedRoom",
 				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneName);
+					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -77,7 +79,7 @@ class Engine {
 				game: "JokerRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -85,7 +87,7 @@ class Engine {
 				game: "TimeRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -93,7 +95,7 @@ class Engine {
 				game: "AnimalRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -101,7 +103,7 @@ class Engine {
 				game: "GandalfRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -109,7 +111,7 @@ class Engine {
 				game: "MathRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -117,7 +119,7 @@ class Engine {
 				game: "Restaurant",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -125,7 +127,7 @@ class Engine {
 				game: "SoundRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -133,7 +135,7 @@ class Engine {
 				game: "ClueRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -141,7 +143,7 @@ class Engine {
 				game: "DesertRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -149,7 +151,7 @@ class Engine {
 				game: "BatmanRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -157,7 +159,7 @@ class Engine {
 				game: "ComputerRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 			{
@@ -165,7 +167,7 @@ class Engine {
 				game: "ImpossibleRoom",
 				disabled: (engine) => {
 					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneName);
+						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
 				},
 			},
 		];
@@ -315,9 +317,9 @@ class Engine {
 		}
 	}
 
-	async loadDomContent(document) {
+	loadDomContent(document) {
 		if (document.readyState !== "loading") {
-			return Promise.resolve(document);
+			return new Promise(resolve => resolve(document));
 		}
 		return new Promise(resolve => document.addEventListener("DOMContentLoaded", () => resolve(document)));
 	}	
@@ -355,6 +357,10 @@ class Engine {
 		/* Focus Fixer */
 		this.focusFixer = new FocusFixer(canvas);	
 
+		/* Collision data */
+		const collisionData = await this.directData.getData("collision/collision-data.json");
+		console.log(collisionData);
+
 		if (!gl.getExtension('OES_element_index_uint')) {
 			throw new Error("OES_element_index_uint not available.");
 		}
@@ -376,7 +382,7 @@ class Engine {
 		/* Texture management */
 		this.shaders[0].link();
 		this.shaders[0].use();
-		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms);
+		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.datastore);
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, config);
@@ -462,11 +468,12 @@ class Engine {
 								}
 								
 								const [ scene, extension ] = sceneFile.split(".");
-								if (extension !== "js") {
-									return;
-								}
 								const className = StringUtil.kebabToClass(scene);
-								this.classToGame[className] = gameName;
+								if (extension === "js") {
+									this.classToGame[className] = gameName;									
+								} else if (extension === "json") {
+									this.classToGame[sceneFile] = gameName;
+								}
 							});
 						}
 					}
@@ -523,13 +530,13 @@ class Engine {
 		this.setClamp(0, 0, 0, 0, 0, 0);
 
 		game.engine = this;
-		localStorage.setItem(game.sceneName + "-unlocked", new Date().getTime());
+		localStorage.setItem(game.sceneTag + "-unlocked", new Date().getTime());
 
 		await this.adjustViewportSize(game);
 		await this.adjustWindowSize(game);		
-		this.updateSidebar(game.sceneName, localStorage.getItem("joker"));
+		this.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
 		ChronoUtils.tick();
-		await game.init(this, this.classToGame[game.sceneName]);
+		await game.init(this, this.classToGame[game.sceneTag]);
 		ChronoUtils.tick();
 		this.shift.goal.light = 1;
 		await game.postInit();
@@ -955,7 +962,7 @@ class Engine {
 			if (result.success) {
 				this.score = result.score.value;
 				localStorage.setItem("bestScore", this.score);
-				this.updateSidebar(this.game.sceneName, localStorage.getItem("joker"));
+				this.updateSidebar(this.game.sceneTag, localStorage.getItem("joker"));
 			} else {
 				console.log(result?.error?.message);
 			}

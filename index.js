@@ -8,6 +8,7 @@ const archiver 	= require('archiver');
 const md5File 	= require('md5-file');
 const getPixels = require("get-pixels");
 const NwBuilder = require('nw-builder');
+const bodyParser = require('body-parser');
 
 const PORT = 3000;
  
@@ -39,31 +40,17 @@ app.get('/', (req, res, next) => {
 					}
 				});
 
-				const assetProperties = {};
-				const assetPropertyPath = `${__dirname}/public/gen/asset-property.json`;
-				return fs.promises.readFile(assetPropertyPath)
-					.then(data => {
-						const properties = JSON.parse(data);
-						for (let asset in properties) {
-							assetProperties[asset] = properties[asset];
-						}
-					})
-					.catch(error => {
-						console.warn(error);
-					})
-					.then(() => {
-						return fs.promises.readFile(`${__dirname}/build/asset-md5.json`);
-					})
+				return fs.promises.readFile(`${__dirname}/build/asset-md5.json`)
 					.then(data => {
 						const preData = JSON.parse(data);
 						const assetsToUpdate = [];
 						for (let asset in preData) {
-							if (preData[asset] !== map[asset] || !assetProperties[asset]) {
+							if (preData[asset] !== map[asset]) {
 								assetsToUpdate.push(asset);
 							}
 						}
-// 						assetsToUpdate.forEach(asset => {
-// 							console.log(`${asset} needs to update its data.`);
+						assetsToUpdate.forEach(asset => {
+							console.log(`${asset} needs to update its data.`);
 // 							const path = `${__dirname}/public/assets/${asset}`;
 // 							getPixels(path, (err, pixels) => {
 // 							  if(err) {
@@ -73,11 +60,14 @@ app.get('/', (req, res, next) => {
 // 							  const [ width, height, byteSize ] = pixels.shape.slice();
 // //							  console.log("pixels:", pixels.data);
 // 							});
-// 						});
+						});
 					})
 					.catch(console.warn)
 					.then(() => {
-						return fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, JSON.stringify(map,null,'\t'));
+						return Promise.all([
+							fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, JSON.stringify(map,null,'\t')),
+							fs.promises.writeFile(`${__dirname}/public/gen/asset-md5.js`, `const assetMd5 = ${JSON.stringify(map,null,'\t')}`),
+						]);
 					});
 			}),
 	]).then(([html]) => {
@@ -108,6 +98,51 @@ app.get('/', (req, res, next) => {
 	});
 });
 
+app.get('/ping', (req, res) => {
+	res.send("ping");
+});
+
+app.get('/data', (req, res, next) => {
+	const { path } = req.query || {};
+	const folder = `${__dirname}/public/data`;
+
+	fs.readdir(folder, async (err, files) => {
+		if (err) {
+			res.status(400).send("Invalid request.");
+			next(err);
+			return;
+		}
+		const data = {};
+		await files.forEach(async dir => {
+			const dirPath = `${folder}/${dir}`;
+			if (fs.lstatSync(dirPath).isDirectory()) {
+				const dataFiles = fs.readdirSync(dirPath);
+				dataFiles.forEach(jsonFile => {
+					if (path && jsonFile.indexOf(path) < 0) {
+						return;
+					}
+					const rawJson = fs.readFileSync(`${dirPath}/${jsonFile}`);
+					try {
+						const subData = JSON.parse(rawJson);
+						data[`${dir}/${jsonFile}`] = subData;
+					} catch (e) {
+						console.error("Error on " + dirPath, e);
+					}
+				});
+			}
+		});
+		res.json(data);
+	});
+});
+
+app.post('/data', bodyParser.json(), function(req, res, next) {
+    const body = req.body;
+    for (let path in body) {
+    	fs.writeFileSync(`${__dirname}/public/data/${path}`, JSON.stringify(body[path], null, "  "));
+    }
+	res.json({success: true});
+});
+
 app.use(serve(`${__dirname}/public`));
 
 async function regenerateIndex() {
@@ -117,7 +152,7 @@ async function regenerateIndex() {
 	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
 	indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
-	await fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
+	fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
 
 	//	Generate class mapping for classes in games folder
 	const classNameMapper = "const NAME_TO_CLASS = {};\ndocument.addEventListener('DOMContentLoaded', () => {\n" + paths.map(path => {

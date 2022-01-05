@@ -13,7 +13,7 @@ class ChronoUtils {
 	static log() {
 		const marks = performance.getEntriesByType("mark")
 			.map(({name,startTime}, index, array) => [Math.round(startTime), "+"+Math.round(startTime - (array[index-1]?.startTime||0)), name]);
-		console.info(marks);
+		console.info("ChronoUtils\n", marks);
 		ChronoUtils.reset();
 	}
 }

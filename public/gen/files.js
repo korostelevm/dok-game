@@ -140,6 +140,17 @@ const globalFiles=[
 			"scream.mp3"
 		]
 	},
+	{
+		"data": [
+			{
+				"collision": [
+					"collision-data.json"
+				]
+			},
+			"direct-data.js"
+		]
+	},
+	"engine.js",
 	"favicon.ico",
 	{
 		"fonts": [
@@ -231,6 +242,7 @@ const globalFiles=[
 	},
 	{
 		"gen": [
+			"asset-md5.js",
 			"data.js",
 			"files.js",
 			"nameToClass.js"
@@ -243,7 +255,6 @@ const globalFiles=[
 			{
 				"core": [
 					"config-translator.js",
-					"engine.js",
 					"game-base.js"
 				]
 			},
@@ -380,22 +391,23 @@ const globalFiles=[
 							"sprite.js"
 						]
 					},
-					"hud.js",
-					"shadow.js",
-					"sprite-collection.js",
-					"sprite-factory.js",
 					{
-						"utils": [
+						"collision": [
 							"collider-set.js",
 							"collision-box-display.js",
 							"collision-box.js",
 							"collision-merger.js"
 						]
-					}
+					},
+					"hud.js",
+					"shadow.js",
+					"sprite-collection.js",
+					"sprite-factory.js"
 				]
 			},
 			{
 				"texture": [
+					"collision-box-calculator.js",
 					"image-loader.js",
 					"texture-atlas.js",
 					"texture-manager.js"

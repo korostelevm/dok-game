@@ -99,11 +99,11 @@ class SceneTab {
 	}
 
 	setScene(game) {
-		for (let sceneName in this.buttonForScene) {
-			if (sceneName === game.sceneName) {
-				this.buttonForScene[sceneName].classList.add("selected");
+		for (let sceneTag in this.buttonForScene) {
+			if (sceneTag === game.sceneTag) {
+				this.buttonForScene[sceneTag].classList.add("selected");
 			} else {
-				this.buttonForScene[sceneName].classList.remove("selected");
+				this.buttonForScene[sceneTag].classList.remove("selected");
 			}
 		}
 	}
