@@ -34,7 +34,7 @@ class Sprite extends Body {
 		}
 		this.properties = properties || {};
 		this.onChange = {
-			position: (self, {x, y, z}) => {
+			position: !this.remember ? null : (self, {x, y, z}) => {
 				self.changePosition(x, y, z);
 			},
 		};

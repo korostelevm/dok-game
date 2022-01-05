@@ -34,7 +34,7 @@ class OverworldMapper extends SpriteMapper {
 					hotspot: [25, 75],
 					x: 40 * col, y: 400 - 10, z: -200 * row,
 					rotation: [-90, 0, 0],					
-					remember: true,
+//					remember: true,
 				});
 			}),
 			'[': new GeneratorWithCallback((col, row, option) => {
