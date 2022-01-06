@@ -31,7 +31,7 @@ attribute vec4 spriteSheet;			//	[ushort] col,(row),hotspot_x,hotspot_y
 attribute vec4 updateTime;			//	motion_update, animation_update
 
 uniform float isPerspective;
-uniform vec2 timeInfo;
+uniform float timeInfo;
 uniform mat4 perspective;
 uniform mat4 ortho;
 uniform mat4 view;
@@ -54,7 +54,7 @@ vec3 modClampPosition(vec3 position, mat3 clamp);
 vec3 applyMotion(float dt, vec3 motion, vec3 acceleration);
 
 void main() {
-	float time = timeInfo[0];
+	float time = timeInfo;
 	vec4 textureInfo = getCornerValue(textureCoordinates, vertexPosition);
 	vec2 textureShift = getTextureShift(spriteSheet, animationInfo, textureCoordinates, time);
 	v_textureCoord = (textureInfo.xy + textureShift) / 4096.;

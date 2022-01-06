@@ -944,13 +944,13 @@ class Engine {
 	}
 
 	render(time, dt) {
-		this.updateTime(time, dt);
+		this.updateTime(time);
 		this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
 	}
 
-	updateTime(time, dt) {
+	updateTime(time) {
 		const uniforms = this.shaders[0].uniforms;
-		this.gl.uniform2f(uniforms.timeInfo.location, time, dt);		
+		this.gl.uniform1f(uniforms.timeInfo.location, time);		
 	}
 
 	postScore(score, callback) {

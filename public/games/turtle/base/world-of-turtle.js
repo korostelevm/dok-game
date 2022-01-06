@@ -24,7 +24,7 @@ class WorldOfTurtle extends GameBase {
 					left: -30, right: 30,
 					top: -50, bottom: 0,
 					close: -50, far: 10,
-					// show: true,
+					show: true,
 				},
 			}, {
 				gravity: 1,
@@ -147,7 +147,7 @@ class WorldOfTurtle extends GameBase {
 					left: -30, right: 30,
 					top: -60, bottom: 0,
 					close: -40, far: 20,
-//					show: true,
+					show: true,
 				},
 				shadow: 1,
 			}, {

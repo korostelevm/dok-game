@@ -67,9 +67,6 @@ class GameBase {
 				collisionMerger.merge(grid, cols, rows);
 			}
 		}
-		this.atlas.collisionBox = await engine.addTexture({
-			url: "assets/red-square.png",
-		});
 		this.atlas.empty = await engine.addTexture({
 			spriteWidth: 0, spriteHeight: 0,
 		});
