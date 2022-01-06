@@ -56,28 +56,28 @@
 		},
 		"sand0": {
 			"url": "assets/sand.png",
-			"collision_url": "assets/hex.png",
+			"collision_url": "assets/sand.png",
 			"spriteWidth": 128, "spriteHeight": 128,
 			"range": [0],
 			"hotspot": "{hotspot_center}"
 		},
 		"sand1": {
 			"url": "assets/sand.png",
-			"collision_url": "assets/hex.png",
+      "collision_url": "assets/sand.png",
 			"spriteWidth": 128, "spriteHeight": 128,
 			"range": [1],
 			"hotspot": "{hotspot_center}"
 		},
 		"sand2": {
 			"url": "assets/sand.png",
-			"collision_url": "assets/hex.png",
+      "collision_url": "assets/sand.png",
 			"spriteWidth": 128, "spriteHeight": 128,
 			"range": [2],
 			"hotspot": "{hotspot_center}"
 		},
 		"sand3": {
 			"url": "assets/sand.png",
-			"collision_url": "assets/hex.png",
+      "collision_url": "assets/sand.png",
 			"spriteWidth": 128, "spriteHeight": 128,
 			"range": [3],
 			"hotspot": "{hotspot_center}"

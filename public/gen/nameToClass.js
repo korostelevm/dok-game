@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["Template"] = Template;		// games/the-impossible-room/template.js
   NAME_TO_CLASS["TimeRoom"] = TimeRoom;		// games/the-impossible-room/time-room.js
   NAME_TO_CLASS["TvRoom"] = TvRoom;		// games/the-impossible-room/tv-room.js
+  NAME_TO_CLASS["DirectData"] = DirectData;		// lib/data/direct-data.js
   NAME_TO_CLASS["TranslateVoice"] = TranslateVoice;		// lib/lang/translate-voice.js
   NAME_TO_CLASS["SpriteGrid"] = SpriteGrid;		// lib/map/sprite-grid.js
   NAME_TO_CLASS["Ng"] = Ng;		// lib/newgrounds/ng.js
@@ -88,6 +89,5 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["RandomUtils"] = RandomUtils;		// lib/utils/random-utils.js
   NAME_TO_CLASS["String"] = String;		// lib/utils/string.js
   NAME_TO_CLASS["ValueRefresher"] = ValueRefresher;		// lib/utils/value-refresher.js
-  NAME_TO_CLASS["DirectData"] = DirectData;		// data/direct-data.js
 });
 function nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }

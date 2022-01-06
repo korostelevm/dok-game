@@ -410,7 +410,9 @@ class Mall extends GameCore {
 	}
 
 	async onExit(engine) {
-		document.getElementById("container").removeChild(document.getElementById("thank-you"));
+		if (document.getElementById("thank-you")) {
+			document.getElementById("container").removeChild(document.getElementById("thank-you"));
+		}
 		return await super.onExit(engine);
 	}
 

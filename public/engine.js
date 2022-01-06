@@ -10,6 +10,7 @@ class Engine {
 		this.fileUtils = new FileUtils();
 		this.configTranslator = new ConfigTranslator(this);
 		this.directData = new DirectData(this.fileUtils);
+		this.collisionBoxCalculator = new CollisionBoxCalculator(this.directData);
 
 
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
@@ -349,6 +350,8 @@ class Engine {
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
+		await this.collisionBoxCalculator.init();
+
 
 		this.tipBox = new TipBox(this);
 
@@ -356,10 +359,6 @@ class Engine {
 
 		/* Focus Fixer */
 		this.focusFixer = new FocusFixer(canvas);	
-
-		/* Collision data */
-		const collisionData = await this.directData.getData("collision/collision-data.json");
-		console.log(collisionData);
 
 		if (!gl.getExtension('OES_element_index_uint')) {
 			throw new Error("OES_element_index_uint not available.");
@@ -382,7 +381,7 @@ class Engine {
 		/* Texture management */
 		this.shaders[0].link();
 		this.shaders[0].use();
-		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.datastore);
+		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.collisionBoxCalculator);
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, config);

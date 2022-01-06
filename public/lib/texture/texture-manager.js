@@ -1,7 +1,7 @@
 class TextureManager {
-	constructor(gl, uniforms, datastore) {
+	constructor(gl, uniforms, collisionBoxCalculator) {
 		this.gl = gl;
-		this.collisionBoxCalculator = new CollisionBoxCalculator(datastore);
+		this.collisionBoxCalculator = collisionBoxCalculator;
 		this.glTextures = [];
 		this.textureSize = 4096;
 		this.textureAtlas = [];

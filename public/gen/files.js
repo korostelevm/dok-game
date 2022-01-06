@@ -142,12 +142,12 @@ const globalFiles=[
 	},
 	{
 		"data": [
+			".DS_Store",
 			{
 				"collision": [
 					"collision-data.json"
 				]
-			},
-			"direct-data.js"
+			}
 		]
 	},
 	"engine.js",
@@ -254,8 +254,14 @@ const globalFiles=[
 			".DS_Store",
 			{
 				"core": [
+					".DS_Store",
 					"config-translator.js",
 					"game-base.js"
+				]
+			},
+			{
+				"data": [
+					"direct-data.js"
 				]
 			},
 			{

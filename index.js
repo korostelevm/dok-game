@@ -140,7 +140,7 @@ app.post('/data', bodyParser.json(), function(req, res, next) {
     for (let path in body) {
     	fs.writeFileSync(`${__dirname}/public/data/${path}`, JSON.stringify(body[path], null, "  "));
     }
-	res.json({success: true});
+	res.json({success: true, updates: Object.keys(body).length});
 });
 
 app.use(serve(`${__dirname}/public`));
