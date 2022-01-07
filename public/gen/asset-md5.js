@@ -25,6 +25,8 @@ const assetMd5 = {
 	"cigarette.png": "900d8857558f7395d4ff3fb4d5ae92c0",
 	"clue-lobby.png": "38473edaa9ba51f06dd4a4e7b18af873",
 	"computer-desk.png": "19863ac9904e86f5837d2bd77fb14e7e",
+	"cosmo-collision.png": "35bc61b3ec59880619600faa20894392",
+	"cosmo.png": "7c82168153c7a202fdd5b4dc2a9cbd00",
 	"debug-block.png": "67ea0ed7a70950ca5f8a4e308b63bca4",
 	"debug-bounce.png": "f064e9eb3d6d2899cdab9f62bc7a48c0",
 	"debug-coin.png": "7c518fa062f3d38b29f5a336274922f3",

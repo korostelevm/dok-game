@@ -30,8 +30,8 @@ class PlatformMapper extends SpriteMapper {
 				return this.spriteFactory.create({
 					name: "hero",
 					anim: this.atlas.hero.still,
-					size: [50, 75, 2],
-					hotspot: [25, 75],
+					size: [50, 50, 2],
+					hotspot: Constants.HOTSPOT_BOTTOM,
 					x: 40 * col, y: 40 * row, z: 1,
 					remember: true,
 				}, {

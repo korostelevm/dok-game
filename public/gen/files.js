@@ -28,6 +28,8 @@ const globalFiles=[
 			"cigarette.png",
 			"clue-lobby.png",
 			"computer-desk.png",
+			"cosmo-collision.png",
+			"cosmo.png",
 			"debug-block.png",
 			"debug-bounce.png",
 			"debug-coin.png",
