@@ -12,6 +12,10 @@ class CollisionBox {
 		this.collisionFrame = collisionFrame || null;
 		this.time = 0;
 		this.lastPosition = null;
+
+		if (this.collisionFrame?.show) {
+			this.show();
+		}
 	}
 
 	get centerX() {

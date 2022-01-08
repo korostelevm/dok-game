@@ -29,9 +29,6 @@ class Sprite extends Body {
 		}
 
 		this.collisionBox = new CollisionBox(this, data.collisionFrame);
-		if (data.collisionFrame?.show) {
-			this.collisionBox.show();
-		}
 		this.properties = properties || {};
 		this.onChange = {
 			position: !this.remember ? null : (self, {x, y, z}) => {

@@ -239,9 +239,20 @@
         "hotspot": "{hotspot_bottom}",
         "spriteWidth": 64,
         "spriteHeight": 64,
-        "frameRate": 10,
+        "frameRate": 2,
         "range": [
           0, 1
+        ]
+      },
+      "still_left": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 2,
+        "range": [
+          2, 3
         ]
       },
       "run": {
@@ -252,8 +263,20 @@
         "spriteHeight": 64,
         "frameRate": 24,
         "range": [
-          2,
-          9
+          4,
+          11
+        ]
+      },
+      "run_left": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 24,
+        "range": [
+          12,
+          19
         ]
       },
       "jump": {
@@ -264,7 +287,18 @@
         "spriteHeight": 64,
         "frameRate": 5,
         "range": [
-          6
+          8
+        ]
+      },
+      "jump_left": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 5,
+        "range": [
+          16
         ]
       },
       "climb": {
@@ -275,8 +309,8 @@
         "spriteHeight": 64,
         "frameRate": 8,
         "range": [
-          14,
-          17
+          28,
+          31
         ]
       },
       "climb_still": {
@@ -287,7 +321,7 @@
         "spriteHeight": 64,
         "frameRate": 8,
         "range": [
-          14
+          28
         ]
       },
       "dead": {
@@ -310,7 +344,7 @@
         "spriteHeight": 64,
         "frameRate": 8,
         "range": [
-          10
+          20
         ]
       },
       "crouch": {
@@ -321,8 +355,31 @@
         "spriteHeight": 64,
         "frameRate": 8,
         "range": [
-          10,
-          13
+          20,
+          23
+        ]
+      },
+      "crouch_still_left": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 8,
+        "range": [
+          24
+        ]
+      },
+      "crouch_left": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 8,
+        "range": [
+          24,
+          27
         ]
       }
     }

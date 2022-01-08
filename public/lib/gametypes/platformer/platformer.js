@@ -8,8 +8,8 @@ class Platformer extends GameBase {
 		const followed = this[cameraConfig.follow];
 		const zoom = cameraConfig.zoom;
 		const shift = this.engine.shift;
-		shift.goal.x = -followed.x * 2 / zoom + cameraConfig.xOffset;
-		shift.goal.y = -followed.y * 2 / zoom + cameraConfig.yOffset;
+		shift.goal.x = -followed.x * 2 / zoom / zoom + cameraConfig.xOffset / zoom / zoom;
+		shift.goal.y = -followed.y * 2 / zoom / zoom + cameraConfig.yOffset / zoom / zoom;
 		shift.goal.zoom = zoom;
 		if (typeof(cameraConfig.minX) !== "undefined") {
 			shift.goal.x = Math.max(cameraConfig.minX, shift.goal.x);
@@ -26,7 +26,6 @@ class Platformer extends GameBase {
 	}
 
 	refresh(time, dt) {
-//		super.refresh(time, dt);
 		this.applyCamera(this.camera);
 	}
 }

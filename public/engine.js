@@ -552,6 +552,7 @@ class Engine {
 			this.sceneTab.setScene(game);
 		}
 
+		ChronoUtils.tick();
 		ChronoUtils.log();
 		this.setupMouseListeners();
 	}

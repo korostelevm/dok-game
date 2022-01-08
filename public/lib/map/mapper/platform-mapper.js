@@ -12,16 +12,22 @@ class PlatformMapper extends SpriteMapper {
 			const climbingStill = climbing && self.dx === 0 && self.dy === 0;
 			const jumping = time - self.lastJump < 300;
 			const crouchingStill = self.crouch && dx === 0;
-			self.changeAnimation(climbingStill ? this.atlas.hero.climb_still
-				: climbing ? this.atlas.hero.climb
-				: jumping ? this.atlas.hero.jump
-				: crouchingStill ? this.atlas.hero.crouch_still
-				: self.crouch ? this.atlas.hero.crouch
-				: still ? this.atlas.hero.still
-				: this.atlas.hero.run);
+			let animName = climbingStill ? "climb_still"
+				: climbing ? "climb"
+				: jumping ? "jump"
+				: crouchingStill ? "crouch_still"
+				: self.crouch ? "crouch"
+				: still ? "still"
+				: "run";
 			if (dx !== 0) {
-				self.changeDirection(dx < 0 ? -1 : 1);
+				self.dir = dx;
 			}
+			if (self.dir < 0 && this.atlas.hero[animName + "_left"]) {
+				animName += "_left";
+			}
+			const anim = this.atlas.hero[animName];
+
+			self.changeAnimation(anim);
 		};
 
 		this.map = {
@@ -34,6 +40,7 @@ class PlatformMapper extends SpriteMapper {
 					hotspot: Constants.HOTSPOT_BOTTOM,
 					x: 40 * col, y: 40 * row, z: 1,
 					remember: true,
+					showCollisionBox: 1,
 				}, {
 					gravity: .2,
 					movement: 1,
@@ -97,6 +104,7 @@ class PlatformMapper extends SpriteMapper {
 							self.dx = 0;
 							self.changePosition(sprite.getCenterX(), self.y, self.z);
 							onMotion(self, this.control.dx, this.control.dy);
+							return;
 						}
 
 						if (self.climbing && sprite.ladder) {
