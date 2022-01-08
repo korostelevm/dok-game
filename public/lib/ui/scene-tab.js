@@ -37,7 +37,7 @@ class SceneTab {
 									const gameConfig = await engine.fileUtils.load(configFile);
 									gameList[name].push({
 										name: scene,
-										classObj: nameToClass(gameConfig.className),
+										classObj: nameToClass(gameConfig.className || "GameBase"),
 										configFile,
 									});
 								}

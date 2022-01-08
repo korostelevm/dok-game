@@ -5,6 +5,7 @@ class ImageLoader {
 			"assets/mouse-cursor.png": true,
 			"assets/pointer-cursor.png": true,
 			"assets/button_e.png": true,
+			"assets/button_q.png": true,
 		};
 		this.canvas = document.createElement("canvas");
 	}

@@ -18,6 +18,7 @@ const globalFiles=[
 			"burger.png",
 			"butler.png",
 			"button_e.png",
+			"button_q.png",
 			"candy-collision.png",
 			"candy.png",
 			"chalkboard.png",
@@ -54,6 +55,7 @@ const globalFiles=[
 			"invitation-check.png",
 			"invitation.png",
 			"joker.png",
+			"lazer.png",
 			"letters.png",
 			"loading.png",
 			"lobby-collision.png",
@@ -145,6 +147,7 @@ const globalFiles=[
 	{
 		"data": [
 			".DS_Store",
+			"can-write.json",
 			{
 				"collision": [
 					"collision-data.json"
@@ -295,18 +298,7 @@ const globalFiles=[
 			},
 			{
 				"gametypes": [
-					".DS_Store",
-					{
-						"overworld": [
-							"overworld.js"
-						]
-					},
-					{
-						"platformer": [
-							".DS_Store",
-							"platformer.js"
-						]
-					}
+					".DS_Store"
 				]
 			},
 			{

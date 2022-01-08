@@ -1,6 +1,5 @@
 {
   "templates": ["platformer-physics", "platformer-camera"],
-  "className": "Platformer",
   "settings": {
     "windowSize": [900, 500]
   },

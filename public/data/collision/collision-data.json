@@ -3345,5 +3345,75 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "2a9c0e774af81b9180ae66b0d2587d9a": [
+    null,
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0.875,
+      "left": 0.25,
+      "bottom": 1,
+      "right": 0.5625,
+      "close": 0,
+      "far": 1
+    },
+    null,
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0.9375,
+      "left": 0.25,
+      "bottom": 1,
+      "right": 0.5625,
+      "close": 0,
+      "far": 1
+    },
+    null,
+    null,
+    null,
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0,
+      "left": 0.25,
+      "bottom": 0.1875,
+      "right": 0.625,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0,
+      "left": 0.75,
+      "bottom": 0.0625,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0,
+      "left": 0,
+      "bottom": 0.125,
+      "right": 0.625,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0,
+      "left": 0.625,
+      "bottom": 0.0625,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lazer.png",
+      "top": 0,
+      "left": 0,
+      "bottom": 0.0625,
+      "right": 0.625,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

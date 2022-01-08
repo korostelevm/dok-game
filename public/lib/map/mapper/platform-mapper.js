@@ -40,7 +40,7 @@ class PlatformMapper extends SpriteMapper {
 					hotspot: Constants.HOTSPOT_BOTTOM,
 					x: 40 * col, y: 40 * row, z: 1,
 					remember: true,
-					showCollisionBox: 1,
+					showCollisionBox: engine.debug,
 				}, {
 					gravity: .2,
 					movement: 1,
@@ -54,8 +54,8 @@ class PlatformMapper extends SpriteMapper {
 								self.engine.clearMessage(self.id);
 							};
 
-							self.engine.showMessage(self.id, `press [E] to start dialog`);
-							self.engine.keyboardHandler.addKeyDownListener('e', sprite.onChatEvent);
+							self.engine.showMessage(self.id, `press [Q] to start dialog`);
+							self.engine.keyboardHandler.addKeyDownListener('q', sprite.onChatEvent);
 						}
 						if (sprite.onOpen) {
 							sprite.onOpenEvent = e => {
@@ -64,8 +64,8 @@ class PlatformMapper extends SpriteMapper {
 								self.engine.clearMessage(self.id);
 							};
 
-							self.engine.showMessage(self.id, `press [E] to start open ${sprite.name}`);
-							self.engine.keyboardHandler.addKeyDownListener('e', sprite.onOpenEvent);							
+							self.engine.showMessage(self.id, `press [Q] to start open ${sprite.name}`);
+							self.engine.keyboardHandler.addKeyDownListener('q', sprite.onOpenEvent);							
 						}
 					},
 					onLeave: (self, sprite) => {
@@ -242,7 +242,7 @@ class PlatformMapper extends SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: "{horizontal_merge}",
+					canMerge: Constants.HORIZONTAL_MERGE,
 					collide: 1, crate: 1, canLand: true,
 				});
 			}),
@@ -349,7 +349,7 @@ class PlatformMapper extends SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
-					canMerge: "{horizontal_merge}",
+					canMerge: Constants.HORIZONTAL_MERGE,
 					collide: 1, lowceiling: 1,
 					init: (self, col, row, grid) => {
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {

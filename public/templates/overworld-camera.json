@@ -2,9 +2,9 @@
 	"cameras": {
 	    "normal": {
 	      "default": true,
-	      "xOffset": 0,
-	      "yOffset": 1000,
-	      "zOffset": 550,
+	      "xOffset": 800,
+	      "yOffset": 1800,
+	      "zOffset": 50,
 	      "zoom": 1,
 	      "rotation": [60, 0, 0],
 	      "follow": "turtle"

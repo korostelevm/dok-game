@@ -3,6 +3,7 @@ class CollisionBoxDisplay {
 		this.collisionBox = collisionBox;
 		const game = collisionBox.sprite.game;
 		this.engine = game.engine;
+		this.active = true;
 		this.sprites = [
 			this.generateBox(game, collisionBox, [90, 0 ,0]),
 			this.generateBox(game, collisionBox, [-90, 0 ,0]),
@@ -31,6 +32,9 @@ class CollisionBoxDisplay {
 
 	repositionSprites(time) {
 		const collisionBox = this.collisionBox.getCollisionBox(time);
+		if (!collisionBox) {
+			return;
+		}
 		this.sprites[0].changeSize(collisionBox.width, collisionBox.depth, time);
 		this.sprites[0].changePosition(
 			collisionBox.left,
@@ -55,13 +59,13 @@ class CollisionBoxDisplay {
 			collisionBox.top,
 			collisionBox.far,
 			time);
-		this.sprites[4].changeSize(collisionBox.width, collisionBox.height, time);
+		this.sprites[4].changeSize(collisionBox.depth, collisionBox.height, time);
 		this.sprites[4].changePosition(
 			collisionBox.right,
 			collisionBox.top,
 			collisionBox.far,
 			time);
-		this.sprites[5].changeSize(collisionBox.width, collisionBox.height, time);
+		this.sprites[5].changeSize(collisionBox.depth, collisionBox.height, time);
 		this.sprites[5].changePosition(
 			collisionBox.left,
 			collisionBox.top,
@@ -69,15 +73,12 @@ class CollisionBoxDisplay {
 			time);		
 	}
 
-	show() {
-		for (let i = 0; i < this.sprites.length; i++) {
-			this.sprites[i].changeActive(true);
-		}
-	}
-
-	hide() {
-		for (let i = 0; i < this.sprites.length; i++) {
-			this.sprites[i].changeActive(false);
+	changeActive(value) {
+		if (this.active !== value) {
+			this.active = value;
+			for (let i = 0; i < this.sprites.length; i++) {
+				this.sprites[i].changeActive(this.active);
+			}			
 		}
 	}
 }

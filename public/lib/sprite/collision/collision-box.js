@@ -7,15 +7,28 @@ class CollisionBox {
 		this.right = 0;
 		this.close = 0;
 		this.far = 0;
-		this.dirty = true;
+		this.isDirty = true;
 		this.frame = -1;
 		this.collisionFrame = collisionFrame || null;
 		this.time = 0;
-		this.lastPosition = null;
+		this.lastPosition = [null,null,null];
 
-		if (this.collisionFrame?.show) {
-			this.show();
+		if (sprite.showCollisionBox) {
+			this.changeActive(true);
+			this.display = new CollisionBoxDisplay(this);
 		}
+	}
+
+	set dirty(value) {
+		this.isDirty = value;
+		if (this.display) {
+			this.changeActive(this.sprite.active);
+			this.display.repositionSprites(this.sprite.engine.lastTime);		
+		}		
+	}
+
+	get dirty() {
+		return this.isDirty;
 	}
 
 	get centerX() {
@@ -71,31 +84,18 @@ class CollisionBox {
 			return null;
 		}
 		this.calculateCollisonBoxFromAnimation(animRect);
-
-
-		if (this.display) {
-			this.display.onRefresh(time);
-		}
 		return this;
 	}
 
-	show() {
-		if (!this.display) {
-			this.display = new CollisionBoxDisplay(this);
-		}
-		this.display.show();
-	}
-
-	hide() {
+	changeActive(value) {
 		if (this.display) {
-			this.display.hide();
+			this.display.changeActive(value);
 		}
 	}
 
 	calculateCollisonBoxFromFrame(collisionFrame) {
 		const spritePosition = this.sprite.getRealPosition(this.time);
-		if (this.lastPosition
-			&& this.lastPosition[0] === spritePosition[0]
+		if (this.lastPosition[0] === spritePosition[0]
 			&& this.lastPosition[1] === spritePosition[1]
 			&& this.lastPosition[2] === spritePosition[2]) {
 			return;
@@ -106,13 +106,10 @@ class CollisionBox {
 		this.bottom = collisionFrame.bottom + spritePosition[1];
 		this.close = collisionFrame.close + spritePosition[2];
 		this.far = collisionFrame.far + spritePosition[2];
-		this.dirty = false;
-		if (!this.lastPosition) {
-			this.lastPosition = [0, 0, 0];
-		}
 		this.lastPosition[0] = spritePosition[0];
 		this.lastPosition[1] = spritePosition[1];
 		this.lastPosition[2] = spritePosition[2];
+		this.dirty = false;
 	}
 
 	calculateCollisonBoxFromAnimation(animRect) {

@@ -925,12 +925,6 @@ class Engine {
 			mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] / 180 * Math.PI);
 			mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] / 180 * Math.PI);
 			gl.uniformMatrix4fv(uniforms.spriteMatrix.location, false, this.viewMatrix);
-
-			const scrollables = this.spriteCollection.filterBy("onScroll");
-			for (let i = 0; i < scrollables.length; i++) {
-				const sprite = scrollables[i];
-				sprite.onScroll(sprite, shift.x, shift.y);
-			}
 		}
 	}
 

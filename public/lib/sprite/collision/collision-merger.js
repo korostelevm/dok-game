@@ -35,6 +35,7 @@ class CollisionMerger {
 				});
 				blocks[cellType] = blocks[cellType].filter(b => b.sprite.active);
 				if (!didMerge) {
+					console.log("merged after: ", pass);
 					break;
 				}
 			}
@@ -77,7 +78,7 @@ class CollisionMerger {
 //		ArrayUtils.shuffle(this.directions);
 		for (let i = 0; i < this.directions.length; i++) {
 			const D = this.directions[i];
-			if (D === RIGHT && (block.canMerge & HORIZONTAL)) {
+			if (D === RIGHT && (block.canMerge & Constants.HORIZONTAL_MERGE)) {
 				let canMerge = true;
 				let prev = null;
 				for (let r = 0; r < spanrow;) {
@@ -95,7 +96,7 @@ class CollisionMerger {
 					return true;
 				}
 			}
-			if (D === BOTTOM && (block.canMerge & VERTICAL)) {
+			if (D === BOTTOM && (block.canMerge & Constants.VERTICAL_MERGE)) {
 				let canMerge = true;
 				let prev = null;
 				for (let c = 0; c < spancol;) {

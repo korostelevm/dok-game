@@ -8,6 +8,9 @@ class DirectData {
 	}
 
 	async getData(path) {
+		this.canWrite = JSON.parse(await this.fileUtils.load('data/can-write.json'));
+
+
 		if (!this.dataStore[path]) {
 			this.dataStore[path] = (await this.fileUtils.load(`data/${path}`)) || {};
 		}
@@ -15,6 +18,9 @@ class DirectData {
 	}
 
 	didChange(path) {
+		if (!this.canWrite) {
+			return;
+		}
 		clearTimeout(this.timeout);
 		this.pendingSave.add(path);
 		this.timeout = setTimeout(() => this.performSave(),
@@ -22,12 +28,18 @@ class DirectData {
 	}
 
 	performSave() {
+		if (!this.canWrite) {
+			return;
+		}
 		this.save().then(response => {
 			console.info(`Save performed. result: ${JSON.stringify(response)}}`);
 		});
 	}
 
 	async save() {
+		if (!this.canWrite) {
+			return;
+		}
 		const body = {};
 		for (let path of this.pendingSave) {
 			const data = this.dataStore[path];

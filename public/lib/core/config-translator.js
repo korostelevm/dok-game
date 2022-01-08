@@ -66,6 +66,8 @@ class ConfigTranslator {
 					hotspot_bottom: Constants.HOTSPOT_BOTTOM,
 					horizontal_merge: Constants.HORIZONTAL_MERGE,
 					vertical_merge: Constants.VERTICAL_MERGE,
+					full_merge: Constants.FULL_MERGE,
+					debug: this.engine.debug ? 1 : 0,
 				});
 				return value;
 			}

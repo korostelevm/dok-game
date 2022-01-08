@@ -15,7 +15,7 @@ class WorldOfTurtle extends GameBase {
 
 			this.turtle = this.spriteFactory.create({
 				name: "turtle",
-				anim: this.atlas.turtle,
+				anim: "turtle",
 				size: [100, 170],
 				x, y, z: z + 10,
 				spriteType: "sprite",
@@ -24,8 +24,8 @@ class WorldOfTurtle extends GameBase {
 					left: -30, right: 30,
 					top: -50, bottom: 0,
 					close: -50, far: 10,
-					show: true,
 				},
+				showCollisionBox: this.engine.debug,
 			}, {
 				gravity: 1,
 				control: 1,
@@ -147,8 +147,8 @@ class WorldOfTurtle extends GameBase {
 					left: -30, right: 30,
 					top: -60, bottom: 0,
 					close: -40, far: 20,
-					show: true,
 				},
+				showCollisionBox: this.engine.debug,
 				shadow: 1,
 			}, {
 				collide: 1,				
@@ -172,9 +172,5 @@ class WorldOfTurtle extends GameBase {
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
-	}
-
-	refresh(time) {
-		this.applyCamera("normal");
 	}
 }

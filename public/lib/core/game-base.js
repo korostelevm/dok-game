@@ -26,6 +26,7 @@ class GameBase {
 		ChronoUtils.tick();
 		this.gameModel = await engine.fileUtils.load(this.path);
 		this.gameModel = await engine.configTranslator.process(this.gameModel, this);
+		console.log(this.gameModel);
 		ChronoUtils.tick();
 		if (this.gameModel) {
 			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};
@@ -138,18 +139,20 @@ class GameBase {
 
 	applyCamera(camera) {
 		const cameraConfig = this.cameras[camera];
-		const zoom = cameraConfig.zoom;
-		const shift = this.engine.shift;
 		const followed = this[cameraConfig.follow];
 		const position = followed.getRealPosition();
-
-		shift.goal.x = cameraConfig.xOffset - position[0] * 2 + 800;
-		shift.goal.y = cameraConfig.yOffset - position[1] * 2 + 800;
-		shift.goal.z = cameraConfig.zOffset + position[2] * 2 - 500;
+		const zoom = cameraConfig.zoom || 1;
+		const zoom2 = zoom * zoom;
+		const shift = this.engine.shift;
+		shift.goal.x = -position[0] * 2 / zoom2 + (cameraConfig.xOffset || 0) / zoom2;
+		shift.goal.y = -position[1] * 2 / zoom2 + (cameraConfig.yOffset || 0) / zoom2
+		shift.goal.z = +position[2] * 2 / zoom2 + (cameraConfig.zOffset || 0) / zoom2;
 		shift.goal.zoom = zoom;
-		shift.goal.rotation[0] = cameraConfig.rotation[0];
-		shift.goal.rotation[1] = cameraConfig.rotation[1];
-		shift.goal.rotation[2] = cameraConfig.rotation[2];
+		if (cameraConfig.rotation) {
+			shift.goal.rotation[0] = (cameraConfig.rotation[0] || 0);
+			shift.goal.rotation[1] = (cameraConfig.rotation[1] || 0);
+			shift.goal.rotation[2] = (cameraConfig.rotation[2] || 0);
+		}
 		if (typeof(cameraConfig.minX) !== "undefined") {
 			shift.goal.x = Math.max(cameraConfig.minX, shift.goal.x);
 		}
@@ -198,6 +201,7 @@ class GameBase {
 	}
 
 	refresh(time, dt) {
+		this.applyCamera(this.camera);
 	}
 
 	selectDialog(index) {

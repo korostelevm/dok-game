@@ -28,6 +28,7 @@ class Sprite extends Body {
 			console.error("Anim doesn't exist.");
 		}
 
+		this.showCollisionBox = data.showCollisionBox;
 		this.collisionBox = new CollisionBox(this, data.collisionFrame);
 		this.properties = properties || {};
 		this.onChange = {

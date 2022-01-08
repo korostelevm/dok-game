@@ -17,6 +17,7 @@ class TipBox {
 
 		this.imageReplacements = {
 			"[E]": "assets/button_e.png",
+			"[Q]": "assets/button_q.png",
 		};
 		Object.keys(this.imageReplacements).forEach(key => {
 			engine.imageLoader.getBlobUrl(this.imageReplacements[key]).then(src => {
@@ -53,7 +54,10 @@ class TipBox {
 		this.id = id;
 		if (message) {
 			this.div.innerText = "";
-			const splits = message.replaceAll("[E]", "|[E]|").split("|");
+			const splits = message
+				.replaceAll("[E]", "|[E]|")
+				.replaceAll("[Q]", "|[Q]|")
+				.split("|");
 			splits.forEach((section, index) => {
 				if (this.imageReplacements[section]) {
 					const img = this.div.appendChild(document.createElement("img"));

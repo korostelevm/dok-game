@@ -1,6 +1,5 @@
 {
   "templates": ["platformer-physics", "overlay-hud", "platformer-camera"],
-  "className": "Platformer",
   "settings": {
     "windowSize": [900, 500]
   },
@@ -83,6 +82,9 @@
     }
   },
   "atlas": {
+    "collisionBox": {
+      "url": "assets/red-square.png"
+    },
     "backwall": {
       "url": "assets/backwall.jpg"
     },
@@ -231,6 +233,18 @@
           7
         ]
       }
+    },
+    "lazer": {
+      "url": "assets/lazer.png",
+      "collision_url": "assets/lazer.png",
+      "spriteWidth": 16,
+      "spriteHeight": 16,
+      "range": [
+        0,
+        2
+      ],
+      "frameRate": 20,
+      "loopCount": 1
     },
     "hero": {
       "still": {

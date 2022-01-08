@@ -102,6 +102,10 @@ app.get('/ping', (req, res) => {
 	res.send("ping");
 });
 
+app.get('/data/can-write.json', (req, res, next) => {
+	res.json(1);
+});
+
 app.get('/data', (req, res, next) => {
 	const { path } = req.query || {};
 	const folder = `${__dirname}/public/data`;

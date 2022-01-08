@@ -12,7 +12,7 @@
     "zoom": {
       "xOffset": 800,
       "yOffset": 450,
-      "zoom": 1.5,
+      "zoom": 2,
       "follow": "hero"
     }
   }
