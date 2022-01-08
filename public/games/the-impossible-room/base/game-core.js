@@ -1366,7 +1366,6 @@ class GameCore extends GameBase {
 	}
 
 	handleMouse(e) {
-		super.handleMouse(e);
 		if (e.target.id === "im" || e.target.id === "title") {
 			if (this.onMouseTitle) {
 				this.onMouseTitle(e);	

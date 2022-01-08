@@ -323,7 +323,6 @@ class Menu extends GameBase {
 	}
 
 	handleMouse(e) {
-		super.handleMouse(e);
 		if (!this.ready) {
 			return;
 		}

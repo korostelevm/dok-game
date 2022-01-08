@@ -198,7 +198,6 @@ class Selection extends GameBase {
 	}
 
 	handleMouse(e) {
-		super.handleMouse(e);
 		const { engine } = this;
 		const { pageX, pageY, buttons } = e;
 		const { canvas } = engine;

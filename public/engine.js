@@ -554,7 +554,10 @@ class Engine {
 
 		ChronoUtils.tick();
 		ChronoUtils.log();
-		this.setupMouseListeners();
+		if (this.game.handleMouse) {
+			this.setupMouseListeners();
+		}
+		this.setupDragListeners();
 	}
 
 	handleMouse(e) {
@@ -571,12 +574,30 @@ class Engine {
 		document.addEventListener("mouseup", this.handleMouseCallback);
 	}
 
+	setupDragListeners() {
+		if (this.game.onDropOnOverlay) {
+			this.overlay.addEventListener("drop", this.onDropOnOverlay);
+		}
+		if (this.game.onDragOver) {
+			this.overlay.addEventListener("dragover", this.onDragOver);
+		}
+	}
+
 	removeMouseListeners() {
-		document.removeEventListener("click", this.handleMouseCallback);
-		document.removeEventListener("mousedown", this.handleMouseCallback);
-		document.removeEventListener("mousemove", this.handleMouseCallback);
-		document.removeEventListener("mouseup", this.handleMouseCallback);
-		delete this.handleMouseCallback;
+		if (this.handleMouseCallback) {
+			document.removeEventListener("click", this.handleMouseCallback);
+			document.removeEventListener("mousedown", this.handleMouseCallback);
+			document.removeEventListener("mousemove", this.handleMouseCallback);
+			document.removeEventListener("mouseup", this.handleMouseCallback);
+			delete this.handleMouseCallback;
+		}
+	}
+
+	removeDragListeners() {
+		if (this.overlay) {
+			this.overlay.removeEventListener("drop", this.onDropOnOverlay);
+			this.overlay.removeEventListener("dragover", this.onDragOver);
+		}
 	}
 
 	removeKeyboardListeners() {
@@ -632,6 +653,7 @@ class Engine {
 		this.shift.goal.rotation[2] = 0;
 		this.shift.dirty = true;
 		this.removeMouseListeners();
+		this.removeDragListeners();
 		this.removeKeyboardListeners();
 	}
 

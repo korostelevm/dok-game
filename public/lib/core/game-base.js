@@ -197,15 +197,6 @@ class GameBase {
 	async onExit(engine) {
 	}
 
-	handleMouse(e) {
-	}
-
-	onDropOnOverlay(e) {
-	}
-
-	onDragOver(e) {
-	}
-
 	refresh(time, dt) {
 	}
 

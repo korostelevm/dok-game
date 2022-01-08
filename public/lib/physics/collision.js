@@ -103,6 +103,7 @@ class Collision extends PhysicsBase {
 	}
 
 	countCollisionFromMarkers(markers, type) {
+		const bits = 1 << type;
 		for (let i = 0; i < markers.length; i++) {
 			const marker = markers[i];
 			const sprite = marker.sprite;
@@ -110,7 +111,7 @@ class Collision extends PhysicsBase {
 				continue;
 			}
 
-			this.countNewCollisionsWithOpenColliders(sprite, type);
+			this.countNewCollisionsWithOpenColliders(sprite, bits);
 
 			if (marker.topLeftClose) {
 				//	Open the new colliders
@@ -141,8 +142,7 @@ class Collision extends PhysicsBase {
 		}
 	}
 
-	countNewCollisionsWithOpenColliders(sprite, type) {
-		const bits = 1 << type;
+	countNewCollisionsWithOpenColliders(sprite, bits) {
 		const openColliders = this.openColliders;
 		for (let i = 0; i < openColliders.length; i++) {
 			const openCollider = openColliders[i];
