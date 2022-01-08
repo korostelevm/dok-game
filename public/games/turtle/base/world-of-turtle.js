@@ -91,12 +91,13 @@ class WorldOfTurtle extends GameBase {
 					const speed = 200;
 
 					if (!dx && dy) {
-						self.dxMul = 1;
-						self.dyMul = 1.1;
-					} else if (dx && !dy) {
-						self.dxMul = 1.1;
+						self.dxMul = 1.5;
 						self.dyMul = 1;
+					} else if (dx && !dy) {
+						self.dxMul = 1;
+						self.dyMul = 1.5;
 					}
+
 					dx *= self.dxMul;
 					dy *= self.dyMul;
 

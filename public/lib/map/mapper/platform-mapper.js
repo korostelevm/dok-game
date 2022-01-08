@@ -191,6 +191,12 @@ class PlatformMapper extends SpriteMapper {
 						onMotion(self, dx, dy);
 					},
 					onJump: (self) => {
+						if (self.crouch) {
+							self.lastJump = 0;
+							console.log(self.platform);
+							onMotion(self, 0, 0);
+							return;
+						}
 						self.changePosition(self.x, self.y - self.jump, self.z);
 						self.lastJump = self.engine.lastTime;
 						onMotion(self, 0, 0);

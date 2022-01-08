@@ -60,6 +60,9 @@ class CollisionMerger {
 			let expandSize = 0;
 			for (let c = 0; c < spancol;) {
 				const b = grid.cell(col + c, row + spanrow);
+				if (b.ceiling) {
+					block.sprite.ceiling = true;
+				}
 				grid.setCell(col + c, row + spanrow, null);
 				b.changeActive(false);
 				expandSize = b.size[1];
