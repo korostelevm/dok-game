@@ -142,8 +142,8 @@ class FlatLand extends GameBase {
 
 	getInitialShift() {
 		return {
-			x: 0, y: 200, z: 550,
-			rotation: [20, 0, 0],
+			x: 0, y: 0, z: 550,
+			rotation: [0, 0, 0],
 		};
 	}
 

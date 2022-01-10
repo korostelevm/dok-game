@@ -5,6 +5,7 @@ class PlatformMapper extends SpriteMapper {
 	}
 
 	async init(engine) {
+		const LEFT_SUFFIX = "_left";
 		const onMotion = (self, dx, dy) => {
 			const still = dx === 0;
 			const time = self.engine.lastTime;
@@ -22,8 +23,14 @@ class PlatformMapper extends SpriteMapper {
 			if (dx !== 0) {
 				self.dir = dx;
 			}
-			if (self.dir < 0 && this.atlas.hero[animName + "_left"]) {
-				animName += "_left";
+			if (self.dir < 0) {
+				if (this.atlas.hero[animName + LEFT_SUFFIX]) {
+					animName += LEFT_SUFFIX;
+				} else {
+					self.changeDirection(-1);
+				}
+			} else {
+				self.changeDirection(1);				
 			}
 			const anim = this.atlas.hero[animName];
 
@@ -259,6 +266,7 @@ class PlatformMapper extends SpriteMapper {
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
+					canMerge: Constants.VERTICAL_MERGE,
 					collide: 1, ladder: 1, canLand: true,
 				});
 			}),

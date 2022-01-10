@@ -76,6 +76,9 @@
     }
   },
   "atlas": {
+    "collisionBox": {
+      "url": "assets/red-square.png"
+    },
     "backwall": {
       "url": "assets/backwall.jpg"
     },

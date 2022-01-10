@@ -110,6 +110,7 @@ const assetMd5 = {
 	"toilet-exit-collision.png": "d6fc996a9872bca956ae22674362e808",
 	"toilet-room-ground.png": "0f417680b2959540b891f4dd44b93c27",
 	"toilet-room.png": "cf813fd87f6c1d164bfca394b86dbb10",
+	"trash-celebration.png": "36d301c2b80eabf9159f1199ee72da76",
 	"turtle-spritesheet-rescaled.png": "7f0bb65076eb901c0149fc49bcd4f24e",
 	"twin-overlay.png": "ed4099d4f30331bdca8876eba51394fb",
 	"twin-shake.png": "d8806eaf8646fd1689b5e44e638aa85b",

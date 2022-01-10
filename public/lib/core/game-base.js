@@ -26,7 +26,6 @@ class GameBase {
 		ChronoUtils.tick();
 		this.gameModel = await engine.fileUtils.load(this.path);
 		this.gameModel = await engine.configTranslator.process(this.gameModel, this);
-		console.log(this.gameModel);
 		ChronoUtils.tick();
 		if (this.gameModel) {
 			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};
@@ -66,6 +65,7 @@ class GameBase {
 
 				const collisionMerger = new CollisionMerger();
 				collisionMerger.merge(grid, cols, rows);
+				engine.spriteCollection.cleanupInactive();
 			}
 		}
 		this.atlas.empty = await engine.addTexture({
@@ -73,6 +73,7 @@ class GameBase {
 		});
 		const mouseCursor = await engine.imageLoader.getBlobUrl("assets/pointer-cursor.png");
 		this.mouseCursorUrl = `url(${mouseCursor}), auto`;
+		console.log("Total spriteSize: ", engine.spriteCollection.size());
 	}
 
 	addPhysics(physics) {

@@ -63,6 +63,21 @@ class SpriteCollection {
 		}
 	}
 
+	cleanupInactive() {
+		let activeCount = 0;
+		for (let i = 0; i < this.sprites.length; i++) {
+			if (!this.sprites[i].destroyed) {
+				this.sprites[activeCount] = this.sprites[i];
+				this.sprites[activeCount].spriteIndex = activeCount;
+				activeCount++;
+			}
+		}
+		if (this.sprites.length !== activeCount) {
+			console.log("Sprite reduction:", this.sprites.length, "=>", activeCount);
+		}
+		this.sprites.length = activeCount;
+	}
+
 	filterBy(name) {
 		if (this.filtered[name]) {
 			return this.filtered[name];

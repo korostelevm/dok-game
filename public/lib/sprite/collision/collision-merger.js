@@ -35,7 +35,6 @@ class CollisionMerger {
 				});
 				blocks[cellType] = blocks[cellType].filter(b => b.sprite.active);
 				if (!didMerge) {
-					console.log("merged after: ", pass);
 					break;
 				}
 			}
@@ -49,7 +48,7 @@ class CollisionMerger {
 			for (let r = 0; r < spanrow;) {
 				const b = grid.cell(col + spancol, row + r);
 				grid.setCell(col + spancol, row + r, null)
-				b.changeActive(false);
+				b.destroy();
 				expandSize = b.size[0];
 				r += b.size[1] / unitSize[1];
 			}
@@ -64,7 +63,7 @@ class CollisionMerger {
 					block.sprite.ceiling = true;
 				}
 				grid.setCell(col + c, row + spanrow, null);
-				b.changeActive(false);
+				b.destroy();
 				expandSize = b.size[1];
 				c += b.size[0] / unitSize[0];
 			}

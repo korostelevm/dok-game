@@ -113,6 +113,7 @@ const globalFiles=[
 			"toilet-exit-collision.png",
 			"toilet-room-ground.png",
 			"toilet-room.png",
+			"trash-celebration.png",
 			"turtle-spritesheet-rescaled.png",
 			"twin-overlay.png",
 			"twin-shake.png",

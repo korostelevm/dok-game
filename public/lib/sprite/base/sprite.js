@@ -207,6 +207,11 @@ class Sprite extends Body {
 		return false;
 	}
 
+	destroy(time) {
+		this.changeActive(false, time);
+		this.destroyed = true;
+	}
+
 	changeLight(light, time) {
 		if (this.light !== light) {
 			this.light = light;

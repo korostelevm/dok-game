@@ -933,7 +933,9 @@ class Engine {
 			const spriteIndex = sprite.spriteIndex;
 			if (sprite.updated.sprite >= lastTime
 				|| sprite.updated.animation >= lastTime) {
-				const {x, y, z, rotation, size:[width,height], anim:{hotspot:[hotX,hotY]}} = sprite;
+				const {x, y, z, rotation, size:[width,height], anim:{hotspot}} = sprite;
+				const hotX = hotspot[0] || 0;
+				const hotY = hotspot[1] || 0;
 				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation);
 			}
 			if (sprite.updated.animation >= lastTime
