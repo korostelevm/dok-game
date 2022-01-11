@@ -50,7 +50,7 @@ class GameBase {
 				this.gameModel.physics.forEach(physic => {
 					const { id, type, config } = physic;
 					const classObj = nameToClass(type);
-					this[id] = this.addPhysics(new classObj(config));
+					this[id] = this.addPhysics(new classObj(config||{}));
 				});
 			}
 

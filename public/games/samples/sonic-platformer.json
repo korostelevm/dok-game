@@ -1,8 +1,41 @@
 {
   "templates": ["platformer-physics", "platformer-camera"],
   "settings": {
-    "windowSize": [900, 500]
+    "windowSize": [900, 500],
+    "refreshPerFrame": 3
   },
+  "physics": [
+    {
+      "type": "PlatformJump",
+      "id": "jump",
+      "config": {
+        "strength": 3
+      }
+    },
+    {
+      "type": "Control",
+      "id": "control"
+    },
+    {
+      "type": "PlatformGravity",
+      "config": {
+        "gravity": 0.5
+      }
+    },
+    {
+      "type": "Movement",
+      "config": {
+        "speed": 0.5
+      }
+    },
+    {
+      "type": "Collision",
+      "config": {
+        "horizontal":true,
+        "vertical":true
+      }
+    }
+  ],
   "world": {
     "backwall": {
       "anim": "backwall",

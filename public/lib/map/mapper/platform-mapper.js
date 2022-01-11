@@ -200,7 +200,6 @@ class PlatformMapper extends SpriteMapper {
 					onJump: (self) => {
 						if (self.crouch) {
 							self.lastJump = 0;
-							console.log(self.platform);
 							onMotion(self, 0, 0);
 							return;
 						}

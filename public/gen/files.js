@@ -192,8 +192,8 @@ const globalFiles=[
 			},
 			{
 				"samples": [
-					"fighting-platformer.json",
-					"sample-platformer.json"
+					"sample-platformer.json",
+					"sonic-platformer.json"
 				]
 			},
 			{
@@ -295,11 +295,6 @@ const globalFiles=[
 							"peerjs.min.js.map"
 						]
 					}
-				]
-			},
-			{
-				"gametypes": [
-					".DS_Store"
 				]
 			},
 			{

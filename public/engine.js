@@ -35,6 +35,7 @@ class Engine {
 
 		/* Keyboard handler */
 		this.keyboardHandler = new KeyboardHandler(document);
+		this.refreshPerFrame = 1;
 
 		this.sidebars = [
 			{
@@ -272,6 +273,10 @@ class Engine {
 			}
 		});
 		sidebar.style.display = !doHideSidebar && foundSelected ? "flex" : "none";
+	}
+
+	setRefreshPerFrame(value) {
+		this.refreshPerFrame = value;
 	}
 
 	setupEmojiCursors() {
@@ -518,6 +523,11 @@ class Engine {
 		this.resize(viewportWidth, viewportHeight, pixelScale||0);
 	}
 
+	async adjustRefresh(game) {
+		const { refreshPerFrame } = await game.getSettings(this);
+		this.setRefreshPerFrame(refreshPerFrame || 1);
+	}
+
 	async wait(ms) {
 		return new Promise(resolve => {
 			setTimeout(() => resolve(), ms);
@@ -532,7 +542,9 @@ class Engine {
 		localStorage.setItem(game.sceneTag + "-unlocked", new Date().getTime());
 
 		await this.adjustViewportSize(game);
-		await this.adjustWindowSize(game);		
+		await this.adjustWindowSize(game);
+		await this.adjustRefresh(game);
+
 		this.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
 		ChronoUtils.tick();
 		await game.init(this, this.classToGame[game.sceneTag]);
@@ -634,6 +646,7 @@ class Engine {
 		if (this.updater) {
 			this.updater.clear();
 		}
+		this.setRefreshPerFrame(1);
 		this.urlToTextureIndex = {};
 		this.shift.x = 0;
 		this.shift.y = 0;
@@ -779,8 +792,11 @@ class Engine {
 		const frameDuration = 1000 / 60;
 		let frame = 0;
 		const loop = (time) => {
-			frame++;
-			engine.refresh(frame * frameDuration, time);
+			const length = engine.refreshPerFrame;
+			for (let i = 0; i < length; i++) {
+				frame++;
+				engine.refresh(frame * frameDuration, time, i === length - 1);
+			}
 		  	requestAnimationFrame(loop);
 		};
 		loop(0);
@@ -830,7 +846,7 @@ class Engine {
 		}
 	}
 
-	refresh(time, actualTime) {
+	refresh(time, actualTime, render) {
 		const dt = time - this.lastTime;
 		if (!this.focusFixer.focused) {
 			this.lastTime = time;
@@ -856,7 +872,9 @@ class Engine {
 		this.handleOnRefreshes(time, dt, actualTime);
 		this.handleViewUpdate(time, this.shaders[0]);
 		this.handleSpriteUpdate(this.lastTime);
-		this.render(time, dt);
+		if (render) {
+			this.render(time, dt);
+		}
 		this.lastTime = time;
 	}
 

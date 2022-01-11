@@ -1,4 +1,9 @@
 class Movement extends PhysicsBase {
+	constructor({speed}) {
+		super();
+		this.speed = speed || 1;
+	}
+
 	async init(sprites) {
 		this.sprites = sprites.filter(({movement}) => movement);
 		this.sprites.forEach(sprite => {
@@ -10,8 +15,8 @@ class Movement extends PhysicsBase {
 	refresh(time, dt) {
 		this.sprites.forEach(sprite => {
 			const maxBottom = 440;
-			const px = Math.max(-30, sprite.x + sprite.dx * sprite.movement);
-			const py = Math.min(maxBottom, sprite.y + sprite.dy * sprite.movement);
+			const px = Math.max(-30, sprite.x + sprite.dx * sprite.movement * this.speed);
+			const py = Math.min(maxBottom, sprite.y + sprite.dy * sprite.movement * this.speed);
 			if (py >= maxBottom) {
 				sprite.rest = time;
 				if (sprite.platform && sprite.platform.onPlatform) {
