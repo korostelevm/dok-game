@@ -853,8 +853,6 @@ class Engine {
 		}
 
 		const game = this.game;
-		const {viewport: {size: [viewportWidth, viewportHeight]}} = this.config;
-
 		if (game && game.ready) {
 			if (game.paused) {
 				return;
@@ -869,15 +867,15 @@ class Engine {
 			this.handleFrames(time);
 		}
 		this.handleOnRefreshes(time, dt, actualTime);
-		this.handleViewUpdate(time, this.shaders[0]);
-		this.handleSpriteUpdate(this.lastTime);
+		this.handleViewUpdate(time, this.shaders[0], render);
+		this.handleSpriteUpdate(this.updater, this.lastTime);
 		if (render) {
 			this.render(time, dt);
 		}
 		this.lastTime = time;
 	}
 
-	handleViewUpdate(time, shader) {
+	handleViewUpdate(time, shader, render) {
 		let shiftChanged = false;
 		const shift = this.shift;
 		if (shift.x !== shift.goal.x
@@ -924,29 +922,31 @@ class Engine {
 			shiftChanged = true;
 		}
 
-		if (shiftChanged || shakeX || shakeY) {
-			const gl = this.gl;
-			mat4.identity(this.viewMatrix);
-			const coef = shift.zoom;
-			const coef2 = coef * coef;
-			mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
-			mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
-			mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
-			mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
-			mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
-			gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-			gl.uniform1f(uniforms.globalLight.location, shift.light);
+		if (render) {
+			if (shiftChanged || shakeX || shakeY) {
+				const gl = this.gl;
+				mat4.identity(this.viewMatrix);
+				const coef = shift.zoom;
+				const coef2 = coef * coef;
+				mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
+				mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
+				mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
+				mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
+				mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
+				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
+				gl.uniform1f(uniforms.globalLight.location, shift.light);
 
-			mat4.identity(this.viewMatrix);
-			mat4.rotateX(this.viewMatrix, this.viewMatrix, -shift.rotation[0] / 180 * Math.PI);
-			mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] / 180 * Math.PI);
-			mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] / 180 * Math.PI);
-			gl.uniformMatrix4fv(uniforms.spriteMatrix.location, false, this.viewMatrix);
+				mat4.identity(this.viewMatrix);
+				mat4.rotateX(this.viewMatrix, this.viewMatrix, -shift.rotation[0] / 180 * Math.PI);
+				mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] / 180 * Math.PI);
+				mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] / 180 * Math.PI);
+				gl.uniformMatrix4fv(uniforms.spriteMatrix.location, false, this.viewMatrix);
+			}
 		}
 	}
 
-	handleSpriteUpdate(lastTime) {
-		this.updater.forEach(sprite => {
+	handleSpriteUpdate(updater, lastTime) {
+		updater.forEach(sprite => {
 			const spriteIndex = sprite.spriteIndex;
 			if (sprite.updated.sprite >= lastTime
 				|| sprite.updated.animation >= lastTime) {
@@ -976,7 +976,7 @@ class Engine {
 				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
 			}
 		});
-		this.updater.clear();	
+		updater.clear();
 	}
 
 	render(time, dt) {
