@@ -36,7 +36,7 @@ class ConfigTranslator {
 		return translatedData;
 	}
 
-	async translate(data, game) {
+	async translate(data, game, index) {
 		if (!data) {
 			return data;
 		} else if (Array.isArray(data)) {
@@ -44,6 +44,11 @@ class ConfigTranslator {
 		} else if (typeof(data) === "object") {
 			if (data.IGNORE) {
 				return null;
+			}
+			if (data.repeat && (typeof index === "undefined")) {
+				return Promise.all(
+					new Array(data.repeat).fill(null)
+					.map((_, index) => this.translate(data, game, index)));
 			}
 			const translatedData = {};
 
@@ -68,6 +73,8 @@ class ConfigTranslator {
 					vertical_merge: Constants.VERTICAL_MERGE,
 					full_merge: Constants.FULL_MERGE,
 					debug: this.engine.debug ? 1 : 0,
+					index,
+					random: Math.random(),
 				});
 				return value;
 			}

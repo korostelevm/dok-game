@@ -1,0 +1,56 @@
+{
+  "settings": {
+    "viewportSize": [800, 600],
+    "clamp": {
+    	"left": -1000,
+    	"right": 1000
+    }
+  },
+  "world": {
+    "star0": {
+   	  "repeat": 300,
+      "anim": "debugBlockHighlight",
+      "size": [
+        "8",
+        "8"
+      ],
+      "motion": [-10,0,0],
+      "x": "{(random - .5) * viewportWidth * 2}",
+      "y": "{(random - .5) * viewportHeight * 2}"
+    },
+    "star1": {
+   	  "repeat": 100,
+      "anim": "debugBlockHighlight",
+      "size": [
+        "12",
+        "12"
+      ],
+      "motion": [-100,0,0],
+      "x": "{(random - .5) * viewportWidth * 2}",
+      "y": "{(random - .5) * viewportHeight * 2}"
+    },
+    "star2": {
+   	  "repeat": 50,
+      "anim": "debugBlockHighlight",
+      "size": [
+        "15",
+        "15"
+      ],
+      "motion": [-200,0,0],
+      "x": "{(random - .5) * viewportWidth * 2}",
+      "y": "{(random - .5) * viewportHeight * 2}"
+    }
+  },
+  "atlas": {
+    "debugBlockHighlight": {
+      "url": "assets/debug-block.png",
+      "collision_url": "assets/debug-block.png",
+      "hotspot": "{hotspot_center}",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [
+        1
+      ]
+    }
+  }
+}

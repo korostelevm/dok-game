@@ -2,7 +2,7 @@
   "templates": ["platformer-physics", "platformer-camera"],
   "settings": {
     "windowSize": [900, 500],
-    "refreshPerFrame": 3
+    "refreshPerFrame": 2
   },
   "physics": [
     {

@@ -193,7 +193,8 @@ const globalFiles=[
 			{
 				"samples": [
 					"sample-platformer.json",
-					"sonic-platformer.json"
+					"sonic-platformer.json",
+					"space-shooter.json"
 				]
 			},
 			{

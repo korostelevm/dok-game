@@ -4,6 +4,7 @@ class GameBase {
 		this.physics = [];
 		this.audio = {};
 		this.atlas = {};
+		this.cameras = {};
 	}
 
 	async init(engine, gameName) {
@@ -30,7 +31,7 @@ class GameBase {
 		if (this.gameModel) {
 			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};
 			ChronoUtils.tick();
-			this.cameras = this.gameModel.cameras;
+			this.cameras = this.gameModel.cameras || {};
 			for (let id in this.cameras) {
 				if (this.cameras[id].default || !this.camera) {
 					this.camera = id;
@@ -43,7 +44,7 @@ class GameBase {
 			}
 
 			for (let id in this.gameModel.world) {
-				this[id] = this.spriteFactory.create(this.gameModel.world[id]);
+				this.addToWorld(this.gameModel.world[id], id);
 			}
 
 			if (this.gameModel.physics) {
@@ -67,6 +68,11 @@ class GameBase {
 				collisionMerger.merge(grid, cols, rows);
 				engine.spriteCollection.cleanupInactive();
 			}
+
+			if (this.gameModel?.settings?.clamp) {
+				const { left, right, top, bottom, close, far } = this.gameModel.settings.clamp;
+				this.engine.setClamp(left || 0, right || 0, top || 0, bottom || 0, close || 0, far || 0);
+			}
 		}
 		this.atlas.empty = await engine.addTexture({
 			spriteWidth: 0, spriteHeight: 0,
@@ -74,6 +80,14 @@ class GameBase {
 		const mouseCursor = await engine.imageLoader.getBlobUrl("assets/pointer-cursor.png");
 		this.mouseCursorUrl = `url(${mouseCursor}), auto`;
 		console.log("Total spriteSize: ", engine.spriteCollection.size());
+	}
+
+	addToWorld(item, id) {
+		if (Array.isArray(item)) {
+			item.forEach((it, i) => this.addToWorld(it, `${id}_${i}`));
+		} else {
+			this[id] = this.spriteFactory.create(item);
+		}
 	}
 
 	addPhysics(physics) {
@@ -140,8 +154,11 @@ class GameBase {
 
 	applyCamera(camera) {
 		const cameraConfig = this.cameras[camera];
+		if (!cameraConfig) {
+			return;
+		}
 		const followed = this[cameraConfig.follow];
-		const position = followed.getRealPosition();
+		const position = followed?.getRealPosition() || Constants.EMPTY_POSITION;
 		const zoom = cameraConfig.zoom || 1;
 		const zoom2 = zoom * zoom;
 		const shift = this.engine.shift;

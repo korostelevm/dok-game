@@ -723,7 +723,6 @@ class Engine {
 
 	setPerspective(perspective) {
 		if (this.isPerspective !== perspective) {
-			console.log("Perspective:", perspective);
 			this.isPerspective = perspective;
 
 			new ValueRefresher(this, {

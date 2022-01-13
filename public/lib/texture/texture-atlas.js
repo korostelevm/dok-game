@@ -243,7 +243,7 @@ class TextureAtlas {
 	}
 
 	static async makeAtlases(engine, atlasConfig) {
-		const flattened = TextureAtlas.flattenAtlases(atlasConfig, [], []);
+		const flattened = TextureAtlas.flattenAtlases(atlasConfig || {}, [], []);
 		const atlases = await Promise.all(flattened.map(config => engine.addTexture(config)));
 		const atlas = {};
 		atlases.forEach(textureAtlas => {

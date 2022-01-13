@@ -19,6 +19,9 @@ class SpriteCollection {
 		for (let i = 0; i < idSplit.length; i++) {
 			root = root[idSplit[i]];
 		}
+		if (!root) {
+			console.warn("Anim doesn't exist: ", anim);
+		}
 		return root;
 	}
 
