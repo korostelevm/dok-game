@@ -1,6 +1,6 @@
 {
 	"className": "WorldOfTurtle",
-	"templates": ["overworld-physics", "overworld-camera"],
+	"templates": ["/templates/overworld-physics", "/templates/overworld-camera"],
 	"settings": {
 		"windowSize": [1000, 700],
 		"pixelScale": 0,
@@ -74,62 +74,46 @@
 			"hotspot": "{hotspot_center}"
 		},
 		"turtle": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[6],
-			"frameRate": 10,
-			"hotspot": [0.5, 0.90]
+			"frameRate": 10
 		},
 		"turtle_run": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[16, 23],
-			"frameRate": 24,
-			"hotspot": [0.5, 0.96]
+			"frameRate": 24
 		},
 		"turtle_run_up": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[71, 79],
-			"frameRate": 24,
-			"hotspot": [0.5, 0.96]
+			"frameRate": 24
 		},
 		"turtle_run_down": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[61, 70],
-			"frameRate": 24,
-			"hotspot": [0.5, 0.96]
+			"frameRate": 24
 		},
 		"turtle_jump": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[32, 40],
-			"frameRate": 15,
-			"hotspot": [0.5, 0.96]
+			"frameRate": 15
 		},
 		"turtle_jump_up": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[44, 51],
-			"frameRate": 15,
-			"hotspot": [0.5, 0.96]
+			"frameRate": 15
 		},
 		"turtle_jump_down": {
-			"url": "assets/turtle-spritesheet-rescaled.png",
-			"spriteWidth": 238, "spriteHeight": 409,
+			"template": "templates/turtle-sprite-sheet",
 			"range":[52, 59],
-			"frameRate": 15,
-			"hotspot": [0.5, 0.96]
+			"frameRate": 15
 		},
 		"peng": {
 			"url": "assets/peng-spritesheet-rescaled.png",
 			"spriteWidth": 349, "spriteHeight": 409,
 			"range":[0],
 			"hotspot": [0.4, 0.8]
-		}
-
-		,
+		},
     "debugBlock": {
       "url": "assets/debug-block.png",
       "collision_url": "assets/debug-block.png",

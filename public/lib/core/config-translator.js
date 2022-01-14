@@ -4,7 +4,7 @@ class ConfigTranslator {
 	}
 
 	async process(data, game) {
-		return this.translate(await this.applyTemplates(data), game);
+		return this.translate(await this.applyTemplates(data, game.path), game);
 	}
 
 	merge(data, newData) {
@@ -21,18 +21,32 @@ class ConfigTranslator {
 		return data;
 	}
 
-	async applyTemplates(data) {
-		if (!data) {
+	fixPath(path, gamePath) {
+		if (path.startsWith("/")) {
+			return path;
+		}
+		const gameDir = gamePath.split("/").slice(0, -1).join("/");
+		return `${gameDir}/${path}`;
+	}
+
+	async applyTemplates(data, gamePath) {
+		if (!data || typeof(data) !== "object" || Array.isArray(data)) {
 			return data;
 		}
 		const translatedData = {};
-		if (data.templates) {
-			const templates = await Promise.all(data.templates.map(path => this.engine.fileUtils.load(`templates/${path}.json`)));
-			templates.forEach(template => {
+		if (data.templates || data.template) {
+			const allTemplates = (data.templates||[]).concat(data.template ? [data.template] : []);
+			const templateObjects = await Promise.all(allTemplates.map(path => this.engine.fileUtils.load(`${this.fixPath(path, gamePath)}.json`)));
+			templateObjects.forEach(template => {
 				this.merge(translatedData, template);
 			});
 		}
 		this.merge(translatedData, data);
+
+		for (let a in translatedData) {
+			translatedData[a] = await this.applyTemplates(translatedData[a], gamePath);
+		}
+
 		return translatedData;
 	}
 
@@ -53,7 +67,7 @@ class ConfigTranslator {
 			const translatedData = {};
 
 			for (let a in data) {
-				if (a !== "templates") {
+				if (a !== "templates" && a !== "template") {
 					translatedData[a] = await this.translate(data[a], game);
 				}
 			}

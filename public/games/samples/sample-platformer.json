@@ -1,5 +1,5 @@
 {
-  "templates": ["platformer-physics", "overlay-hud", "platformer-camera"],
+  "templates": ["/templates/platformer-physics", "/templates/overlay-hud", "/templates/platformer-camera"],
   "settings": {
     "windowSize": [900, 500]
   },
@@ -328,6 +328,29 @@
         ]
       },
       "climb_still": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 8,
+        "range": [
+          28
+        ]
+      },
+      "climb_left": {
+        "url": "assets/cosmo.png",
+        "collision_url": "assets/cosmo-collision.png",
+        "hotspot": "{hotspot_bottom}",
+        "spriteWidth": 64,
+        "spriteHeight": 64,
+        "frameRate": 8,
+        "range": [
+          28,
+          31
+        ]
+      },
+      "climb_still_left": {
         "url": "assets/cosmo.png",
         "collision_url": "assets/cosmo-collision.png",
         "hotspot": "{hotspot_bottom}",

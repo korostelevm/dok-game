@@ -240,7 +240,9 @@ const globalFiles=[
 						]
 					},
 					{
-						"templates": []
+						"templates": [
+							"turtle-sprite-sheet.json"
+						]
 					},
 					"world-of-turtle.json"
 				]

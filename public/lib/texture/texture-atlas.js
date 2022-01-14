@@ -236,9 +236,13 @@ class TextureAtlas {
 			array.push({id: path.join("."), ...object});
 			return array;
 		}
-		Object.keys(object).forEach(id => {
-			TextureAtlas.flattenAtlases(object[id], path.concat(id), array);
-		});
+		if (typeof(object) === "object") {
+			Object.keys(object).forEach(id => {
+				TextureAtlas.flattenAtlases(object[id], path.concat(id), array);
+			});
+		} else {
+			console.warn("What is object? => ", object)
+		}
 		return array;
 	}
 
