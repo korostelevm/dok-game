@@ -9,6 +9,7 @@ const md5File 	= require('md5-file');
 const getPixels = require("get-pixels");
 const NwBuilder = require('nw-builder');
 const bodyParser = require('body-parser');
+const stringify = require("json-stringify-pretty-compact");
 
 const PORT = 3000;
  
@@ -25,7 +26,7 @@ app.get('/', (req, res, next) => {
 		generateData(),
 		listFiles(`${__dirname}/public`, "")
 			.then(data => {
-				return fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${JSON.stringify(data,null,'\t')};`)
+				return fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${stringify(data,null,'\t')};`)
 					.then(() => data);
 			})
 			.then(data => {
@@ -65,8 +66,8 @@ app.get('/', (req, res, next) => {
 					.catch(console.warn)
 					.then(() => {
 						return Promise.all([
-							fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, JSON.stringify(map,null,'\t')),
-							fs.promises.writeFile(`${__dirname}/public/gen/asset-md5.js`, `const assetMd5 = ${JSON.stringify(map,null,'\t')}`),
+							fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, stringify(map,null,'\t')),
+							fs.promises.writeFile(`${__dirname}/public/gen/asset-md5.js`, `const assetMd5 = ${stringify(map,null,'\t')}`),
 						]);
 					});
 			}),
@@ -142,7 +143,7 @@ app.get('/data', (req, res, next) => {
 app.post('/data', bodyParser.json(), function(req, res, next) {
     const body = req.body;
     for (let path in body) {
-    	fs.writeFileSync(`${__dirname}/public/data/${path}`, JSON.stringify(body[path], null, "  "));
+    	fs.writeFileSync(`${__dirname}/public/data/${path}`, stringify(body[path], null, "  "));
     }
 	res.json({success: true, updates: Object.keys(body).length});
 });
@@ -195,7 +196,7 @@ function generateData() {
 			}));
 		})
 		.then(dataChunks => Object.fromEntries(dataChunks))
-		.then(data => fs.promises.writeFile(`${__dirname}/public/gen/data.js`, `const globalData=${JSON.stringify(data,null,'\t')};`));
+		.then(data => fs.promises.writeFile(`${__dirname}/public/gen/data.js`, `const globalData=${stringify(data,null,'\t')};`));
 }
 
 function listFiles(root, path) {
