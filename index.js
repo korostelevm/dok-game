@@ -243,10 +243,16 @@ function zipPublic(source, out) {
 }
 
 function compareDependencies(a, b) {
-	const isGenA = a.indexOf("/gen/") >= 0;
-	const isGenB = b.indexOf("/gen/") >= 0;
+	const isGenA = a.indexOf("gen/") >= 0;
+	const isGenB = b.indexOf("gen/") >= 0;
 	if (isGenA !== isGenB) {
 		return isGenA ? -1 : 1;
+	}
+
+	const isExternalA = a.indexOf("/external/") >= 0;
+	const isExternalB = b.indexOf("/external/") >= 0;
+	if (isExternalA !== isExternalB) {
+		return isExternalA ? -1 : 1;
 	}
 
 	const isCoreA = a.indexOf("/core/") >= 0;

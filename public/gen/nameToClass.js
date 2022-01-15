@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["SpriteCollection"] = SpriteCollection;		// lib/sprite/sprite-collection.js
   NAME_TO_CLASS["SpriteFactory"] = SpriteFactory;		// lib/sprite/sprite-factory.js
   NAME_TO_CLASS["CollisionBoxCalculator"] = CollisionBoxCalculator;		// lib/texture/collision-box-calculator.js
-  NAME_TO_CLASS["ImageLoader"] = ImageLoader;		// lib/texture/image-loader.js
   NAME_TO_CLASS["TextureAtlas"] = TextureAtlas;		// lib/texture/texture-atlas.js
   NAME_TO_CLASS["TextureManager"] = TextureManager;		// lib/texture/texture-manager.js
   NAME_TO_CLASS["DragDrop"] = DragDrop;		// lib/ui/drag-drop.js
@@ -83,10 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["TipBox"] = TipBox;		// lib/ui/tip-box.js
   NAME_TO_CLASS["ArrayUtils"] = ArrayUtils;		// lib/utils/array-utils.js
   NAME_TO_CLASS["Constants"] = Constants;		// lib/utils/constants.js
-  NAME_TO_CLASS["FileUtils"] = FileUtils;		// lib/utils/file-utils.js
   NAME_TO_CLASS["RandomUtils"] = RandomUtils;		// lib/utils/random-utils.js
   NAME_TO_CLASS["String"] = String;		// lib/utils/string.js
   NAME_TO_CLASS["ValueRefresher"] = ValueRefresher;		// lib/utils/value-refresher.js
-  NAME_TO_CLASS["DokLib"] = DokLib;		// lib/dok-lib.js
 });
 function nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }

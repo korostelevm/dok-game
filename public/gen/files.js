@@ -235,10 +235,10 @@ const globalFiles=[
       ".DS_Store",
       {"core": [".DS_Store", "config-translator.js", "game-base.js"]},
       {"data": ["direct-data.js"]},
-      "dok-lib.js",
       {
         "external": [
           ".DS_Store",
+          "dok-lib.js",
           {"math": [".DS_Store", "gl-matrix-min.js", "gl-matrix.js"]},
           {"newgrounds": ["newgroundsio.min.js", "newgroundsio.min.js.map"]},
           {"peerjs": ["peerjs.min.js", "peerjs.min.js.map"]}
@@ -305,7 +305,6 @@ const globalFiles=[
       {
         "texture": [
           "collision-box-calculator.js",
-          "image-loader.js",
           "texture-atlas.js",
           "texture-manager.js"
         ]
@@ -328,7 +327,6 @@ const globalFiles=[
           "array-utils.js",
           "chrono-utils-self-load.js",
           "constants.js",
-          "file-utils.js",
           "random-utils.js",
           "string.js",
           "value-refresher.js"
