@@ -2,3 +2,4 @@ dok-game.app/Contents
 cache
 build
 game.zip
+package-lock.json

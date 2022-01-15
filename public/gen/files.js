@@ -220,27 +220,29 @@ const globalFiles=[
       }
     ]
   },
-  {"gen": ["asset-md5.js", "data.js", "files.js", "nameToClass.js"]},
+  {
+    "gen": [
+      "asset-md5.js",
+      "compact.js",
+      "compact.js.tmp-browserify-18998859773326137734",
+      "data.js",
+      "files.js",
+      "nameToClass.js"
+    ]
+  },
   "index.html",
   {
     "lib": [
       ".DS_Store",
       {"core": [".DS_Store", "config-translator.js", "game-base.js"]},
       {"data": ["direct-data.js"]},
+      "dok-lib.js",
       {
         "external": [
           ".DS_Store",
-          {
-            "math": [
-              ".DS_Store",
-              "gl-matrix-min.js",
-              "gl-matrix.js",
-              "math.js",
-              "math.js.map"
-            ]
-          },
+          {"math": [".DS_Store", "gl-matrix-min.js", "gl-matrix.js"]},
           {"newgrounds": ["newgroundsio.min.js", "newgroundsio.min.js.map"]},
-          {"peerjs": [".DS_Store", "peerjs.min.js", "peerjs.min.js.map"]}
+          {"peerjs": ["peerjs.min.js", "peerjs.min.js.map"]}
         ]
       },
       {"lang": ["translate-voice.js"]},
@@ -345,6 +347,5 @@ const globalFiles=[
       "platformer-camera.json",
       "platformer-physics.json"
     ]
-  },
-  {"video": []}
+  }
 ];

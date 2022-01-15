@@ -6,7 +6,6 @@ const url 		= require('url');
 const path 		= require('path');
 const archiver 	= require('archiver');
 const md5File 	= require('md5-file');
-const getPixels = require("get-pixels");
 const NwBuilder = require('nw-builder');
 const bodyParser = require('body-parser');
 const stringify = require("json-stringify-pretty-compact");
@@ -52,15 +51,6 @@ app.get('/', (req, res, next) => {
 						}
 						assetsToUpdate.forEach(asset => {
 							console.log(`${asset} needs to update its data.`);
-// 							const path = `${__dirname}/public/assets/${asset}`;
-// 							getPixels(path, (err, pixels) => {
-// 							  if(err) {
-// 							    console.log("Bad image path")
-// 							    return
-// 							  }
-// 							  const [ width, height, byteSize ] = pixels.shape.slice();
-// //							  console.log("pixels:", pixels.data);
-// 							});
 						});
 					})
 					.catch(console.warn)
@@ -270,10 +260,6 @@ function compareDependencies(a, b) {
 		return pathCountB - pathCountA;
 	}
 	return a.localeCompare(b);
-}
-
-function getPixelsPromise(path) {
-
 }
 
 const server = app.listen(PORT, () => {

@@ -87,5 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["RandomUtils"] = RandomUtils;		// lib/utils/random-utils.js
   NAME_TO_CLASS["String"] = String;		// lib/utils/string.js
   NAME_TO_CLASS["ValueRefresher"] = ValueRefresher;		// lib/utils/value-refresher.js
+  NAME_TO_CLASS["DokLib"] = DokLib;		// lib/dok-lib.js
 });
 function nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }
