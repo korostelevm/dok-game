@@ -6,7 +6,9 @@
     "node": "16.x"
   },
   "scripts": {
-    "start": "npm run browserify && node index.js",
+    "install-if-needed": "if [ package.json -nt node_modules ]; then npm install && npm run browserify && touch node_modules; fi",
+    "prestart": "npm run install-if-needed",
+    "start": "node index.js",
     "browserify": "browserify browserify/main.js -s dok-lib -o public/gen/compact.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
