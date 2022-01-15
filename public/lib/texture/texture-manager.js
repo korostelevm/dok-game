@@ -8,6 +8,7 @@ class TextureManager {
 		this.maxTextureIndex = 0;
 		this.textureCache = {};
 		this.nextTextureIndex = 0;
+		this.canvas = document.createElement("canvas");
 
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
 		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {

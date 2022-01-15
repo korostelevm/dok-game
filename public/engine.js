@@ -14,7 +14,12 @@ class Engine {
 
 
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
-		this.imageLoader = new ImageLoader();
+		this.imageLoader = new ImageLoader({
+			"assets/mouse-cursor.png": true,
+			"assets/pointer-cursor.png": true,
+			"assets/button_e.png": true,
+			"assets/button_q.png": true,
+		});
 		this.uiComponents = [];
 
 		if (this.debug) {

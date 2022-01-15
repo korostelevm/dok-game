@@ -224,7 +224,6 @@ const globalFiles=[
     "gen": [
       "asset-md5.js",
       "compact.js",
-      "compact.js.tmp-browserify-18998859773326137734",
       "data.js",
       "files.js",
       "nameToClass.js"

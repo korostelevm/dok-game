@@ -22,10 +22,11 @@ class TextureAtlas {
 		]);
 		this.shortVec4 = new Uint16Array(4);
 		this.floatVec4 = new Float32Array(4);
+		this.canvas = textureManager.canvas;
 	}
 
 	textureMix(image, texture, texture_alpha, texture_blend) {
-		const canvas = this.imageLoader.canvas;
+		const canvas = this.canvas;
 		const context = canvas.getContext("2d");
 		if (canvas !== image) {
 			this.getCanvasImage(image, canvas);
@@ -61,7 +62,7 @@ class TextureAtlas {
 		const { spriteWidth, spriteHeight } = this;
 		const col = frame % this.cols;
 		const row = Math.floor(frame / this.cols);
-		const canvas = this.imageLoader.canvas;
+		const canvas = this.canvas;
 		canvas.width = spriteWidth;
 		canvas.height = spriteHeight;
 
@@ -104,8 +105,8 @@ class TextureAtlas {
 		this.hotspot = hotspot || [0, 0];
 
 
-		this.imageLoader.canvas.width = 0;
-		this.imageLoader.canvas.height = 0;
+		this.canvas.width = 0;
+		this.canvas.height = 0;
 		return this;
 	}
 
