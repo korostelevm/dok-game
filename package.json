@@ -23,7 +23,6 @@
   "homepage": "https://github.com/jacklehamster/dok-game#readme",
   "dependencies": {
     "archiver": "^5.2.0",
-    "browserify": "^17.0.0",
     "colors": "^1.4.0",
     "config-template-merger": "^1.0.9",
     "direct-data": "^1.0.5",
@@ -36,5 +35,8 @@
     "minify-all": "^1.2.2",
     "nw-builder": "^3.5.7",
     "uglify-js": "^3.14.5"
+  },
+  "devDependencies": {
+    "browserify": "^17.0.0"
   }
 }
