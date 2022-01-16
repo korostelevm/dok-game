@@ -39,15 +39,7 @@ class Sprite extends Body {
 
 		this.updated = {
 			... this.updated,
-			sprite: time,
-			spriteSheet: time,
 			animation: time,
-			updateTime: time,
-			direction: time,
-			opacity: time,
-			acceleration: time,
-			light: time,
-			spriteType: time,
 		};
 		this.engine.updater.add(this);
 
@@ -108,7 +100,7 @@ class Sprite extends Body {
 
 	changePosition(x, y, z, time, skipRecalculate) {
 		if (super.changePosition(x, y, z, time, skipRecalculate)) {
-			this.updated.sprite = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			this.collisionBox.dirty = true;
 			this.needUpdate();			
 			return true;
@@ -116,11 +108,11 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeSize(width, height, time) {
+	changeSize(width, height) {
 		if (this.size[0] !== width || this.size[1] !== height) {
 			this.size[0] = width;
 			this.size[1] = height;
-			this.updated.sprite = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			return true;
@@ -128,12 +120,12 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeRotation(rotX, rotY, rotZ, time) {
+	changeRotation(rotX, rotY, rotZ) {
 		if (this.rotation[0] !== rotX || this.rotation[1] !== rotY || this.rotation[2] !== rotZ) {
 			this.rotation[0] = rotX;
 			this.rotation[1] = rotY;
 			this.rotation[2] = rotZ;
-			this.updated.sprite = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			return true;
@@ -141,45 +133,45 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeOpacity(opacity, time) {
+	changeOpacity(opacity) {
 		if (this.opacity !== opacity) {
 			this.opacity = opacity;
-			this.updated.opacity = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.OPACITY;
 			this.needUpdate();
 			return true;
 		}
 		return false;
 	}
 
-	changeDirection(direction, time) {
+	changeDirection(direction) {
 		if (this.direction !== direction) {
 			this.direction = direction;
-			this.updated.direction = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.DIRECTION;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			if (this.shadow) {
-				this.shadow.changeDirection(direction, time);
+				this.shadow.changeDirection(direction);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	changeYDirection(direction, time) {
+	changeYDirection(direction) {
 		if (this.ydirection !== direction) {
 			this.ydirection = direction;
-			this.updated.direction = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.DIRECTION;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			if (this.shadow) {
-				this.shadow.changeYDirection(direction, time);
+				this.shadow.changeYDirection(direction);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	changeAnimation(anim, time, updateTime) {
+	changeAnimation(anim, time) {
 		if (this.anim !== anim) {
 			if (!anim) {
 				console.warn("anim is null.");
@@ -187,19 +179,19 @@ class Sprite extends Body {
 			}
 			this.anim = anim;
 			this.updated.animation = time || this.engine.lastTime;
-			this.updated.updateTime = updateTime || time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			if (this.shadow) {
-				this.shadow.changeAnimation(anim, time, updateTime);
+				this.shadow.changeAnimation(anim, time);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	changeActive(value, time) {
-		if (super.changeActive(value, time)) {
+	changeActive(value) {
+		if (super.changeActive(value)) {
 			this.needUpdate();
 			this.collisionBox.dirty = true;
 			return true;
@@ -207,15 +199,15 @@ class Sprite extends Body {
 		return false;
 	}
 
-	destroy(time) {
-		this.changeActive(false, time);
+	destroy() {
+		this.changeActive(false);
 		this.destroyed = true;
 	}
 
-	changeLight(light, time) {
+	changeLight(light) {
 		if (this.light !== light) {
 			this.light = light;
-			this.updated.light = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.LIGHT;
 			this.needUpdate();
 			return true;
 		}
@@ -231,8 +223,8 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeAcceleration(ax, ay, az, time) {
-		if (super.changeAcceleration(ax, ay, az, time)) {
+	changeAcceleration(ax, ay, az) {
+		if (super.changeAcceleration(ax, ay, az)) {
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			return true;			
@@ -240,16 +232,17 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeAnimationTime(animationTime, time) {
-		this.updated.updateTime = time || this.engine.lastTime;
+	changeAnimationTime(animationTime) {
 		this.updated.animation = animationTime;		
+		this.updateFlag |= Constants.UPDATE_FLAG.UPDATE_TIME;
+		this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
 	}
 
-	changeSpriteType(spriteType, time) {
+	changeSpriteType(spriteType) {
 		const actualSpriteType = Constants.SPRITE_TYPES[spriteType] || spriteType;
 		if (this.spriteType !== actualSpriteType) {
 			this.spriteType = actualSpriteType;
-			this.updated.spriteType = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE_TYPE;
 			this.needUpdate();
 			return true;
 		}
@@ -269,7 +262,8 @@ class Sprite extends Body {
 	resetAnimation(time) {
 		const t = time || this.engine.lastTime;
 		this.updated.animation = t;
-		this.updated.updateTime = t;
+		this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
+		this.updateFlag |= Constants.UPDATE_FLAG.UPDATE_TIME;
 	}
 
 	getCenterX(time) {

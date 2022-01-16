@@ -12,10 +12,10 @@ class Body {
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
 		this.updated = {
 			motion: time,
-			active: time,
 			positionCache: 0,
 			motionCache: 0,
 		};
+		this.updateFlag = 0xFFFFFFFF;
 		this.followers = new Set();
 		this.canRecalculatePosition = false;
 		this.canRecalculateMotion = false;
@@ -53,6 +53,7 @@ class Body {
 
 	onMotionChanged(time) {
 		this.updated.motion = time;
+		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
 		this.followers.forEach(follower => follower.followMotion(time));
 		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
 	}
@@ -83,6 +84,7 @@ class Body {
 
 	onAccelerationChanged(time) {
 		this.updated.motion = time;
+		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
 		this.followers.forEach(follower => follower.followAcceleration(time));
 		this.canRecalculateMotion = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
 		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
@@ -99,10 +101,10 @@ class Body {
 			time);
 	}
 
-	changeActive(value, time) {
+	changeActive(value) {
 		if (this.active !== value) {
 			this.active = value;
-			this.updated.active = time || this.engine.lastTime;
+			this.updateFlag |= Constants.UPDATE_FLAG.ACTIVE;
 			return true;
 		}
 		return false;
@@ -145,6 +147,7 @@ class Body {
 				const z = positionCache[2];
 				this.changePosition(x, y, z, time, true);
 				this.updated.motion = time;
+				this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
 			}
 
 			if (this.canRecalculateMotion) {
@@ -154,6 +157,7 @@ class Body {
 				const vz = motionCache[2];
 				this.changeMotion(vx, vy, vz, time, true);
 				this.updated.motion = time;
+				this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
 			}
 		}
 	}

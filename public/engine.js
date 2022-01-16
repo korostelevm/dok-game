@@ -878,8 +878,8 @@ class Engine {
 		}
 		this.handleOnRefreshes(time, dt, actualTime);
 		this.handleViewUpdate(time, this.shaders[0], render);
-		this.handleSpriteUpdate(this.updater, this.lastTime);
 		if (render) {
+			this.handleSpriteUpdate(this.updater);
 			this.render(time, dt);
 		}
 		this.lastTime = time;
@@ -955,36 +955,31 @@ class Engine {
 		}
 	}
 
-	handleSpriteUpdate(updater, lastTime) {
+	handleSpriteUpdate(updater) {
 		updater.forEach(sprite => {
 			const spriteIndex = sprite.spriteIndex;
-			if (sprite.updated.sprite >= lastTime
-				|| sprite.updated.animation >= lastTime) {
+			if (sprite.updateFlag & Constants.RENDER_FLAG.SPRITE_ATTRIBUTE) {
 				const {x, y, z, rotation, size:[width,height], anim:{hotspot}} = sprite;
 				const hotX = hotspot[0] || 0;
 				const hotY = hotspot[1] || 0;
 				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation);
 			}
-			if (sprite.updated.animation >= lastTime
-				|| sprite.updated.opacity >= lastTime
-				|| sprite.updated.active >= lastTime
-				|| sprite.updated.light >= lastTime
-				|| sprite.updated.spriteType >= lastTime) {
+			if (sprite.updateFlag & Constants.RENDER_FLAG.TEXTURE) {
 				const {anim, direction, active, opacity, light, spriteType } = sprite;
 				this.spriteRenderer.setTextureIndex(spriteIndex, anim, active ? opacity : 0, light, spriteType);
 			}
-			if (sprite.updated.animation >= lastTime
-				|| sprite.updated.direction >= lastTime) {
+			if (sprite.updateFlag & Constants.RENDER_FLAG.ANIMATION_INFO) {
 				const {anim, direction, vdirection, } = sprite;
 				this.spriteRenderer.setAnimationInfo(spriteIndex, anim, direction, vdirection);
 			}
-			if (sprite.updated.motion >= lastTime) {
+			if (sprite.updateFlag  & Constants.RENDER_FLAG.MOTION) {
 				const {motion, acceleration} = sprite;
 				this.spriteRenderer.setMotion(spriteIndex, motion, acceleration);
 			}
-			if (sprite.updated.updateTime >= lastTime || sprite.updated.motion >= lastTime) {
+			if (sprite.updateFlag & Constants.RENDER_FLAG.UPDATE_TIME) {
 				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
 			}
+			sprite.updateFlag = 0;
 		});
 		updater.clear();
 	}
