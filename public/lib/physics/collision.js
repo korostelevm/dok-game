@@ -13,7 +13,7 @@ class Collision extends PhysicsBase {
 
 	async init(sprites, game) {
 		this.game = game;
-		this.sprites = sprites.filter(({collide}) => collide);
+		const filteredSprites = sprites.filter(({collide}) => collide);
 		this.axis = [
 			this.horizontal = [],
 			this.vertical = [],
@@ -22,9 +22,28 @@ class Collision extends PhysicsBase {
 		this.openColliders = [];
 		this.countedColliders = [];
 
-		this.sprites.forEach((sprite, colIndex) => {
-			const topLeftClose = { sprite, topLeftClose: true, bottomRightFar: false, x: 0, y: 0, z: 0 };
-			const bottomRightFar = { sprite, topLeftClose: false, bottomRightFar: true, x: 0, y: 0, z: 0 };
+		this.collisionDataList = [];
+		this.preCollisions = [];
+		filteredSprites.forEach((sprite, colIndex) => {
+			const collisionData = {
+				sprite,
+				id: sprite.id,
+				collisionBox: sprite.collisionBox,
+				colIndex,
+				colliders: [],
+				collisions: new Array(filteredSprites.length).fill(null).map(() => 0),
+				overlappers: [],
+				overlapping: new Array(filteredSprites.length).fill(null).map(() => 0),
+				countCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
+				openColliderIndex: 0,
+				onCollide: sprite.onCollide,
+				onLeave: sprite.onLeave,
+				onEnter: sprite.onEnter,
+				preCollisionCheck: sprite.preCollisionCheck,
+				trackCollision: sprite.trackCollision,
+			};
+			const topLeftClose = { collisionData, topLeftClose: true, bottomRightFar: false, x: 0, y: 0, z: 0 };
+			const bottomRightFar = { collisionData, topLeftClose: false, bottomRightFar: true, x: 0, y: 0, z: 0 };
 			if (this.countType[HORIZONTAL]) {
 				this.horizontal.push(topLeftClose, bottomRightFar);
 			}
@@ -34,29 +53,23 @@ class Collision extends PhysicsBase {
 			if (this.countType[DEEP]) {
 				this.deep.push(topLeftClose, bottomRightFar);
 			}
-			sprite.collisionData = {
-				colIndex,
-				colliders: [],
-				collisions: new Array(this.sprites.length).fill(null).map(() => 0),
-				overlappers: [],
-				overlapping: new Array(this.sprites.length).fill(null).map(() => 0),
-				countCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
-				openColliderIndex: 0,
-			};
+			this.collisionDataList[colIndex] = collisionData;
+			if (collisionData.preCollisionCheck) {
+				this.preCollisions.push(collisionData);
+			}
 		});
-		this.preCollisionSprites = sprites.filter(({preCollisionCheck}) => preCollisionCheck);
 	}
 
-	countCollision(sprite, secondSprite, bits) {
-		if (!sprite.collisionData.countCollision) {
+	countCollision(collisionData, secondCollisionData, bits) {
+		if (!collisionData.countCollision) {
 			return;
 		}
-		const colIndex = secondSprite.collisionData.colIndex;
-		const collisions = sprite.collisionData.collisions;
-		const colliders = sprite.collisionData.colliders;
+		const colIndex = secondCollisionData.colIndex;
+		const collisions = collisionData.collisions;
+		const colliders = collisionData.colliders;
 		if (!collisions[colIndex]) {
 			if (!colliders.length) {
-				this.countedColliders.push(sprite);
+				this.countedColliders.push(collisionData);
 			}
 			colliders.push(colIndex);
 		}
@@ -64,20 +77,20 @@ class Collision extends PhysicsBase {
 	}
 
 	calculateCollisionMarkers(time) {
-		for (let i = 0; i < this.sprites.length; i++) {
-			this.sprites[i].getCollisionBox(time);
+		for (let i = 0; i < this.collisionDataList.length; i++) {
+			this.collisionDataList[i].collisionBox.getCollisionBox(time);
 		}
 		for (let i = 0; i < this.horizontal.length; i++) {
 			const marker = this.horizontal[i];
-			marker.x = marker.topLeftClose ? marker.sprite.collisionBox.left : marker.sprite.collisionBox.right;
+			marker.x = marker.topLeftClose ? marker.collisionData.collisionBox.left : marker.collisionData.collisionBox.right;
 		}
 		for (let i = 0; i < this.vertical.length; i++) {
 			const marker = this.vertical[i];
-			marker.y = marker.topLeftClose ? marker.sprite.collisionBox.top : marker.sprite.collisionBox.bottom;
+			marker.y = marker.topLeftClose ? marker.collisionData.collisionBox.top : marker.collisionData.collisionBox.bottom;
 		}
 		for (let i = 0; i < this.deep.length; i++) {
 			const marker = this.deep[i];
-			marker.z = marker.topLeftClose ? marker.sprite.collisionBox.close : marker.sprite.collisionBox.far;
+			marker.z = marker.topLeftClose ? marker.collisionData.collisionBox.close : marker.collisionData.collisionBox.far;
 		}
 
 		this.sortMarkers();
@@ -90,9 +103,9 @@ class Collision extends PhysicsBase {
 	}
 
 	refresh(time, dt) {
-		for (let i = 0; i < this.preCollisionSprites.length; i++) {
-			const sprite = this.preCollisionSprites[i];
-			sprite.preCollisionCheck(sprite);
+		for (let i = 0; i < this.preCollisions.length; i++) {
+			const collisionData = this.preCollisions[i];
+			collisionData.preCollisionCheck(collisionData.sprite);
 		}
 		this.calculateCollisionMarkers(time);
 
@@ -106,81 +119,81 @@ class Collision extends PhysicsBase {
 		const bits = 1 << type;
 		for (let i = 0; i < markers.length; i++) {
 			const marker = markers[i];
-			const sprite = marker.sprite;
-			if (!sprite.active) {
-				continue;
+			const collisionData = marker.collisionData;
+			if (!collisionData.sprite.active) {
+				return;
 			}
 
-			this.countNewCollisionsWithOpenColliders(sprite, bits);
+			this.countNewCollisionsWithOpenColliders(collisionData, bits);
 
 			if (marker.topLeftClose) {
 				//	Open the new colliders
-				this.addOpenCollider(sprite);
+				this.addOpenCollider(collisionData);
 			} else {
 				//	Close colliders
-				this.removeOpenCollider(sprite);
+				this.removeOpenCollider(collisionData);
 			}
 		}
 	}
 
-	addOpenCollider(sprite) {
+	addOpenCollider(collisionData) {
 		const openColliders = this.openColliders;
-		sprite.collisionData.openColliderIndex = openColliders.length;
-		openColliders.push(sprite);
+		collisionData.openColliderIndex = openColliders.length;
+		openColliders.push(collisionData);
 	}
 
-	removeOpenCollider(sprite) {
+	removeOpenCollider(collisionData) {
 		const openColliders = this.openColliders;
-		const openColliderIndex = sprite.collisionData.openColliderIndex;
+		const openColliderIndex = collisionData.openColliderIndex;
 		if (openColliderIndex < openColliders.length) {
 			openColliders[openColliderIndex] = openColliders[openColliders.length - 1];
 		}
 		openColliders.pop();
 		if (openColliderIndex < openColliders.length) {
 			const replacement = openColliders[openColliderIndex];
-			replacement.collisionData.openColliderIndex = openColliderIndex;
+			replacement.openColliderIndex = openColliderIndex;
 		}
 	}
 
-	countNewCollisionsWithOpenColliders(sprite, bits) {
+	countNewCollisionsWithOpenColliders(collisionData, bits) {
 		const openColliders = this.openColliders;
 		for (let i = 0; i < openColliders.length; i++) {
 			const openCollider = openColliders[i];
-			if (openCollider.id !== sprite.id) {
-				this.countCollision(openCollider, sprite, bits);
+			if (openCollider.id !== collisionData.id) {
+				this.countCollision(openCollider, collisionData, bits);
 			}
 		}
-		if (sprite.collisionData.countCollision) {
+		if (collisionData.countCollision) {
 			for (let i = 0; i < openColliders.length; i++) {
 				const openCollider = openColliders[i];
-				if (openCollider.id !== sprite.id) {
-					this.countCollision(sprite, openCollider, bits);
+				if (openCollider.id !== collisionData.id) {
+					this.countCollision(collisionData, openCollider, bits);
 				}
 			}
 		}
 	}
 
-	accountForCollision(sprite, secondSprite, time) {
-		const leftPush = sprite.collisionBox.right - secondSprite.collisionBox.left;
-		const rightPush = secondSprite.collisionBox.right - sprite.collisionBox.left;
+	accountForCollision(collisionData, secondCollisionData, time) {
+		const leftPush = collisionData.collisionBox.right - secondCollisionData.collisionBox.left;
+		const rightPush = secondCollisionData.collisionBox.right - collisionData.collisionBox.left;
 		const xPush = leftPush < rightPush ? -leftPush : rightPush;
-		const topPush = sprite.collisionBox.bottom - secondSprite.collisionBox.top;
-		const bottomPush = secondSprite.collisionBox.bottom - sprite.collisionBox.top;
+		const topPush = collisionData.collisionBox.bottom - secondCollisionData.collisionBox.top;
+		const bottomPush = secondCollisionData.collisionBox.bottom - collisionData.collisionBox.top;
 		const yPush = topPush < bottomPush ? -topPush : bottomPush;
-		const closePush = sprite.collisionBox.far - secondSprite.collisionBox.close;
-		const farPush = secondSprite.collisionBox.far - sprite.collisionBox.close;
+		const closePush = collisionData.collisionBox.far - secondCollisionData.collisionBox.close;
+		const farPush = secondCollisionData.collisionBox.far - collisionData.collisionBox.close;
 		const zPush = closePush < farPush ? -closePush : farPush;
-		if (sprite.onCollide) {
-			sprite.onCollide(sprite, secondSprite, xPush, yPush, zPush);
-			sprite.trackCollision(secondSprite, time);
+		if (collisionData.onCollide) {
+			collisionData.onCollide(collisionData.sprite, secondCollisionData.sprite, xPush, yPush, zPush);
+			collisionData.trackCollision(secondCollisionData.sprite, time);
 		}
-		if (!sprite.collisionData.overlapping[secondSprite.collisionData.colIndex]) {
-			if (sprite.onEnter) {
-				sprite.onEnter(sprite, secondSprite);
+		if (!collisionData.overlapping[secondCollisionData.colIndex]) {
+			if (collisionData.onEnter) {
+				collisionData.onEnter(collisionData.sprite, secondCollisionData.sprite);
 			}
-			sprite.collisionData.overlappers.push(secondSprite.collisionData.colIndex);
+			collisionData.overlappers.push(secondCollisionData.colIndex);
 		}
-		sprite.collisionData.overlapping[secondSprite.collisionData.colIndex] = time;
+		collisionData.overlapping[secondCollisionData.colIndex] = time;
 	}
 
 	applyCollisionsOnAllSprites(time) {
@@ -193,30 +206,30 @@ class Collision extends PhysicsBase {
 		this.countedColliders.length = 0;
 	}
 
-	applyCollisions(sprite, time) {
-		const colliders = sprite.collisionData.colliders;
+	applyCollisions(collisionData, time) {
+		const colliders = collisionData.colliders;
 		for (let i = 0; i < colliders.length; i++) {
 			const index = colliders[i];
-			const secondSprite = this.sprites[index];
-			if (sprite.collisionData.collisions[secondSprite.collisionData.colIndex] === this.BOTH) {
-				this.accountForCollision(sprite, secondSprite, time);
+			const secondCollisionData = this.collisionDataList[index];
+			if (collisionData.collisions[secondCollisionData.colIndex] === this.BOTH) {
+				this.accountForCollision(collisionData, secondCollisionData, time);
 			}
-			sprite.collisionData.collisions[secondSprite.collisionData.colIndex] = 0;
+			collisionData.collisions[secondCollisionData.colIndex] = 0;
 		}
 		colliders.length = 0;
 	}
 
-	leaveCollisions(sprite, time) {
-		const overlappers = sprite.collisionData.overlappers;
-		const overlapping = sprite.collisionData.overlapping;
+	leaveCollisions(collisionData, time) {
+		const overlappers = collisionData.overlappers;
+		const overlapping = collisionData.overlapping;
 		for (let i = overlappers.length - 1; i >= 0; i--) {
 			const overlapperIndex = overlappers[i];
 			if (overlapping[overlapperIndex] !== time) {
 				overlapping[overlapperIndex] = 0;
 				overlappers[i] = overlappers[overlappers.length - 1];
 				overlappers.pop();
-				if (sprite.onLeave) {
-					sprite.onLeave(sprite, this.sprites[overlapperIndex]);
+				if (collisionData.onLeave) {
+					collisionData.onLeave(collisionData.sprite, this.collisionDataList[overlapperIndex].sprite);
 				}
 			}
 		}
