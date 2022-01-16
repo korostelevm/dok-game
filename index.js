@@ -9,6 +9,7 @@ const md5File 	= require('md5-file');
 const NwBuilder = require('nw-builder');
 const bodyParser = require('body-parser');
 const stringify = require("json-stringify-pretty-compact");
+const { ServerHandler } = require("direct-data/src/server-handler.js");
 
 const PORT = 3000;
  
@@ -93,50 +94,7 @@ app.get('/ping', (req, res) => {
 	res.send("ping");
 });
 
-app.get('/data/can-write.json', (req, res, next) => {
-	res.json(1);
-});
-
-app.get('/data', (req, res, next) => {
-	const { path } = req.query || {};
-	const folder = `${__dirname}/public/data`;
-
-	fs.readdir(folder, async (err, files) => {
-		if (err) {
-			res.status(400).send("Invalid request.");
-			next(err);
-			return;
-		}
-		const data = {};
-		await files.forEach(async dir => {
-			const dirPath = `${folder}/${dir}`;
-			if (fs.lstatSync(dirPath).isDirectory()) {
-				const dataFiles = fs.readdirSync(dirPath);
-				dataFiles.forEach(jsonFile => {
-					if (path && jsonFile.indexOf(path) < 0) {
-						return;
-					}
-					const rawJson = fs.readFileSync(`${dirPath}/${jsonFile}`);
-					try {
-						const subData = JSON.parse(rawJson);
-						data[`${dir}/${jsonFile}`] = subData;
-					} catch (e) {
-						console.error("Error on " + dirPath, e);
-					}
-				});
-			}
-		});
-		res.json(data);
-	});
-});
-
-app.post('/data', bodyParser.json(), function(req, res, next) {
-    const body = req.body;
-    for (let path in body) {
-    	fs.writeFileSync(`${__dirname}/public/data/${path}`, stringify(body[path], null, "  "));
-    }
-	res.json({success: true, updates: Object.keys(body).length});
-});
+new ServerHandler(app);
 
 app.use(serve(`${__dirname}/public`));
 

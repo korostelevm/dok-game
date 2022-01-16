@@ -8,15 +8,15 @@ class Engine {
 		this.setupEmojiCursors();
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 
-		this.fileUtils = new FileUtils();
-		this.configMerger = new ConfigMerger(this.fileUtils, this.debug, {
+		const fileUtils = this.fileUtils = new FileUtils();
+		this.configMerger = new ConfigMerger(fileUtils, this.debug, {
 			hotspot_center: Constants.HOTSPOT_CENTER,
 			hotspot_bottom: Constants.HOTSPOT_BOTTOM,
 			horizontal_merge: Constants.HORIZONTAL_MERGE,
 			vertical_merge: Constants.VERTICAL_MERGE,
 			full_merge: Constants.FULL_MERGE,
 		});
-		this.directData = new DirectData(this.fileUtils);
+		this.directData = new DirectData({fileUtils});
 		this.collisionBoxCalculator = new CollisionBoxCalculator(this.directData);
 
 
