@@ -6,14 +6,20 @@ class Engine {
 		this.setupPrototypes();
 		/* Setup stylesheet emoji cursors. */
 		this.setupEmojiCursors();
+		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 
 		this.fileUtils = new FileUtils();
-		this.configTranslator = new ConfigTranslator(this);
+		this.configMerger = new ConfigMerger(this.fileUtils, this.debug, {
+			hotspot_center: Constants.HOTSPOT_CENTER,
+			hotspot_bottom: Constants.HOTSPOT_BOTTOM,
+			horizontal_merge: Constants.HORIZONTAL_MERGE,
+			vertical_merge: Constants.VERTICAL_MERGE,
+			full_merge: Constants.FULL_MERGE,
+		});
 		this.directData = new DirectData(this.fileUtils);
 		this.collisionBoxCalculator = new CollisionBoxCalculator(this.directData);
 
 
-		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 		this.imageLoader = new ImageLoader({
 			"assets/mouse-cursor.png": true,
 			"assets/pointer-cursor.png": true,

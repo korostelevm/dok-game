@@ -1,6 +1,5 @@
 const NAME_TO_CLASS = {};
 document.addEventListener('DOMContentLoaded', () => {
-  NAME_TO_CLASS["ConfigTranslator"] = ConfigTranslator;		// lib/core/config-translator.js
   NAME_TO_CLASS["GameBase"] = GameBase;		// lib/core/game-base.js
   NAME_TO_CLASS["Generator"] = Generator;		// lib/map/generator/base/generator.js
   NAME_TO_CLASS["SpriteMapper"] = SpriteMapper;		// lib/map/mapper/base/sprite-mapper.js

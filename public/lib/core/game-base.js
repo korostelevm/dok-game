@@ -26,7 +26,8 @@ class GameBase {
 
 		ChronoUtils.tick();
 		this.gameModel = await engine.fileUtils.load(this.path);
-		this.gameModel = await engine.configTranslator.process(this.gameModel, this);
+		const gameSettings = await this.getSettings(engine);
+		this.gameModel = await engine.configMerger.process(this.gameModel, this.path, gameSettings);
 		ChronoUtils.tick();
 		if (this.gameModel) {
 			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};

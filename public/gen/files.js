@@ -233,7 +233,7 @@ const globalFiles=[
   {
     "lib": [
       ".DS_Store",
-      {"core": [".DS_Store", "config-translator.js", "game-base.js"]},
+      {"core": [".DS_Store", "game-base.js"]},
       {"data": ["direct-data.js"]},
       {
         "external": [
