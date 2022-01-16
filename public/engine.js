@@ -368,7 +368,6 @@ class Engine {
 		this.gl = gl;
 		await this.collisionBoxCalculator.init();
 
-
 		this.tipBox = new TipBox(this);
 
 		this.overlay = document.getElementById("overlay");

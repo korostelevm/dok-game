@@ -7,7 +7,11 @@ class CollisionBoxCalculator {
 	}
 
 	async init() {
-		this.collisionData = await this.directData.getData(COLLISION_BOX_CALCULATOR_DATA_PATH) || {};
+		try {
+			this.collisionData = await this.directData.getData(COLLISION_BOX_CALCULATOR_DATA_PATH) || {};
+		} catch (e) {
+			console.error("Failed to load collision data", e);
+		}
 		const allMd5 = new Set();
 		Object.values(assetMd5).forEach(md5 => allMd5.add(md5));
 		for (let md5 in this.collisionData) {
@@ -26,7 +30,7 @@ class CollisionBoxCalculator {
 			return this.collisionData[tag];
 		}
 		console.log("Calculating collision box on: " + collision_url + "(" + tag + ")");
-		const canvas = imageLoader.canvas;
+		const canvas = textureAtlas.canvas;
 		const collisionBoxes = [];
 		const collisionImage = await imageLoader.loadImage(collision_url);
 		canvas.width = collisionImage.naturalWidth;
@@ -51,6 +55,7 @@ class CollisionBoxCalculator {
 				if (top >= 0 && bottom >= 0 && left >= 0 && right >= 0) {
 					collisionBoxes[row * cols + col] = {
 						collision_url,
+						updated: new Date(),
 						top: top / cellHeight,
 						left: left / cellWidth,
 						bottom: bottom / cellHeight,

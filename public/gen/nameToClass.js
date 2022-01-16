@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["SpriteMapper"] = SpriteMapper;		// lib/map/mapper/base/sprite-mapper.js
   NAME_TO_CLASS["GameCore"] = GameCore;		// games/the-impossible-room/base/game-core.js
   NAME_TO_CLASS["WorldOfTurtle"] = WorldOfTurtle;		// games/turtle/base/world-of-turtle.js
+  NAME_TO_CLASS["DataWriter"] = DataWriter;		// lib/data/base/data-writer.js
   NAME_TO_CLASS["GeneratorWithCallback"] = GeneratorWithCallback;		// lib/map/generator/generator-with-callback.js
   NAME_TO_CLASS["NullGenerator"] = NullGenerator;		// lib/map/generator/null-generator.js
   NAME_TO_CLASS["OverworldMapper"] = OverworldMapper;		// lib/map/mapper/overworld-mapper.js

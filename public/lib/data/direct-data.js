@@ -1,59 +1,51 @@
 const SAVE_AFTER_MILLIS = 5000;
 
 class DirectData {
-	constructor(fileUtils) {
+	constructor(fileUtils, dataWriter, dataEndPoint) {
 		this.fileUtils = fileUtils;
 		this.dataStore = {};
 		this.pendingSave = new Set();
+		this.dataEndPoint = dataEndPoint || "/data";
+		this.dataWriter = dataWriter || new DataWriter(this.dataEndPoint);
 	}
 
 	async getData(path) {
-		this.canWrite = JSON.parse(await this.fileUtils.load('data/can-write.json'));
-
-
 		if (!this.dataStore[path]) {
-			this.dataStore[path] = (await this.fileUtils.load(`data/${path}`)) || {};
+			this.dataStore[path] = {};
+			try {
+				this.dataStore[path] = (await this.fileUtils.load(`${this.dataEndPoint}/${path}`)) || {};
+			} catch (e) {
+				console.warn("Path: " + path + " unavailable.")
+			}
 		}
 		return this.dataStore[path];
 	}
 
 	didChange(path) {
-		if (!this.canWrite) {
-			return;
-		}
 		clearTimeout(this.timeout);
 		this.pendingSave.add(path);
 		this.timeout = setTimeout(() => this.performSave(),
 			SAVE_AFTER_MILLIS);
 	}
 
-	performSave() {
-		if (!this.canWrite) {
+	async performSave() {
+		const canWrite = JSON.parse(await this.fileUtils.load(`${this.dataEndPoint}/can-write.json`));
+
+		if (!canWrite) {
 			return;
 		}
 		this.save().then(response => {
-			console.info(`Save performed. result: ${JSON.stringify(response)}}`);
+			console.info(`Save performed. response: ${response}`);
 		});
 	}
 
 	async save() {
-		if (!this.canWrite) {
-			return;
-		}
 		const body = {};
 		for (let path of this.pendingSave) {
 			const data = this.dataStore[path];
 			body[path] = data;
 		}
 
-		const response = await fetch("/data", {
-		    method: 'POST',
-		    cache: 'no-cache',
-		    headers: {
-		      'Content-Type': 'application/json',
-		    },
-		    body: JSON.stringify(body),
-		});	
-		return response;	
+		return Object.keys(body).length ? this.dataWriter.write(body) : null;
 	}
 }
