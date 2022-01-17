@@ -40,7 +40,6 @@ class Collision extends PhysicsBase {
 				onLeave: sprite.onLeave,
 				onEnter: sprite.onEnter,
 				preCollisionCheck: sprite.preCollisionCheck,
-				trackCollision: sprite.trackCollision,
 			};
 			const topLeftClose = { collisionData, topLeftClose: true, bottomRightFar: false, x: 0, y: 0, z: 0 };
 			const bottomRightFar = { collisionData, topLeftClose: false, bottomRightFar: true, x: 0, y: 0, z: 0 };
@@ -121,7 +120,7 @@ class Collision extends PhysicsBase {
 			const marker = markers[i];
 			const collisionData = marker.collisionData;
 			if (!collisionData.sprite.active) {
-				return;
+				continue;
 			}
 
 			this.countNewCollisionsWithOpenColliders(collisionData, bits);
@@ -185,7 +184,6 @@ class Collision extends PhysicsBase {
 		const zPush = closePush < farPush ? -closePush : farPush;
 		if (collisionData.onCollide) {
 			collisionData.onCollide(collisionData.sprite, secondCollisionData.sprite, xPush, yPush, zPush);
-			collisionData.trackCollision(secondCollisionData.sprite, time);
 		}
 		if (!collisionData.overlapping[secondCollisionData.colIndex]) {
 			if (collisionData.onEnter) {

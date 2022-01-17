@@ -289,7 +289,6 @@ const globalFiles=[
           {"base": [".DS_Store", "body.js", "sprite.js"]},
           {
             "collision": [
-              "collider-set.js",
               "collision-box-display.js",
               "collision-box.js",
               "collision-merger.js"

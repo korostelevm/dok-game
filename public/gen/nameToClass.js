@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["PhysicsBase"] = PhysicsBase;		// lib/physics/base/physics-base.js
   NAME_TO_CLASS["Body"] = Body;		// lib/sprite/base/body.js
   NAME_TO_CLASS["Sprite"] = Sprite;		// lib/sprite/base/sprite.js
-  NAME_TO_CLASS["ColliderSet"] = ColliderSet;		// lib/sprite/collision/collider-set.js
   NAME_TO_CLASS["CollisionBoxDisplay"] = CollisionBoxDisplay;		// lib/sprite/collision/collision-box-display.js
   NAME_TO_CLASS["CollisionBox"] = CollisionBox;		// lib/sprite/collision/collision-box.js
   NAME_TO_CLASS["CollisionMerger"] = CollisionMerger;		// lib/sprite/collision/collision-merger.js

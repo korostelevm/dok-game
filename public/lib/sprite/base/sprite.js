@@ -49,14 +49,6 @@ class Sprite extends Body {
 				sprite: this,
 			});
 		}
-
-		this.colliderSet = new ColliderSet(this);
-	}
-
-	trackCollision(sprite, time) {
-		if (this.onStopCollision) {
-			this.colliderSet.track(sprite, time);
-		}
 	}
 
 	onExit(game) {
