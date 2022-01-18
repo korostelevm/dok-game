@@ -90,7 +90,7 @@ class PlatformMapper extends SpriteMapper {
 							self.engine.keyboardHandler.removeListener(sprite.onOpenEvent);
 							this.game.camera = "normal";
 						}
-						if (sprite.ladder && !self.touchingLadder) {
+						if (sprite.ladder) {
 							const jumping = self.engine.lastTime - self.lastJump < 100;
 							if (this.jump && this.control.dy < 0 && !jumping) {
 								this.game.jump.performJump(self);
@@ -100,9 +100,6 @@ class PlatformMapper extends SpriteMapper {
 								onMotion(self, this.control.dx, this.control.dy);
 							}
 						}
-					},
-					preCollisionCheck: (self) => {
-						self.touchingLadder = false;
 					},
 					onCollide: (self, sprite, xPush, yPush) => {
 						if (sprite.ladder && !self.climbing && self.dy > 0) {
@@ -116,10 +113,7 @@ class PlatformMapper extends SpriteMapper {
 
 						if (self.climbing && sprite.ladder) {
 							self.climbing = self.engine.lastTime;
-							if (!self.touchingLadder) {
-								self.touchingLadder = true;
-								onMotion(self, this.control.dx, this.control.dy);
-							}
+							onMotion(self, this.control.dx, this.control.dy);
 							return;
 						}
 

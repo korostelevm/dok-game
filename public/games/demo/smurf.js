@@ -97,7 +97,7 @@ class Smurf extends GameBase {
 
 		this.mazoos = [];
 		for (let i = 0; i < 2000; i++) {
-			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 2;
+			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 10;
 			const z = - Math.random() * 2000;
 			const y = 400;// + (z / 2000) * 500;
 			const smurf = this.spriteFactory.create({
@@ -149,7 +149,7 @@ class Smurf extends GameBase {
 		this.mushrooms = [
 
 		];
-		this.engine.setClamp(-1000, 1000, 0, 0, 0, 0);
+		this.engine.setClamp(-3000, 3000, 0, 0, 0, 0);
 	}
 
 	handleMouse(e) {
@@ -234,55 +234,14 @@ class Smurf extends GameBase {
 		}
 	}
 
-	moveMazoos(time) {
-		const gl = engine.gl;
-		const config = engine.config;
-		const viewportWidth = config.viewport.size[0];
-		for (let i = 0; i < this.mazoos.length; i++) {
-			const mazoo = this.mazoos[i];
-			const goalX = mazoo.goal[0];
-			const goalZ = mazoo.goal[2];
-			const dx = (goalX - mazoo.x);
-			const dz = (goalZ - mazoo.z);
-			const dist = Math.max(1, Math.sqrt(dx*dx + dz*dz));
-			if (!dist) {
-				continue;
-			}
-			const z = mazoo.z + dz / dist;
-			const y = 400;// + (z / 2000) * 500;
-			mazoo.changePosition(mazoo.x + dx / dist, y, z, time);
-			if (dist <= 1) {
-				if (!mazoo.stillTime) {
-					mazoo.stillTime = time;
-					mazoo.changeAnimation(this.atlas.mazoo_still, time);
-				} else if (time - mazoo.stillTime > 5000) {
-					const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 4;
-					mazoo.goal[0] = x;
-					mazoo.goal[2] = -Math.random() * 2000;
-				}
-			} else {
-				mazoo.stillTime = 0;
-				if (Math.abs(dx) >= Math.abs(dz)) {
-					mazoo.changeAnimation(dx < 0 ? this.atlas.mazoo_left : this.atlas.mazoo_right, time);
-				} else {
-					mazoo.changeAnimation(dz < 0 ? this.atlas.mazoo_up : this.atlas.mazoo_down, time);
-				}
-			}
-		}
-	}
-
 	async isPerspective(engine) {
 		return true;
 	}
 
 	getInitialShift() {
 		return {
-			x: 0, y: 1000, z: 450,
+			x: 0, y: 1000, z: -450,
 			rotation: [45, 0, 0],
 		};
-	}
-
-	refresh(time, dt) {
-//		this.moveMazoos(time);
 	}
 }

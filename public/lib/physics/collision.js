@@ -23,7 +23,6 @@ class Collision extends PhysicsBase {
 		this.countedColliders = [];
 
 		this.collisionDataList = [];
-		this.preCollisions = [];
 		filteredSprites.forEach((sprite, colIndex) => {
 			const collisionData = {
 				sprite,
@@ -39,7 +38,6 @@ class Collision extends PhysicsBase {
 				onCollide: sprite.onCollide,
 				onLeave: sprite.onLeave,
 				onEnter: sprite.onEnter,
-				preCollisionCheck: sprite.preCollisionCheck,
 			};
 			const topLeftClose = { collisionData, topLeftClose: true, bottomRightFar: false, x: 0, y: 0, z: 0 };
 			const bottomRightFar = { collisionData, topLeftClose: false, bottomRightFar: true, x: 0, y: 0, z: 0 };
@@ -53,9 +51,6 @@ class Collision extends PhysicsBase {
 				this.deep.push(topLeftClose, bottomRightFar);
 			}
 			this.collisionDataList[colIndex] = collisionData;
-			if (collisionData.preCollisionCheck) {
-				this.preCollisions.push(collisionData);
-			}
 		});
 	}
 
@@ -102,10 +97,6 @@ class Collision extends PhysicsBase {
 	}
 
 	refresh(time, dt) {
-		for (let i = 0; i < this.preCollisions.length; i++) {
-			const collisionData = this.preCollisions[i];
-			collisionData.preCollisionCheck(collisionData.sprite);
-		}
 		this.calculateCollisionMarkers(time);
 
 		for (let m = 0; m < this.axis.length; m++) {

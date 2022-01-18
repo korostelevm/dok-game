@@ -83,7 +83,17 @@
   },
   "atlas": {
     "collisionBox": {
-      "url": "assets/red-square.png"
+      "url": "assets/red-square.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [0]
+    },
+    "selectionBox": {
+      "url": "assets/red-square.png",
+      "spriteWidth": 32,
+      "spriteHeight": 32,
+      "range": [1,3],
+      "frameRate": 4
     },
     "backwall": {
       "url": "assets/backwall.jpg"

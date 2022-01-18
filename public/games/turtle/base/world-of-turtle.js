@@ -170,8 +170,29 @@ class WorldOfTurtle extends GameBase {
 			}
 		}
 
+		this.selectionBox = this.spriteFactory.create({
+			anim: this.atlas.selectionBox,
+			size: [50, 50],
+			x: 400, y: 400, z: 400,
+			rotation: [-90, 0, 0],
+		});
+
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
+	}
+
+	handleMouse(e) {
+		const x = e.pageX - this.engine.canvas.offsetLeft, y = e.pageY - this.engine.canvas.offsetTop;
+		const inGame = x >= 0 && x < this.engine.viewportWidth && y >= 0 && y < this.engine.viewportHeight;
+		this.mouseX = x;
+		this.mouseY = y;
+		this.engine.changeCursor(inGame ? "none" : this.arrowCursor);
+		this.selectionBox.changeActive(inGame);
+	}
+
+	refresh(time, dt) {
+		super.refresh(time, dt);
+		this.selectionBox.changePosition(this.mouseX - this.engine.shift.x / 2 - 50, this.selectionBox.y, this.mouseY + this.engine.shift.z / 2 - 330);
 	}
 }

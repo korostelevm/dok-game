@@ -141,20 +141,20 @@ class Body {
 		const time = t || this.engine.lastTime;
 		if (this.updated.motion !== time) {
 			if (this.canRecalculatePosition) {
-				const positionCache = this.getRealPosition(time);
-				const x = positionCache[0];
-				const y = positionCache[1];
-				const z = positionCache[2];
+				const realPosition = this.getRealPosition(time);
+				const x = realPosition[0];
+				const y = realPosition[1];
+				const z = realPosition[2];
 				this.changePosition(x, y, z, time, true);
 				this.updated.motion = time;
 				this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
 			}
 
 			if (this.canRecalculateMotion) {
-				const motionCache = this.getRealMotion(time);
-				const vx = motionCache[0];
-				const vy = motionCache[1];
-				const vz = motionCache[2];
+				const realMotion = this.getRealMotion(time);
+				const vx = realMotion[0];
+				const vy = realMotion[1];
+				const vz = realMotion[2];
 				this.changeMotion(vx, vy, vz, time, true);
 				this.updated.motion = time;
 				this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
@@ -190,5 +190,10 @@ class Body {
 			followAxis[0] ? target.x + offset.x : this.x,
 			followAxis[1] ? target.y + offset.y : this.y,
 			followAxis[2] ? target.z + offset.z : this.z, time);
+	}
+
+	destroy() {
+		this.changeActive(false);
+		this.destroyed = true;
 	}
 }

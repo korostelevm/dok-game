@@ -1,5 +1,5 @@
 const assetMd5 = {
-  ".DS_Store": "92027fbf9adc07cb248b602a655a1b5a",
+  ".DS_Store": "c13a6bd95b567c04752afd62e05d70cf",
   "1570015905422-scanlines.png": "9a76f5e6ec7a9ebf52f48ad1098578c8",
   "Scanline_320x240x4.png": "5f526709bcc039b1851d3a3f76b2e3f1",
   "about-2.png": "aa9de9e639dba617adec2f98911af521",
@@ -89,7 +89,7 @@ const assetMd5 = {
   "pipe.png": "6c12b0a77b1b4603968669f704e13a91",
   "pointer-cursor.png": "12fea8eb76f7bdfe20002a15e01c079b",
   "red-line.png": "73c41cfe5f58de03fa80d7c90fe11ed1",
-  "red-square.png": "5ff4b8772102af16cf58e0348883fc54",
+  "red-square.png": "568f18c6b66350164f34a6265117e4bc",
   "restaurant.png": "e57d444b02ce11d2b9b9bb5f8bd5f522",
   "sand.png": "18038a1222f11835b8e3e4b7f98be635",
   "select-cursor.png": "b564eb6f4156304f31965348aedd250d",

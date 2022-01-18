@@ -1,5 +1,5 @@
 class CollisionBox {
-	constructor(sprite, collisionFrame) {
+	constructor(sprite, collisionFrame, showCollisionBox) {
 		this.sprite = sprite;
 		this.top = 0;
 		this.left = 0;
@@ -13,7 +13,7 @@ class CollisionBox {
 		this.time = 0;
 		this.lastPosition = [null,null,null];
 
-		if (sprite.showCollisionBox) {
+		if (showCollisionBox) {
 			this.changeActive(true);
 			this.display = new CollisionBoxDisplay(this);
 		}

@@ -28,8 +28,7 @@ class Sprite extends Body {
 			console.error("Anim doesn't exist.");
 		}
 
-		this.showCollisionBox = data.showCollisionBox;
-		this.collisionBox = new CollisionBox(this, data.collisionFrame);
+		this.collisionBox = new CollisionBox(this, data.collisionFrame, data.showCollisionBox);
 		this.properties = properties || {};
 		this.onChange = {
 			position: !this.remember ? null : (self, {x, y, z}) => {
@@ -189,11 +188,6 @@ class Sprite extends Body {
 			return true;
 		}
 		return false;
-	}
-
-	destroy() {
-		this.changeActive(false);
-		this.destroyed = true;
 	}
 
 	changeLight(light) {
