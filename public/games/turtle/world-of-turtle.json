@@ -1,6 +1,6 @@
 {
 	"className": "WorldOfTurtle",
-	"templates": ["/templates/overworld-physics", "/templates/overworld-camera"],
+	"templates": ["/templates/overworld-physics", "/templates/overworld-camera", "/templates/overlay-hud"],
 	"settings": {
 		"windowSize": [1000, 700],
 		"pixelScale": 0,
@@ -16,7 +16,13 @@
 			"y": 420,
 			"z": -450,
 			"rotation": [-90, 0, 0]
-		}
+		},
+
+	  "overlayHud": {
+	  	"properties": {
+		  	"multiplier": 2
+	  	}
+	  }
 	},
 
   "gridData": {

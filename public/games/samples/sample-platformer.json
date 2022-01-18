@@ -218,10 +218,6 @@
       ],
       "frameRate": 8
     },
-    "debugGradient": {
-      "url": "assets/gradient.png",
-      "collision_url": "assets/gradient.png"
-    },
     "npc": {
       "still": {
         "url": "assets/debug-npc.png",

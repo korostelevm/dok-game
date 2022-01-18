@@ -25,9 +25,7 @@ class GameBase {
 		this.swapData = engine?.swapData?.TheImpossibleRoom;
 
 		ChronoUtils.tick();
-		this.gameModel = await engine.fileUtils.load(this.path);
-		const gameSettings = await this.getSettings(engine);
-		this.gameModel = await engine.configMerger.process(this.gameModel, this.path, gameSettings);
+		const gameModel = await this.getGameModel(engine);
 		ChronoUtils.tick();
 		if (this.gameModel) {
 			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};
@@ -80,6 +78,10 @@ class GameBase {
 		});
 		const mouseCursor = await engine.imageLoader.getBlobUrl("assets/pointer-cursor.png");
 		this.mouseCursorUrl = `url(${mouseCursor}), auto`;
+
+		const cursorImageUrl = await this.imageLoader.getBlobUrl(`assets/mouse-cursor.png`);
+		this.arrowCursor = `url(${cursorImageUrl}), auto`;
+
 		console.log("Total spriteSize: ", engine.spriteCollection.size());
 	}
 
@@ -87,7 +89,7 @@ class GameBase {
 		if (Array.isArray(item)) {
 			item.forEach((it, i) => this.addToWorld(it, `${id}_${i}`));
 		} else {
-			this[id] = this.spriteFactory.create(item);
+			this[id] = this.spriteFactory.create({id, ...item}, item.properties);
 		}
 	}
 
@@ -196,16 +198,27 @@ class GameBase {
 		return this.path?.split("/").pop() || this.constructor.name;
 	}
 
-	async getSettings(engine) {
-		const json = await engine.fileUtils.load(this.path);
-		const settings = json?.settings || {};		
+	async getGameModel(engine) {
+		if (this.gameModel) {
+			return this.gameModel;
+		}
+		let gameModel = await engine.fileUtils.load(this.path);
+		const settings = gameModel?.settings || {};
 		if (!settings.viewportSize) {
-			settings.viewportSize = [800, 400];
+			settings.viewportSize = Constants.defaultViewportSize();
 		}
 		if (!settings.windowSize) {
-			settings.windowSize = [settings.viewportSize[0] + 200, settings.viewportSize[1] + 200];
+			settings.windowSize = Constants.defaultWindowSize(settings.viewportSize[0], settings.viewportSize[1]);
 		}
-		return settings;
+		gameModel = await engine.configMerger.process(gameModel, this.path, settings);
+		return this.gameModel = gameModel;
+	}
+
+	async getSettings(engine) {
+		if (this.gameSettings) {
+			return this.gameSettings;
+		}
+		return this.gameSettings = (await this.getGameModel(engine))?.settings || {};
 	}
 
 	async isPerspective() {

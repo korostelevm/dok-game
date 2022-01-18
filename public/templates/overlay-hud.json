@@ -8,7 +8,16 @@
       "z": 10,
       "opacity": 0,
       "manualRefresh": true,
-      "spriteType": "hud"
+      "spriteType": "hud",
+      "properties": {
+        "manualRefresh": 1
+      }
+    }
+  },
+  "atlas": {
+    "debugGradient": {
+      "url": "assets/gradient.png",
+      "collision_url": "assets/gradient.png"
     }
   }
 }

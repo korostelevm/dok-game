@@ -522,7 +522,7 @@ class Engine {
 	}
 
 	async adjustWindowSize(game) {
-		const {windowSize:[windowWidth, windowHeight], viewportSize:[viewportWidth, viewportHeight]} = await game.getSettings(this);
+		const {windowSize: [windowWidth, windowHeight], viewportSize: [viewportWidth, viewportHeight]} = await game.getSettings(this);
 		document.body.style.width = `${windowWidth}px`;
 		document.body.style.height = `${windowHeight}px`;
 		this.canvas.style.left = `${(windowWidth - viewportWidth) / 2}px`;

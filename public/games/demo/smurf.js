@@ -144,8 +144,6 @@ class Smurf extends GameBase {
 			opacity: .5,
 		});
 
-		this.cursorImageUrl = await this.imageLoader.getBlobUrl(`assets/mouse-cursor.png`);
-		this.arrowCursor = `url(${this.cursorImageUrl}), auto`;
 		this.mushrooms = [
 
 		];

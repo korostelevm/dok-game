@@ -185,10 +185,16 @@ class WorldOfTurtle extends GameBase {
 	handleMouse(e) {
 		const x = e.pageX - this.engine.canvas.offsetLeft, y = e.pageY - this.engine.canvas.offsetTop;
 		const inGame = x >= 0 && x < this.engine.viewportWidth && y >= 0 && y < this.engine.viewportHeight;
+		const onHud = inGame && y >= this.engine.viewportHeight - 150;
 		this.mouseX = x;
 		this.mouseY = y;
-		this.engine.changeCursor(inGame ? "none" : this.arrowCursor);
-		this.selectionBox.changeActive(inGame);
+		this.engine.changeCursor(inGame && !onHud ? "none" : this.arrowCursor);
+		this.selectionBox.changeActive(inGame && !onHud);
+		if (onHud) {
+			this.overlayHud.show(this.overlayHud);
+		} else {
+			this.overlayHud.hide(this.overlayHud);
+		}
 	}
 
 	refresh(time, dt) {

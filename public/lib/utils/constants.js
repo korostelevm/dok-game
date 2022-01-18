@@ -1,5 +1,12 @@
 class Constants {
 	//	dummy.
+	static defaultViewportSize() {
+		return [800, 400];
+	}
+
+	static defaultWindowSize(viewportWidth, viewportHeight) {
+		return [viewportWidth + 200, viewportHeight + 200]
+	}
 }
 
 Constants.HOTSPOT_CENTER = [.5, .5];
