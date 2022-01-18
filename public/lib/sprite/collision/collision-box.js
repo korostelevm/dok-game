@@ -21,7 +21,7 @@ class CollisionBox {
 
 	set dirty(value) {
 		this.isDirty = value;
-		if (this.display) {
+		if (this.isDirty && this.display) {
 			this.changeActive(this.sprite.active);
 			this.display.repositionSprites(this.sprite.engine.lastTime);		
 		}		

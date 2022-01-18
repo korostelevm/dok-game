@@ -55,6 +55,9 @@ class WorldOfTurtle extends GameBase {
 					console.log(sprite.id);
 				},
 				onCollide: (self, sprite, xPush, yPush, zPush) => {
+					if (sprite.noblock) {
+						return;
+					}
 					//	VERTICAL COLLIDE
 					self.recalculatePosition();
 					if (Math.abs(yPush) < Math.abs(zPush) && Math.abs(yPush) < Math.abs(xPush)) {
@@ -81,11 +84,9 @@ class WorldOfTurtle extends GameBase {
 				},
 				onRefresh: (self, time, dt) => {
 					const position = self.getRealPosition(time);
+					position[1] = Math.min(400, position[1]);
 					const shadowOpacity = .5 * Math.max(0, 1 - (400 - position[1]) / 150);
 					self.shadow.changeOpacity(shadowOpacity);
-					if (position[1] >= 400) {
-						self.engine.refresher.delete(self);
-					}
 				},
 				updateControl: (self, dx, dy, jumping) => {
 					const speed = 200;
@@ -121,13 +122,14 @@ class WorldOfTurtle extends GameBase {
 				canJump: (self) => {
 					return !self.airborne;
 				},
-				onLand: (self, time) => {
+				onLand: (self, time, yLand) => {
 					self.airborne = 0;
 					self.landed = time;
 					self.changeAcceleration(0, 0, 0);
 					self.updateControl(self, self.game.control.dx, self.game.control.dy);
 					self.changeMotion(self.motion[0], 0, self.motion[2], time);
-					self.changePosition(self.x, self.y, self.z, time);
+					self.changePosition(self.x, yLand, self.z, time);
+					self.engine.refresher.delete(self);
 				},
 			});
 		}
@@ -175,6 +177,32 @@ class WorldOfTurtle extends GameBase {
 			size: [50, 50],
 			x: 400, y: 400, z: 400,
 			rotation: [-90, 0, 0],
+			collisionFrame: {
+				left: -25, right: 25,
+				top: -5, bottom: 0,
+				close: -25, far: 25,
+			},
+		}, {
+			collide: 1, noblock: 1,
+			changeSelection: (self, sprite) => {
+				if (self.selection) {
+					self.selection.changeLight(1);
+				}
+				self.selection = sprite;
+			},
+			onEnter: (self, sprite) => {
+				self.changeSelection(self, sprite);
+			},
+			onLeave: (self, sprite) => {
+				if (sprite === self.selection) {
+					self.changeSelection(self, null);
+				}
+			},
+			onRefresh: (self, time, dt) => {
+				if (self.selection) {
+					self.selection.changeLight(1 + Math.random());
+				}
+			},
 		});
 
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
