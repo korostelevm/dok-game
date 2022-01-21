@@ -5,6 +5,7 @@ class GameBase {
 		this.audio = {};
 		this.atlas = {};
 		this.cameras = {};
+		this.ready = 0;
 	}
 
 	async init(engine, gameName) {
@@ -58,8 +59,12 @@ class GameBase {
 				const mapperClass = nameToClass(this.gameModel.gridData.mapper);
 				const mapper = new mapperClass(this);
 				await mapper.init(engine);
-				const spriteGrid = new SpriteGrid(this, mapper);
-				await spriteGrid.init();
+				const configMapper = new ConfigMapper(this, this.gameModel.gridData.mapping);
+				await configMapper.init(engine);
+				const spriteGrid = new SpriteGrid(this, [
+					mapper,
+					configMapper,
+				]);
 
 				const { grid, cols, rows } = spriteGrid.generate(this.gameModel.gridData.grid);
 
@@ -68,7 +73,7 @@ class GameBase {
 				engine.spriteCollection.cleanupInactive();
 			}
 
-			if (this.gameModel?.settings?.clamp) {
+			if (this.gameModel.settings?.clamp) {
 				const { left, right, top, bottom, close, far } = this.gameModel.settings.clamp;
 				this.engine.setClamp(left || 0, right || 0, top || 0, bottom || 0, close || 0, far || 0);
 			}
@@ -140,7 +145,7 @@ class GameBase {
 		this.engine.setPerspective(await this.isPerspective());
 		await this.engine.changeCursor(null, true);
 		if (this.camera) {
-			this.applyCamera(this.camera);
+			this.applyCamera(this.camera, 0);
 		} else if (this.getInitialShift()) {
 			const { x, y, z, rotation, light, zoom } = this.getInitialShift() || {};
 			const [rotX, rotY, rotZ] = rotation || [];
@@ -155,11 +160,12 @@ class GameBase {
 		}
 	}
 
-	applyCamera(camera) {
+	applyCamera(camera, time) {
 		const cameraConfig = this.cameras[camera];
 		if (!cameraConfig) {
 			return;
 		}
+		const timeSinceReady = time - this.ready;
 		const followed = this[cameraConfig.follow];
 		const position = followed?.getRealPosition() || Constants.EMPTY_POSITION;
 		const zoom = cameraConfig.zoom || 1;
@@ -202,13 +208,16 @@ class GameBase {
 		if (this.gameModel) {
 			return this.gameModel;
 		}
-		let gameModel = await engine.fileUtils.load(this.path);
-		const settings = gameModel?.settings || {};
+		let gameModel = await engine.fileUtils.load(this.path) || {};
+		const settings = gameModel.settings || (gameModel.settings = {});
 		if (!settings.viewportSize) {
-			settings.viewportSize = Constants.defaultViewportSize();
+			settings.viewportSize = this.getDefaultViewportSize();
 		}
 		if (!settings.windowSize) {
-			settings.windowSize = Constants.defaultWindowSize(settings.viewportSize[0], settings.viewportSize[1]);
+			settings.windowSize = this.getDefaultWindowSize(settings.viewportSize[0], settings.viewportSize[1]);
+		}
+		if (!settings.margin) {
+			settings.margin = this.getMargin();
 		}
 		gameModel = await engine.configMerger.process(gameModel, this.path, settings);
 		return this.gameModel = gameModel;
@@ -218,11 +227,24 @@ class GameBase {
 		if (this.gameSettings) {
 			return this.gameSettings;
 		}
-		return this.gameSettings = (await this.getGameModel(engine))?.settings || {};
+		return this.gameSettings = (await this.getGameModel(engine)).settings;
 	}
 
 	async isPerspective() {
 		return (await this.getSettings(this.engine)).perspective;
+	}
+
+	getMargin() {
+		return null;
+	}
+
+	getDefaultViewportSize() {
+		console.log(Constants.defaultViewportSize());
+		return Constants.defaultViewportSize();
+	}
+
+	getDefaultWindowSize(viewportWidth, viewportHeight) {
+		return Constants.defaultWindowSize(viewportWidth, viewportHeight);
 	}
 
 	getInitialShift() {
@@ -233,7 +255,7 @@ class GameBase {
 	}
 
 	refresh(time, dt) {
-		this.applyCamera(this.camera);
+		this.applyCamera(this.camera, time);
 	}
 
 	selectDialog(index) {

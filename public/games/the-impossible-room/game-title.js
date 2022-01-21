@@ -68,4 +68,12 @@ class GameTitle extends GameBase {
 			this.engine.setGame(new Menu());
 		}
 	}
+
+	getDefaultWindowSize(viewportWidth, viewportHeight) {
+		return [viewportWidth + 200, viewportHeight + 200];
+	}
+
+	getMargin() {
+		return { top: 50 };
+	}
 }

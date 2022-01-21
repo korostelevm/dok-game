@@ -4026,5 +4026,390 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "2b4f0db916fea2fa1d5313dec1dd2d7e": [
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.149Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.151Z",
+      "top": 0.22,
+      "left": 0.03,
+      "bottom": 0.975,
+      "right": 0.97,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.157Z",
+      "top": 0.05,
+      "left": 0.2125,
+      "bottom": 0.2,
+      "right": 0.7425,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.169Z",
+      "top": 0.215,
+      "left": 0.185,
+      "bottom": 0.61,
+      "right": 0.7525,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.189Z",
+      "top": 0.215,
+      "left": 0.185,
+      "bottom": 0.61,
+      "right": 0.2875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.204Z",
+      "top": 0.205,
+      "left": 0.135,
+      "bottom": 0.635,
+      "right": 0.185,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.215Z",
+      "top": 0.215,
+      "left": 0.34,
+      "bottom": 0.61,
+      "right": 0.4425,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.222Z",
+      "top": 0.205,
+      "left": 0.29,
+      "bottom": 0.635,
+      "right": 0.34,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.230Z",
+      "top": 0.215,
+      "left": 0.495,
+      "bottom": 0.61,
+      "right": 0.5975,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.237Z",
+      "top": 0.21,
+      "left": 0.445,
+      "bottom": 0.64,
+      "right": 0.495,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.244Z",
+      "top": 0.215,
+      "left": 0.65,
+      "bottom": 0.61,
+      "right": 0.7525,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.266Z",
+      "top": 0.21,
+      "left": 0.6025,
+      "bottom": 0.64,
+      "right": 0.6525,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.275Z",
+      "top": 0.23,
+      "left": 0.9175,
+      "bottom": 0.985,
+      "right": 0.97,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.283Z",
+      "top": 0.235,
+      "left": 0.7975,
+      "bottom": 0.865,
+      "right": 0.92,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.289Z",
+      "top": 0.23,
+      "left": 0.03,
+      "bottom": 0.985,
+      "right": 0.0825,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.297Z",
+      "top": 0.225,
+      "left": 0.08,
+      "bottom": 0.855,
+      "right": 0.2025,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.303Z",
+      "top": 0.59,
+      "left": 0.3275,
+      "bottom": 0.875,
+      "right": 0.695,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.306Z",
+      "top": 0.44,
+      "left": 0.33,
+      "bottom": 0.985,
+      "right": 0.97,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.310Z",
+      "top": 0.435,
+      "left": 0.33,
+      "bottom": 0.985,
+      "right": 0.97,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.315Z",
+      "top": 0.045,
+      "left": 0.38,
+      "bottom": 0.63,
+      "right": 0.6275,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.321Z",
+      "top": 0.045,
+      "left": 0.36,
+      "bottom": 0.63,
+      "right": 0.6475,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.328Z",
+      "top": 0.045,
+      "left": 0.295,
+      "bottom": 0.63,
+      "right": 0.7,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.334Z",
+      "top": 0.275,
+      "left": 0.175,
+      "bottom": 0.725,
+      "right": 0.825,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.334Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.342Z",
+      "top": 0.555,
+      "left": 0.0575,
+      "bottom": 0.635,
+      "right": 0.0775,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/lobby.png",
+      "updated": "2022-01-19T03:26:56.354Z",
+      "top": 0.555,
+      "left": 0.0575,
+      "bottom": 0.635,
+      "right": 0.08,
+      "close": 0,
+      "far": 1
+    }
+  ],
+  "4f662c4f91ea8b17b51657dac2fc2393": [
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.896Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.905Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.62,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.910Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.655,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.920Z",
+      "top": 0.025,
+      "left": 0.065,
+      "bottom": 0.645,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.926Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.62,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.934Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.62,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.942Z",
+      "top": 0.165,
+      "left": 0.1025,
+      "bottom": 0.625,
+      "right": 0.2825,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.947Z",
+      "top": 0.07,
+      "left": 0.07,
+      "bottom": 0.62,
+      "right": 0.3125,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.968Z",
+      "top": 0.065,
+      "left": 0.0225,
+      "bottom": 0.63,
+      "right": 0.3575,
+      "close": 0,
+      "far": 1
+    },
+    null,
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.984Z",
+      "top": 0.225,
+      "left": 0.06,
+      "bottom": 0.485,
+      "right": 0.325,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:01.989Z",
+      "top": 0.065,
+      "left": 0.0225,
+      "bottom": 0.615,
+      "right": 0.3575,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-01-19T03:27:02.009Z",
+      "top": 0.015,
+      "left": 0.395,
+      "bottom": 0.14,
+      "right": 0.56,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

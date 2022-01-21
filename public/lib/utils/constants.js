@@ -5,7 +5,7 @@ class Constants {
 	}
 
 	static defaultWindowSize(viewportWidth, viewportHeight) {
-		return [viewportWidth + 200, viewportHeight + 200]
+		return [viewportWidth + 100, viewportHeight + 100]
 	}
 }
 

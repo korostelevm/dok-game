@@ -23,7 +23,8 @@ class Sprite extends Body {
 
 		this.direction = data.direction || 1;
 		this.ydirection = data.ydirection || 1;
-		this.anim = data.anim;
+		this.anim = typeof(data.anim) === "string" ? SpriteCollection.fetchAnim(game.atlas, data.anim) : data.anim;
+
 		if (!this.anim) {
 			console.error("Anim doesn't exist.");
 		}
@@ -31,9 +32,7 @@ class Sprite extends Body {
 		this.collisionBox = new CollisionBox(this, data.collisionFrame, data.showCollisionBox);
 		this.properties = properties || {};
 		this.onChange = {
-			position: !this.remember ? null : (self, {x, y, z}) => {
-				self.changePosition(x, y, z);
-			},
+			position: !this.remember ? null : (self, {x, y, z}) => self.changePosition(x, y, z),
 		};
 
 		this.updated = {
@@ -168,7 +167,7 @@ class Sprite extends Body {
 				console.warn("anim is null.");
 				return false;
 			}
-			this.anim = anim;
+			this.anim = typeof(anim) === "string" ? SpriteCollection.fetchAnim(this.game.atlas, anim) : anim;
 			this.updated.animation = time || this.engine.lastTime;
 			this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
 			this.collisionBox.dirty = true;

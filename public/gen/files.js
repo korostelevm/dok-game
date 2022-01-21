@@ -152,7 +152,6 @@ const globalFiles=[
       {"collision": ["collision-data.json"]}
     ]
   },
-  "engine.js",
   "favicon.ico",
   {
     "fonts": [
@@ -234,6 +233,7 @@ const globalFiles=[
     "lib": [
       ".DS_Store",
       {"core": [".DS_Store", "game-base.js"]},
+      "engine.js",
       {
         "external": [
           ".DS_Store",
@@ -251,6 +251,7 @@ const globalFiles=[
             "generator": [
               ".DS_Store",
               {"base": [".DS_Store", "generator.js"]},
+              "generator-from-config.js",
               "generator-with-callback.js",
               "null-generator.js"
             ]
@@ -259,6 +260,7 @@ const globalFiles=[
             "mapper": [
               ".DS_Store",
               {"base": ["sprite-mapper.js"]},
+              "config-mapper.js",
               "overworld-mapper.js",
               "platform-mapper.js"
             ]

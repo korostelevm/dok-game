@@ -420,9 +420,8 @@ class Engine {
 		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
 		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
-		this.resize(viewportWidth, viewportHeight);
 		engine.canvas.style.opacity = 1;
-		this.initialize(gl, this.shaders[0], config);
+		this.initialize(gl, this.shaders[0]);
 
 		await this.voiceManager.init();
 		ChronoUtils.tick();
@@ -522,10 +521,11 @@ class Engine {
 	}
 
 	async adjustWindowSize(game) {
-		const {windowSize: [windowWidth, windowHeight], viewportSize: [viewportWidth, viewportHeight]} = await game.getSettings(this);
+		const {windowSize: [windowWidth, windowHeight], viewportSize: [viewportWidth, viewportHeight], margin} = await game.getSettings(this);
 		document.body.style.width = `${windowWidth}px`;
 		document.body.style.height = `${windowHeight}px`;
-		this.canvas.style.left = `${(windowWidth - viewportWidth) / 2}px`;
+		this.canvas.style.left = margin?.left ? `${margin?.left}px` : `${(windowWidth - viewportWidth) / 2}px`;
+		this.canvas.style.top = margin?.top ? `${margin?.top}px` : `${(windowHeight - viewportHeight) / 2}px`;
 	}
 
 	async adjustViewportSize(game) {
@@ -569,7 +569,6 @@ class Engine {
 		}
 		ChronoUtils.tick();
 
-		game.ready = true;
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
@@ -580,6 +579,7 @@ class Engine {
 			this.setupMouseListeners();
 		}
 		this.setupDragListeners();
+		game.ready = Math.max(this.lastTime, 1);
 	}
 
 	handleMouse(e) {
@@ -589,11 +589,13 @@ class Engine {
 	}
 
 	setupMouseListeners() {
+		this.removeMouseListeners();
 		this.handleMouseCallback = e => this.handleMouse(e);
 		document.addEventListener("click", this.handleMouseCallback);
 		document.addEventListener("mousedown", this.handleMouseCallback);
 		document.addEventListener("mousemove", this.handleMouseCallback);
 		document.addEventListener("mouseup", this.handleMouseCallback);
+		document.addEventListener("mouseleave", this.handleMouseCallback);
 	}
 
 	setupDragListeners() {
@@ -611,6 +613,7 @@ class Engine {
 			document.removeEventListener("mousedown", this.handleMouseCallback);
 			document.removeEventListener("mousemove", this.handleMouseCallback);
 			document.removeEventListener("mouseup", this.handleMouseCallback);
+			document.removeEventListener("mouseleave", this.handleMouseCallback);
 			delete this.handleMouseCallback;
 		}
 	}
@@ -629,7 +632,7 @@ class Engine {
 	async resetScene() {
 		const { game, gl } = this;
 		if (game) {
-			game.ready = false;
+			game.ready = 0;
 			for (let i = 0; i < this.spriteCollection.size(); i++) {
 				const sprite = this.spriteCollection.get(i);
 				sprite.onExit(game);
@@ -700,7 +703,7 @@ class Engine {
 		};		
 	}
 
-	initialize(gl, shader, {webgl: {depth}, viewport: {viewAngle, size: [viewportWidth, viewportHeight]}}) {
+	initialize(gl, shader) {
 		const uniforms = shader.uniforms;
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
@@ -794,6 +797,7 @@ class Engine {
 			this.viewportWidth = viewportWidth;
 			this.viewportHeight = viewportHeight;
 			this.pixelScale = pixelScale;
+			console.log(this.viewportWidth, this.viewportHeight);
 		}
 	}
 
@@ -803,7 +807,9 @@ class Engine {
 		const loop = (time) => {
 			const length = engine.refreshPerFrame;
 			for (let i = 0; i < length; i++) {
-				frame++;
+				if (!engine.gamePaused()) {
+					frame++;
+				}
 				engine.refresh(frame * frameDuration, time, i === length - 1);
 			}
 		  	requestAnimationFrame(loop);
@@ -818,29 +824,8 @@ class Engine {
 		return box1.right >= box2.left && box2.right >= box1.left && box1.bottom >= box2.top && box2.bottom >= box1.top;
 	}
 
-	handleFrames(time) {
-		const sprites = this.spriteCollection.filterBy("onFrame");
-		for (let i = 0; i < sprites.length; i++) {
-			const sprite = sprites[i];
-			const frame = sprite.getAnimationFrame(time);
-			const previousFrame = sprite.frame;
-			sprite.frame = frame;
-			this.handleOnFrame(sprite, frame, previousFrame);
-		}
-	}
-
 	handleOnRefreshes(time, dt, actualTime) {
 		this.refresher.forEach(item => item.onRefresh(item, time, dt, actualTime));
-	}
-
-	handleOnFrame(sprite, frame, previousFrame) {
-		let f = sprite.onFrame[frame];
-		if (typeof f === "number") {
-			f = sprite.onFrame[f];
-		}
-		if (f) {
-			f(sprite, previousFrame);
-		}
 	}
 
 	onDropOnOverlay(event) {
@@ -855,16 +840,15 @@ class Engine {
 		}
 	}
 
+	gamePaused() {
+		return this.game.paused || !this.focusFixer.focused;
+	}
+
 	refresh(time, actualTime, render) {
 		const dt = time - this.lastTime;
-		if (!this.focusFixer.focused) {
-			this.lastTime = time;
-			return;
-		}
-
 		const game = this.game;
-		if (game && game.ready) {
-			if (game.paused) {
+		if (game.ready) {
+			if (this.gamePaused()) {
 				return;
 			}
 			for (let i = 0; i < game.physics.length; i++) {
@@ -872,9 +856,6 @@ class Engine {
 			}
 
 			game.refresh(time, dt);
-
-			//	Handle special frame actions
-			this.handleFrames(time);
 		}
 		this.handleOnRefreshes(time, dt, actualTime);
 		this.handleViewUpdate(time, this.shaders[0], render);

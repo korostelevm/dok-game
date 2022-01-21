@@ -236,4 +236,12 @@ class Selection extends GameBase {
 			overlay.style.cursor = cursor;
 		}
 	}
+
+	getDefaultWindowSize(viewportWidth, viewportHeight) {
+		return [viewportWidth + 200, viewportHeight + 200];
+	}
+
+	getMargin() {
+		return { top: 50 };
+	}
 }

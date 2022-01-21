@@ -39,7 +39,7 @@ class FocusFixer {
 	}
 
 	lostFocus() {
-		this.focused = true;
+		this.focused = false;
 	}
 
 	gainFocus() {

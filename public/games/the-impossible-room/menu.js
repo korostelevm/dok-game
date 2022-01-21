@@ -91,7 +91,6 @@ class Menu extends GameBase {
 			}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
 		this.spriteFactory.create({
 			anim: this.atlas.menu,
 			size: [800, 400],
@@ -389,5 +388,13 @@ class Menu extends GameBase {
 			document.getElementById("newgrounds-login").style.display = "none";
 		}
 		return super.onExit(engine);
+	}	
+
+	getDefaultWindowSize(viewportWidth, viewportHeight) {
+		return [viewportWidth + 200, viewportHeight + 200];
+	}
+
+	getMargin() {
+		return { top: 50 };
 	}
 }

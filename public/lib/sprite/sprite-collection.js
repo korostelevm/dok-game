@@ -6,7 +6,6 @@ class SpriteCollection {
 	constructor(engine, refresher) {
 		this.sprites = [];
 		this.engine = engine;
-		this.filtered = {};
 		this.refresher  = refresher;
 	}
 
@@ -30,7 +29,6 @@ class SpriteCollection {
 		const sprite = new type({
 			id,
 			...data,
-			anim: typeof(data.anim) === "string" ? SpriteCollection.fetchAnim(this.engine.game.atlas, data.anim) : data.anim,
 		}, this.engine.lastTime, spriteData, this.engine, game);
 		sprite.spriteIndex = this.sprites.length;
 		this.sprites.push(sprite);
@@ -61,9 +59,6 @@ class SpriteCollection {
 
 	clear() {
 		this.sprites.length = 0;
-		for (let f in this.filtered) {
-			delete this.filtered[f];
-		}
 	}
 
 	cleanupInactive() {
@@ -82,16 +77,12 @@ class SpriteCollection {
 	}
 
 	filterBy(name) {
-		if (this.filtered[name]) {
-			return this.filtered[name];
-		}
-
 		const filteredSprites = [];
 		for (let i = 0; i < this.sprites.length; i++) {
 			if (this.sprites[i][name]) {
 				filteredSprites.push(this.sprites[i]);
 			}
 		}
-		return this.filtered[name] = filteredSprites;
+		return filteredSprites;
 	}
 }

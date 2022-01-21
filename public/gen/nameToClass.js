@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["SpriteMapper"] = SpriteMapper;		// lib/map/mapper/base/sprite-mapper.js
   NAME_TO_CLASS["GameCore"] = GameCore;		// games/the-impossible-room/base/game-core.js
   NAME_TO_CLASS["WorldOfTurtle"] = WorldOfTurtle;		// games/turtle/base/world-of-turtle.js
+  NAME_TO_CLASS["GeneratorFromConfig"] = GeneratorFromConfig;		// lib/map/generator/generator-from-config.js
   NAME_TO_CLASS["GeneratorWithCallback"] = GeneratorWithCallback;		// lib/map/generator/generator-with-callback.js
   NAME_TO_CLASS["NullGenerator"] = NullGenerator;		// lib/map/generator/null-generator.js
+  NAME_TO_CLASS["ConfigMapper"] = ConfigMapper;		// lib/map/mapper/config-mapper.js
   NAME_TO_CLASS["OverworldMapper"] = OverworldMapper;		// lib/map/mapper/overworld-mapper.js
   NAME_TO_CLASS["PlatformMapper"] = PlatformMapper;		// lib/map/mapper/platform-mapper.js
   NAME_TO_CLASS["PhysicsBase"] = PhysicsBase;		// lib/physics/base/physics-base.js
@@ -82,5 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["RandomUtils"] = RandomUtils;		// lib/utils/random-utils.js
   NAME_TO_CLASS["String"] = String;		// lib/utils/string.js
   NAME_TO_CLASS["ValueRefresher"] = ValueRefresher;		// lib/utils/value-refresher.js
+  NAME_TO_CLASS["Engine"] = Engine;		// lib/engine.js
 });
 function nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }

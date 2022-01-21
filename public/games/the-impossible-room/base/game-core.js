@@ -841,6 +841,7 @@ class GameCore extends GameBase {
 		if (!this.data.name) {
 			this.data.name = localStorage.getItem("playerName");
 		}
+
 	}
 
 	isBatmanRoom() {
@@ -1112,6 +1113,7 @@ class GameCore extends GameBase {
 			}
 		}
 
+		this.onFrameSprites = this.engine.spriteCollection.filterBy("onFrame");
 		await super.postInit();
 	}
 
@@ -2370,6 +2372,7 @@ class GameCore extends GameBase {
 			this.updateMouse(time);
 			this.updateFile(time);
 		}
+		this.handleFrames(time);
 	}
 
 	selectDialog(id) {
@@ -2510,6 +2513,35 @@ class GameCore extends GameBase {
 		} else {
 			this.setInventoryVisibility(true);
 			this.applyDialogResponses(this.dialogResponses);
+		}
+	}
+
+	getDefaultWindowSize(viewportWidth, viewportHeight) {
+		return [viewportWidth + 200, viewportHeight + 200];
+	}
+
+	getMargin() {
+		return { top: 50 };
+	}
+
+	handleFrames(time) {
+		const sprites = this.onFrameSprites;
+		for (let i = 0; i < sprites.length; i++) {
+			const sprite = sprites[i];
+			const frame = sprite.getAnimationFrame(time);
+			const previousFrame = sprite.frame;
+			sprite.frame = frame;
+			this.handleOnFrame(sprite, frame, previousFrame);
+		}
+	}
+
+	handleOnFrame(sprite, frame, previousFrame) {
+		let f = sprite.onFrame[frame];
+		if (typeof f === "number") {
+			f = sprite.onFrame[f];
+		}
+		if (f) {
+			f(sprite, previousFrame);
 		}
 	}
 }

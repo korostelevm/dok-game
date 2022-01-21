@@ -42,7 +42,7 @@ class PlatformMapper extends SpriteMapper {
 			'8': new GeneratorWithCallback((col, row, option) => {
 				return this.spriteFactory.create({
 					name: "hero",
-					anim: this.atlas.hero.still,
+					anim: "hero.still",
 					size: [50, 50, 2],
 					hotspot: Constants.HOTSPOT_BOTTOM,
 					x: 40 * col, y: 40 * row, z: 1,
@@ -220,7 +220,7 @@ class PlatformMapper extends SpriteMapper {
 			'[': new GeneratorWithCallback((col, row, option) => {
 				return this.spriteFactory.create({
 					name: `block_${col}_${row}`,
-					anim: this.atlas.debugBlock,
+					anim: "debugBlock",
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
@@ -237,30 +237,8 @@ class PlatformMapper extends SpriteMapper {
 						}
 					},
 					onPlatform: (self, lander) => {
-						self.changeAnimation(lander ? this.atlas.debugBlockHighlight : this.atlas.debugBlock);
+						self.changeAnimation(lander ? "debugBlockHighlight" : "debugBlock");
 					},
-				});
-			}),
-			'V': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `crate_${col}_${row}`,
-					anim: this.atlas.debugCrate,
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					canMerge: Constants.HORIZONTAL_MERGE,
-					collide: 1, crate: 1, canLand: true,
-				});
-			}),
-			'H': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `ladder_${col}_${row}`,
-					anim: this.atlas.debugLadder,
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					canMerge: Constants.VERTICAL_MERGE,
-					collide: 1, ladder: 1, canLand: true,
 				});
 			}),
 			'-': new GeneratorWithCallback((col, row, option) => {
@@ -352,7 +330,7 @@ class PlatformMapper extends SpriteMapper {
 			'^': new GeneratorWithCallback((col, row, option) => {
 				return this.spriteFactory.create({
 					name: `lowceiling_${col}_${row}`,
-					anim: this.atlas.debugCeiling,
+					anim: "debugCeiling",
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
@@ -369,7 +347,7 @@ class PlatformMapper extends SpriteMapper {
 			'?': new GeneratorWithCallback((col, row, option) => {
 				return this.spriteFactory.create({
 					name: `npc_${col}_${row}`,
-					anim: this.atlas.npc.still,
+					anim: "npc.still",
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
@@ -396,7 +374,7 @@ class PlatformMapper extends SpriteMapper {
 			'$': new GeneratorWithCallback((col, row, option) => {
 				return this.spriteFactory.create({
 					name: `coin_${col}_${row}`,
-					anim: this.atlas.debugCoin,
+					anim: "debugCoin",
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
@@ -422,7 +400,7 @@ class PlatformMapper extends SpriteMapper {
 			'@': new GeneratorWithCallback((col, row, option) => {
 				return this.spriteFactory.create({
 					name: `bounce_${col}_${row}`,
-					anim: this.atlas.debugBounce,
+					anim: "debugBounce",
 					size: [40, 40],
 					x: 40 * col, y: 40 * row,
 				}, {
@@ -439,9 +417,9 @@ class PlatformMapper extends SpriteMapper {
 				const door = this.spriteFactory.create({
 					name: "the door",
 					id: `door_${col}_${row}`,
-					anim: this.atlas.debugDoorBack,
+					anim: "debugDoorBack",
 					size: [40, 60],
-					x: 40 * col, y: 40 * row - 20,
+					x: 40 * col, y: 40 * row,
 				}, {
 					collide: 1, noblock: 1,
 					onOpen: self => {
@@ -458,7 +436,7 @@ class PlatformMapper extends SpriteMapper {
 					id: `door_door_${col}_${row}`,
 					anim: this.atlas.debugDoorStill,
 					size: [40, 60],
-					x: 40 * col, y: 40 * row - 20,
+					x: 40 * col, y: 40 * row,
 				});
 				return door;
 			}),

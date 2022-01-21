@@ -45,7 +45,7 @@ class StartScreen extends GameBase {
 	}
 
 	async getSettings(engine) {
-		const { gameConfig } = this.nextGame || { classObj: GameTitle };
+		const { gameConfig } = this.nextGame || {};
 		const json = await engine.fileUtils.load(gameConfig);
 		return (json && json.settings) || super.getSettings(engine);
 	}

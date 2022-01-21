@@ -5,6 +5,10 @@ class Hud extends Sprite {
 		this.animDuration = data.animDuration || 150;
 	}
 
+	get visible() {
+		return this.showTime;
+	}
+
 	show(self) {
 		if (!self.showTime) {
 			self.showTime = self.engine.lastTime;

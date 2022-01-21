@@ -9,7 +9,7 @@ class FpsBox extends UiComponent {
 		this.input.id = "fps-box";
 		this.input.style.border = 0;
 		this.input.style.boxOutline = 0;
-		this.input.style.right = "10px";
+		this.input.style.left = "4px";
 		this.input.style.top = "4px";
 		this.input.style.width = "20px";
 		this.input.style.position = "absolute";

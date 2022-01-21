@@ -1,11 +1,8 @@
 class SpriteGrid {
-	constructor(game, spriteMapper) {
+	constructor(game, spriteMappers) {
 		this.game = game;
 		this.spriteFactory = game.spriteFactory;
-		this.spriteMapper = spriteMapper;
-	}
-
-	async init() {
+		this.spriteMappers = spriteMappers;
 	}
 
 	generate(map) {
@@ -57,8 +54,18 @@ class SpriteGrid {
 		return { grid, cols: maxcols, rows: grid.length };
 	}
 
+	makeBlock(spriteMappers, col, row, type, option) {
+		for(let i = 0; i < spriteMappers.length; i++) {
+			const block = spriteMappers[i].createBlock(col, row, type, option);
+			if (block) {
+				return block;
+			}
+		}
+		return null;
+	}
+
 	createBlock(col, row, type, option) {
-		const block = this.spriteMapper.createBlock(col, row, type, option);
+		const block = this.makeBlock(this.spriteMappers, col, row, type, option);
 		if (block) {
 			this.game[block.id] = block;
 		}

@@ -12,7 +12,6 @@ class SpriteMapper {
 	async init(engine) {
 	}
 
-
 	createBlock(col, row, cellType, option) {
 		const generator = this.map[cellType];
 		if (generator) {
@@ -21,8 +20,6 @@ class SpriteMapper {
 				block.cellType = cellType;
 			}
 			return block;
-		} else {
-			console.warn(`No generator for [${cellType}${option}] at [${col},${row}]`)
 		}
 		return null;
 	}

@@ -33,7 +33,29 @@
       "[][]    [][][][]        [][][][][][][][][][]    [][]        VVVVVV  [][][][]          [][][][][][][]          [][]        -0--",
       "....    [][][][][][][]          DD[][][][][]    [][][]  [][][][][][][][][]  [][][][]    [][][][][][][][][][][][][]    []            -1",
       "[][][][][][][][][][][][][][][][][][][][][][]@@@@[][][][][][][][][][][][][]  [][][][][]  [][][][][][][][][][][][][]  [][]            --     "
-    ]
+    ],
+    "mapping": {
+      "V": {
+        "name": "crate",
+        "anim": "debugCrate",
+        "size": [40, 40],
+        "spriteWidth": 40, "spriteHeight": 40,
+        "properties": {
+          "canMerge": "{horizontal_merge}",
+          "collide": 1, "crate": 1, "canLand": true       
+        }
+      },
+      "H": {
+        "name": "ladder",
+        "anim": "debugLadder",
+        "size": [40, 40],
+        "spriteWidth": 40, "spriteHeight": 40,
+        "properties": {
+          "canMerge": "{vertical_merge}",
+          "collide": 1, "ladder": 1, "canLand": true
+        }
+      }  
+    }
   },
   "audio": {
     "scream": {
@@ -172,6 +194,7 @@
       "collision_url": "assets/door.png",
       "spriteWidth": 64,
       "spriteHeight": 128,
+      "hotspot": [0, 0.3],
       "range": [
         0
       ],
@@ -180,6 +203,7 @@
     "debugDoorStill": {
       "url": "assets/door.png",
       "collision_url": "assets/door.png",
+      "hotspot": [0, 0.3],
       "spriteWidth": 64,
       "spriteHeight": 128,
       "range": [
@@ -189,6 +213,7 @@
     "debugDoorOpen": {
       "url": "assets/door.png",
       "collision_url": "assets/door.png",
+      "hotspot": [0, 0.3],
       "spriteWidth": 64,
       "spriteHeight": 128,
       "range": [

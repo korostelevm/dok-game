@@ -188,19 +188,45 @@ class WorldOfTurtle extends GameBase {
 				if (self.selection) {
 					self.selection.changeLight(1);
 				}
+				self.release(self);
 				self.selection = sprite;
 			},
 			onEnter: (self, sprite) => {
-				self.changeSelection(self, sprite);
+				if (!self.holding) {
+					self.changeSelection(self, sprite);
+				}
 			},
 			onLeave: (self, sprite) => {
-				if (sprite === self.selection) {
+				if (sprite === self.selection && !self.holding) {
+					self.release(self);
 					self.changeSelection(self, null);
 				}
 			},
 			onRefresh: (self, time, dt) => {
 				if (self.selection) {
-					self.selection.changeLight(1 + Math.random());
+					if (self.active) {
+						self.selection.changeLight(1 + Math.random());
+						if (self.holding) {
+							self.selection.changePosition(self.x, self.selection.y, self.z);
+						}
+					} else {
+						self.changeSelection(self, null);
+					}
+				}
+			},
+			hold: (self) => {
+				if (self.selection) {
+					self.selection.changePosition(self.selection.x, 380, self.selection.z);
+					self.holding = true;
+					self.lastSelection = self.selection;
+				} else {
+					self.lastSelection = null;
+				}
+			},
+			release: (self) => {
+				if (self.selection) {
+					self.selection.changePosition(self.selection.x, 400, self.selection.z);
+					self.holding = false;
 				}
 			},
 		});
@@ -212,16 +238,24 @@ class WorldOfTurtle extends GameBase {
 
 	handleMouse(e) {
 		const x = e.pageX - this.engine.canvas.offsetLeft, y = e.pageY - this.engine.canvas.offsetTop;
-		const inGame = x >= 0 && x < this.engine.viewportWidth && y >= 0 && y < this.engine.viewportHeight;
-		const onHud = inGame && y >= this.engine.viewportHeight - 150;
+		const inGame = e.type !== "mouseleave" && x >= 0 && x < this.engine.viewportWidth && y >= 0 && y < this.engine.viewportHeight;
+		const onHud = e.type !== "mouseleave" && this.overlayHud.visible && inGame && y >= this.engine.viewportHeight - 150;
 		this.mouseX = x;
 		this.mouseY = y;
-		this.engine.changeCursor(inGame && !onHud ? "none" : this.arrowCursor);
+		this.engine.changeCursor(e.type !== "mouseleave" && inGame && !onHud ? "none" : this.arrowCursor);
 		this.selectionBox.changeActive(inGame && !onHud);
-		if (onHud) {
-			this.overlayHud.show(this.overlayHud);
-		} else {
-			this.overlayHud.hide(this.overlayHud);
+
+		if (e.type === "mousedown") {
+			this.selectionBox.hold(this.selectionBox);
+
+			if (this.selectionBox.lastSelection) {
+				this.overlayHud.show(this.overlayHud);
+			} else {
+				this.overlayHud.hide(this.overlayHud);
+			}
+
+		} else if (e.type === "mouseup" || e.type === "mouseleave") {
+			this.selectionBox.release(this.selectionBox);
 		}
 	}
 
