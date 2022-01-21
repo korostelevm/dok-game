@@ -35,9 +35,15 @@ class SpriteGrid {
 					return;
 				}
 				const block = this.createBlock(col, row + rowShift, piece.charAt(0), piece.charAt(1));
-				grid[row][col] = block;
-				if (block && block.onCreate) {
-					block.onCreate(grid[row][col], col, row, asciiMap, grid);
+				if (block) {
+					grid[row][col] = block;
+					block.col = col;
+					block.row = row;
+					block.grid = grid;
+					block.asciiMap = asciiMap;
+					if (block.onCreate) {
+						block.onCreate(grid[row][col]);
+					}
 				}
 			});
 			maxcols = Math.max(maxcols, asciiRow.length);
@@ -45,8 +51,8 @@ class SpriteGrid {
 
 		grid.forEach((line, row) => {
 			line.forEach((cell, col) => {
-				if (cell && cell.init) {
-					cell.init(cell, col, row, grid);
+				if (cell && cell.gridInit) {
+					cell.gridInit(cell);
 				}
 			});
 		})

@@ -6,13 +6,16 @@ class GeneratorFromConfig extends Generator {
 	}
 
 	generate(spriteMapper, col, row, option) {
-		return spriteMapper.spriteFactory.create({
+		const config = {
 			... this.config,
 			name: `${this.name}_${col}_${row}`,
-			x: (this.config.spriteWidth||40) * col,
-			y: (this.config.spriteHeight||40) * row,
-		}, {
+			x: (this.config.cellWidth||40) * col,
+			y: (this.config.cellHeight||40) * row,
+		};
+		const properties = {
 			... this.config.properties,
-		});
+		}
+
+		return spriteMapper.spriteFactory.create(config, properties);
 	}
 }

@@ -250,6 +250,7 @@ const globalFiles=[
           {
             "generator": [
               ".DS_Store",
+              {"aux": ["platform-gridcell-position-auxiliary.js"]},
               {"base": [".DS_Store", "generator.js"]},
               "generator-from-config.js",
               "generator-with-callback.js",

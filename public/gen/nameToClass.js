@@ -1,6 +1,7 @@
 const NAME_TO_CLASS = {};
 document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["GameBase"] = GameBase;		// lib/core/game-base.js
+  NAME_TO_CLASS["PlatformGridcellPositionAuxiliary"] = PlatformGridcellPositionAuxiliary;		// lib/map/generator/aux/platform-gridcell-position-auxiliary.js
   NAME_TO_CLASS["Generator"] = Generator;		// lib/map/generator/base/generator.js
   NAME_TO_CLASS["SpriteMapper"] = SpriteMapper;		// lib/map/mapper/base/sprite-mapper.js
   NAME_TO_CLASS["GameCore"] = GameCore;		// games/the-impossible-room/base/game-core.js

@@ -39,7 +39,7 @@
         "name": "crate",
         "anim": "debugCrate",
         "size": [40, 40],
-        "spriteWidth": 40, "spriteHeight": 40,
+        "cellWidth": 40, "cellHeight": 40,
         "properties": {
           "canMerge": "{horizontal_merge}",
           "collide": 1, "crate": 1, "canLand": true       
@@ -49,7 +49,7 @@
         "name": "ladder",
         "anim": "debugLadder",
         "size": [40, 40],
-        "spriteWidth": 40, "spriteHeight": 40,
+        "cellWidth": 40, "cellHeight": 40,
         "properties": {
           "canMerge": "{vertical_merge}",
           "collide": 1, "ladder": 1, "canLand": true

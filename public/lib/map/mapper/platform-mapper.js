@@ -227,7 +227,8 @@ class PlatformMapper extends SpriteMapper {
 					canMerge: Constants.VERTICAL_MERGE,
 					block: 1,
 					collide: 1,
-					init: (self, col, row, grid) => {
+					gridInit: (self) => {
+						const { col, row, grid } = self;
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {
 							self.canLand = true;
 							self.changeOpacity(.7);
@@ -253,7 +254,8 @@ class PlatformMapper extends SpriteMapper {
 						collide: 1, canLand: true,
 						index: 0,
 						speed: 2,
-						onCreate: (self, col, row, asciiMap, grid) => {
+						onCreate: (self) => {
+							const { col, row, grid, asciiMap } = self;
 							let w = 1, h = 1;
 							for (let i = 1; asciiMap[row][col+i] === "--"; i++) {
 								w ++;
@@ -336,7 +338,8 @@ class PlatformMapper extends SpriteMapper {
 				}, {
 					canMerge: Constants.HORIZONTAL_MERGE,
 					collide: 1, lowceiling: 1,
-					init: (self, col, row, grid) => {
+					gridInit: (self) => {
+						const { col, row, grid } = self;
 						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {
 							self.canLand = true;
 							self.changeOpacity(.7);
