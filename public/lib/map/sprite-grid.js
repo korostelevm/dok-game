@@ -40,6 +40,7 @@ class SpriteGrid {
 					block.col = col;
 					block.row = row;
 					block.grid = grid;
+					block.rowShift = rowShift;
 					block.asciiMap = asciiMap;
 					if (block.onCreate) {
 						block.onCreate(grid[row][col]);

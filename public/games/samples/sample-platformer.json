@@ -36,25 +36,53 @@
     ],
     "mapping": {
       "V": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          }
+        },
         "name": "crate",
         "anim": "debugCrate",
         "size": [40, 40],
-        "cellWidth": 40, "cellHeight": 40,
         "properties": {
           "canMerge": "{horizontal_merge}",
           "collide": 1, "crate": 1, "canLand": true       
         }
       },
       "H": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          }
+        },
         "name": "ladder",
         "anim": "debugLadder",
         "size": [40, 40],
-        "cellWidth": 40, "cellHeight": 40,
         "properties": {
           "canMerge": "{vertical_merge}",
           "collide": 1, "ladder": 1, "canLand": true
         }
-      }  
+      },
+      "[": {
+        "type": "PlatformBlock",
+        "name": "block",
+        "anim": "debugBlock",
+        "size": [40, 40],
+        "aux": {
+          "LandingAuxiliary": {
+            "animOnLand": "debugBlockHighlight",
+            "animOnLeave": "debugBlock"
+          },
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          }
+        },
+        "properties": {
+          "canMerge": "{vertical_merge}",
+          "block": 1,
+          "collide": 1
+        }
+      }
     }
   },
   "audio": {

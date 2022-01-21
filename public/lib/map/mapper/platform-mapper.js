@@ -217,31 +217,6 @@ class PlatformMapper extends SpriteMapper {
 					},
 				});
 			}),
-			'[': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `block_${col}_${row}`,
-					anim: "debugBlock",
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					canMerge: Constants.VERTICAL_MERGE,
-					block: 1,
-					collide: 1,
-					gridInit: (self) => {
-						const { col, row, grid } = self;
-						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {
-							self.canLand = true;
-							self.changeOpacity(.7);
-						}
-						if (!grid[row+1] || !grid[row+1][col] || !grid[row+1][col].block) {
-							self.ceiling = true;
-						}
-					},
-					onPlatform: (self, lander) => {
-						self.changeAnimation(lander ? "debugBlockHighlight" : "debugBlock");
-					},
-				});
-			}),
 			'-': new GeneratorWithCallback((col, row, option) => {
 				if (!this.movingPlatform) {
 					this.movingPlatform = this.spriteFactory.create({

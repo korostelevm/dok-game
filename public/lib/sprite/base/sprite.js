@@ -47,6 +47,8 @@ class Sprite extends Body {
 				sprite: this,
 			});
 		}
+
+		this.aux = data.aux;
 	}
 
 	onExit(game) {
@@ -239,6 +241,11 @@ class Sprite extends Body {
 	}
 
 	postCreate() {
+		for (let name in this.aux) {
+			const classObj = nameToClass(name);
+			const auxiliary = new classObj(this.aux[name]);
+			auxiliary.decorate(this);
+		}
 		for (let key in this.properties) {
 			this.onUpdate(key, this.properties[key], true);
 		}		

@@ -9,8 +9,6 @@ class GeneratorFromConfig extends Generator {
 		const config = {
 			... this.config,
 			name: `${this.name}_${col}_${row}`,
-			x: (this.config.cellWidth||40) * col,
-			y: (this.config.cellHeight||40) * row,
 		};
 		const properties = {
 			... this.config.properties,

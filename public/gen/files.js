@@ -250,7 +250,6 @@ const globalFiles=[
           {
             "generator": [
               ".DS_Store",
-              {"aux": ["platform-gridcell-position-auxiliary.js"]},
               {"base": [".DS_Store", "generator.js"]},
               "generator-from-config.js",
               "generator-with-callback.js",
@@ -289,6 +288,14 @@ const globalFiles=[
       {
         "sprite": [
           ".DS_Store",
+          {
+            "aux": [
+              ".DS_Store",
+              {"base": ["auxiliary.js"]},
+              "landing-auxiliary.js",
+              "platform-gridcell-position-auxiliary.js"
+            ]
+          },
           {"base": [".DS_Store", "body.js", "sprite.js"]},
           {
             "collision": [
@@ -298,6 +305,7 @@ const globalFiles=[
             ]
           },
           "hud.js",
+          "platform-block.js",
           "shadow.js",
           "sprite-collection.js",
           "sprite-factory.js"
