@@ -60,7 +60,27 @@
       "[]      [][]                    [][]      []",
       "[]                                        []",
       "[][][][][][][][][][][][][][][][][][][][][][]"
-    ]
+    ],
+    "mapping": {
+      "[": {
+        "name": "block",
+        "anim": "debugBlock",
+        "size": [40, 40],
+        "aux": {
+          "LandingAuxiliary": {
+            "animOnLand": "debugBlockHighlight",
+            "animOnLeave": "debugBlock"
+          },
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          },
+          "PlatformBlockAuxiliary": {}
+        },
+        "properties": {
+          "canMerge": "{vertical_merge}"
+        }
+      }      
+    }
   },
   "audio": {
     "scream": {

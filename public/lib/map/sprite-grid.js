@@ -53,8 +53,9 @@ class SpriteGrid {
 		grid.forEach((line, row) => {
 			line.forEach((cell, col) => {
 				if (cell && cell.gridInit) {
-					cell.gridInit(cell);
+					cell.gridInit(cell, col, row, grid);
 				}
+				cell.aux.forEach(auxiliary => auxiliary.gridInit(cell, col, row, grid));
 			});
 		})
 

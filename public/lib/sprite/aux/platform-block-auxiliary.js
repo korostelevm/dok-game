@@ -1,6 +1,11 @@
-class PlatformBlock extends Sprite {
-	constructor(data, time, properties, engine, game) {
-		super(data, time, properties, engine, game);
+class PlatformBlockAuxiliary extends Auxiliary {
+	constructor(config) {
+		super(config);
+	}
+
+	decorate(sprite) {
+		sprite.block = 1;
+		sprite.collide = 1;
 	}
 
 	gridInit(self, col, row, grid) {

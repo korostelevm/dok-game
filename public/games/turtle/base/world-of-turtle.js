@@ -247,13 +247,7 @@ class WorldOfTurtle extends GameBase {
 
 		if (e.type === "mousedown") {
 			this.selectionBox.hold(this.selectionBox);
-
-			if (this.selectionBox.lastSelection) {
-				this.overlayHud.show(this.overlayHud);
-			} else {
-				this.overlayHud.hide(this.overlayHud);
-			}
-
+			this.overlayHud.visible = this.selectionBox.lastSelection;
 		} else if (e.type === "mouseup" || e.type === "mouseleave") {
 			this.selectionBox.release(this.selectionBox);
 		}

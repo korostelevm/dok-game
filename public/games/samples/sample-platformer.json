@@ -64,7 +64,6 @@
         }
       },
       "[": {
-        "type": "PlatformBlock",
         "name": "block",
         "anim": "debugBlock",
         "size": [40, 40],
@@ -75,13 +74,78 @@
           },
           "PlatformGridcellPositionAuxiliary": {
               "cellSize": [40, 40, 0]
-          }
+          },
+          "PlatformBlockAuxiliary": {}
         },
         "properties": {
-          "canMerge": "{vertical_merge}",
-          "block": 1,
-          "collide": 1
+          "canMerge": "{vertical_merge}"
         }
+      },
+      "^": {
+        "aux": {
+          "LowCeilingAuxiliary": {},
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          }
+        },
+        "name": "lowceiling",
+        "anim": "debugCeiling",
+        "size": [40, 40],
+        "properties": {
+          "canMerge": "{horizontal_merge}"
+        }
+      },
+      "@": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          },
+          "BouncerAuxiliary": {
+            "animOnBounce": "debugBounce"
+          }
+        },
+        "name": "bounce",
+        "anim": "debugBounce",
+        "size": [40, 40]
+      },
+      "$": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          },
+          "CollectibleAuxiliary": {
+            "sound": "pickup"
+          }
+        },
+        "name": "coin",
+        "anim": "debugCoin",
+        "size": [40, 40]
+      },
+      "?": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          },
+          "NpcAuxiliary": {}          
+        },
+        "name": "npc",
+        "anim": "npc.still",
+        "size": [40, 40]
+      },
+      "D": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0]
+          },
+          "DoorAuxiliary": {
+            "animOnOpen": "debugDoorOpen",
+            "animOnClose": "debugDoorStill",
+            "shouldZoom": true
+          }
+        },
+        "name": "door",
+        "anim": "debugDoorBack",
+        "size": [40, 60]
       }
     }
   },

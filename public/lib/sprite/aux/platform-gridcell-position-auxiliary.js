@@ -1,6 +1,6 @@
-class PlatformGridcellPositionAuxiliary {
+class PlatformGridcellPositionAuxiliary extends Auxiliary {
 	constructor(config) {
-		this.config = config;
+		super(config);
 	}
 
 	decorate(sprite) {

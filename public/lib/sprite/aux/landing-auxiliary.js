@@ -1,13 +1,13 @@
-class LandingAuxiliary {
+class LandingAuxiliary extends Auxiliary {
 	constructor(config) {
-		this.config = config;
+		super(config);
 	}
 
 	decorate(sprite) {
-		const animOnLand = this.config.animOnLand;
-		const animOnLeave = this.config.animOnLeave;
-		sprite.onPlatform = (self, lander) => {
-			self.changeAnimation(lander ? animOnLand : animOnLeave);
-		};
-	}	
+		sprite.onPlatform = (self, lander) => this.onPlatform(self, lander);
+	}
+
+	onPlatform(self, lander) {
+		self.changeAnimation(lander ? this.config.animOnLand : this.config.animOnLeave);		
+	}
 }

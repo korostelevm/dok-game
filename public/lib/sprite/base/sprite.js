@@ -48,7 +48,13 @@ class Sprite extends Body {
 			});
 		}
 
-		this.aux = data.aux;
+		this.aux = [];
+		for (let name in data.aux) {
+			const classObj = nameToClass(name);
+			const auxiliary = new classObj(data.aux[name]);
+			this.aux.push(auxiliary);
+		}
+
 	}
 
 	onExit(game) {
@@ -241,11 +247,7 @@ class Sprite extends Body {
 	}
 
 	postCreate() {
-		for (let name in this.aux) {
-			const classObj = nameToClass(name);
-			const auxiliary = new classObj(this.aux[name]);
-			auxiliary.decorate(this);
-		}
+		this.aux.forEach(auxiliary => auxiliary.decorate(this));
 		for (let key in this.properties) {
 			this.onUpdate(key, this.properties[key], true);
 		}		

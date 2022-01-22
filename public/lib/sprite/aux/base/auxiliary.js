@@ -5,4 +5,7 @@ class Auxiliary {
 
 	decorate(sprite) {
 	}	
+
+	gridInit(sprite, col, row, grid) {
+	}
 }

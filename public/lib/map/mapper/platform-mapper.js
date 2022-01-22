@@ -78,26 +78,26 @@ class PlatformMapper extends SpriteMapper {
 					onLeave: (self, sprite) => {
 						if (sprite.onChat) {
 							if (self.chatting) {
-								sprite.stopChat(sprite, self);
+								sprite.onChat(sprite, self, false);
 							}
 							self.engine.clearMessage(self.id);
 							self.engine.keyboardHandler.removeListener(sprite.onChatEvent);
-							this.game.camera = "normal";
+							self.game.camera = "normal";
 						}
 						if (sprite.onOpen) {
 							sprite.setProperty("opened", 0);
 							self.engine.clearMessage(self.id);
 							self.engine.keyboardHandler.removeListener(sprite.onOpenEvent);
-							this.game.camera = "normal";
+							self.game.camera = "normal";
 						}
 						if (sprite.ladder) {
 							const jumping = self.engine.lastTime - self.lastJump < 100;
-							if (this.jump && this.control.dy < 0 && !jumping) {
-								this.game.jump.performJump(self);
+							if (self.game.jump && self.game.control.dy < 0 && !jumping) {
+								self.game.jump.performJump(self);
 							}
 							if (self.climbing) {
 								self.climbing = 0;
-								onMotion(self, this.control.dx, this.control.dy);
+								onMotion(self, self.game.control.dx, self.game.control.dy);
 							}
 						}
 					},
@@ -107,13 +107,13 @@ class PlatformMapper extends SpriteMapper {
 							self.dy = 0;
 							self.dx = 0;
 							self.changePosition(sprite.getCenterX(), self.y, self.z);
-							onMotion(self, this.control.dx, this.control.dy);
+							onMotion(self, self.game.control.dx, self.game.control.dy);
 							return;
 						}
 
 						if (self.climbing && sprite.ladder) {
 							self.climbing = self.engine.lastTime;
-							onMotion(self, this.control.dx, this.control.dy);
+							onMotion(self, self.game.control.dx, self.game.control.dy);
 							return;
 						}
 
@@ -124,13 +124,13 @@ class PlatformMapper extends SpriteMapper {
 						if (sprite.bounce) {
 							if (self.dy > 0) {
 								self.lastJump = self.engine.lastTime;
-								self.dy = -self.dy * (this.control.dy < 0 ? 1.3 : 1);
+								self.dy = -self.dy * (self.game.control.dy < 0 ? 1.3 : 1);
 								self.changePosition(self.x, self.y + self.dy, self.z);
 								self.bouncing = self.engine.lastTime;
 								self.lastJump = self.engine.lastTime;
-								sprite.changeAnimation(this.atlas.debugBounceBouncing);
+								sprite.changeAnimation(self.game.atlas.debugBounceBouncing);
 								sprite.bounced = self.engine.lastTime;
-								onMotion(self, this.control.dx, this.control.dy);
+								onMotion(self, self.game.control.dx, self.game.control.dy);
 								sprite.engine.refresher.add(sprite);
 							}
 							return;
@@ -147,7 +147,7 @@ class PlatformMapper extends SpriteMapper {
 							if (sprite.canLand && self.dy > 0 || sprite.ceiling && self.dy < 0) {
 								self.dy = 0;
 								self.bouncing = 0;
-								onMotion(self, this.control.dx, this.control.dy);
+								onMotion(self, self.game.control.dx, self.game.control.dy);
 							}
 
 							if (sprite.lowceiling && yPush > 0 && self.rest && !self.crouch) {
@@ -160,7 +160,7 @@ class PlatformMapper extends SpriteMapper {
 							if (yPush < 0) {
 								self.lastJump = 0;
 								if (!self.rest) {
-									onMotion(self, this.control.dx, this.control.dy);
+									onMotion(self, self.game.control.dx, self.game.control.dy);
 								}
 								if (sprite.canLand) {
 									self.rest = self.engine.lastTime;
@@ -303,120 +303,6 @@ class PlatformMapper extends SpriteMapper {
 					this.movingPlatform.changePosition(40 * col, 40 * row, this.movingPlatform.z);
 				}
 				return this.movingPlatform;
-			}),
-			'^': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `lowceiling_${col}_${row}`,
-					anim: "debugCeiling",
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					canMerge: Constants.HORIZONTAL_MERGE,
-					collide: 1, lowceiling: 1,
-					gridInit: (self) => {
-						const { col, row, grid } = self;
-						if (!grid[row-1] || !grid[row-1][col] || !grid[row-1][col].block) {
-							self.canLand = true;
-							self.changeOpacity(.7);
-						}
-					},
-				});				
-			}),
-			'?': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `npc_${col}_${row}`,
-					anim: "npc.still",
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					collide: 1, npc: 1, noblock: 1,
-					onChat: (self, sprite) => {
-						if (!sprite.chatting) {
-							self.startChat(self, sprite);
-						} else {
-							self.stopChat(self, sprite);
-						}
-					},
-					startChat: (self, sprite) => {
-						sprite.chatting = self.engine.lastTime;
-						this.game.camera = "zoom";
-						this.game.overlayHud.show(this.game.overlayHud);
-					},
-					stopChat: (self, sprite) => {
-						sprite.chatting = 0;
-						this.game.camera = "normal";
-						this.game.overlayHud.hide(this.game.overlayHud);
-					}
-				});
-			}),
-			'$': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `coin_${col}_${row}`,
-					anim: "debugCoin",
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					collide: 1, coin: 1, noblock: 1,
-					onCollide: (self, sprite, xPush, yPush) => {
-						if (self.properties.pickedUp) {
-							return;
-						}
-						self.setProperty("pickedUp", self.engine.lastTime);
-					},
-					onChange: {
-						pickedUp: (coin, value, isInit) => {
-							if (value) {
-								if (!isInit) {
-									this.game.audio.pickup.play();
-								}
-								coin.changeActive(false);
-							}
-						},
-					},
-				});
-			}),
-			'@': new GeneratorWithCallback((col, row, option) => {
-				return this.spriteFactory.create({
-					name: `bounce_${col}_${row}`,
-					anim: "debugBounce",
-					size: [40, 40],
-					x: 40 * col, y: 40 * row,
-				}, {
-					collide: 1, bounce: 1, manualRefresh: true,
-					onRefresh: self => {
-						if (self.engine.lastTime - self.bounced > 1000) {
-							self.changeAnimation(this.atlas.debugBounce);
-							self.engine.refresher.delete(self);
-						}
-					},
-				});
-			}),
-			'D': new GeneratorWithCallback((col, row, option) => {
-				const door = this.spriteFactory.create({
-					name: "the door",
-					id: `door_${col}_${row}`,
-					anim: "debugDoorBack",
-					size: [40, 60],
-					x: 40 * col, y: 40 * row,
-				}, {
-					collide: 1, noblock: 1,
-					onOpen: self => {
-						self.setProperty("opened", self.properties.opened ? 0 : self.engine.lastTime);
-						this.game.camera = self.properties.opened ? "zoom" : "normal";
-					},
-					onChange: {
-						opened: (self, opened) => {
-							self.door.changeAnimation(opened ? this.atlas.debugDoorOpen : this.atlas.debugDoorStill);
-						},
-					},
-				});
-				door.door = this.spriteFactory.create({
-					id: `door_door_${col}_${row}`,
-					anim: this.atlas.debugDoorStill,
-					size: [40, 60],
-					x: 40 * col, y: 40 * row,
-				});
-				return door;
 			}),
 		};
 	}

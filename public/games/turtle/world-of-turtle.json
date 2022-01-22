@@ -26,16 +26,40 @@
 	},
 
   "gridData": {
-    "mapper": "OverworldMapper",
     "grid": [
       "[][][][][][]",
       "[][]  []  []",
       "..[]  8   []",
       "[][]  [][][]",
       "[][][][][][]"
-    ]
+    ],
+    "mapping": {
+      "8": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 0, 40],
+              "offset": [0, 390, 0]
+          }
+        },
+        "name": "hero",
+        "anim": "hero.still",
+        "size": [50, 75, 2],
+        "rotation": [-90, 0, 0]
+      },
+      "[": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 0, 40],
+              "offset": [0, 390, 0]
+          }
+        },
+        "name": "block",
+        "anim": "debugBlock",
+        "size": [40, 40],
+        "rotation": [-90, 0, 0]
+      }    	
+    }
   },
-
 	"atlas": {
     "collisionBox": {
       "url": "assets/red-square.png",

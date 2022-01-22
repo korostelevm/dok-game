@@ -6,7 +6,18 @@ class Hud extends Sprite {
 	}
 
 	get visible() {
-		return this.showTime;
+		return Boolean(this.showTime);
+	}
+
+	set visible(value) {
+		const shouldShow = Boolean(value);
+		if (shouldShow !== this.visible) {
+			if (shouldShow) {
+				this.show(this);
+			} else {
+				this.hide(this);
+			}
+		}
 	}
 
 	show(self) {

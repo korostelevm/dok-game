@@ -261,7 +261,6 @@ const globalFiles=[
               ".DS_Store",
               {"base": ["sprite-mapper.js"]},
               "config-mapper.js",
-              "overworld-mapper.js",
               "platform-mapper.js"
             ]
           },
@@ -292,7 +291,13 @@ const globalFiles=[
             "aux": [
               ".DS_Store",
               {"base": ["auxiliary.js"]},
+              "bouncer-auxiliary.js",
+              "collectible-auxiliary.js",
+              "door-auxiliary.js",
               "landing-auxiliary.js",
+              "low-ceiling-auxiliary.js",
+              "npc-auxiliary.js",
+              "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js"
             ]
           },
