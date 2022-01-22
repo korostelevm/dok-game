@@ -9,7 +9,7 @@ class PlatformGridcellPositionAuxiliary extends Auxiliary {
 		sprite.changePosition(
 			(cellWidth||0) * sprite.col + (xOffset||0),
 			(cellHeight||0) * (sprite.row + sprite.rowShift) + (yOffset||0),
-			(cellDepth||0) * sprite.row + (yOffset||0)
+			(cellDepth||0) * sprite.row + (zOffset||0)
 		);
 	}
 }

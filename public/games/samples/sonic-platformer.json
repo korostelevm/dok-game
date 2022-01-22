@@ -79,7 +79,22 @@
         "properties": {
           "canMerge": "{vertical_merge}"
         }
-      }      
+      },
+      "8": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0],
+              "offset": [0, 0, 1]
+          },
+          "PlatformHeroAuxiliary": {}
+        },
+        "id": "hero",
+        "name": "hero",
+        "anim": "hero.still",
+        "size": [50, 50, 2],
+        "hotspot": "{hotspot_bottom}",
+        "remember": true
+      }
     }
   },
   "audio": {

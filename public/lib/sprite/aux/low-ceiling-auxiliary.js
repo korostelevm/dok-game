@@ -13,5 +13,6 @@ class LowCeilingAuxiliary extends Auxiliary {
 			self.canLand = true;
 			self.changeOpacity(.7);
 		}
+		return self;
 	}
 }

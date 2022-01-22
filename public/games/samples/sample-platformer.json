@@ -16,7 +16,6 @@
     }
   },
   "gridData": {
-    "mapper": "PlatformMapper",
     "grid": [
       "..                        [][][][][][][][][][][][][][][][][][][][][][][][]  [][][][]    [][][][]    [][][][]    [][][][]",
       "..                      HH",
@@ -146,6 +145,24 @@
         "name": "door",
         "anim": "debugDoorBack",
         "size": [40, 60]
+      },
+      "8": {
+        "aux": {
+          "PlatformGridcellPositionAuxiliary": {
+              "cellSize": [40, 40, 0],
+              "offset": [0, 0, 1]
+          },
+          "PlatformHeroAuxiliary": {}
+        },
+        "id": "hero",
+        "name": "hero",
+        "anim": "hero.still",
+        "size": [50, 50, 2],
+        "hotspot": "{hotspot_bottom}",
+        "remember": true
+      },
+      "-": {
+        "generator": "MovingPlatformGenerator"
       }
     }
   },

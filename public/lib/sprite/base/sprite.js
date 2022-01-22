@@ -54,7 +54,6 @@ class Sprite extends Body {
 			const auxiliary = new classObj(data.aux[name]);
 			this.aux.push(auxiliary);
 		}
-
 	}
 
 	onExit(game) {

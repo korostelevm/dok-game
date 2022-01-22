@@ -252,19 +252,12 @@ const globalFiles=[
               ".DS_Store",
               {"base": [".DS_Store", "generator.js"]},
               "generator-from-config.js",
-              "generator-with-callback.js",
+              "moving-platform-generator.js",
               "null-generator.js"
             ]
           },
-          {
-            "mapper": [
-              ".DS_Store",
-              {"base": ["sprite-mapper.js"]},
-              "config-mapper.js",
-              "platform-mapper.js"
-            ]
-          },
-          "sprite-grid.js"
+          "sprite-grid.js",
+          "sprite-mapper.js"
         ]
       },
       {"newgrounds": [".DS_Store", "ng.js", "sound.mp3"]},
@@ -298,7 +291,8 @@ const globalFiles=[
               "low-ceiling-auxiliary.js",
               "npc-auxiliary.js",
               "platform-block-auxiliary.js",
-              "platform-gridcell-position-auxiliary.js"
+              "platform-gridcell-position-auxiliary.js",
+              "platform-hero-auxiliary.js"
             ]
           },
           {"base": [".DS_Store", "body.js", "sprite.js"]},

@@ -12,11 +12,14 @@ class CollisionBox {
 		this.collisionFrame = collisionFrame || null;
 		this.time = 0;
 		this.lastPosition = [null,null,null];
+		this.showCollisionBox = showCollisionBox;
+	}
 
-		if (showCollisionBox) {
-			this.changeActive(true);
+	set showCollisionBox(value) {
+		if (value && !this.display) {
 			this.display = new CollisionBoxDisplay(this);
 		}
+		this.changeActive(value);
 	}
 
 	set dirty(value) {

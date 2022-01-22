@@ -56,17 +56,9 @@ class GameBase {
 			}
 
 			if (this.gameModel.gridData) {
-				const mapperClass = this.gameModel.gridData.mapper ? nameToClass(this.gameModel.gridData.mapper) : null;
-				const mapper = mapperClass ? new mapperClass(this) : null;
-				if (mapper) {
-					await mapper.init(engine);
-				}
-				const configMapper = new ConfigMapper(this, this.gameModel.gridData.mapping);
-				await configMapper.init(engine);
-				const spriteGrid = new SpriteGrid(this, [
-					mapper,
-					configMapper,
-				].filter(a => a));
+				const mapper = new SpriteMapper(this, this.gameModel.gridData.mapping);
+				await mapper.init(engine);
+				const spriteGrid = new SpriteGrid(this, mapper);
 
 				const { grid, cols, rows } = spriteGrid.generate(this.gameModel.gridData.grid);
 
