@@ -144,7 +144,10 @@
         },
         "name": "door",
         "anim": "debugDoorBack",
-        "size": [40, 60]
+        "size": [40, 60],
+        "properties": {
+            "label": "the door"
+        }
       },
       "8": {
         "aux": {
@@ -165,6 +168,9 @@
         "generator": "MovingPlatformGenerator"
       }
     }
+  },
+  "dialogs": {
+    
   },
   "audio": {
     "scream": {

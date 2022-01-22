@@ -39,7 +39,7 @@ class PlatformHeroAuxiliary extends Auxiliary {
 				self.engine.clearMessage(self.id);
 			};
 
-			self.engine.showMessage(self.id, `press [Q] to start open ${sprite.name}`);
+			self.engine.showMessage(self.id, `press [Q] to start open ${sprite.label || sprite.name}`);
 			self.engine.keyboardHandler.addKeyDownListener('q', sprite.onOpenEvent);							
 		}
 	}
