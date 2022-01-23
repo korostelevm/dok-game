@@ -18,25 +18,31 @@ class KeyboardHandler {
 			if (!keys[e.key]) {
 				keys[e.key] = true;
 				const listener = listeners[e.key] || listeners[null];
-				if (listener && listener["down"]) {
-					listener["down"].forEach(f => f(e));
-				}
+				this.executeAll(listener["down"], e);
 			}
 		});
 		document.addEventListener("keyup", e => {
 			this.keys[e.key] = false;
 			const listener = listeners[e.key] || listeners[null];
-			if (listener && listener["up"]) {
-				listener["up"].forEach(f => f(e));
-			}
+			this.executeAll(listener["up"], e);
 		});
 		this.listeners = listeners;
 		this.keys = keys;
 	}
 
+	executeAll(listeners, e) {
+		if (listeners) {
+			for (let f of listeners) {
+				f(e);
+			}
+		}
+	}
+
 	addKeyListener(key, type, onKey) {
 		if (Array.isArray(key)) {
-			key.forEach(k => this.addKeyListener(k, type, onKey));
+			for (let k of key) {
+				this.addKeyListener(k, type, onKey);	
+			}
 			return;
 		}
 		this.listeners[key] = (this.listeners[key] || {});

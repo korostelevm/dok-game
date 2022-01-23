@@ -435,7 +435,7 @@ class Engine {
 		this.uiComponents.forEach(component => component.init());
 
 		this.ready = true;
-		Engine.trigger(this);
+		Engine.turnOn(this);
 	}
 
 	async preloadAssets(onProgress) {
@@ -801,7 +801,7 @@ class Engine {
 		}
 	}
 
-	static trigger(engine) {
+	static turnOn(engine) {
 		const frameDuration = 1000 / 60;
 		let frame = 0;
 		const loop = (time) => {
@@ -825,7 +825,9 @@ class Engine {
 	}
 
 	handleOnRefreshes(time, dt, actualTime) {
-		this.refresher.forEach(item => item.onRefresh(item, time, dt, actualTime));
+		for (let item of this.refresher) {
+			item.onRefresh(item, time, dt, actualTime);			
+		}
 	}
 
 	onDropOnOverlay(event) {
@@ -937,7 +939,7 @@ class Engine {
 	}
 
 	handleSpriteUpdate(updater) {
-		updater.forEach(sprite => {
+		for (let sprite of updater) {
 			const spriteIndex = sprite.spriteIndex;
 			if (sprite.updateFlag & Constants.RENDER_FLAG.SPRITE_ATTRIBUTE) {
 				const {x, y, z, rotation, size:[width,height], anim:{hotspot}} = sprite;
@@ -961,7 +963,7 @@ class Engine {
 				this.spriteRenderer.setUpdateTime(spriteIndex, sprite.getAnimationTime(), sprite.updated.motion);
 			}
 			sprite.updateFlag = 0;
-		});
+		}
 		updater.clear();
 	}
 

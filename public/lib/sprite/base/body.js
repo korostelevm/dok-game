@@ -30,7 +30,9 @@ class Body {
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			this.followers.forEach(follower => follower.adjustFollowerPosition(time));
+			for (let follower of this.followers) {
+				follower.adjustFollowerPosition(time);	
+			}
 			return true;
 		}
 		return false;
@@ -54,7 +56,9 @@ class Body {
 	onMotionChanged(time) {
 		this.updated.motion = time;
 		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
-		this.followers.forEach(follower => follower.followMotion(time));
+		for (let follower of this.followers) {
+			follower.followMotion(time);
+		}
 		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
 	}
 
@@ -85,7 +89,9 @@ class Body {
 	onAccelerationChanged(time) {
 		this.updated.motion = time;
 		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
-		this.followers.forEach(follower => follower.followAcceleration(time));
+		for (let follower of this.followers) {
+			follower.followAcceleration(time);	
+		}
 		this.canRecalculateMotion = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
 		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
 	}

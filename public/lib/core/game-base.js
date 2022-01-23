@@ -48,11 +48,11 @@ class GameBase {
 			}
 
 			if (this.gameModel.physics) {
-				this.gameModel.physics.forEach(physic => {
+				for (let physic of this.gameModel.physics) {
 					const { id, type, config } = physic;
 					const classObj = nameToClass(type);
 					this[id] = this.addPhysics(new classObj(config||{}));
-				});
+				}
 			}
 
 			if (this.gameModel.gridData) {

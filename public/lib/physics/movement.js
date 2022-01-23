@@ -6,14 +6,14 @@ class Movement extends PhysicsBase {
 
 	async init(sprites) {
 		this.sprites = sprites.filter(({movement}) => movement);
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			sprite.dx = 0;
 			sprite.dy = 0;
-		});
+		}
 	}
 
 	refresh(time, dt) {
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			const maxBottom = 440;
 			const px = Math.max(-30, sprite.x + sprite.dx * sprite.movement * this.speed);
 			const py = Math.min(maxBottom, sprite.y + sprite.dy * sprite.movement * this.speed);
@@ -25,6 +25,6 @@ class Movement extends PhysicsBase {
 				sprite.platform = null;
 			}
 			sprite.changePosition(px, py, sprite.z);
-		});
+		}
 	}	
 }

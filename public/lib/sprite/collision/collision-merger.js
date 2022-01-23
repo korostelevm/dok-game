@@ -28,11 +28,11 @@ class CollisionMerger {
 			for (let pass = 0; pass < 10; pass++) {
 //				ArrayUtils.shuffle(blocks[cellType]);
 				let didMerge = false;
-				blocks[cellType].forEach(b => {
+				for (let b of blocks[cellType]) {
 					if (this.tryMerge(b, grid)) {
 						didMerge = true;
-					}
-				});
+					}					
+				}
 				blocks[cellType] = blocks[cellType].filter(b => b.sprite.active);
 				if (!didMerge) {
 					break;

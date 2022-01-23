@@ -10,7 +10,7 @@ class OverworldGravity extends PhysicsBase {
 	}
 
 	refresh(time, dt) {
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			if (sprite.airborne && sprite.acceleration[1] === 0) {
 				sprite.changeAcceleration(0, 3000 * this.gravity, 0, time);
 			}
@@ -18,6 +18,6 @@ class OverworldGravity extends PhysicsBase {
 			if (position[1] > this.ground && sprite.onLand) {
 				sprite.onLand(sprite, time, this.ground);
 			}
-		});
+		}
 	}
 }

@@ -146,6 +146,24 @@ const globalFiles=[
     ]
   },
   {
+    "css": [
+      ".DS_Store",
+      {
+        "fonts": [
+          "Lato-Bold.ttf",
+          "Lato-Regular.ttf",
+          "alphabetized-cassette-tapes.ttf",
+          "american-captain.otf",
+          "cartoon-script.ttf",
+          "demode.ttf",
+          "grotto.ttf",
+          "math-font.ttf"
+        ]
+      },
+      "style.css"
+    ]
+  },
+  {
     "data": [
       ".DS_Store",
       "can-write.json",
@@ -153,25 +171,12 @@ const globalFiles=[
     ]
   },
   "favicon.ico",
-  {
-    "fonts": [
-      "Lato-Bold.ttf",
-      "Lato-Regular.ttf",
-      "alphabetized-cassette-tapes.ttf",
-      "american-captain.otf",
-      "cartoon-script.ttf",
-      "demode.ttf",
-      "grotto.ttf",
-      "math-font.ttf"
-    ]
-  },
   "game-starter.js",
   {
     "games": [
       ".DS_Store",
       {"common": ["start-screen.js"]},
       {"demo": ["flat-land.js", "game-ring.js", "peer-demo.js", "smurf.js"]},
-      {"dobuki": []},
       {
         "samples": [
           "sample-platformer.json",
@@ -324,6 +329,7 @@ const globalFiles=[
           "focus-fixer.js",
           "fps-box.js",
           "keyboard-handler.js",
+          "mouse-handler-manager.js",
           "player-overlay.js",
           "scene-tab.js",
           "side-bar.js",

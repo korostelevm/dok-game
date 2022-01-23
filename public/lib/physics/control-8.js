@@ -75,19 +75,19 @@ class Control8 extends PhysicsBase {
 		game.engine.keyboardHandler.addKeyDownListener([' ', 'Shift'], this.onAction);
 		game.engine.keyboardHandler.addKeyUpListener([' ', 'Shift'], this.onAction);
 
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			for (let event in this.onKeyActions) {
 				if (sprite[event]) {
 					this.onKeyActions[event].push(sprite);
 				}
 			}
-		});
+		}
 	}
 
 	forwardEvents(action, e) {
 		const sprites = this.onKeyActions[action];
-		for (let i = 0; i < sprites.length; i++) {
-			sprites[i][action](sprites[i], e);
+		for (let sprite of sprites) {
+			sprite[action](sprite, e);
 		}
 	}
 

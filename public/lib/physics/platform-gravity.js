@@ -9,7 +9,7 @@ class PlatformGravity extends PhysicsBase {
 	}
 
 	refresh(time, dt) {
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			if (time - sprite.climbing < 150) {
 				return;
 			}
@@ -20,6 +20,6 @@ class PlatformGravity extends PhysicsBase {
 			}
 			sprite.dy += sprite.gravity * (sprite.dy < 0 ? 1 : 2.5 - floatFactor) * this.gravity;
 			sprite.dy = Math.min(sprite.dy, 9);
-		});
+		}
 	}
 }

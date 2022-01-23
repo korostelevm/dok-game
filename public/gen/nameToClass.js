@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["FocusFixer"] = FocusFixer;		// lib/ui/focus-fixer.js
   NAME_TO_CLASS["FpsBox"] = FpsBox;		// lib/ui/fps-box.js
   NAME_TO_CLASS["KeyboardHandler"] = KeyboardHandler;		// lib/ui/keyboard-handler.js
+  NAME_TO_CLASS["MouseHandlerManager"] = MouseHandlerManager;		// lib/ui/mouse-handler-manager.js
   NAME_TO_CLASS["PlayerOverlay"] = PlayerOverlay;		// lib/ui/player-overlay.js
   NAME_TO_CLASS["SceneTab"] = SceneTab;		// lib/ui/scene-tab.js
   NAME_TO_CLASS["SideBar"] = SideBar;		// lib/ui/side-bar.js

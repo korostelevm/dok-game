@@ -46,11 +46,11 @@ class VoiceManager {
 			replacedVoice = true;
 		}
 		if (this.defaultVoiceReplacement && this.defaultVoiceReplacement !== "default" && mainCharacter && localStorage.getItem("alternate_voices")) {
-			voices.forEach(theVoice => {
+			for (let voice of voices) {
 				if (theVoice.name === this.defaultVoiceReplacement && theVoice !== voice) {
 					voice = theVoice;
 				}
-			});
+			}
 			replacedVoice = true;
 		}
 //		console.log(this.defaultVoiceReplacement, replacedVoice);

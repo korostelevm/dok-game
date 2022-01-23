@@ -14,9 +14,9 @@ class CollisionBoxDisplay {
 		];
 
 		this.repositionSprites(engine.lastTime);
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			sprite.follow(this.collisionBox.sprite);
-		});
+		}
 	}
 
 	generateBox(game, collisionBox, rotation) {

@@ -40,7 +40,7 @@ class PlatformJump extends PhysicsBase {
 
 	refresh(time, dt) {
 		let recordJump = false;
-		this.sprites.forEach(sprite => {
+		for (let sprite of this.sprites) {
 			if (!this.jump && (!this.up || !sprite.rest)) {
 				return;
 			}
@@ -48,7 +48,7 @@ class PlatformJump extends PhysicsBase {
 				this.performJump(sprite, this.strength);
 				recordJump = true;
 			}
-		});
+		}
 		if (recordJump || time - this.jump > 100) {
 			this.jump = 0;
 		}
