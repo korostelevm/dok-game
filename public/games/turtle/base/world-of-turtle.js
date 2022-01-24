@@ -229,6 +229,8 @@ class WorldOfTurtle extends GameBase {
 					self.holding = false;
 				}
 			},
+			handleMouse: (e) => {
+			},
 		});
 
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
@@ -236,8 +238,7 @@ class WorldOfTurtle extends GameBase {
 		});
 	}
 
-	handleMouse(e) {
-		const x = e.pageX - this.engine.canvas.offsetLeft, y = e.pageY - this.engine.canvas.offsetTop;
+	handleMouse(self, e, x, y) {
 		const inGame = e.type !== "mouseleave" && x >= 0 && x < this.engine.viewportWidth && y >= 0 && y < this.engine.viewportHeight;
 		const onHud = e.type !== "mouseleave" && this.overlayHud.visible && inGame && y >= this.engine.viewportHeight - 150;
 		this.mouseX = x;

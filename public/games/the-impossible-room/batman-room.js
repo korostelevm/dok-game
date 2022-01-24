@@ -8,9 +8,9 @@ class BatmanRoom extends GameCore {
 		/* Load Audio */
 		this.audio = {
 			...this.audio,
-			punch: new Sound("audio/hit.mp3", 1),
-			im_batman: new Sound("audio/im-batman.mp3", 1),
-			joker: new Sound("audio/joker.mp3", 1),
+			punch: engine.soundManager.getSound("audio/hit.mp3", 1),
+			im_batman: engine.soundManager.getSound("audio/im-batman.mp3", 1),
+			joker: engine.soundManager.getSound("audio/joker.mp3", 1),
 		};
 
 		this.atlas = {

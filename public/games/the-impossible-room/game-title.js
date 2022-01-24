@@ -7,7 +7,7 @@ class GameTitle extends GameBase {
 		/* Load Audio */
 		this.audio = {
 			...this.audio,
-			om: new Sound("audio/om.mp3", 1),
+			om: engine.soundManager.getSound("audio/om.mp3", 1),
 		};
 
 		this.atlas = {

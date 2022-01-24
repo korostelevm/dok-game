@@ -28,17 +28,17 @@ class GameCore extends GameBase {
 		//	Audio
 		this.audio = {
 			... this.audio,
-			scream: new Sound("audio/scream.mp3", 1),
-			piano: new Sound("audio/piano.mp3", 1),
-			beep: new Sound("audio/beep.mp3", .5,),
-			eat: new Sound("audio/eat.mp3", .5),
-			dud: new Sound("audio/dud.mp3", 1),
-			hit: new Sound("audio/hit.mp3", .5),
-			door: new Sound("audio/door.mp3", .5),
-			pickup: new Sound("audio/pickup.mp3", .3),
-			drink: new Sound("audio/drink.mp3", 1),
-			mouse: new Sound("audio/animal-cry.mp3", 1),
-			jingle: new Sound("audio/jingle.mp3", 1),
+			scream: engine.soundManager.getSound("audio/scream.mp3", 1),
+			piano: engine.soundManager.getSound("audio/piano.mp3", 1),
+			beep: engine.soundManager.getSound("audio/beep.mp3", .5,),
+			eat: engine.soundManager.getSound("audio/eat.mp3", .5),
+			dud: engine.soundManager.getSound("audio/dud.mp3", 1),
+			hit: engine.soundManager.getSound("audio/hit.mp3", .5),
+			door: engine.soundManager.getSound("audio/door.mp3", .5),
+			pickup: engine.soundManager.getSound("audio/pickup.mp3", .3),
+			drink: engine.soundManager.getSound("audio/drink.mp3", 1),
+			mouse: engine.soundManager.getSound("audio/animal-cry.mp3", 1),
+			jingle: engine.soundManager.getSound("audio/jingle.mp3", 1),
 		};
 
 
@@ -1367,7 +1367,7 @@ class GameCore extends GameBase {
 		return true;
 	}
 
-	handleMouse(e) {
+	handleMouse(self, e, x, y) {
 		if (e.target.id === "im" || e.target.id === "title") {
 			if (this.onMouseTitle) {
 				this.onMouseTitle(e);	
@@ -1414,12 +1414,7 @@ class GameCore extends GameBase {
 
 		const { engine } = this;
 		const { canvas, lastTime } = engine;
-		const { pageX, pageY, buttons } = e;
-		const rect = canvas.getBoundingClientRect();
-
-//		const x = pageX - canvas.offsetLeft, y = pageY - canvas.offsetTop;
-		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
-			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
+		const { buttons } = e;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
 			return;
 		}

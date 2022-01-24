@@ -8,7 +8,7 @@ class Selection extends GameBase {
 		/* Load Audio */
 		this.audio = {
 			...this.audio,
-			beep: new Sound("audio/beep.mp3", .5,),
+			beep: engine.soundManager.getSound("audio/beep.mp3", .5,),
 		};
 
 		/* Load image */
@@ -197,13 +197,10 @@ class Selection extends GameBase {
 		return super.onExit(engine);
 	}
 
-	handleMouse(e) {
+	handleMouse(self, e, x, y) {
 		const { engine } = this;
-		const { pageX, pageY, buttons } = e;
+		const { buttons } = e;
 		const { canvas } = engine;
-		const rect = canvas.getBoundingClientRect();
-		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
-			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
 			return;
 		}

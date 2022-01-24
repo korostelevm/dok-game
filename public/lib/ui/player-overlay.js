@@ -17,7 +17,7 @@ class PlayerOverlay extends UiComponent {
 		document.getElementById("player-overlay").src = `assets/${character}-overlay.png`;
 	}
 
-	setInception(inception, extraData) {
+	setInception(inception, extraData, nextScene) {
 		this.inception = inception;
 		const temp = this.engine.swapData || {};
 		this.engine.swapData = this.engine.data;
@@ -28,7 +28,7 @@ class PlayerOverlay extends UiComponent {
 			}
 		}
 
-		const TempScene = this.engine.SwapScene || StartScreen;
+		const TempScene = nextScene || this.engine.SwapScene || StartScreen;
 		this.engine.SwapScene = this.engine.game.constructor;
 		this.engine.setGame(new TempScene(), true).then(game => {
 			game.onInception(inception);

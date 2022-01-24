@@ -18,13 +18,13 @@ class KeyboardHandler {
 			if (!keys[e.key]) {
 				keys[e.key] = true;
 				const listener = listeners[e.key] || listeners[null];
-				this.executeAll(listener["down"], e);
+				this.executeAll(listener?.down, e);
 			}
 		});
 		document.addEventListener("keyup", e => {
 			this.keys[e.key] = false;
 			const listener = listeners[e.key] || listeners[null];
-			this.executeAll(listener["up"], e);
+			this.executeAll(listener?.up, e);
 		});
 		this.listeners = listeners;
 		this.keys = keys;

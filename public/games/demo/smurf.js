@@ -150,8 +150,7 @@ class Smurf extends GameBase {
 		this.engine.setClamp(-3000, 3000, 0, 0, 0, 0);
 	}
 
-	handleMouse(e) {
-		const x = e.pageX - this.engine.canvas.offsetLeft, y = e.pageY - this.engine.canvas.offsetTop;
+	handleMouse(self, e, x, y) {
 		const zdiff = (y - 400) * 3 - 100;
 		const xdiff = 400 + (x-400) * (1 - zdiff / 500);
 		if (e.type === "mousemove") {

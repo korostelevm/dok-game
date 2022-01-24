@@ -2,8 +2,12 @@ class Sound {
 	constructor(src, volume) {
 		this.audios = [];
 		this.src = src;
-		this.volume = volume;
+		this.volume = volume ?? 1;
 		this.prepare();
+	}
+
+	setDefaultVolume(volume) {
+		this.volume = volume ?? 1;
 	}
 
 	prepare() {

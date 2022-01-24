@@ -1,6 +1,7 @@
 class GameBase {
-	constructor(path) {
-		this.path = path;		
+	constructor(path, configOverride) {
+		this.path = path;
+		this.configOverride = configOverride;	
 		this.physics = [];
 		this.audio = {};
 		this.atlas = {};
@@ -40,7 +41,7 @@ class GameBase {
 
 			for (let id in this.gameModel.audio) {
 				const { src, volume } = this.gameModel.audio[id];
-				this.audio[id] = new Sound(src, volume || 1);
+				this.audio[id] = engine.soundManager.getSound(src, volume ?? 1);
 			}
 
 			for (let id in this.gameModel.world) {
@@ -202,7 +203,7 @@ class GameBase {
 		if (this.gameModel) {
 			return this.gameModel;
 		}
-		let gameModel = await engine.fileUtils.load(this.path) || {};
+		let gameModel = this.configOverride ?? (await engine.fileUtils.load(this.path) || {});
 		const settings = gameModel.settings || (gameModel.settings = {});
 		if (!settings.viewportSize) {
 			settings.viewportSize = this.getDefaultViewportSize();
@@ -233,7 +234,6 @@ class GameBase {
 	}
 
 	getDefaultViewportSize() {
-		console.log(Constants.defaultViewportSize());
 		return Constants.defaultViewportSize();
 	}
 

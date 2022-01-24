@@ -4411,5 +4411,27 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "5b46bb788f559d8869f00c65bbe0da7c": [
+    {
+      "collision_url": "assets/next-button.png",
+      "updated": "2022-01-23T23:12:41.689Z",
+      "top": 0.09375,
+      "left": 0.0625,
+      "bottom": 0.8125,
+      "right": 0.96875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/next-button.png",
+      "updated": "2022-01-23T23:12:41.689Z",
+      "top": 0.15625,
+      "left": 0.0625,
+      "bottom": 0.8125,
+      "right": 0.9375,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

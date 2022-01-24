@@ -78,9 +78,8 @@ class Sprite extends Body {
 
 	getAnimationTime() {
 		const anim = this.anim;
-		const updated = this.updated;
 		const frameOffset = anim.firstFrame - anim.startFrame;
-		return updated.animation - frameOffset * anim.frameDuration;
+		return this.updated.animation - frameOffset * anim.frameDuration;
 	}
 
 	getAnimationFrame(t) {
@@ -168,19 +167,19 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeAnimation(anim, time) {
+	changeAnimation(anim) {
 		if (this.anim !== anim) {
 			if (!anim) {
 				console.warn("anim is null.");
 				return false;
 			}
 			this.anim = typeof(anim) === "string" ? SpriteCollection.fetchAnim(this.game.atlas, anim) : anim;
-			this.updated.animation = time || this.engine.lastTime;
 			this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
 			this.collisionBox.dirty = true;
+			this.changeAnimationTime(this.engine.lastTime);
 			this.needUpdate();
 			if (this.shadow) {
-				this.shadow.changeAnimation(anim, time);
+				this.shadow.changeAnimation(anim);
 			}
 			return true;
 		}
@@ -225,9 +224,13 @@ class Sprite extends Body {
 	}
 
 	changeAnimationTime(animationTime) {
-		this.updated.animation = animationTime;		
-		this.updateFlag |= Constants.UPDATE_FLAG.UPDATE_TIME;
-		this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
+		if (animationTime !== this.updated.animation) {
+			this.updated.animation = animationTime;		
+			this.updateFlag |= Constants.UPDATE_FLAG.UPDATE_TIME | Constants.UPDATE_FLAG.ANIMATION;
+			this.needUpdate();
+			return true;
+		}
+		return false;
 	}
 
 	changeSpriteType(spriteType) {
@@ -250,13 +253,6 @@ class Sprite extends Body {
 		for (let key in this.properties) {
 			this.onUpdate(key, this.properties[key], true);
 		}		
-	}
-
-	resetAnimation(time) {
-		const t = time || this.engine.lastTime;
-		this.updated.animation = t;
-		this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
-		this.updateFlag |= Constants.UPDATE_FLAG.UPDATE_TIME;
 	}
 
 	getCenterX(time) {

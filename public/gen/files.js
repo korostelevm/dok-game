@@ -281,7 +281,15 @@ const globalFiles=[
         ]
       },
       {"renderer": ["sprite-renderer.js"]},
-      {"sound": [".DS_Store", "music.js", "sound.js", "voice-manager.js"]},
+      {
+        "sound": [
+          ".DS_Store",
+          "music.js",
+          "sound-manager.js",
+          "sound.js",
+          "voice-manager.js"
+        ]
+      },
       {
         "sprite": [
           ".DS_Store",

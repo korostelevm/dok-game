@@ -8,10 +8,10 @@ class Restroom extends GameCore {
 		/* Load Audio */
 		this.audio = {
 			...this.audio,
-			shit: new Sound("audio/player-hurt.mp3", 1),
-			wipe: new Sound("audio/eat.mp3", .2),
-			pee: new Sound("audio/drink.mp3", .5),
-			flush: new Sound("audio/diving.mp3", 1),
+			shit: engine.soundManager.getSound("audio/player-hurt.mp3", 1),
+			wipe: engine.soundManager.getSound("audio/eat.mp3", .2),
+			pee: engine.soundManager.getSound("audio/drink.mp3", .5),
+			flush: engine.soundManager.getSound("audio/diving.mp3", 1),
 		};
 
 		const genderToShitUrl = {
@@ -128,7 +128,8 @@ class Restroom extends GameCore {
 					lookup: 500,
 					action: door => {
 						this.audio.door.play();
-						door.changeAnimation(this.atlas.toilet_opening, engine.lastTime);
+						door.changeAnimation(this.atlas.toilet_opening);
+						door.changeAnimationTime(engine.lastTime);
 					}
 				},
 				{ name: "close", condition: door => door.properties.opened && !this.monkor_shit.properties.sit,

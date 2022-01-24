@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["PlatformJump"] = PlatformJump;		// lib/physics/platform-jump.js
   NAME_TO_CLASS["SpriteRenderer"] = SpriteRenderer;		// lib/renderer/sprite-renderer.js
   NAME_TO_CLASS["Music"] = Music;		// lib/sound/music.js
+  NAME_TO_CLASS["SoundManager"] = SoundManager;		// lib/sound/sound-manager.js
   NAME_TO_CLASS["Sound"] = Sound;		// lib/sound/sound.js
   NAME_TO_CLASS["VoiceManager"] = VoiceManager;		// lib/sound/voice-manager.js
   NAME_TO_CLASS["Hud"] = Hud;		// lib/sprite/hud.js

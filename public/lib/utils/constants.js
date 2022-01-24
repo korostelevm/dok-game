@@ -30,7 +30,7 @@ Constants.UPDATE_FLAG = {
 	SPRITE_SHEET: 	1 << 3,
 	SPRITE_TYPE: 	1 << 4,
 	ANIMATION: 		1 << 5,
-	UPDATETIME: 	1 << 6,
+	UPDATE_TIME: 	1 << 6,
 	DIRECTION: 		1 << 7,
 	OPACITY: 		1 << 8,
 	ACCELERATION: 	1 << 9,

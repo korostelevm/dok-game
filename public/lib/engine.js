@@ -39,12 +39,10 @@ class Engine {
 
 		this.music = new Music(this);
 		this.voiceManager = new VoiceManager();
+		this.soundManager = new SoundManager();
 
 		this.init(config);
 
-		this.seenGame = {};
-
-		/* Keyboard handler */
 		this.keyboardHandler = new KeyboardHandler(document);
 		this.refreshPerFrame = 1;
 
@@ -359,6 +357,8 @@ class Engine {
 		await this.loadDomContent(document);
 		console.log("Starting engine...");
 		const canvas = document.getElementById("canvas");
+		this.mouseHandlerManager = new MouseHandlerManager(document, canvas);
+
 		if (!canvas) {
 			console.error("You need a canvas with id 'canvas'.");
 		}
@@ -576,26 +576,11 @@ class Engine {
 		ChronoUtils.tick();
 		ChronoUtils.log();
 		if (this.game.handleMouse) {
-			this.setupMouseListeners();
+			this.mouseHandlerManager.add(this.game);
 		}
+		this.spriteCollection.filterBy("handleMouse").forEach(sprite => this.mouseHandlerManager.add(sprite));
 		this.setupDragListeners();
 		game.ready = Math.max(this.lastTime, 1);
-	}
-
-	handleMouse(e) {
-		if (this.game && this.game.ready) {
-			this.game.handleMouse(e);
-		}
-	}
-
-	setupMouseListeners() {
-		this.removeMouseListeners();
-		this.handleMouseCallback = e => this.handleMouse(e);
-		document.addEventListener("click", this.handleMouseCallback);
-		document.addEventListener("mousedown", this.handleMouseCallback);
-		document.addEventListener("mousemove", this.handleMouseCallback);
-		document.addEventListener("mouseup", this.handleMouseCallback);
-		document.addEventListener("mouseleave", this.handleMouseCallback);
 	}
 
 	setupDragListeners() {
@@ -604,17 +589,6 @@ class Engine {
 		}
 		if (this.game.onDragOver) {
 			this.overlay.addEventListener("dragover", this.onDragOver);
-		}
-	}
-
-	removeMouseListeners() {
-		if (this.handleMouseCallback) {
-			document.removeEventListener("click", this.handleMouseCallback);
-			document.removeEventListener("mousedown", this.handleMouseCallback);
-			document.removeEventListener("mousemove", this.handleMouseCallback);
-			document.removeEventListener("mouseup", this.handleMouseCallback);
-			document.removeEventListener("mouseleave", this.handleMouseCallback);
-			delete this.handleMouseCallback;
 		}
 	}
 
@@ -678,9 +652,9 @@ class Engine {
 		this.shift.goal.rotation[1] = 0;
 		this.shift.goal.rotation[2] = 0;
 		this.shift.dirty = true;
-		this.removeMouseListeners();
 		this.removeDragListeners();
 		this.removeKeyboardListeners();
+		this.mouseHandlerManager.clear();
 	}
 
 	resetGame() {
@@ -797,7 +771,6 @@ class Engine {
 			this.viewportWidth = viewportWidth;
 			this.viewportHeight = viewportHeight;
 			this.pixelScale = pixelScale;
-			console.log(this.viewportWidth, this.viewportHeight);
 		}
 	}
 
@@ -1007,9 +980,9 @@ class Engine {
 		return this.tipBox.id;
 	}
 
-	static start(classObj, gameConfig, skipStartScreen, debug) {
+	static start(classObj, gameConfig, skipStartScreen, debug, configOverride) {
 		const engine = new Engine(globalData.config, debug);
-		engine.setGame(skipStartScreen ? new classObj(gameConfig) : new StartScreen({classObj, gameConfig}));
+		engine.setGame(skipStartScreen ? new classObj(gameConfig, configOverride) : new StartScreen({classObj, gameConfig}, configOverride));
 		window.engine = engine;
 	}
 }

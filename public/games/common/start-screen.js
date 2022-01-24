@@ -1,18 +1,15 @@
 class StartScreen extends GameBase {
-	constructor(nextGame) {
+	constructor(nextGame, configOverride) {
 		super();
-		this.nextGame = nextGame;
+		this.classObj = nextGame?.classObj;
+		this.gameConfig = nextGame?.gameConfig;
+		this.configOverride = configOverride;
 	}
 
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
 		const { config } = engine;
-
-		/* Load Audio */
-		this.audio = {
-			...this.audio,
-		};
 
 		const [ start_screen, loading ] = await Promise.all([
 			"assets/start-screen.png",
@@ -45,18 +42,22 @@ class StartScreen extends GameBase {
 	}
 
 	async getSettings(engine) {
-		const { gameConfig } = this.nextGame || {};
+		const { gameConfig } = this;
 		const json = await engine.fileUtils.load(gameConfig);
-		return (json && json.settings) || super.getSettings(engine);
+		return json?.settings || super.getSettings(engine);
 	}
 
 	async postInit() {
 	}
 
-	handleMouse(e) {
+	handleMouse(self, e) {
 		if (e.type === "click") {
-			const { classObj, gameConfig } = this.nextGame || { classObj: GameTitle };
-			this.engine.setGame(new classObj(gameConfig));
+			const { classObj, gameConfig } = this;
+			if (classObj) {
+				this.engine.setGame(new classObj(gameConfig, this.configOverride));
+			} else {
+				throw new Error("Invalid start screen. Next scene missing.");
+			}
 		}
 	}
 }

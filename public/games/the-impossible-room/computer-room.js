@@ -154,7 +154,7 @@ class ComputerRoom extends GameCore {
 						const { gender } = this.data;
 						this.engine.playerOverlay.setInception(true, {
 							computerGender: gender,
-						});
+						}, GameTitle);
 					},
 				},
 				{ name: "talk", condition: () => this.engine.inception,

@@ -321,16 +321,13 @@ class Menu extends GameBase {
 		audio.volume = volume;
 	}
 
-	handleMouse(e) {
+	handleMouse(self, e, x, y) {
 		if (!this.ready) {
 			return;
 		}
 		const { engine } = this;
-		const { pageX, pageY, buttons } = e;
+		const { buttons } = e;
 		const { canvas } = engine;
-		const rect = canvas.getBoundingClientRect();
-		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
-			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
 			const cursor = "url(assets/mouse-cursor.png), auto";
 			if (this.cursor !== cursor) {
