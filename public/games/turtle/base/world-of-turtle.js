@@ -139,12 +139,11 @@ class WorldOfTurtle extends GameBase {
 		for (let i = 0; i < 100; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
 			const z = - RandomUtils.random(i, 888) * 2000;
-			const y = 400;
 			const peng = this.spriteFactory.create({
 				name: peng => `peng-${i}`,
-				anim: this.atlas.peng,
+				anim: "peng",
 				size: [100, 120],
-				x, y, z,
+				x, y: 400, z,
 				spriteType: "sprite",
 				collisionFrame: {
 					left: -30, right: 30,
@@ -206,6 +205,7 @@ class WorldOfTurtle extends GameBase {
 				self.changePosition(self.mouseX - self.engine.shift.x / 2 - 50, self.y, self.mouseY + self.engine.shift.z / 2 - 330);
 			},
 			onRefresh: (self, time, dt) => {
+				self.changePosition(self.mouseX - self.engine.shift.x / 2 - 50, self.y, self.mouseY + self.engine.shift.z / 2 - 330);
 				self.updatePosition(self);
 				if (self.selection) {
 					if (self.active) {

@@ -9,12 +9,13 @@ class Engine {
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 
 		const fileUtils = this.fileUtils = new FileUtils();
-		this.configMerger = new ConfigMerger(fileUtils, this.debug, {
+		this.configMerger = new ConfigMerger(fileUtils, {
 			hotspot_center: Constants.HOTSPOT_CENTER,
 			hotspot_bottom: Constants.HOTSPOT_BOTTOM,
 			horizontal_merge: Constants.HORIZONTAL_MERGE,
 			vertical_merge: Constants.VERTICAL_MERGE,
 			full_merge: Constants.FULL_MERGE,
+			isDebug: this.debug ? 1 : 0,
 		});
 		this.directData = new DirectData({fileUtils});
 		this.collisionBoxCalculator = new CollisionBoxCalculator(this.directData);

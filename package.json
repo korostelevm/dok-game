@@ -24,7 +24,7 @@
   "dependencies": {
     "archiver": "^5.2.0",
     "colors": "^1.4.0",
-    "config-template-merger": "^1.0.9",
+    "config-template-merger": "^1.0.10",
     "direct-data": "^1.0.5",
     "dok-file-utils": "^1.0.7",
     "express": "^4.17.1",
