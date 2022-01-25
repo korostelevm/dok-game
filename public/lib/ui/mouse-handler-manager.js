@@ -12,7 +12,6 @@ class MouseHandlerManager {
 
 	recalculateSize() {
 		this.rect = this.canvas.getBoundingClientRect();
-		console.log(this.rect);
 	}
 
 	add(mouseHandler) {
@@ -64,5 +63,6 @@ class MouseHandlerManager {
 		for (let mouseHandler of this.handlerSet) {
 			mouseHandler.handleMouse(mouseHandler, e, x, y);
 		}
+		engine.forceRefresh();
 	}
 }

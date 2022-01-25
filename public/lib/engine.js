@@ -696,7 +696,7 @@ class Engine {
 		const zNear = 0.01;
 		const zFar = 5000;
 
-		const fieldOfView = (viewAngle||45) * Math.PI / 180;   // in radians
+		const fieldOfView = (viewAngle||45) * Constants.DEG_TO_RAD;   // in radians
 		const aspect = gl.canvas.width / gl.canvas.height;
 		const perspectiveMatrix = mat4.perspective(mat4.create(), fieldOfView, aspect, zNear, zFar);
 		const pixelScaleMultiplier = 1 / (pixelScale || (this.isRetinaDisplay() ? .5 : 1));
@@ -819,7 +819,7 @@ class Engine {
 		return this.game.paused || !this.focusFixer.focused;
 	}
 
-	refresh(time, actualTime, render) {
+	refresh(time, actualTime, render, skipUpdateView) {
 		const dt = time - this.lastTime;
 		const game = this.game;
 		if (game.ready) {
@@ -833,12 +833,18 @@ class Engine {
 			game.refresh(time, dt);
 		}
 		this.handleOnRefreshes(time, dt, actualTime);
-		this.handleViewUpdate(time, this.shaders[0], render);
+		if (!skipUpdateView) {
+			this.handleViewUpdate(time, this.shaders[0], render);
+		}
 		if (render) {
 			this.handleSpriteUpdate(this.updater);
 			this.render(time, dt);
 		}
 		this.lastTime = time;
+	}
+
+	forceRefresh() {
+		this.refresh(this.lastTime, 0, true, true);
 	}
 
 	handleViewUpdate(time, shader, render) {
@@ -895,17 +901,17 @@ class Engine {
 				const coef = shift.zoom;
 				const coef2 = coef * coef;
 				mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
-				mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] / 180 * Math.PI);
-				mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] / 180 * Math.PI);
-				mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] / 180 * Math.PI);
+				mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] * Constants.DEG_TO_RAD);
+				mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] * Constants.DEG_TO_RAD);
+				mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] * Constants.DEG_TO_RAD);
 				mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
 				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 				gl.uniform1f(uniforms.globalLight.location, shift.light);
 
 				mat4.identity(this.viewMatrix);
-				mat4.rotateX(this.viewMatrix, this.viewMatrix, -shift.rotation[0] / 180 * Math.PI);
-				mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] / 180 * Math.PI);
-				mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] / 180 * Math.PI);
+				mat4.rotateX(this.viewMatrix, this.viewMatrix, -shift.rotation[0] * Constants.DEG_TO_RAD);
+				mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] * Constants.DEG_TO_RAD);
+				mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] * Constants.DEG_TO_RAD);
 				gl.uniformMatrix4fv(uniforms.spriteMatrix.location, false, this.viewMatrix);
 			}
 		}
@@ -928,7 +934,7 @@ class Engine {
 				const {anim, direction, vdirection, } = sprite;
 				this.spriteRenderer.setAnimationInfo(spriteIndex, anim, direction, vdirection);
 			}
-			if (sprite.updateFlag  & Constants.RENDER_FLAG.MOTION) {
+			if (sprite.updateFlag & Constants.RENDER_FLAG.MOTION) {
 				const {motion, acceleration} = sprite;
 				this.spriteRenderer.setMotion(spriteIndex, motion, acceleration);
 			}
@@ -942,6 +948,7 @@ class Engine {
 
 	render(time, dt) {
 		this.updateTime(time);
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 		this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
 	}
 

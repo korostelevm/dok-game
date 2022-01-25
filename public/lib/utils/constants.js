@@ -47,3 +47,4 @@ Constants.RENDER_FLAG = {
 	UPDATE_TIME: Constants.UPDATE_FLAG.UPDATE_TIME|Constants.UPDATE_FLAG.MOTION,
 };
 
+Constants.DEG_TO_RAD = Math.PI / 180;
