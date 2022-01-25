@@ -72,7 +72,7 @@ class CollisionBox {
 		}
 
 		if (this.collisionFrame) {
-			this.calculateCollisonBoxFromFrame(this.collisionFrame);
+			this.calculateCollisonBoxFromFrame(this.collisionFrame, time);
 			return this;
 		}
 
@@ -96,8 +96,8 @@ class CollisionBox {
 		}
 	}
 
-	calculateCollisonBoxFromFrame(collisionFrame) {
-		const spritePosition = this.sprite.getRealPosition(this.time);
+	calculateCollisonBoxFromFrame(collisionFrame, time) {
+		const spritePosition = this.sprite.getRealPosition(time);
 		if (this.lastPosition[0] === spritePosition[0]
 			&& this.lastPosition[1] === spritePosition[1]
 			&& this.lastPosition[2] === spritePosition[2]) {

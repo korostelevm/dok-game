@@ -22,6 +22,8 @@ class FocusFixer {
 		this.input.style.outline = "none";
 		this.input.style.position = "absolute";
 		this.input.style.top = "-30px";
+		this.gainFocusCallback = () => this.gainFocus();
+		this.lostFocusCallback = () => this.lostFocus();
 		this.fix();
 	}
 
@@ -33,17 +35,25 @@ class FocusFixer {
 
 		document.body.appendChild(input);
 		this.gainFocus();
-		window.addEventListener("focus", () => this.gainFocus());
-		window.addEventListener("blur", () => this.lostFocus());
-		this.canvas.addEventListener("mousedown", () => this.gainFocus());
+
 	}
 
 	lostFocus() {
-		this.focused = false;
+		if (this.focused) {
+			this.focused = false;
+			window.removeEventListener("blur", this.lostFocusCallback);
+			window.addEventListener("focus", this.gainFocusCallback);
+			document.addEventListener("mouseenter", this.gainFocusCallback);
+		}
 	}
 
 	gainFocus() {
-		this.input.focus();
-		this.focused = true;
+		if (!this.focused) {
+			this.input.focus();
+			this.focused = true;
+			window.addEventListener("blur", this.lostFocusCallback);
+			window.removeEventListener("focus", this.gainFocusCallback);
+			document.removeEventListener("mouseenter", this.gainFocusCallback);
+		}
 	}
 }

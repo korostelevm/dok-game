@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["DoorAuxiliary"] = DoorAuxiliary;		// lib/sprite/aux/door-auxiliary.js
   NAME_TO_CLASS["LandingAuxiliary"] = LandingAuxiliary;		// lib/sprite/aux/landing-auxiliary.js
   NAME_TO_CLASS["LowCeilingAuxiliary"] = LowCeilingAuxiliary;		// lib/sprite/aux/low-ceiling-auxiliary.js
+  NAME_TO_CLASS["MousePointerAuxiliary"] = MousePointerAuxiliary;		// lib/sprite/aux/mouse-pointer-auxiliary.js
   NAME_TO_CLASS["NpcAuxiliary"] = NpcAuxiliary;		// lib/sprite/aux/npc-auxiliary.js
   NAME_TO_CLASS["PlatformBlockAuxiliary"] = PlatformBlockAuxiliary;		// lib/sprite/aux/platform-block-auxiliary.js
   NAME_TO_CLASS["PlatformGridcellPositionAuxiliary"] = PlatformGridcellPositionAuxiliary;		// lib/sprite/aux/platform-gridcell-position-auxiliary.js

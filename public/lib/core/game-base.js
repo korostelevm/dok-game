@@ -65,7 +65,7 @@ class GameBase {
 
 				const collisionMerger = new CollisionMerger();
 				collisionMerger.merge(grid, cols, rows);
-				engine.spriteCollection.cleanupInactive();
+				collisionMerger.cleanupMerged(engine.spriteCollection);
 			}
 
 			if (this.gameModel.settings?.clamp) {

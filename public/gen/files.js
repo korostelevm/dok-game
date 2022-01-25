@@ -302,6 +302,7 @@ const globalFiles=[
               "door-auxiliary.js",
               "landing-auxiliary.js",
               "low-ceiling-auxiliary.js",
+              "mouse-pointer-auxiliary.js",
               "npc-auxiliary.js",
               "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js",

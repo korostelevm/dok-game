@@ -3,6 +3,7 @@ const BOTTOM = 1, RIGHT = 2;
 class CollisionMerger {
 	constructor() {
 		this.directions = [BOTTOM, RIGHT];
+		this.spritesMerged = new Set();
 	}
 
 	merge(grid, cols, rows) {
@@ -41,6 +42,11 @@ class CollisionMerger {
 		}
 	}
 
+	destroy(block) {
+		block.changeActive(false);
+		this.spritesMerged.add(block);
+	}
+
 	applyMerge(block, D, grid) {
 		const { cellType, col, row, spancol, spanrow, unitSize } = block;
 		if (D === RIGHT) {
@@ -48,7 +54,7 @@ class CollisionMerger {
 			for (let r = 0; r < spanrow;) {
 				const b = grid.cell(col + spancol, row + r);
 				grid.setCell(col + spancol, row + r, null)
-				b.destroy();
+				this.destroy(b);
 				expandSize = b.size[0];
 				r += b.size[1] / unitSize[1];
 			}
@@ -63,7 +69,7 @@ class CollisionMerger {
 					block.sprite.ceiling = true;
 				}
 				grid.setCell(col + c, row + spanrow, null);
-				b.destroy();
+				this.destroy(b);
 				expandSize = b.size[1];
 				c += b.size[0] / unitSize[0];
 			}
@@ -118,5 +124,10 @@ class CollisionMerger {
 			}
 		}
 		return false;
+	}
+
+	cleanupMerged(spriteCollection) {
+		spriteCollection.filterOut(sprite => this.spritesMerged.has(sprite));
+		this.spritesMerged.clear();
 	}
 }

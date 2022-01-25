@@ -265,4 +265,19 @@ class TextureAtlas {
 		});
 		return atlas;
 	}
+
+	static getAnimFromAtlas(atlas, anim) {
+		if (typeof(anim) !== "string") {
+			return anim;
+		}
+		const idSplit = anim.split(".");
+		let root = atlas;
+		for (let i = 0; i < idSplit.length; i++) {
+			root = root[idSplit[i]];
+		}
+		if (!root) {
+			console.warn("Anim doesn't exist: ", anim);
+		}
+		return root;
+	}
 }

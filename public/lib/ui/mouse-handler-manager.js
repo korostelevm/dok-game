@@ -8,6 +8,13 @@ class MouseHandlerManager {
 			this.rect = null;
 		});
 		this.resizeObserver.observe(this.canvas);
+		this.onActivationListener = (mouseHandler, active) => {
+			if (!active) {
+				this.remove(mouseHandler);
+			} else {
+				this.add(mouseHandler);
+			}
+		};
 	}
 
 	recalculateSize() {
@@ -18,13 +25,19 @@ class MouseHandlerManager {
 		if (!this.handleMouseCallback) {
 			this.setupMouseListeners();
 		}
-		this.handlerSet.add(mouseHandler);
+		if (!this.handlerSet.has(mouseHandler)) {
+			this.handlerSet.add(mouseHandler);
+			if (mouseHandler.addActivationListener) {
+				mouseHandler.addActivationListener(this.onActivationListener);
+			}
+		}
 	}
 
 	remove(mouseHandler) {
 		if (!this.handlerSet.size) {
 			this.removeMouseListeners();
 		}
+		this.handlerSet.delete(mouseHandler);
 	}
 
 	clear() {
@@ -58,10 +71,10 @@ class MouseHandlerManager {
 		if (!this.rect) {
 			this.recalculateSize();
 		}
-		const x = (e.pageX - this.rect.x) / this.rect.width * this.canvas.offsetWidth,
-			  y = (e.pageY - this.rect.y) / this.rect.height * this.canvas.offsetHeight;
+		this.mouseX = (e.pageX - this.rect.x) / this.rect.width * this.canvas.offsetWidth,
+		this.mouseY = (e.pageY - this.rect.y) / this.rect.height * this.canvas.offsetHeight;
 		for (let mouseHandler of this.handlerSet) {
-			mouseHandler.handleMouse(mouseHandler, e, x, y);
+			mouseHandler.handleMouse(mouseHandler, e, this.mouseX, this.mouseY);
 		}
 		engine.forceRefresh();
 	}

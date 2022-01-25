@@ -9,21 +9,6 @@ class SpriteCollection {
 		this.refresher  = refresher;
 	}
 
-	static fetchAnim(atlas, anim) {
-		if (typeof(anim) !== "string") {
-			return anim;
-		}
-		const idSplit = anim.split(".");
-		let root = atlas;
-		for (let i = 0; i < idSplit.length; i++) {
-			root = root[idSplit[i]];
-		}
-		if (!root) {
-			console.warn("Anim doesn't exist: ", anim);
-		}
-		return root;
-	}
-
 	create(id, data, attributes, spriteData, game) {
 		const type = data.type ? nameToClass(data.type) : Sprite;
 		const sprite = new type({
@@ -46,7 +31,9 @@ class SpriteCollection {
 	}
 
 	postCreate() {
-		this.sprites.forEach(sprite => sprite.postCreate());
+		for (let sprite of this.sprites) {
+			sprite.postCreate();
+		}
 	}
 
 	get(index) {
@@ -58,31 +45,33 @@ class SpriteCollection {
 	}
 
 	clear() {
-		this.sprites.length = 0;
+		this.filterOut(() => true);
 	}
 
-	cleanupInactive() {
+	spritesFilteredBy(name) {
+		const filteredSprites = [];
+		for (let sprite of this.sprites) {
+			if (sprite[name]) {
+				filteredSprites.push(sprite);				
+			}
+		}
+		return filteredSprites;
+	}
+
+	filterOut(condition) {
 		let activeCount = 0;
 		for (let i = 0; i < this.sprites.length; i++) {
-			if (!this.sprites[i].destroyed) {
+			if (!condition(this.sprites[i])) {
 				this.sprites[activeCount] = this.sprites[i];
 				this.sprites[activeCount].spriteIndex = activeCount;
 				activeCount++;
+			} else {
+				this.sprites[i].changeActive(false);				
 			}
 		}
 		if (this.sprites.length !== activeCount) {
 			console.log("Sprite reduction:", this.sprites.length, "=>", activeCount);
 		}
 		this.sprites.length = activeCount;
-	}
-
-	filterBy(name) {
-		const filteredSprites = [];
-		for (let i = 0; i < this.sprites.length; i++) {
-			if (this.sprites[i][name]) {
-				filteredSprites.push(this.sprites[i]);
-			}
-		}
-		return filteredSprites;
 	}
 }

@@ -181,6 +181,13 @@ class WorldOfTurtle extends GameBase {
 				top: -5, bottom: 0,
 				close: -25, far: 25,
 			},
+			aux: {
+				"MousePointerAuxiliary": {
+					"offset": [-50, 400, -330],
+					"mouseMultiplier": [1, 0, 1],
+					"shiftMultiplier": [-.5, 0, .5],
+				},
+			},
 		}, {
 			collide: 1, noblock: 1,
 			changeSelection: (self, sprite) => {
@@ -201,20 +208,11 @@ class WorldOfTurtle extends GameBase {
 					self.changeSelection(self, null);
 				}
 			},
-			updatePosition: self => {
-				self.changePosition(self.mouseX - self.engine.shift.x / 2 - 50, self.y, self.mouseY + self.engine.shift.z / 2 - 330);
-			},
 			onRefresh: (self, time, dt) => {
-				self.changePosition(self.mouseX - self.engine.shift.x / 2 - 50, self.y, self.mouseY + self.engine.shift.z / 2 - 330);
-				self.updatePosition(self);
 				if (self.selection) {
-					if (self.active) {
-						self.selection.changeLight(1 + Math.random());
-						if (self.holding) {
-							self.selection.changePosition(self.x, self.selection.y, self.z);
-						}
-					} else {
-						self.changeSelection(self, null);
+					self.selection.changeLight(1 + Math.random());
+					if (self.holding) {
+						self.selection.changePosition(self.x, self.selection.y, self.z);
 					}
 				}
 			},
@@ -234,14 +232,13 @@ class WorldOfTurtle extends GameBase {
 				}
 			},
 			handleMouse: (self, e, x, y) => {
-				self.mouseX = x;
-				self.mouseY = y;
 				const inGame = e.type !== "mouseleave" && x >= 0 && x < self.engine.viewportWidth && y >= 0 && y < self.engine.viewportHeight;
 				const onHud = e.type !== "mouseleave" && self.game.overlayHud.visible && inGame && y >= self.engine.viewportHeight - 150;
 				self.engine.changeCursor(e.type !== "mouseleave" && inGame && !onHud ? "none" : self.game.arrowCursor);
-				self.changeActive(inGame && !onHud);
-
-				if (e.type === "mousedown") {
+				self.changeOpacity(inGame && !onHud ? 1 : 0);
+				if (!self.opacity) {
+					self.changeSelection(self, null);					
+				} else if (e.type === "mousedown") {
 					self.hold(self);
 					self.game.overlayHud.visible = self.lastSelection;
 				} else if (e.type === "mouseup" || e.type === "mouseleave") {

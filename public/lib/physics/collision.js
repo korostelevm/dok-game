@@ -23,7 +23,8 @@ class Collision extends PhysicsBase {
 		this.countedColliders = [];
 
 		this.collisionDataList = [];
-		filteredSprites.forEach((sprite, colIndex) => {
+		for (let colIndex = 0; colIndex < filteredSprites.length; colIndex++) {
+			const sprite = filteredSprites[colIndex];
 			const collisionData = {
 				sprite,
 				id: sprite.id,
@@ -51,7 +52,7 @@ class Collision extends PhysicsBase {
 				this.deep.push(topLeftClose, bottomRightFar);
 			}
 			this.collisionDataList[colIndex] = collisionData;
-		});
+		}
 	}
 
 	countCollision(collisionData, secondCollisionData, bits) {
@@ -71,23 +72,27 @@ class Collision extends PhysicsBase {
 	}
 
 	calculateCollisionMarkers(time) {
-		for (let i = 0; i < this.collisionDataList.length; i++) {
-			this.collisionDataList[i].collisionBox.getCollisionBox(time);
+		this.refreshCollisionBoxes(time);
+		this.updateMarkers();
+		this.sortMarkers();
+	}
+
+	refreshCollisionBoxes(time) {
+		for (let collisionData of this.collisionDataList) {
+			collisionData.collisionBox.getCollisionBox(time);
 		}
-		for (let i = 0; i < this.horizontal.length; i++) {
-			const marker = this.horizontal[i];
-			marker.x = marker.topLeftClose ? marker.collisionData.collisionBox.left : marker.collisionData.collisionBox.right;
+	}
+
+	updateMarkers() {
+		for (let marker of this.horizontal) {
+			marker.x = marker.topLeftClose ? marker.collisionData.collisionBox.left : marker.collisionData.collisionBox.right;			
 		}
-		for (let i = 0; i < this.vertical.length; i++) {
-			const marker = this.vertical[i];
+		for (let marker of this.vertical) {
 			marker.y = marker.topLeftClose ? marker.collisionData.collisionBox.top : marker.collisionData.collisionBox.bottom;
 		}
-		for (let i = 0; i < this.deep.length; i++) {
-			const marker = this.deep[i];
+		for (let marker of this.deep) {
 			marker.z = marker.topLeftClose ? marker.collisionData.collisionBox.close : marker.collisionData.collisionBox.far;
 		}
-
-		this.sortMarkers();
 	}
 
 	sortMarkers() {

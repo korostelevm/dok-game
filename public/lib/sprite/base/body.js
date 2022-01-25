@@ -19,6 +19,7 @@ class Body {
 		this.followers = new Set();
 		this.canRecalculatePosition = false;
 		this.canRecalculateMotion = false;
+		this.activationListeners = new Set();
 	}
 
 	changePosition(x, y, z, t, skipRecalculate) {
@@ -111,9 +112,16 @@ class Body {
 		if (this.active !== value) {
 			this.active = value;
 			this.updateFlag |= Constants.UPDATE_FLAG.ACTIVE;
+			for (let listener of this.activationListeners) {
+				listener(this, value);
+			}
 			return true;
 		}
 		return false;
+	}
+
+	addActivationListener(listener) {
+		this.activationListeners.add(listener);
 	}
 
 	getRealPosition(t) {
@@ -196,10 +204,5 @@ class Body {
 			followAxis[0] ? target.x + offset.x : this.x,
 			followAxis[1] ? target.y + offset.y : this.y,
 			followAxis[2] ? target.z + offset.z : this.z, time);
-	}
-
-	destroy() {
-		this.changeActive(false);
-		this.destroyed = true;
 	}
 }

@@ -1113,7 +1113,7 @@ class GameCore extends GameBase {
 			}
 		}
 
-		this.onFrameSprites = this.engine.spriteCollection.filterBy("onFrame");
+		this.onFrameSprites = this.engine.spriteCollection.spritesFilteredBy("onFrame");
 		await super.postInit();
 	}
 

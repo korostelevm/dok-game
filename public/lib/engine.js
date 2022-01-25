@@ -579,7 +579,8 @@ class Engine {
 		if (this.game.handleMouse) {
 			this.mouseHandlerManager.add(this.game);
 		}
-		this.spriteCollection.filterBy("handleMouse").forEach(sprite => this.mouseHandlerManager.add(sprite));
+		this.spriteCollection.spritesFilteredBy("handleMouse").forEach(sprite => this.mouseHandlerManager.add(sprite));
+		this.spriteCollection.spritesFilteredBy("needsMouse").forEach(sprite => this.mouseHandlerManager.add(sprite));
 		this.setupDragListeners();
 		game.ready = Math.max(this.lastTime, 1);
 	}
