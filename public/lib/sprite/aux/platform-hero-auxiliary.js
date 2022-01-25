@@ -60,10 +60,6 @@ class PlatformHeroAuxiliary extends Auxiliary {
 			self.game.camera = "normal";
 		}
 		if (sprite.ladder) {
-			const jumping = self.engine.lastTime - self.lastJump < 100;
-			if (self.game.jump && self.game.control.dy < 0 && !jumping) {
-				self.game.jump.performJump(self);
-			}
 			if (self.climbing) {
 				self.climbing = 0;
 				this.onMotion(self, self.game.control.dx, self.game.control.dy);

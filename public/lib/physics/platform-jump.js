@@ -27,8 +27,8 @@ class PlatformJump extends PhysicsBase {
 		game.engine.keyboardHandler.removeListener(this.onJump);
 	}
 
-	performJump(sprite, strength) {
-		sprite.dy = -sprite.jump * strength;
+	performJump(sprite) {
+		sprite.dy = -sprite.jump * this.strength;
 		sprite.rest = 0;
 		if (sprite.platform && sprite.platform.onPlatform) {
 			sprite.platform.onPlatform(sprite.platform, null);
@@ -45,7 +45,7 @@ class PlatformJump extends PhysicsBase {
 				return;
 			}
 			if (time - sprite.rest < 150 || time - sprite.climbing < 100) {
-				this.performJump(sprite, this.strength);
+				this.performJump(sprite);
 				recordJump = true;
 			}
 		}
