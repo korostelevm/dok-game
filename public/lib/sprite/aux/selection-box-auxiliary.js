@@ -1,6 +1,7 @@
 class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 	constructor(config, sprite) {
 		super(config, sprite);
+		this.centerHold = config.centerHold;
 		this.holdOffset = config.holdOffset || [0, 0, 0];
 		this.holdAxis = config.holdAxis || [true, true, true];
 		this.sprite.collide = 1;
@@ -39,9 +40,9 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 	hold() {
 		if (this.selection) {
 			this.selection.changePosition(
-				this.holdAxis[0] ? this.sprite.x : this.selection.x + this.holdOffset[0],
-				this.holdAxis[1] ? this.sprite.y : this.selection.y + this.holdOffset[1],
-				this.holdAxis[2] ? this.sprite.z : this.selection.z + this.holdOffset[2]);
+				this.centerHold && this.holdAxis[0] ? this.sprite.x : this.selection.x + this.holdOffset[0],
+				this.centerHold && this.holdAxis[1] ? this.sprite.y : this.selection.y + this.holdOffset[1],
+				this.centerHold && this.holdAxis[2] ? this.sprite.z : this.selection.z + this.holdOffset[2]);
 			this.selection.follow(this.sprite, this.holdOffset, this.holdAxis);
 			this.holding = true;
 			this.lastSelection = this.selection;

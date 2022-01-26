@@ -28,7 +28,7 @@
           "offset": [0, 0, 0],
           "mouseMultiplier": [1, 1, 1],
           "shiftMultiplier": [-0.5, -0.5, 0],
-          "holdOffset": [0, -20, 0],
+          "holdOffset": [0, 0, 0],
           "holdAxis": [true, true, false]
         }
       }
@@ -94,7 +94,8 @@
           "PlatformGridcellPositionAuxiliary": {
               "cellSize": [40, 40, 0]
           },
-          "PlatformBlockAuxiliary": {}
+          "PlatformBlockAuxiliary": {},
+          "HighlightAuxiliary": {}
         },
         "properties": {
           "canMerge": "{vertical_merge}"
