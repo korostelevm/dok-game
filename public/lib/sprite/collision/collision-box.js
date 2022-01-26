@@ -26,7 +26,7 @@ class CollisionBox {
 		this.isDirty = value;
 		if (this.isDirty && this.display) {
 			this.changeActive(this.sprite.active);
-			this.display.repositionSprites(this.sprite.engine.lastTime);		
+			this.display.repositionSprites();		
 		}		
 	}
 

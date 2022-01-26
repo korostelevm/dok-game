@@ -1,9 +1,6 @@
 class PlatformBlockAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
-	}
-
-	decorate(sprite) {
+	constructor(config, sprite) {
+		super(config, sprite);
 		sprite.block = 1;
 		sprite.collide = 1;
 	}

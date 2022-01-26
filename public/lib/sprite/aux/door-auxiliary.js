@@ -1,9 +1,11 @@
 class DoorAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
+	constructor(config, sprite) {
+		super(config, sprite);
 	}
 
-	decorate(sprite) {
+	postCreate() {
+		super.postCreate();
+		const sprite = this.sprite;
 		sprite.collide = 1;
 		sprite.noblock = 1;
 		sprite.onOpen = (self, opener) => this.onOpen(self, opener);

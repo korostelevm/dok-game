@@ -29,8 +29,12 @@ class Body {
 				this.recalculatePosition(time);
 			}
 			this.x = x;
+			if (isNaN(y)) {
+				throw new Error("error");
+			}
 			this.y = y;
 			this.z = z;
+			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			for (let follower of this.followers) {
 				follower.adjustFollowerPosition(time);	
 			}
@@ -183,16 +187,20 @@ class Body {
 			}
 			this.following.target.followers.delete(this);
 		}
-		this.following = {
-			target,
-			offset: {
-				x: offset?.x ?? this.x - target.x,
-				y: offset?.y ?? this.y - target.y,
-				z: offset?.z ?? this.z - target.z,
-			},
-			followAxis: followAxis || [true, true, true],
-		};
-		target.followers.add(this);
+		if (target) {
+			this.following = {
+				target,
+				offset: {
+					x: offset?.x ?? this.x - target.x,
+					y: offset?.y ?? this.y - target.y,
+					z: offset?.z ?? this.z - target.z,
+				},
+				followAxis: followAxis || [true, true, true],
+			};
+			target.followers.add(this);
+		} else {
+			this.following = null;
+		}
 	}
 
 	adjustFollowerPosition(time) {
@@ -200,9 +208,10 @@ class Body {
 		const target = this.following.target;
 		const offset = this.following.offset;
 		const followAxis = this.following.followAxis;
+		const targetPosition = target.getRealPosition(time);
 		this.changePosition(
-			followAxis[0] ? target.x + offset.x : this.x,
-			followAxis[1] ? target.y + offset.y : this.y,
-			followAxis[2] ? target.z + offset.z : this.z, time);
+			followAxis[0] ? targetPosition[0] + offset.x : this.x,
+			followAxis[1] ? targetPosition[1] + offset.y : this.y,
+			followAxis[2] ? targetPosition[2] + offset.z : this.z, time);
 	}
 }

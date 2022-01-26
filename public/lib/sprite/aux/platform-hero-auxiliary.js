@@ -1,11 +1,13 @@
 const LEFT_SUFFIX = "_left";
 
 class PlatformHeroAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
+	constructor(config, sprite) {
+		super(config, sprite);
 	}
 
-	decorate(sprite) {
+	postCreate() {
+		super.postCreate();
+		const sprite = this.sprite;
 		sprite.collisionBox.showCollisionBox = sprite.engine.debug;
 		sprite.gravity = this.config.gravity || .2;
 		sprite.movement = 1;

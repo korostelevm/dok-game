@@ -1,9 +1,10 @@
 class Auxiliary {
-	constructor(config) {
+	constructor(config, sprite) {
 		this.config = config;
+		this.sprite = sprite;
 	}
 
-	decorate(sprite) {
+	postCreate() {
 	}	
 
 	gridInit(sprite, col, row, grid) {

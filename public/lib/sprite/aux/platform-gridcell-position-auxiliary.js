@@ -1,9 +1,11 @@
 class PlatformGridcellPositionAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
+	constructor(config, sprite) {
+		super(config, sprite);
 	}
 
-	decorate(sprite) {
+	postCreate() {
+		super.postCreate();
+		const sprite = this.sprite;
 		const [cellWidth, cellHeight, cellDepth] = this.config.cellSize || [];
 		const [xOffset, yOffset, zOffset] = this.config.offset || [];
 		sprite.changePosition(

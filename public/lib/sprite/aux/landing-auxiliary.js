@@ -1,9 +1,6 @@
 class LandingAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
-	}
-
-	decorate(sprite) {
+	constructor(config, sprite) {
+		super(config, sprite);
 		sprite.onPlatform = (self, lander) => this.onPlatform(self, lander);
 	}
 

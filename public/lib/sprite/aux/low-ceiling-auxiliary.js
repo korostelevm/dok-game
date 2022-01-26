@@ -1,9 +1,6 @@
 class LowCeilingAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
-	}
-
-	decorate(sprite) {
+	constructor(config, sprite) {
+		super(config, sprite);
 		sprite.lowceiling = 1;
 		sprite.collide = 1;
 	}

@@ -296,10 +296,11 @@ const globalFiles=[
           {
             "aux": [
               ".DS_Store",
-              {"base": ["auxiliary.js"]},
+              {"base": ["auxiliary.js", "refresher-auxiliary.js"]},
               "bouncer-auxiliary.js",
               "collectible-auxiliary.js",
               "door-auxiliary.js",
+              "highlight-auxiliary.js",
               "landing-auxiliary.js",
               "low-ceiling-auxiliary.js",
               "mouse-pointer-auxiliary.js",

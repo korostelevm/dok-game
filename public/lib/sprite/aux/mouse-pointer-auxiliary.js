@@ -1,26 +1,10 @@
-class MousePointerAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
+class MousePointerAuxiliary extends RefresherAuxiliary {
+	constructor(config, sprite) {
+		super(config, sprite);
 		this.offset = this.config.offset || [0, 0, 0];
 		this.mouseMultiplier = this.config.mouseMultiplier || [0, 0, 0];
 		this.shiftMultiplier = this.config.shiftMultiplier || [0, 0, 0];
-		this.onActivationListener = (sprite, active) => {
-			if (!active) {
-				sprite.engine.refresher.delete(this);
-			} else {
-				sprite.engine.refresher.add(this);
-			}
-		};
-	}
-
-	decorate(sprite) {
-		this.sprite = sprite;
 		this.sprite.needsMouse = true;
-		sprite.addActivationListener(this.onActivationListener);
-		this.onActivationListener(sprite, sprite.active);
-	}
-
-	gridInit(self, col, row, grid) {
 	}
 
 	onRefresh(self, time, dt) {

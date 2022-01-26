@@ -26,6 +26,9 @@ class WorldOfTurtle extends GameBase {
 					close: -50, far: 10,
 				},
 				showCollisionBox: this.engine.debug,
+				aux: {
+					"HighlightAuxiliary": {}
+				},
 			}, {
 				gravity: 1,
 				control: 1,
@@ -139,7 +142,7 @@ class WorldOfTurtle extends GameBase {
 		for (let i = 0; i < 100; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
 			const z = - RandomUtils.random(i, 888) * 2000;
-			const peng = this.spriteFactory.create({
+			this[`peng-${i}`] = this.spriteFactory.create({
 				name: peng => `peng-${i}`,
 				anim: "peng",
 				size: [100, 120],
@@ -152,6 +155,9 @@ class WorldOfTurtle extends GameBase {
 				},
 				showCollisionBox: this.engine.debug,
 				shadow: 1,
+				aux: {
+					"HighlightAuxiliary": {}
+				},
 			}, {
 				collide: 1,				
 			});
@@ -191,11 +197,14 @@ class WorldOfTurtle extends GameBase {
 		}, {
 			collide: 1, noblock: 1,
 			changeSelection: (self, sprite) => {
-				if (self.selection) {
-					self.selection.changeLight(1);
+				if (self.selection?.setHighlight) {
+					self.selection.setHighlight(false);
 				}
 				self.release(self);
 				self.selection = sprite;
+				if (self.selection?.setHighlight) {
+					self.selection.setHighlight(true);
+				}
 			},
 			onEnter: (self, sprite) => {
 				if (!self.holding) {
@@ -208,17 +217,17 @@ class WorldOfTurtle extends GameBase {
 					self.changeSelection(self, null);
 				}
 			},
-			onRefresh: (self, time, dt) => {
-				if (self.selection) {
-					self.selection.changeLight(1 + Math.random());
-					if (self.holding) {
-						self.selection.changePosition(self.x, self.selection.y, self.z);
-					}
-				}
-			},
+			// onRefresh: (self, time, dt) => {
+			// 	if (self.selection) {
+			// 		if (self.holding) {
+			// 			self.selection.changePosition(self.x, self.selection.y, self.z);
+			// 		}
+			// 	}
+			// },
 			hold: (self) => {
 				if (self.selection) {
 					self.selection.changePosition(self.selection.x, 380, self.selection.z);
+					self.selection.follow(self, [0, 0, 0], [true, false, true]);
 					self.holding = true;
 					self.lastSelection = self.selection;
 				} else {
@@ -228,6 +237,7 @@ class WorldOfTurtle extends GameBase {
 			release: (self) => {
 				if (self.selection) {
 					self.selection.changePosition(self.selection.x, 400, self.selection.z);
+					self.selection.follow(null);
 					self.holding = false;
 				}
 			},

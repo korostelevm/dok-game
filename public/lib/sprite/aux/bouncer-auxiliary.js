@@ -1,9 +1,11 @@
 class BouncerAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
+	constructor(config, sprite) {
+		super(config, sprite);
 	}
 
-	decorate(sprite) {
+	postCreate() {
+		super.postCreate();
+		const sprite = this.sprite;
 		sprite.collide = 1;
 		sprite.bounce = this.config.bounce || 1;
 		sprite.manualRefresh = true;

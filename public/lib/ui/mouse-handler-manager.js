@@ -15,6 +15,8 @@ class MouseHandlerManager {
 				this.add(mouseHandler);
 			}
 		};
+		this.mouseX = 0;
+		this.mouseY = 0;
 	}
 
 	recalculateSize() {

@@ -51,7 +51,7 @@ class Sprite extends Body {
 		this.aux = [];
 		for (let name in data.aux) {
 			const classObj = nameToClass(name);
-			const auxiliary = new classObj(data.aux[name]);
+			const auxiliary = new classObj(data.aux[name], this);
 			this.aux.push(auxiliary);
 		}
 	}
@@ -96,7 +96,6 @@ class Sprite extends Body {
 
 	changePosition(x, y, z, time, skipRecalculate) {
 		if (super.changePosition(x, y, z, time, skipRecalculate)) {
-			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			this.collisionBox.dirty = true;
 			this.needUpdate();			
 			return true;
@@ -249,7 +248,7 @@ class Sprite extends Body {
 	}
 
 	postCreate() {
-		this.aux.forEach(auxiliary => auxiliary.decorate(this));
+		this.aux.forEach(auxiliary => auxiliary.postCreate());
 		for (let key in this.properties) {
 			this.onUpdate(key, this.properties[key], true);
 		}		

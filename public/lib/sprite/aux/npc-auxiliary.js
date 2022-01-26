@@ -1,9 +1,6 @@
 class NpcAuxiliary extends Auxiliary {
-	constructor(config) {
-		super(config);
-	}
-
-	decorate(sprite) {
+	constructor(config, sprite) {
+		super(config, sprite);
 		sprite.collide = 1;
 		sprite.npc = 1;
 		sprite.noblock = 1;
