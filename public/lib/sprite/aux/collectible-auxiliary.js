@@ -25,7 +25,7 @@ class CollectibleAuxiliary extends Auxiliary {
 	}
 
 	onCollide(self, sprite, xPush, yPush) {
-		if (self.properties.pickedUp) {
+		if (!sprite.canPickup || self.properties.pickedUp) {
 			return;
 		}
 		self.setProperty("pickedUp", self.engine.lastTime);

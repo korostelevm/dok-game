@@ -5,7 +5,8 @@
 		"windowSize": [1000, 700],
 		"pixelScale": 0,
 		"viewportSize": [900, 600],
-		"perspective": true
+		"perspective": true,
+		"forceRefreshOnMouse": true
 	},
 	"world": {
 		"backwall": {
@@ -16,6 +17,27 @@
 			"y": 420,
 			"z": -450,
 			"rotation": [-90, 0, 0]
+		},
+
+		"selectionBox": {
+			"anim": "selectionBox",
+			"size": [50, 50],
+			"y": 400,
+			"rotation": [-90, 0, 0],
+			"collisionFrame": {
+				"left": -25, "right": 25,
+				"top": -5, "bottom": 0,
+				"close": -25, "far": 25
+			},
+			"aux": {
+				"SelectionBoxAuxiliary": {
+					"offset": [-50, 400, -330],
+					"mouseMultiplier": [1, 0, 1],
+					"shiftMultiplier": [-0.5, 0, 0.5],
+					"holdOffset": [0, -20, 0],
+					"holdAxis": [true, false, true]
+				}
+			}
 		},
 
 	  "overlayHud": {

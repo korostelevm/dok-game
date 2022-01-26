@@ -307,7 +307,8 @@ const globalFiles=[
               "npc-auxiliary.js",
               "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js",
-              "platform-hero-auxiliary.js"
+              "platform-hero-auxiliary.js",
+              "selection-box-auxiliary.js"
             ]
           },
           {"base": [".DS_Store", "body.js", "sprite.js"]},

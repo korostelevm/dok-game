@@ -14,6 +14,7 @@ class PlatformHeroAuxiliary extends Auxiliary {
 		sprite.collide = 1;
 		sprite.jump = this.config.jump || 4.8;
 		sprite.control = 1;
+		sprite.canPickup = 1;
 		sprite.onEnter = (self, sprite) => this.onEnter(self, sprite);
 		sprite.onLeave = (self, sprite) => this.onLeave(self, sprite);
 		sprite.onCollide = (self, sprite, xPush, yPush) => this.onCollide(self, sprite, xPush, yPush);
@@ -72,6 +73,7 @@ class PlatformHeroAuxiliary extends Auxiliary {
 	onCollide(self, sprite, xPush, yPush) {
 		if (sprite.ladder && !self.climbing && self.dy > 0) {
 			self.climbing = self.engine.lastTime;
+			console.log("HERE");
 			self.dy = 0;
 			self.dx = 0;
 			self.changePosition(sprite.getCenterX(), self.y, self.z);
@@ -112,7 +114,7 @@ class PlatformHeroAuxiliary extends Auxiliary {
 				}
 			}
 
-			if (sprite.canLand && self.dy > 0 || sprite.ceiling && self.dy < 0) {
+			if (sprite.canLand && self.dy > 0 && yPush < 0 || sprite.ceiling && self.dy < 0 && yPush > 0) {
 				self.dy = 0;
 				self.bouncing = 0;
 				this.onMotion(self, self.game.control.dx, self.game.control.dy);

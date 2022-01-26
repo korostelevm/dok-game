@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["PlatformBlockAuxiliary"] = PlatformBlockAuxiliary;		// lib/sprite/aux/platform-block-auxiliary.js
   NAME_TO_CLASS["PlatformGridcellPositionAuxiliary"] = PlatformGridcellPositionAuxiliary;		// lib/sprite/aux/platform-gridcell-position-auxiliary.js
   NAME_TO_CLASS["PlatformHeroAuxiliary"] = PlatformHeroAuxiliary;		// lib/sprite/aux/platform-hero-auxiliary.js
+  NAME_TO_CLASS["SelectionBoxAuxiliary"] = SelectionBoxAuxiliary;		// lib/sprite/aux/selection-box-auxiliary.js
   NAME_TO_CLASS["Body"] = Body;		// lib/sprite/base/body.js
   NAME_TO_CLASS["Sprite"] = Sprite;		// lib/sprite/base/sprite.js
   NAME_TO_CLASS["CollisionBoxDisplay"] = CollisionBoxDisplay;		// lib/sprite/collision/collision-box-display.js

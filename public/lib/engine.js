@@ -558,12 +558,9 @@ class Engine {
 		await this.adjustRefresh(game);
 
 		this.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
-		ChronoUtils.tick();
 		await game.init(this, this.classToGame[game.sceneTag]);
-		ChronoUtils.tick();
 		this.shift.goal.light = 1;
 		await game.postInit();
-		ChronoUtils.tick();
 
 		const sprites = this.spriteCollection.sprites;
 		for (let i = 0; i < game.physics.length; i++) {

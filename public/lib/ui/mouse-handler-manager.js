@@ -43,6 +43,7 @@ class MouseHandlerManager {
 	clear() {
 		this.handlerSet.clear();
 		this.removeMouseListeners();
+		this.setForceRefreshOnMouse(false);
 	}
 
 
@@ -76,6 +77,12 @@ class MouseHandlerManager {
 		for (let mouseHandler of this.handlerSet) {
 			mouseHandler.handleMouse(mouseHandler, e, this.mouseX, this.mouseY);
 		}
-		engine.forceRefresh();
+		if (this.forceRefreshOnMouse) {
+			engine.forceRefresh();
+		}
+	}
+
+	setForceRefreshOnMouse(value) {
+		this.forceRefreshOnMouse = value;
 	}
 }

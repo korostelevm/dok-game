@@ -72,6 +72,10 @@ class GameBase {
 				const { left, right, top, bottom, close, far } = this.gameModel.settings.clamp;
 				this.engine.setClamp(left || 0, right || 0, top || 0, bottom || 0, close || 0, far || 0);
 			}
+
+			if (this.gameModel.settings?.forceRefreshOnMouse) {
+				this.engine.mouseHandlerManager.setForceRefreshOnMouse(true);
+			}
 		}
 		this.atlas.empty = await engine.addTexture({
 			spriteWidth: 0, spriteHeight: 0,
