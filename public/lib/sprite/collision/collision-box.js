@@ -24,10 +24,12 @@ class CollisionBox {
 
 	set dirty(value) {
 		this.isDirty = value;
-		if (this.isDirty && this.display) {
+		if (this.isDirty) {
 			this.changeActive(this.sprite.active);
-			this.display.repositionSprites();		
-		}		
+			if (this.display) {
+				this.display.repositionSprites(this.sprite.engine.lastTime);
+			}
+		}
 	}
 
 	get dirty() {
@@ -65,14 +67,14 @@ class CollisionBox {
 			&& this.close <= pz && pz <= this.far;
 	}
 
-	getCollisionBox(t) {
-		const time = t || this.sprite.game.engine.lastTime
-		if (this.time === time && !this.dirty) {
+	getCollisionBox(t, forceRecalculate) {
+		const time = t || this.sprite.engine.lastTime
+		if (this.time === time && !this.dirty && !forceRecalculate) {
 			return this;
 		}
 
 		if (this.collisionFrame) {
-			this.calculateCollisonBoxFromFrame(this.collisionFrame, time);
+			this.calculateCollisonBoxFromFrame(this.collisionFrame, time, forceRecalculate);
 			return this;
 		}
 
@@ -96,11 +98,12 @@ class CollisionBox {
 		}
 	}
 
-	calculateCollisonBoxFromFrame(collisionFrame, time) {
+	calculateCollisonBoxFromFrame(collisionFrame, time, forceRecalculate) {
 		const spritePosition = this.sprite.getRealPosition(time);
 		if (this.lastPosition[0] === spritePosition[0]
 			&& this.lastPosition[1] === spritePosition[1]
-			&& this.lastPosition[2] === spritePosition[2]) {
+			&& this.lastPosition[2] === spritePosition[2]
+			&& !forceRecalculate) {
 			return;
 		}
 		this.left = collisionFrame.left + spritePosition[0];

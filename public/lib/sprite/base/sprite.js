@@ -96,6 +96,7 @@ class Sprite extends Body {
 
 	changePosition(x, y, z, time, skipRecalculate) {
 		if (super.changePosition(x, y, z, time, skipRecalculate)) {
+			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			this.collisionBox.dirty = true;
 			this.needUpdate();			
 			return true;

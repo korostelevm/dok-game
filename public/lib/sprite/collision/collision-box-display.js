@@ -13,19 +13,19 @@ class CollisionBoxDisplay {
 			this.generateBox(game, collisionBox, [0, -90 ,0]),
 		];
 
-		this.repositionSprites(engine.lastTime);
-		for (let sprite of this.sprites) {
-			sprite.follow(this.collisionBox.sprite);
-		}
+		this.engine.refresher.add(this);
+	}
+
+	onRefresh(self, time) {
+		this.repositionSprites(time);
 	}
 
 	generateBox(game, collisionBox, rotation) {
+		const { x, y, z } = collisionBox.sprite;
 		return game.spriteFactory.create({
 			anim: game.atlas.collisionBox,
 			size: [1, 1],
-			x: collisionBox.sprite.x,
-			y: collisionBox.sprite.y,
-			z: collisionBox.sprite.z,
+			x, y, z,
 			rotation,
 		});
 	}
@@ -76,9 +76,9 @@ class CollisionBoxDisplay {
 	changeActive(value) {
 		if (this.active !== value) {
 			this.active = value;
-			for (let i = 0; i < this.sprites.length; i++) {
-				this.sprites[i].changeActive(this.active);
-			}			
+			for (let sprite of this.sprites) {
+				sprite.changeActive(value);
+			}
 		}
 	}
 }

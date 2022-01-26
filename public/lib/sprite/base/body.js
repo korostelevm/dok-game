@@ -6,7 +6,6 @@ class Body {
 		this.y = data.y || 0;
 		this.z = data.z || 0;
 		this.positionCache = [this.x, this.y, this.z];
-		this.active = true;
 		this.motion = [... data.motion || [0, 0, 0]];
 		this.motionCache = [this.motion[0], this.motion[1], this.motion[2]];
 		this.acceleration = [... data.acceleration || [0, 0, 0]];
@@ -15,11 +14,21 @@ class Body {
 			positionCache: 0,
 			motionCache: 0,
 		};
+		this.active = true;
 		this.updateFlag = 0xFFFFFFFF;
 		this.followers = new Set();
+		this.activationListeners = new Set();
+		this.motionChangeListeners = new Set();
 		this.canRecalculatePosition = false;
 		this.canRecalculateMotion = false;
-		this.activationListeners = new Set();
+	}
+
+	addActivationListener(listener) {
+		this.activationListeners.add(listener);
+	}
+
+	addMotionChangeListener(listener) {
+		this.motionChangeListeners.add(listener);
 	}
 
 	changePosition(x, y, z, t, skipRecalculate) {
@@ -29,9 +38,6 @@ class Body {
 				this.recalculatePosition(time);
 			}
 			this.x = x;
-			if (isNaN(y)) {
-				throw new Error("error");
-			}
 			this.y = y;
 			this.z = z;
 			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
@@ -61,21 +67,10 @@ class Body {
 	onMotionChanged(time) {
 		this.updated.motion = time;
 		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
-		for (let follower of this.followers) {
-			follower.followMotion(time);
-		}
+			for (let follower of this.followers) {
+				follower.adjustFollowerPosition(time);	
+			}
 		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
-	}
-
-	followMotion(time) {
-		this.recalculatePosition(time);
-		const target = this.following.target;
-		const followAxis = this.following.followAxis;
-		this.changeMotion(
-			followAxis[0] ? target.motion[0] : this.motion[0],
-			followAxis[1] ? target.motion[1] : this.motion[1],
-			followAxis[2] ? target.motion[2] : this.motion[2],
-			time);
 	}
 
 	changeAcceleration(ax, ay, az, t) {
@@ -94,22 +89,11 @@ class Body {
 	onAccelerationChanged(time) {
 		this.updated.motion = time;
 		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
-		for (let follower of this.followers) {
-			follower.followAcceleration(time);	
-		}
+			for (let follower of this.followers) {
+				follower.adjustFollowerPosition(time);	
+			}
 		this.canRecalculateMotion = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
 		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
-	}
-
-	followAcceleration(time) {
-		this.recalculatePosition(time);
-		const target = this.following.target;
-		const followAxis = this.following.followAxis;
-		this.changeAcceleration(
-			followAxis[0] ? target.acceleration[0] : this.acceleration[0],
-			followAxis[1] ? target.acceleration[1] : this.acceleration[1],
-			followAxis[2] ? target.acceleration[2] : this.acceleration[2],
-			time);
 	}
 
 	changeActive(value) {
@@ -122,10 +106,6 @@ class Body {
 			return true;
 		}
 		return false;
-	}
-
-	addActivationListener(listener) {
-		this.activationListeners.add(listener);
 	}
 
 	getRealPosition(t) {
@@ -186,6 +166,8 @@ class Body {
 				return;
 			}
 			this.following.target.followers.delete(this);
+			this.onRefresh = null;
+			this.engine.refresher.delete(this);
 		}
 		if (target) {
 			this.following = {
@@ -212,6 +194,17 @@ class Body {
 		this.changePosition(
 			followAxis[0] ? targetPosition[0] + offset.x : this.x,
 			followAxis[1] ? targetPosition[1] + offset.y : this.y,
-			followAxis[2] ? targetPosition[2] + offset.z : this.z, time);
+			followAxis[2] ? targetPosition[2] + offset.z : this.z,
+			time);
+		this.changeMotion(
+			followAxis[0] ? target.motion[0] : this.motion[0],
+			followAxis[1] ? target.motion[1] : this.motion[1],
+			followAxis[2] ? target.motion[2] : this.motion[2],
+			time);
+		this.changeAcceleration(
+			followAxis[0] ? target.acceleration[0] : this.acceleration[0],
+			followAxis[1] ? target.acceleration[1] : this.acceleration[1],
+			followAxis[2] ? target.acceleration[2] : this.acceleration[2],
+			time);
 	}
 }

@@ -226,7 +226,7 @@ class WorldOfTurtle extends GameBase {
 			// },
 			hold: (self) => {
 				if (self.selection) {
-					self.selection.changePosition(self.selection.x, 380, self.selection.z);
+					self.selection.changePosition(self.x, 380, self.z);
 					self.selection.follow(self, [0, 0, 0], [true, false, true]);
 					self.holding = true;
 					self.lastSelection = self.selection;

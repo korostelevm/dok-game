@@ -428,6 +428,7 @@ class Engine {
 		ChronoUtils.tick();
 
 		this.lastTime = 0;
+		this.time = 0;
 		await this.initGame(this.game);
 		ChronoUtils.tick();
 
@@ -801,7 +802,9 @@ class Engine {
 
 	handleOnRefreshes(time, dt, actualTime) {
 		for (let item of this.refresher) {
-			item.onRefresh(item, time, dt, actualTime);			
+			if (item.onRefresh) {
+				item.onRefresh(item, time, dt, actualTime);
+			}
 		}
 	}
 
@@ -822,6 +825,7 @@ class Engine {
 	}
 
 	refresh(time, actualTime, render, skipUpdateView) {
+		this.time = time;
 		const dt = time - this.lastTime;
 		const game = this.game;
 		if (game.ready) {
