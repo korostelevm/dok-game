@@ -49,6 +49,11 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 		} else {
 			this.lastSelection = null;
 		}
+
+		const hudForSelection = this.sprite.game[this.config.hudForSelection];
+		if (hudForSelection) {
+			hudForSelection.visible = this.lastSelection;
+		}
 	}
 
 	release() {
@@ -71,7 +76,6 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 			this.changeSelection(null);					
 		} else if (e.type === "mousedown") {
 			this.hold();
-			self.game.overlayHud.visible = this.lastSelection;
 		} else if (e.type === "mouseup" || e.type === "mouseleave") {
 			this.release();
 		}

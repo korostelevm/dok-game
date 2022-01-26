@@ -36,7 +36,8 @@
 					"shiftMultiplier": [-0.5, 0, 0.5],
 					"holdOffset": [0, -20, 0],
 					"holdAxis": [true, false, true],
-					"centerHold": true
+					"centerHold": true,
+					"hudForSelection": "overlayHud"
 				}
 			}
 		},
