@@ -1,4 +1,4 @@
-class Entrance extends GameCore {
+class Entrance extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

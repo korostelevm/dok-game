@@ -1,4 +1,4 @@
-class Restaurant extends GameCore {
+class Restaurant extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

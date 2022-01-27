@@ -1,4 +1,4 @@
-class Template extends GameCore {
+class Template extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

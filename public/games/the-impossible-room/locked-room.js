@@ -1,4 +1,4 @@
-class LockedRoom extends GameCore {
+class LockedRoom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

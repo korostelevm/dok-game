@@ -1,4 +1,4 @@
-class GandalfRoom extends GameCore {
+class GandalfRoom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

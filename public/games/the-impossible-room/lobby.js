@@ -1,4 +1,4 @@
-class Lobby extends GameCore {
+class Lobby extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

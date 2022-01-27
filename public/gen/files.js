@@ -197,7 +197,7 @@ const globalFiles=[
         "the-impossible-room": [
           ".DS_Store",
           "animal-room.js",
-          {"base": ["game-core.js"]},
+          {"base": ["room-base.js"]},
           "batman-room.js",
           "clue-room.js",
           "computer-room.js",

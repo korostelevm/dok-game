@@ -1,4 +1,4 @@
-class SoundRoom extends GameCore {
+class SoundRoom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

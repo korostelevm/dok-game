@@ -1,4 +1,4 @@
-class Restroom extends GameCore {
+class Restroom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

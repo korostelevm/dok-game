@@ -1,4 +1,4 @@
-class ClueRoom extends GameCore {
+class ClueRoom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

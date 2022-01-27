@@ -1,4 +1,4 @@
-class DesertRoom extends GameCore {
+class DesertRoom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 

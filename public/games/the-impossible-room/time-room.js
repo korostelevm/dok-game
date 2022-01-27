@@ -1,4 +1,4 @@
-class TimeRoom extends GameCore {
+class TimeRoom extends RoomBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
