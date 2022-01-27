@@ -22,7 +22,7 @@ class StartScreen extends GameBase {
 			loading,
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		const anim = this.atlas.loading;
 		const { spriteWidth, spriteHeight } = this.atlas.loading;

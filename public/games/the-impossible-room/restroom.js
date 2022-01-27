@@ -116,7 +116,7 @@ class Restroom extends GameCore {
 				}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		this.backwall = this.spriteFactory.create({
 			name: "bathroom",

@@ -22,7 +22,7 @@ class GameTitle extends GameBase {
 			}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
 			size: [800, 400],
@@ -48,12 +48,11 @@ class GameTitle extends GameBase {
 		if (!this.fadeStart) {
 			this.fadeStart = time;
 		}
-		const { config } = this.engine;
+		const { config, viewportWidth, viewportHeight } = this.engine;
 		const timeDiff = (time - this.fadeStart);
 		const log = Math.log(timeDiff) / 10;
 
 		const totalTime = 10000;
-		const [viewportWidth, viewportHeight] = config.viewport.size;
 		const width = 700 * log;
 		const height = 80 * log;
 		const opacityOut = Math.max(0, (totalTime - timeDiff) / 2000);

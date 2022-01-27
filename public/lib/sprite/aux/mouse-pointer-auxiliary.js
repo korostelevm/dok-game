@@ -12,13 +12,13 @@ class MousePointerAuxiliary extends RefresherAuxiliary {
 		const mouseHandlerManager = engine.mouseHandlerManager;
 		const shift = engine.shift;
 		const posX = mouseHandlerManager.mouseX * self.mouseMultiplier[0]
-			+ shift.x * self.shiftMultiplier[0]
+			+ shift.x * self.shiftMultiplier[0] / shift.zoom
 			+ self.offset[0];
 		const posY = mouseHandlerManager.mouseY * self.mouseMultiplier[1]
-			+ shift.y * self.shiftMultiplier[1]
+			+ shift.y * self.shiftMultiplier[1] / shift.zoom
 			+ self.offset[1];
 		const posZ = mouseHandlerManager.mouseY * self.mouseMultiplier[2]
-			+ shift.z * self.shiftMultiplier[2]
+			+ shift.z * self.shiftMultiplier[2] / shift.zoom
 			+ self.offset[2];
 		self.sprite.changePosition(posX, posY, posZ);
 	}

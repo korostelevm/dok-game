@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["Sound"] = Sound;		// lib/sound/sound.js
   NAME_TO_CLASS["VoiceManager"] = VoiceManager;		// lib/sound/voice-manager.js
   NAME_TO_CLASS["Hud"] = Hud;		// lib/sprite/hud.js
-  NAME_TO_CLASS["PlatformBlock"] = PlatformBlock;		// lib/sprite/platform-block.js
   NAME_TO_CLASS["Shadow"] = Shadow;		// lib/sprite/shadow.js
   NAME_TO_CLASS["SpriteCollection"] = SpriteCollection;		// lib/sprite/sprite-collection.js
   NAME_TO_CLASS["SpriteFactory"] = SpriteFactory;		// lib/sprite/sprite-factory.js

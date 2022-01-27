@@ -5,11 +5,7 @@ class HighlightAuxiliary extends RefresherAuxiliary {
 	}
 
 	postCreate() {
-		if (this.config.highlight) {
-			this.setHighlight(true);
-		} else {
-			this.setHighlight(false);
-		}
+		this.setHighlight(this.config.highlight);
 	}
 
 	setHighlight(highlight) {

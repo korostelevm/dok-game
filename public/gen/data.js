@@ -23,7 +23,6 @@ const globalData={
     "updateTime": {"type": "FLOAT", "usage": "DYNAMIC_DRAW", "instances": 1}
   },
   "config": {
-    "viewport": {"size": [800, 400]},
     "webgl": {
       "antialias": false,
       "preserveDrawingBuffer": false,

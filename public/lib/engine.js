@@ -350,8 +350,6 @@ class Engine {
 	async init(config) {
 		this.config = config;
 
-		const {viewport: {size: [viewportWidth, viewportHeight]}} = config;
-
 		ChronoUtils.tick();
 		console.log("Config", config);
 		const maxInstancesCount = config.maxInstancesCount || 1000;
@@ -401,7 +399,7 @@ class Engine {
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, config);
-		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shaders[0], this.config.viewport.size);
+		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shaders[0]);
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection(this, this.refresher);
@@ -771,6 +769,7 @@ class Engine {
 			this.viewportWidth = viewportWidth;
 			this.viewportHeight = viewportHeight;
 			this.pixelScale = pixelScale;
+			this.spriteRenderer.initSize(this.viewportWidth, this.viewportHeight);
 		}
 	}
 

@@ -54,7 +54,7 @@ class Selection extends GameBase {
 			}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,

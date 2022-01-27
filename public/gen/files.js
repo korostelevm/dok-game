@@ -320,7 +320,6 @@ const globalFiles=[
             ]
           },
           "hud.js",
-          "platform-block.js",
           "shadow.js",
           "sprite-collection.js",
           "sprite-factory.js"

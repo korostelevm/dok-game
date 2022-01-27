@@ -45,7 +45,7 @@ class GameRing extends GameBase {
 			}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		this.backwall = this.spriteFactory.create({
 			anim: this.atlas.backwall,
@@ -74,10 +74,9 @@ class GameRing extends GameBase {
 	moveMazoos(time) {
 		const gl = engine.gl;
 		const config = engine.config;
-		const viewportWidth = config.viewport.size[0];
-		const viewportHeight = config.viewport.size[1];
-		for (let i = 0; i < this.mazoos.length; i++) {
-			const mazoo = this.mazoos[i];
+		const viewportWidth = engine.viewportWidth;
+		const viewportHeight = engine.viewportHeight;
+		for (let mazoo of this.mazoos) {
 			const goalX = mazoo.goal[0];
 			const goalY = mazoo.goal[1];
 			const dx = (goalX - mazoo.x);

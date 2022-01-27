@@ -1,7 +1,6 @@
 class Hud extends Sprite {
 	constructor(data, time, properties, engine, game) {
-		const {viewport: {pixelScale, size: [viewportWidth, viewportHeight]}} = engine.config;
-		super({...data, size:[viewportWidth, 131]}, time, properties, engine, game);
+		super({...data, size:[engine.viewportWidth, 131]}, time, properties, engine, game);
 		this.animDuration = data.animDuration || 150;
 	}
 
@@ -39,7 +38,7 @@ class Hud extends Sprite {
 	onRefresh(self, time) {
 		const viewportHeight = this.engine.viewportHeight;
 		const hideY = viewportHeight;
-		const showY = viewportHeight - (self.size[1] * (this.multiplier || 1) - 1);
+		const showY = viewportHeight - (self.size[1] - 1);
 		let progress;
 		if (self.showTime) {
 			progress = Math.min(1, (time - self.showTime) / self.animDuration);

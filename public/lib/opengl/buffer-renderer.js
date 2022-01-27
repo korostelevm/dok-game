@@ -9,7 +9,6 @@ class BufferRenderer {
 		    [ 0, 0 ],
 		    [ 0, 0 ],
 		));
-		this.size = config.viewport.size;
 		this.tempBytes = new Uint8Array(4);
 		this.tempSingleByte = new Uint8Array(1);
 	}

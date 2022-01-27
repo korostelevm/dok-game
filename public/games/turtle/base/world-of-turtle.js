@@ -137,7 +137,7 @@ class WorldOfTurtle extends GameBase {
 			});
 		}
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		for (let i = 0; i < 100; i++) {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;

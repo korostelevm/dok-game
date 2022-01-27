@@ -52,7 +52,7 @@ class FlatLand extends GameBase {
 			}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		const backwallWidth = viewportWidth * 2, backwallHeight = viewportHeight * 2;
 		this.backwall = this.spriteFactory.create({
@@ -102,7 +102,7 @@ class FlatLand extends GameBase {
 	moveMazoos(time) {
 		const gl = engine.gl;
 		const config = engine.config;
-		const viewportWidth = config.viewport.size[0];
+		const viewportWidth = engine.viewportWidth;
 		for (let i = 0; i < this.mazoos.length; i++) {
 			const mazoo = this.mazoos[i];
 			const goalX = mazoo.goal[0];

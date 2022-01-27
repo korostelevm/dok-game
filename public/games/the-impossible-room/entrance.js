@@ -102,7 +102,7 @@ class Entrance extends GameCore {
 				}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		this.inventoryDetails = {
 			...this.inventoryDetails,

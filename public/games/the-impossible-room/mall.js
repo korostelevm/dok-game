@@ -172,9 +172,8 @@ class Mall extends GameCore {
 		this.monkor.changePosition(-1500, 373, this.monkor.z, this.engine.lastTime);
 		this.monkor.goal.x = 223;
 		this.monkor.goal.y = 375;
-		const { config } = this.engine;
+		const { config, viewportWidth, viewportHeight } = this.engine;
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
 		this.title = this.spriteFactory.create({
 			anim: this.atlas.title,
 			x: viewportWidth / 2 - 350,
@@ -255,12 +254,11 @@ class Mall extends GameCore {
 		this.refreshPerson3(time);
 
 		if (this.fadeStart) {
-			const { config } = this.engine;
+			const { config, viewportWidth, viewportHeight } = this.engine;
 			const timeDiff = (time - this.fadeStart);
 			const log = Math.log(timeDiff) / 10;
 
 			const totalTime = 10000;
-			const [viewportWidth, viewportHeight] = config.viewport.size;
 			const width = 700 * log;
 			const height = 80 * log;
 			const opacityOut = Math.max(0, (totalTime - timeDiff) / 2000);

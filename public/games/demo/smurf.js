@@ -84,7 +84,7 @@ class Smurf extends GameBase {
 			}),
 		};
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 
 		const backwallWidth = viewportWidth * 5, backwallHeight = viewportHeight * 5;
 		this.backwall = this.spriteFactory.create({

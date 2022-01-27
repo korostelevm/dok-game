@@ -90,7 +90,7 @@ class DesertFar extends GameCore {
 			opacity: 0,
 		});
 
-		const [viewportWidth, viewportHeight] = config.viewport.size;
+		const {viewportWidth, viewportHeight} = engine;
 		this.desert_far = this.spriteFactory.create({
 			name: "desert",
 			anim: this.atlas.desert_far,
