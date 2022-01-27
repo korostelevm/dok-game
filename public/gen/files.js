@@ -257,7 +257,6 @@ const globalFiles=[
           {"peerjs": ["peerjs.min.js", "peerjs.min.js.map"]}
         ]
       },
-      {"lang": ["translate-voice.js"]},
       {
         "map": [
           ".DS_Store",
@@ -293,6 +292,7 @@ const globalFiles=[
       {
         "sound": [
           ".DS_Store",
+          {"lang": ["translate-voice.js"]},
           "music.js",
           "sound-manager.js",
           "sound.js",
