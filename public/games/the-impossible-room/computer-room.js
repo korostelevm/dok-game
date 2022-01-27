@@ -151,7 +151,7 @@ class ComputerRoom extends RoomBase {
 						this.achieve("The Computer");
 
 						const { gender } = this.data;
-						this.engine.playerOverlay.setInception(true, {
+						this.core.playerOverlay.setInception(true, {
 							computerGender: gender,
 						}, GameTitle);
 					},

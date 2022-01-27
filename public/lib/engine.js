@@ -32,7 +32,6 @@ class Engine {
 		if (this.debug) {
 			new FpsBox(this);
 		}
-		this.playerOverlay = new PlayerOverlay(this);
 
 		this.refresher = new Set();
 		this.updater = new Set();

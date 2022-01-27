@@ -190,7 +190,7 @@ class Selection extends GameBase {
 		this.overContainer.innerText = "";
 
 		if (!this.engine.inception) {
-			engine.playerOverlay.changeCharacter(character);
+			this.core.playerOverlay.changeCharacter(character);
 			localStorage.setItem("playerName", this.data.name);
 			localStorage.setItem("playerGender", this.data.gender);
 			document.getElementById("player-name").textContent =

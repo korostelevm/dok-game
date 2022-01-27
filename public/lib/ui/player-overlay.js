@@ -1,13 +1,14 @@
-class PlayerOverlay extends UiComponent {
+class PlayerOverlay {
 	constructor(engine) {
-		super(engine);
+		this.engine = engine;
+		this.init();
 	}
 
 	init() {
 		const gender = localStorage.getItem("playerGender") || "M";
 		this.changeCharacter(gender === "W" ? "nuna" : gender === "T" ? "twin" : "monkor");
 
-		document.getElementById("back-button");
+		const backButton = document.getElementById("back-button");
 		backButton.addEventListener("click", () => {
 			this.setInception(false);
 		});		
