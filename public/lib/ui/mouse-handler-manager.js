@@ -4,7 +4,9 @@ class MouseHandlerManager {
 		this.document = document;
 		this.handlerSet = new Set();
 		this.handleMouseCallback = null;
-		this.resizeObserver = new ResizeObserver(() => this.rect = null);
+		this.resizeObserver = new ResizeObserver(() => {
+			this.rect = null;
+		});
 		this.resizeObserver.observe(this.canvas);
 		this.onActivationListener = (mouseHandler, active) => {
 			if (!active) {

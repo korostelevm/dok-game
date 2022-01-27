@@ -39,6 +39,7 @@ class PlayerOverlay {
 		} else {
 			this.engine.canvas.parentElement.classList.remove("inception");
 		}
+		this.engine.mouseHandlerManager.rect = null;
 
 		document.getElementById("player-overlay").style.display = inception ? "" : "none";
 		document.getElementById("back-button").style.display = inception ? "" : "none";
