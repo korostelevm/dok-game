@@ -2,6 +2,8 @@ class GameTitle extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
+		this.engine.sidebar.enableSidebar(false);
+
 		const { config } = engine;
 
 		/* Load Audio */
@@ -40,7 +42,9 @@ class GameTitle extends GameBase {
 	}
 
 	async postInit() {
+		await super.postInit();
 		this.audio.om.play();
+		this.engine.sidebar.enableSidebar(true);
 	}
 
 	refresh(time, dt) {

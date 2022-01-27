@@ -2,6 +2,8 @@ class Menu extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
+		this.engine.sidebar.enableSidebar(false);
+
 		const { config } = engine;
 
 		/* Load Audio */
@@ -375,6 +377,7 @@ class Menu extends GameBase {
 		const audio = this.mainTheme;
 		audio.currentTime = 0;
 		this.setAudio(audio, true, .5);
+		this.engine.sidebar.enableSidebar(true);
 	}
 
 	async onExit(engine) {

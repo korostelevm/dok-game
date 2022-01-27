@@ -2,6 +2,8 @@ class Selection extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
+		this.engine.sidebar.enableSidebar(false);
+
 		const { gl, config } = engine;
 		const { gender } = this.data;
 
@@ -240,5 +242,10 @@ class Selection extends GameBase {
 
 	getMargin() {
 		return { top: 50 };
+	}
+
+	async postInit() {
+		await super.postInit();
+		this.engine.sidebar.enableSidebar(true);
 	}
 }
