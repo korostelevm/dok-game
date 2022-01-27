@@ -246,7 +246,7 @@ const globalFiles=[
   {
     "lib": [
       ".DS_Store",
-      {"core": [".DS_Store", "game-base.js"]},
+      {"core": [".DS_Store", "game-base.js", "shift.js"]},
       "engine.js",
       {
         "external": [
@@ -344,6 +344,7 @@ const globalFiles=[
       {
         "ui": [
           {"base": ["ui-component.js"]},
+          "cursor-manager.js",
           "drag-drop.js",
           "focus-fixer.js",
           "fps-box.js",
@@ -351,7 +352,6 @@ const globalFiles=[
           "mouse-handler-manager.js",
           "player-overlay.js",
           "scene-tab.js",
-          "side-bar.js",
           "sidebar.js",
           "tip-box.js"
         ]

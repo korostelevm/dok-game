@@ -504,7 +504,7 @@ class AnimalRoom extends GameCore {
 				const idol = id;
 				actions.push({ 
 					name: () => `put ${this.itemCarried.properties.item} on pedestal`,
-					condition: pedestal => (this.selectedItem === idol || this.itemCarried.properties.item === idol) && !pedestal.properties.occupied,
+					condition: pedestal => (this.selectedItem === idol || this.itemCarried.properties.item === idol) && !pedestal.properties?.occupied,
 					item: idol,
 					command: (item, target) => `put ${item.name} on the pedestal`,
 					action: pedestal => {

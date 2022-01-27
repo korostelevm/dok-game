@@ -37,7 +37,7 @@ class StartScreen extends GameBase {
 		}).then(totalCount => {
 			this.backwall.changeAnimation(this.atlas.start_screen, this.engine.lastTime);
 			this.backwall.changeOpacity(1, this.engine.lastTime); 
-			this.engine.changeCursor(null);
+			this.engine.cursorManager.changeCursor(null);
 		});
 	}
 

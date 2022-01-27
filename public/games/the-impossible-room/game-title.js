@@ -38,7 +38,7 @@ class GameTitle extends GameBase {
 			opacity: .7,
 		});
 
-		await this.engine.changeCursor("wait");
+		await this.engine.cursorManager.changeCursor("wait");
 	}
 
 	async postInit() {

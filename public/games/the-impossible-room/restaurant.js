@@ -314,7 +314,7 @@ class Restaurant extends GameCore {
 								this.audio.hit.play();
 							}
 							const shakeTime = this.engine.lastTime;
-							this.engine.shake = time => {
+							this.engine.shift.shake = time => {
 								const progress = 50 * (time - shakeTime) / 5000;
 								return progress >= 1 ? null : 50 / progress;
 							};

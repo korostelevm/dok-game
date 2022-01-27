@@ -69,7 +69,7 @@ class Smurf extends GameBase {
 			}
 			this.redLine.changeOpacity(inGame ? 1 : 0);
 			this.redLineX.changeOpacity(inGame ? 1 : 0);
-			this.engine.changeCursor(inGame && y > 80 ? "none" : this.arrowCursor);
+			this.engine.cursorManager.changeCursor(inGame && y > 80 ? "none" : this.arrowCursor);
 
 			let selectedMushroom = null;
 			for (let i = 0; i < this.mushrooms.length; i++) {

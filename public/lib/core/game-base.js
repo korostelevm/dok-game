@@ -140,7 +140,7 @@ class GameBase {
 		}
 		this.spriteFactory.postCreate();
 		this.engine.setPerspective(await this.isPerspective());
-		await this.engine.changeCursor(null, true);
+		await this.engine.cursorManager.changeCursor(null, true);
 		if (this.camera) {
 			this.applyCamera(this.camera, 0);
 		} else if (this.getInitialShift()) {

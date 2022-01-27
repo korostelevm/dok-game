@@ -274,10 +274,10 @@ class ClueRoom extends GameCore {
 				{
 					name: "browse",
 					action: hand => {
-						this.engine.changeCursor("wait").then(() => {
+						this.engine.cursorManager.changeCursor("wait").then(() => {
 							openFileDialog(e => {
 								this.handOverFile(e.currentTarget.files[0]?.name);
-								this.engine.changeCursor(null);
+								this.engine.cursorManager.changeCursor(null);
 							});
 						});
 					},

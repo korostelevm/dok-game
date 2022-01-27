@@ -5,7 +5,7 @@ class Engine {
 		/* Prototypes */
 		this.setupPrototypes();
 		/* Setup stylesheet emoji cursors. */
-		this.setupEmojiCursors();
+		this.cursorManager = new CursorManager(this);
 		this.debug = (location.search.contains("release") ? false : forceDebug || location.search.contains("debug") || (location.host.startsWith("localhost:") || location.host.startsWith("dobuki.tplinkdns.com")));
 
 		const fileUtils = this.fileUtils = new FileUtils();
@@ -48,18 +48,7 @@ class Engine {
 		this.refreshPerFrame = 1;
 
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
-		this.shift = {
-			x:0, y:0, z:0, zoom:1, opacity: 1,
-			rotation:[0,0,0],
-			goal:{
-				x:0, y:0, z:0,
-				zoom:1, opacity: 1, rotation:[0,0,0],
-			},
-			speed: dist => dist / 20,
-			canvasWidth: 0, canvasHeight: 0,
-			dirty: true,
-		};
-		this.tempVec3 = vec3.create();
+		this.shift = new Shift();
 
 		this.sidebar = new Sidebar(this, document.getElementById("sidebar"), document);
 	}
@@ -74,50 +63,6 @@ class Engine {
 
 	setRefreshPerFrame(value) {
 		this.refreshPerFrame = value;
-	}
-
-	setupEmojiCursors() {
-		this.sheet = (() => {
-			const style = document.createElement("style");
-			style.appendChild(document.createTextNode(""));
-			document.head.appendChild(style);
-			return style.sheet;
-		})();
-		this.iconEmojis = {};
-		this.addEmojiRule("happy", "😀");
-	}
-
-	addEmojiRule(id, emoji) {
-		if (!this.iconEmojis[id]) {
-			this.iconEmojis[id] = true;
-			this.sheet.insertRule(`#overlay.cursor-${id} { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:white;fill:white;font-size:18px;'><circle cx='50%' cy='50%' r='10'/><line x1='16' y1='0' x2='8' y2='10' style='stroke:rgb(255,255,255);stroke-width:1' /><line x1='16' y1='0' x2='24' y2='10' style='stroke:rgb(255,255,255);stroke-width:1' /><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
-				this.sheet.rules.length);
-			this.sheet.insertRule(`#overlay.cursor-${id}.highlight { cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'  width='32' height='32' viewport='0 0 64 64' style='fill-opacity:0.4;stroke:yellow;fill:yellow;font-size:18px;stroke-width:3'><circle cx='50%' cy='50%' r='10'/><line x1='16' y1='0' x2='8' y2='10' style='stroke:rgb(255,255,0);stroke-width:3' /><line x1='16' y1='0' x2='24' y2='10' style='stroke:rgb(255,255,0);stroke-width:3' /><text x='8' y='24'>${emoji}</text></svg>") 16 0,auto; }`,
-				this.sheet.rules.length);
-		}
-	}
-
-	setCursor(id, highlight) {
-		if (this.cursorId === id && this.cursorHighlight === highlight) {
-			return;
-		}
-		this.cursorId = id;
-		this.cursorHighlight = highlight;
-		const classList = this.overlay.classList;
-		for (let i = 0; i < classList.length; i++) {
-			const c = classList[i];
-			if (c.startsWith("cursor-")) {
-				classList.remove(classList[i]);
-			}
-		}
-		if (id) {
-			classList.add(`cursor-${id}`);
-		}
-		if (highlight) {
-			classList.add('highlight');
-		} else {
-			classList.remove('highlight');
-		}
 	}
 
 	loadDomContent(document) {
@@ -282,20 +227,10 @@ class Engine {
 		});
 	}
 
-	async changeCursor(cursor, cantWait) {
-		if (this.overlay && this.overlay.style.cursor !== cursor) {
-			this.overlay.style.cursor = cursor;
-			if (!cantWait) {
-				await this.wait(500);
-			}
-		}
-	}
-
 	async setGame(game, skipCursor) {
-		this.shift.goal.light = 0;
-		this.shift.light = 0;
+		this.shift.turnLightOff();
 		if (!skipCursor) {
-			await this.changeCursor("wait");
+			await this.cursorManager.changeCursor("wait");
 		}
 		await this.resetScene();
 		this.restoreUIComponents();
@@ -344,7 +279,7 @@ class Engine {
 
 		this.sidebar.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
 		await game.init(this, this.classToGame[game.sceneTag]);
-		this.shift.goal.light = 1;
+		this.shift.turnLightOn();
 		await game.postInit();
 
 		const sprites = this.spriteCollection.sprites;
@@ -420,23 +355,7 @@ class Engine {
 		}
 		this.setRefreshPerFrame(1);
 		this.urlToTextureIndex = {};
-		this.shift.x = 0;
-		this.shift.y = 0;
-		this.shift.z = 0;
-		this.shift.rotation[0] = 0;
-		this.shift.rotation[1] = 0;
-		this.shift.rotation[2] = 0;
-		this.shift.light = 0;
-		this.shift.zoom = 1;
-		this.shift.goal.x = 0;
-		this.shift.goal.y = 0;
-		this.shift.goal.z = 0;
-		this.shift.goal.zoom = 1;
-		this.shift.goal.light = 0;
-		this.shift.goal.rotation[0] = 0;
-		this.shift.goal.rotation[1] = 0;
-		this.shift.goal.rotation[2] = 0;
-		this.shift.dirty = true;
+		this.shift.clear();
 		this.removeDragListeners();
 		this.removeKeyboardListeners();
 		this.mouseHandlerManager.clear();
@@ -467,9 +386,10 @@ class Engine {
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
-		this.viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.set(this.tempVec3, 0, 0, 0));
-		gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(this.tempVec3, 0, 0, 0)));
+		const tempVec3 = vec3.create();
+		const viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.set(tempVec3, 0, 0, 0));
+		gl.uniformMatrix4fv(uniforms.view.location, false, viewMatrix);
+		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(tempVec3, 0, 0, 0)));
 
 		this.setClamp(0, 0, 0, 0, 0, 0);
 	}
@@ -576,13 +496,6 @@ class Engine {
 		loop(0);
 	}
 
-	doCollide(box1, box2, time) {
-		if (!box1 || !box2) {
-			return false;
-		}
-		return box1.right >= box2.left && box2.right >= box1.left && box1.bottom >= box2.top && box2.bottom >= box1.top;
-	}
-
 	handleOnRefreshes(time, dt, actualTime) {
 		for (let item of this.refresher) {
 			if (item.onRefresh) {
@@ -623,7 +536,7 @@ class Engine {
 		}
 		this.handleOnRefreshes(time, dt, actualTime);
 		if (!skipUpdateView) {
-			this.handleViewUpdate(time, this.shaders[0], render);
+			this.shift.handleViewUpdate(time, this.shaders[0], this.gl, render);
 		}
 		if (render) {
 			this.handleSpriteUpdate(this.updater);
@@ -634,76 +547,6 @@ class Engine {
 
 	forceRefresh() {
 		this.refresh(this.lastTime, 0, true, true);
-	}
-
-	handleViewUpdate(time, shader, render) {
-		let shiftChanged = false;
-		const shift = this.shift;
-		if (shift.x !== shift.goal.x
-			|| shift.y !== shift.goal.y
-			|| shift.z !== shift.goal.z
-			|| shift.zoom !== shift.goal.zoom
-			|| shift.light !== shift.goal.light
-			|| shift.rotation[0] !== shift.goal.rotation[0]
-			|| shift.rotation[1] !== shift.goal.rotation[1]
-			|| shift.rotation[2] !== shift.goal.rotation[2]
-			|| shift.dirty) {
-			const dx = (shift.goal.x - shift.x);
-			const dy = (shift.goal.y - shift.y);
-			const dz = (shift.goal.z - shift.z);
-			const drx = (shift.goal.rotation[0] - shift.rotation[0]);
-			const dry = (shift.goal.rotation[1] - shift.rotation[1]);
-			const drz = (shift.goal.rotation[2] - shift.rotation[2]);
-			const dzoom = (shift.goal.zoom - shift.zoom);
-			const dlight = (shift.goal.light - shift.light);
-			const dist = Math.sqrt(dx*dx + dy*dy + dz*dz + drx*drx + dry*dry + drz*drz + dzoom*dzoom + dlight*dlight);
-			const speed = shift.speed(dist);
-			const mul = dist < .1 ? 1 : Math.min(speed, dist) / dist;
-			shift.x += dx * mul;
-			shift.y += dy * mul;
-			shift.z += dz * mul;
-			shift.rotation[0] += drx * mul;
-			shift.rotation[1] += dry * mul;
-			shift.rotation[2] += drz * mul;
-			shift.zoom += dzoom * mul;
-			shift.light += dlight * mul;
-			shift.dirty = false;
-			shiftChanged = true;
-		}
-
-		const uniforms = shader.uniforms;
-		let shakeX = 0, shakeY = 0;
-		const shake = typeof(this.shake) === "function" ? this.shake(time) : this.shake;
-		if (shake) {
-			if (shake > 1) {
-				shakeY = (Math.random() - .5) * shake;
-			}
-		} else if (shake === null && this.shake) {
-			delete this.shake;
-			shiftChanged = true;
-		}
-
-		if (render) {
-			if (shiftChanged || shakeX || shakeY) {
-				const gl = this.gl;
-				mat4.identity(this.viewMatrix);
-				const coef = shift.zoom;
-				const coef2 = coef * coef;
-				mat4.scale(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, coef, coef, 1));
-				mat4.rotateX(this.viewMatrix, this.viewMatrix, shift.rotation[0] * Constants.DEG_TO_RAD);
-				mat4.rotateY(this.viewMatrix, this.viewMatrix, shift.rotation[1] * Constants.DEG_TO_RAD);
-				mat4.rotateZ(this.viewMatrix, this.viewMatrix, shift.rotation[2] * Constants.DEG_TO_RAD);
-				mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, shift.x * coef2 + shakeX, -shift.y * coef2 + shakeY, -shift.z * coef2));
-				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
-				gl.uniform1f(uniforms.globalLight.location, shift.light);
-
-				mat4.identity(this.viewMatrix);
-				mat4.rotateX(this.viewMatrix, this.viewMatrix, -shift.rotation[0] * Constants.DEG_TO_RAD);
-				mat4.rotateY(this.viewMatrix, this.viewMatrix, -shift.rotation[1] * Constants.DEG_TO_RAD);
-				mat4.rotateZ(this.viewMatrix, this.viewMatrix, -shift.rotation[2] * Constants.DEG_TO_RAD);
-				gl.uniformMatrix4fv(uniforms.spriteMatrix.location, false, this.viewMatrix);
-			}
-		}
 	}
 
 	handleSpriteUpdate(updater) {

@@ -1101,7 +1101,7 @@ class GameCore extends GameBase {
 		}
 
 		for (let id in this.inventoryIcons) {
-			this.engine.addEmojiRule(id, this.inventoryIcons[id]);
+			this.engine.cursorManager.addEmojiRule(id, this.inventoryIcons[id]);
 		}
 		this.updateInventory();
 
@@ -1382,7 +1382,7 @@ class GameCore extends GameBase {
 			const cursor = "wait";
 			if (this.cursor !== cursor) {
 				this.cursor = cursor;
-				this.engine.changeCursor(cursor);
+				this.engine.cursorManager.changeCursor(cursor);
 			}
 			return;
 		}
@@ -1514,7 +1514,7 @@ class GameCore extends GameBase {
 		const cursor = !this.selectedItem && hovering ? (hovering.cursor || this.getMouseCursor()) : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
-			this.engine.changeCursor(cursor);
+			this.engine.cursorManager.changeCursor(cursor);
 		}
 
 		if (this.selectedItem && e.type === "mousedown") {
@@ -2218,13 +2218,20 @@ class GameCore extends GameBase {
 		}
 		const monkorBox = monkor.getCollisionBox(time);
 		const targetBox = monkor.target && monkor.target.getCollisionBox ? monkor.target.getCollisionBox(time) : null;
-		if (engine.doCollide(monkorBox, targetBox)) {
+		if (this.doCollide(monkorBox, targetBox)) {
 			if (monkor.pendingAction) {
 				this.performAction(monkor.pendingAction, monkor.target);
 			} else {
 				this.showActions(monkor.target);
 			}
 		}
+	}
+
+	doCollide(box1, box2, time) {
+		if (!box1 || !box2) {
+			return false;
+		}
+		return box1.right >= box2.left && box2.right >= box1.left && box1.bottom >= box2.top && box2.bottom >= box1.top;
 	}
 
 	getWalkArea() {
@@ -2246,7 +2253,7 @@ class GameCore extends GameBase {
 	setSelection(item, force) {
 		if (this.selectedItem != item || force) {
 			this.selectedItem = item;
-			this.engine.setCursor(item, this.lastHovering);
+			this.engine.cursorManager.setCursor(item, this.lastHovering);
 		}
 	}
 

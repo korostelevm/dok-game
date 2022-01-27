@@ -70,7 +70,7 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 	handleMouse(self, e, x, y) {
 		const inGame = e.type !== "mouseleave" && x >= 0 && x < self.engine.viewportWidth && y >= 0 && y < self.engine.viewportHeight;
 		const onHud = e.type !== "mouseleave" && self.game.overlayHud.visible && inGame && y >= self.engine.viewportHeight - 150;
-		self.engine.changeCursor(e.type !== "mouseleave" && inGame && !onHud ? "none" : self.game.arrowCursor);
+		self.engine.cursorManager.changeCursor(e.type !== "mouseleave" && inGame && !onHud ? "none" : self.game.arrowCursor);
 		self.changeOpacity(inGame && !onHud ? 1 : 0);
 		if (!self.opacity) {
 			this.changeSelection(null);					
