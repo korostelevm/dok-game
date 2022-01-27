@@ -313,7 +313,6 @@ class Restroom extends RoomBase {
 						this.setInventoryVisibility(!sitting);
 						this.setControlVisibility(!sitting);
 						this.achieve("The Restroom");
-						// getMedal("The Restroom", this.onUnlockMedal);
 					}
 				},
 				dump: (seat, dump) => {

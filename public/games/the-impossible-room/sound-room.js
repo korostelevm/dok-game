@@ -629,7 +629,6 @@ class SoundRoom extends RoomBase {
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
 			this.achieve("The Music Room");
-			// getMedal("The Music Room", this.onUnlockMedal);
 		}
 		this.engine.setGame(new ClueRoom());
 	}

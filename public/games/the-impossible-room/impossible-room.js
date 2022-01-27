@@ -891,7 +891,6 @@ class ImpossibleRoom extends RoomBase {
 
 	upperLevel() {
 		this.achieve("The Impossible Room");
-		// getMedal("The Impossible Room", this.onUnlockMedal);
 		this.engine.setGame(new Mall());
 	}
 

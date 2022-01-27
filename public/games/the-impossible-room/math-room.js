@@ -416,7 +416,6 @@ class MathRoom extends RoomBase {
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
 			this.achieve("The Math Room");
-			// getMedal("The Math Room", this.onUnlockMedal);
 		}
 		this.engine.setGame(new Restaurant());
 	}

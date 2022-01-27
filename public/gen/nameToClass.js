@@ -1,6 +1,7 @@
 const NAME_TO_CLASS = {};
 document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["GameBase"] = GameBase;		// lib/core/game-base.js
+  NAME_TO_CLASS["GameCore"] = GameCore;		// lib/core/game-core.js
   NAME_TO_CLASS["Shift"] = Shift;		// lib/core/shift.js
   NAME_TO_CLASS["Generator"] = Generator;		// lib/map/generator/base/generator.js
   NAME_TO_CLASS["Auxiliary"] = Auxiliary;		// lib/sprite/aux/base/auxiliary.js
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["GameRing"] = GameRing;		// games/demo/base/game-ring.js
   NAME_TO_CLASS["Smurf"] = Smurf;		// games/demo/base/smurf.js
   NAME_TO_CLASS["RoomBase"] = RoomBase;		// games/the-impossible-room/base/room-base.js
+  NAME_TO_CLASS["TheImpossibleRoomCore"] = TheImpossibleRoomCore;		// games/the-impossible-room/base/the-impossible-room-core.js
   NAME_TO_CLASS["WorldOfTurtle"] = WorldOfTurtle;		// games/turtle/base/world-of-turtle.js
   NAME_TO_CLASS["GeneratorFromConfig"] = GeneratorFromConfig;		// lib/map/generator/generator-from-config.js
   NAME_TO_CLASS["MovingPlatformGenerator"] = MovingPlatformGenerator;		// lib/map/generator/moving-platform-generator.js
@@ -101,4 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["ValueRefresher"] = ValueRefresher;		// lib/utils/value-refresher.js
   NAME_TO_CLASS["Engine"] = Engine;		// lib/engine.js
 });
-function nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }
+		function nameToClass(name, ignoreWarning) {
+			if(!NAME_TO_CLASS[name] && !ignoreWarning) {
+				console.warn('No class named ' + name);
+			}
+			return NAME_TO_CLASS[name];
+		}
+	

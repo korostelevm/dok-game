@@ -2,7 +2,7 @@ class Selection extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
-		this.engine.sidebar.enableSidebar(false);
+		this.core.sidebar.enableSidebar(false);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;
@@ -246,6 +246,6 @@ class Selection extends GameBase {
 
 	async postInit() {
 		await super.postInit();
-		this.engine.sidebar.enableSidebar(true);
+		this.core.sidebar.enableSidebar(true);
 	}
 }

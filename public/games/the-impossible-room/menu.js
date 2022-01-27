@@ -2,7 +2,7 @@ class Menu extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
-		this.engine.sidebar.enableSidebar(false);
+		this.core.sidebar.enableSidebar(false);
 
 		const { config } = engine;
 
@@ -307,7 +307,9 @@ class Menu extends GameBase {
 		this.option2_check.setProperty("disabled", true);
 		this.option2_check.setProperty("checked", localStorage.getItem("alternate_voices") || false);
 
-		engine.postScore(0);
+		engine.postScore(0, score => {
+			this.core.onPostScore(score);
+		});
 	}
 
 	setAudio(audio, value, volume, ignore) {
@@ -377,7 +379,7 @@ class Menu extends GameBase {
 		const audio = this.mainTheme;
 		audio.currentTime = 0;
 		this.setAudio(audio, true, .5);
-		this.engine.sidebar.enableSidebar(true);
+		this.core.sidebar.enableSidebar(true);
 	}
 
 	async onExit(engine) {

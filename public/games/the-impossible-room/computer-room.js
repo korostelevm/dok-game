@@ -149,7 +149,6 @@ class ComputerRoom extends RoomBase {
 				{ name: "sit", condition: () => !this.engine.inception,
 					action: computer_desk => {
 						this.achieve("The Computer");
-						// getMedal("The Computer", this.onUnlockMedal);
 
 						const { gender } = this.data;
 						this.engine.playerOverlay.setInception(true, {

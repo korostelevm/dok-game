@@ -2,7 +2,11 @@ class RoomBase extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
-		this.engine.sidebar.enableSidebar(false);
+		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
+		this.core.sidebar.enableSidebar(false);
+
+		this.dragDrop = new DragDrop(this);
+		await this.dragDrop.init();
 
 		const { gl, config } = this.engine;
 
@@ -1117,7 +1121,7 @@ class RoomBase extends GameBase {
 		}
 
 		this.onFrameSprites = this.engine.spriteCollection.spritesFilteredBy("onFrame");
-		this.engine.sidebar.enableSidebar(true);
+		this.core.sidebar.enableSidebar(true);
 		await super.postInit();
 	}
 
@@ -1152,6 +1156,7 @@ class RoomBase extends GameBase {
 		this.setInventoryVisibility(false);
 		this.setControlVisibility(false);
 		this.setDialogVisibility(false);
+		this.dragDrop.clear();
 		return super.onExit(engine);
 	}
 
@@ -1276,7 +1281,7 @@ class RoomBase extends GameBase {
 	}
 
 	resetGame() {
-		this.engine.resetGame();
+		this.engine.resetGame(this.gameName);
 	}
 
 	updateFile(time) {
@@ -1352,7 +1357,7 @@ class RoomBase extends GameBase {
 			document.getElementById("game-over").style.display = "none";
 			document.getElementById("game-over-message").style.display = "none";
 			this.resetMouse();
-			this.resetGame();
+			this.resetGame(this.gameName);
 			this.engine.setGame(new GameTitle());
 		});
 	}
@@ -1732,8 +1737,7 @@ class RoomBase extends GameBase {
 			this.engine.showedVoices = true;
 			const voiceDrop = document.getElementById("voice-drop");
 			voiceDrop.addEventListener("change",e => {
-//				console.log(e.currentTarget.value);
-				engine.voiceManager.swapVoice(e.currentTarget.value);
+				this.core.voiceManager.swapVoice(e.currentTarget.value);
 			});
 			voices.forEach(voice => {
 				const option = voiceDrop.appendChild(document.createElement("option"));
@@ -1750,7 +1754,7 @@ class RoomBase extends GameBase {
 		const { engine } = this;
 		const { lastTime } = engine;
 		sprite = sprite || this.monkor;
-		const utterance = engine.voiceManager.getUterrance(msg, voiceName, sprite === this.monkor);
+		const utterance = this.core.voiceManager.getUterrance(msg, voiceName, sprite === this.monkor);
 		const reallyIgnoreSpeechBoundary = ignoreSpeechBoundary || utterance && utterance.replacedVoice;
 		if (reallyIgnoreSpeechBoundary) {
 //			console.log("ignore speech boundary.");
@@ -2053,7 +2057,7 @@ class RoomBase extends GameBase {
 				localStorage.removeItem("joker");
 			}
 		}
-		this.engine.sidebar.updateSidebar(this.constructor.name, localStorage.getItem("joker"));
+		this.core.sidebar.updateSidebar(this.constructor.name, localStorage.getItem("joker"));
 	}
 
 	runAwayToPreviousRoom() {
@@ -2267,7 +2271,7 @@ class RoomBase extends GameBase {
 		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
 		const div = document.getElementById("controls");
 		div.style.display = actualVisibilty ? "" : "none";
-		this.engine.sidebar.enableSidebar(visible);
+		this.core.sidebar.enableSidebar(visible);
 	}
 
 	setDialogVisibility(visible, responses) {
@@ -2549,5 +2553,17 @@ class RoomBase extends GameBase {
 		if (f) {
 			f(sprite, previousFrame);
 		}
+	}
+
+	achieve(achievement, nameOverride) {
+		getMedal(achievement, this.onUnlockMedal);
+		const gameName = nameOverride || this.constructor.name;
+		const level = this.core.sidebar.getLevelFor(gameName);
+		console.log("Passed:", level, achievement);
+		this.engine.postScore(level, score => this.core.onPostScore(score));
+	}
+
+	onUnlockMedal(medal) {
+		showUnlockedMedal(medal);
 	}
 }

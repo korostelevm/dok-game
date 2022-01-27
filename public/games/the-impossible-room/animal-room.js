@@ -649,7 +649,6 @@ class AnimalRoom extends RoomBase {
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
 			this.achieve("The Animal Room");
-			// getMedal("The Animal Room", this.onUnlockMedal);
 		}
 		this.engine.setGame(new GandalfRoom());
 	}

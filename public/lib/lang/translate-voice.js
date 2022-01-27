@@ -259,7 +259,6 @@ class TranslateVoice {
 		const m = msg.split(" ").map(word => {
 			return words[word] || word;
 		}).join(" ").replaceAll("' ", "'");
-	//	console.log(`window.speechSynthesis.speak(engine.voiceManager.getUterrance("${m}", "Thomas"));`);
 		return m;
 	}
 }

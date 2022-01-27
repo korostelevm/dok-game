@@ -252,7 +252,6 @@ class JokerRoom extends RoomBase {
 
 	nextLevelRight() {
 		this.achieve("The Joker");
-		// getMedal("The Joker", this.onUnlockMedal);
 		this.engine.setGame(new TimeRoom());
 	}
 }

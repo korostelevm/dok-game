@@ -154,7 +154,6 @@ class DesertFar extends RoomBase {
 						this.monkor.goal.y = -100;
 						this.monkor.onStill = () => {
 							this.achieve("The Desert", "DesertRoom");
-							// getMedal("The Desert", this.onUnlockMedal);
 							this.engine.setGame(new DesertExit());
 						};
 					},

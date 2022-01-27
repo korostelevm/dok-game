@@ -415,7 +415,6 @@ class ClueRoom extends RoomBase {
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
 			this.achieve("The Room with No Clue");
-			// getMedal("The Room with No Clue", this.onUnlockMedal);
 		}
 		this.engine.setGame(new DesertRoom());
 	}

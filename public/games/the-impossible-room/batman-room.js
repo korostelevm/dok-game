@@ -470,7 +470,6 @@ class BatmanRoom extends RoomBase {
 
 	nextLevelRight() {
 		this.achieve("Batman");
-		// getMedal("Batman", this.onUnlockMedal);
 		this.engine.setGame(new ComputerRoom());
 	}
 }

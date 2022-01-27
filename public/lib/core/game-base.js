@@ -12,9 +12,10 @@ class GameBase {
 	async init(engine, gameName) {
 		this.engine = engine;
 		this.imageLoader = engine.imageLoader;
-		engine.data = engine.data || (engine.data = {});
-		const gameData = engine.data[gameName] || (engine.data[gameName] = {});
-		this.data = gameData;
+		this.gameName = gameName;
+		this.core = await engine.getCore(gameName);
+		this.core.setGame(this);
+		this.data = this.core.data;
 		this.sceneData = this.data[this.sceneTag] || (this.data[this.sceneTag] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
@@ -99,18 +100,6 @@ class GameBase {
 	addPhysics(physics) {
 		this.physics.push(physics);
 		return physics;
-	}
-
-	onUnlockMedal(medal) {
-		showUnlockedMedal(medal);
-	}
-
-	achieve(achievement, nameOverride) {
-		getMedal(achievement, this.onUnlockMedal);
-		const gameName = nameOverride || this.constructor.name;
-		const level = engine.getLevelFor(gameName);
-		console.log("Passed:", level, achievement);
-		this.engine.postScore(level);
 	}
 
 	onInception(inception) {		

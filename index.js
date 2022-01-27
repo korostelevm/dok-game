@@ -114,7 +114,15 @@ async function regenerateIndex() {
 			return null;
 		}
 		return `  NAME_TO_CLASS["${className}"] = ${className};		// ${path}\n`;
-	}).filter(a => a).join("") + "});\nfunction nameToClass(name) { if(!NAME_TO_CLASS[name]) console.warn('No class named ' + name); return NAME_TO_CLASS[name]; }\n";
+	}).filter(a => a).join("")
+	+ `});
+		function nameToClass(name, ignoreWarning) {
+			if(!NAME_TO_CLASS[name] && !ignoreWarning) {
+				console.warn('No class named ' + name);
+			}
+			return NAME_TO_CLASS[name];
+		}
+	`;
 	return fs.promises.writeFile(`${__dirname}/public/gen/nameToClass.js`, classNameMapper)
 }
 

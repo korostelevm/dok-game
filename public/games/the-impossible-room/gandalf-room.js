@@ -293,7 +293,6 @@ class GandalfRoom extends RoomBase {
 					action: exit => {
 						if (!this.monkor.properties.joker) {
 							this.achieve("Gandalf");
-							// getMedal("Gandalf", this.onUnlockMedal);
 						}
 						
 						this.monkor.setProperty("paused", engine.lastTime);

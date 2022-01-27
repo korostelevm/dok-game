@@ -1465,7 +1465,6 @@ class Restaurant extends RoomBase {
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
 			this.achieve("The Restaurant");
-			// getMedal("The Restaurant", this.onUnlockMedal);
 		}
 		this.engine.setGame(new SoundRoom());
 	}

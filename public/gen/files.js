@@ -197,7 +197,7 @@ const globalFiles=[
         "the-impossible-room": [
           ".DS_Store",
           "animal-room.js",
-          {"base": ["room-base.js"]},
+          {"base": ["room-base.js", "the-impossible-room-core.js"]},
           "batman-room.js",
           "clue-room.js",
           "computer-room.js",
@@ -246,7 +246,7 @@ const globalFiles=[
   {
     "lib": [
       ".DS_Store",
-      {"core": [".DS_Store", "game-base.js", "shift.js"]},
+      {"core": [".DS_Store", "game-base.js", "game-core.js", "shift.js"]},
       "engine.js",
       {
         "external": [

@@ -962,7 +962,6 @@ class LockedRoom extends RoomBase {
 
 	nextLevelRight() {
 		this.achieve("The First Room");
-		// getMedal("The First Room", this.onUnlockMedal);
 		this.engine.setGame(new JokerRoom());
 	}
 }

@@ -376,7 +376,6 @@ class Entrance extends RoomBase {
 
 	upperLevel() {
 		this.achieve("The Entrance");
-		// getMedal("The Entrance", this.onUnlockMedal);
 		this.engine.setGame(new Restroom());
 	}
 }

@@ -739,6 +739,5 @@ class Lobby extends RoomBase {
 	nextLevelRight() {
 		this.engine.setGame(new LockedRoom());
 		this.achieve("The Lobby");
-		// getMedal("The Lobby", this.onUnlockMedal);
 	}
 }

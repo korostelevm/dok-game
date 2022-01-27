@@ -33,13 +33,11 @@ class Engine {
 			new FpsBox(this);
 		}
 		this.playerOverlay = new PlayerOverlay(this);
-		new DragDrop(this);
 
 		this.refresher = new Set();
 		this.updater = new Set();
 
 		this.music = new Music(this);
-		this.voiceManager = new VoiceManager();
 		this.soundManager = new SoundManager();
 
 		this.init(config);
@@ -50,7 +48,7 @@ class Engine {
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
 		this.shift = new Shift();
 
-		this.sidebar = new Sidebar(this, document.getElementById("sidebar"), document);
+		this.core = {};
 	}
 
 	addUiComponent(component) {
@@ -145,7 +143,6 @@ class Engine {
 		engine.canvas.style.opacity = 1;
 		this.initialize(gl, this.shaders[0]);
 
-		await this.voiceManager.init();
 		ChronoUtils.tick();
 
 		this.lastTime = 0;
@@ -268,7 +265,6 @@ class Engine {
 		await this.adjustWindowSize(game);
 		await this.adjustRefresh(game);
 
-		this.sidebar.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
 		await game.init(this, this.classToGame[game.sceneTag]);
 		this.shift.turnLightOn();
 		await game.postInit();
@@ -290,24 +286,7 @@ class Engine {
 		}
 		this.spriteCollection.spritesFilteredBy("handleMouse").forEach(sprite => this.mouseHandlerManager.add(sprite));
 		this.spriteCollection.spritesFilteredBy("needsMouse").forEach(sprite => this.mouseHandlerManager.add(sprite));
-		this.setupDragListeners();
 		game.ready = Math.max(this.lastTime, 1);
-	}
-
-	setupDragListeners() {
-		if (this.game.onDropOnOverlay) {
-			this.overlay.addEventListener("drop", this.onDropOnOverlay);
-		}
-		if (this.game.onDragOver) {
-			this.overlay.addEventListener("dragover", this.onDragOver);
-		}
-	}
-
-	removeDragListeners() {
-		if (this.overlay) {
-			this.overlay.removeEventListener("drop", this.onDropOnOverlay);
-			this.overlay.removeEventListener("dragover", this.onDragOver);
-		}
 	}
 
 	removeKeyboardListeners() {
@@ -347,13 +326,24 @@ class Engine {
 		this.setRefreshPerFrame(1);
 		this.urlToTextureIndex = {};
 		this.shift.clear();
-		this.removeDragListeners();
 		this.removeKeyboardListeners();
 		this.mouseHandlerManager.clear();
 	}
 
-	resetGame() {
-		this.data = {};
+	resetGame(gameName) {
+		const core = this.core[gameName];
+		if (core) {
+			core.reset();
+		}
+	}
+
+	async getCore(gameName) {
+		if (!this.core[gameName]) {
+			const coreClass = nameToClass(`${gameName}Core`, true) || GameCore;
+			this.core[gameName] = new coreClass(this);
+			await this.core[gameName].init();
+		}
+		return this.core[gameName];
 	}
 
 	async addTexture(imageConfig) {
@@ -504,18 +494,6 @@ class Engine {
 		}
 	}
 
-	onDropOnOverlay(event) {
-		if (this.game && this.game.onDropOnOverlay) {
-			this.game.onDropOnOverlay(event);
-		}
-	}
-
-	onDragOver(event) {
-		if (this.game && this.game.onDragOver) {
-			this.game.onDragOver(event);
-		}
-	}
-
 	gamePaused() {
 		return this.game.paused || !this.focusFixer.focused;
 	}
@@ -597,7 +575,6 @@ class Engine {
 			if (result.success) {
 				this.score = result.score.value;
 				localStorage.setItem("bestScore", this.score);
-				this.sidebar.updateSidebar(this.game.sceneTag, localStorage.getItem("joker"));
 			} else {
 				console.log(result?.error?.message);
 			}

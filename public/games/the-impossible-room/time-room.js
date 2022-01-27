@@ -562,7 +562,6 @@ class TimeRoom extends RoomBase {
 	nextLevelRight() {
 		if (!this.monkor.properties.joker) {
 			this.achieve("The Time Room");
-			// getMedal("The Time Room", this.onUnlockMedal);
 		}
 		this.engine.setGame(new AnimalRoom());
 	}
