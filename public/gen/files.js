@@ -179,11 +179,11 @@ const globalFiles=[
       {
         "demo": [
           ".DS_Store",
-          {"base": ["flat-land.js", "game-ring.js"]},
+          {"base": ["flat-land.js", "game-ring.js", "smurf.js"]},
           "flat-land.json",
           "game-ring.json",
           "peer-demo.js",
-          "smurf.js"
+          "smurf.json"
         ]
       },
       {

@@ -1,0 +1,105 @@
+{
+  "className": "Smurf",
+  "settings": {
+    "perspective": true,
+    "clamp": {
+    	"left": -3000, "right": 3000
+    }
+  },
+  "cameras": {
+      "normal": {
+        "default": true,
+		"xOffset": 0, "yOffset": 1000, "zOffset": -450,
+		"rotation": [45, 0, 0]
+      }
+  },
+  "world": {
+  	"backwall": {
+		"anim": "backwall",
+		"size": ["{viewportWidth * 5}", "{viewportHeight * 5}"],
+		"opacity": 0.5,
+		"x": "{viewportWidth}", "y": "{viewportHeight * 2}",
+		"z": -1000
+  	}
+  },
+  "atlas": {
+		"backwall": {
+			"url": "assets/backwall.jpg",
+			"hotspot": "{hotspot_center}"
+		},
+		"smurf_still": {
+			"url": "assets/smurf.png",
+			"spriteWidth": 256, "spriteHeight": 256,
+			"range":[1],
+			"hotspot": "{hotspot_bottom}"
+		},
+		"smurf_walk": {
+			"url": "assets/smurf.png",
+			"spriteWidth": 256, "spriteHeight": 256,
+			"range":[0, 1],
+			"frameRate": 5,
+			"hotspot": "{hotspot_bottom}"
+		},
+		"hex": {
+			"url": "assets/hex.png",
+			"collision_url": "assets/hex.png",
+			"cols": 2, "rows": 2,
+			"range": [0],
+			"hotspot": "{hotspot_center}"
+		},
+		"red_line": {
+			"url": "assets/red-line.png",
+			"spriteWidth": 100, "spriteHeight": 4,
+			"range":[0],
+			"hotspot": [0, 0.5]
+		},
+		"blue_line": {
+			"url": "assets/red-line.png",
+			"spriteWidth": 100, "spriteHeight": 4,
+			"range":[1],
+			"hotspot": [0, 0.5]
+		},
+		"mushroom": {
+			"url": "assets/mushrooms.png",
+			"spriteWidth": 512, "spriteHeight": 512,
+			"range":[0],
+			"hotspot": "{hotspot_bottom}"
+		},
+		"big_mushroom": {
+			"url": "assets/mushrooms.png",
+			"spriteWidth": 512, "spriteHeight": 512,
+			"range":[1],
+			"hotspot": "{hotspot_bottom}"
+		},
+		"flower_mushroom": {
+			"url": "assets/mushrooms.png",
+			"spriteWidth": 512, "spriteHeight": 512,
+			"range":[2],
+			"hotspot": "{hotspot_bottom}"
+		},
+		"mushroom_lab": {
+			"url": "assets/mushrooms.png",
+			"spriteWidth": 512, "spriteHeight": 512,
+			"range":[3],
+			"hotspot": "{hotspot_bottom}"
+		},
+		"mushroom_workshop": {
+			"url": "assets/mushrooms.png",
+			"spriteWidth": 512, "spriteHeight": 512,
+			"range":[4],
+			"hotspot": "{hotspot_bottom}"
+		},
+		"meter": {
+			"url": "assets/meter.png",
+			"spriteWidth": 64, "spriteHeight": 8,
+			"range":[0],
+			"hotspot": [0,0]
+		},
+		"meter_back": {
+			"url": "assets/meter.png",
+			"spriteWidth": 64, "spriteHeight": 8,
+			"range":[1],
+			"hotspot": [0,0]
+		}
+	}
+}
