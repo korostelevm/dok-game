@@ -47,142 +47,6 @@ class Engine {
 		this.keyboardHandler = new KeyboardHandler(document);
 		this.refreshPerFrame = 1;
 
-		this.sidebars = [
-			{
-				name: "main menu",
-				game: "Menu",
-				onClick: engine => {
-					confirmRestart();
-				},
-				hideSidebar: (engine) => {
-					return engine.countUnlocked() === 1;
-				},
-			},
-			{
-				name: "entrance",
-				game: "Entrance",
-				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "restroom",
-				game: "Restroom",
-				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "lobby",
-				game: "Lobby",
-				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "first room",
-				game: "LockedRoom",
-				disabled: (engine) => {
-					return !["Menu", "Entrance", "Restroom", "Lobby"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "joker",
-				game: "JokerRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "time",
-				game: "TimeRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "animal",
-				game: "AnimalRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "gandalf",
-				game: "GandalfRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "math",
-				game: "MathRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "restaurant",
-				game: "Restaurant",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "music",
-				game: "SoundRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "no clue",
-				game: "ClueRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "desert",
-				game: "DesertRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "batman",
-				game: "BatmanRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "computer",
-				game: "ComputerRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-			{
-				name: "impossible",
-				game: "ImpossibleRoom",
-				disabled: (engine) => {
-					return !["Menu", "JokerRoom", "TimeRoom", "AnimalRoom", "GandalfRoom", "Restaurant", "SoundRoom", "MathRoom",
-						"ClueRoom", "DesertRoom", "BatmanRoom", "ComputerRoom", "ImpossibleRoom"].includes(engine.game.sceneTag);
-				},
-			},
-		];
 		this.score = parseInt(localStorage.getItem("bestScore")) || 0;
 		this.shift = {
 			x:0, y:0, z:0, zoom:1, opacity: 1,
@@ -196,6 +60,8 @@ class Engine {
 			dirty: true,
 		};
 		this.tempVec3 = vec3.create();
+
+		this.sidebar = new Sidebar(this, document.getElementById("sidebar"), document);
 	}
 
 	addUiComponent(component) {
@@ -204,85 +70,6 @@ class Engine {
 
 	restoreUIComponents() {
 		this.uiComponents.filter(({onRefresh}) => onRefresh).forEach(component => this.refresher.add(component));
-	}
-
-	countUnlocked() {
-		let count = 0;
-		this.sidebars.forEach(({ game, name, disabled, hideSidebar }, index) => {
-			if (this.roomUnlocked(game)) {
-				count++;
-			}
-		});
-		return count;
-	}
-
-	getLevelFor(name) {
-		for (let i = 0; i < this.sidebars.length; i++) {
-			if (this.sidebars[i].game === name) {
-				return i;
-			}
-		}
-		return -1;
-	}
-
-	roomUnlocked(game) {
-		return localStorage.getItem(game + "-unlocked");
-	}
-
-	enableSidebar(enabled) {
-		const sidebar = document.getElementById("sidebar");
-		if (enabled) {
-			sidebar.classList.remove("blocked");
-		} else {
-			sidebar.classList.add("blocked");
-		}
-	}
-
-	updateSidebar(selected, joker) {
-		const sidebar = document.getElementById("sidebar");
-		sidebar.innerText = "";
-		let foundSelected = false;
-		let doHideSidebar = false;
-		const allRows = [];
-		this.sidebars.forEach(({ game, name, disabled, hideSidebar, onClick }, index) => {
-			const classObj = nameToClass(game);
-			const row = sidebar.appendChild(document.createElement("div"));
-			allRows.push(row);
-			row.classList.add("sidebar-room");
-			const icon = joker === game ? " 🤪" : index && index <= this.score ? " ✔️" : "";
-			row.innerText = `${name}${icon}`;
-			if (!this.roomUnlocked(game)) {
-				row.classList.add("locked");
-			} else if (selected !== game && disabled && disabled(this)) {
-				row.classList.add("disabled");
-			} else {
-				if (selected !== game) {
-					row.addEventListener("click", () => {
-						if (onClick) {
-							onClick(this);
-						} else {
-							allRows.forEach(row => {
-								row.classList.remove("selected");
-								row.classList.add("wait");
-							});
-							row.classList.add("selected");
-							this.setGame(new classObj()).then(() => {
-								allRows.forEach(row => row.classList.remove("wait"));
-							});
-						}
-					});
-				}
-			}
-
-			if (selected === game) {
-				row.classList.add("selected");
-				foundSelected = true;
-				if (hideSidebar && hideSidebar(this)) {
-					doHideSidebar = true;
-				}
-			}
-		});
-		sidebar.style.display = !doHideSidebar && foundSelected ? "flex" : "none";
 	}
 
 	setRefreshPerFrame(value) {
@@ -555,7 +342,7 @@ class Engine {
 		await this.adjustWindowSize(game);
 		await this.adjustRefresh(game);
 
-		this.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
+		this.sidebar.updateSidebar(game.sceneTag, localStorage.getItem("joker"));
 		await game.init(this, this.classToGame[game.sceneTag]);
 		this.shift.goal.light = 1;
 		await game.postInit();
@@ -967,7 +754,7 @@ class Engine {
 			if (result.success) {
 				this.score = result.score.value;
 				localStorage.setItem("bestScore", this.score);
-				this.updateSidebar(this.game.sceneTag, localStorage.getItem("joker"));
+				this.sidebar.updateSidebar(this.game.sceneTag, localStorage.getItem("joker"));
 			} else {
 				console.log(result?.error?.message);
 			}

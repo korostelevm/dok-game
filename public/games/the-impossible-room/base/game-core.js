@@ -1,6 +1,9 @@
 class GameCore extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
+
+		this.engine.sidebar.enableSidebar(false);
+
 		const { gl, config } = this.engine;
 
 		const { gender } = this.data;
@@ -1114,6 +1117,7 @@ class GameCore extends GameBase {
 		}
 
 		this.onFrameSprites = this.engine.spriteCollection.spritesFilteredBy("onFrame");
+		this.engine.sidebar.enableSidebar(true);
 		await super.postInit();
 	}
 
@@ -2049,7 +2053,7 @@ class GameCore extends GameBase {
 				localStorage.removeItem("joker");
 			}
 		}
-		this.engine.updateSidebar(this.constructor.name, localStorage.getItem("joker"));
+		this.engine.sidebar.updateSidebar(this.constructor.name, localStorage.getItem("joker"));
 	}
 
 	runAwayToPreviousRoom() {
@@ -2256,7 +2260,7 @@ class GameCore extends GameBase {
 		const actualVisibilty = typeof(visible) === "function" ? visible() : visible;
 		const div = document.getElementById("controls");
 		div.style.display = actualVisibilty ? "" : "none";
-		this.engine.enableSidebar(visible);
+		this.engine.sidebar.enableSidebar(visible);
 	}
 
 	setDialogVisibility(visible, responses) {

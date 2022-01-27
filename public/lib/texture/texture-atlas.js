@@ -276,6 +276,7 @@ class TextureAtlas {
 			root = root[idSplit[i]];
 		}
 		if (!root) {
+			console.log(atlas, anim);
 			console.warn("Anim doesn't exist: ", anim);
 		}
 		return root;

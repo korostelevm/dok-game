@@ -1,8 +1,4 @@
 class WorldOfTurtle extends GameBase {
-	constructor(path) {
-		super(path);
-	}
-
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
@@ -143,7 +139,7 @@ class WorldOfTurtle extends GameBase {
 			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
 			const z = - RandomUtils.random(i, 888) * 2000;
 			this[`peng-${i}`] = this.spriteFactory.create({
-				name: peng => `peng-${i}`,
+				name: `peng-${i}`,
 				anim: "peng",
 				size: [100, 120],
 				x, y: 400, z,
@@ -169,7 +165,7 @@ class WorldOfTurtle extends GameBase {
 				const y = 400;
 				const z = (col - 5) * 100 - 400;
 				this.spriteFactory.create({
-					anim: this.atlas.hex,
+					anim: "hex",
 					size: [100, 100],
 					x, y, z,
 					rotation: [-90, 0, 0],					

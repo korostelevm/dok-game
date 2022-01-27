@@ -17,9 +17,6 @@
 		<meta name="description" content="Dobuki Game Description">
 		<link rel="stylesheet" href="css/style.css">
 
-		<style type="text/css">
-
-		</style>
 		<script>
 			addEventListener('error', function(event) {
 				const div = document.body.appendChild(document.createElement("div"));
@@ -104,7 +101,7 @@
 		</script>
 
 		<div style="position: absolute; left: 10px; top: 60px; z-index: 100; font-size: 8pt;">
-			<div id="sidebar" style="flex-direction: column; display: flex; display: none; 			  cursor:url(assets/mouse-cursor.png), auto;">
+			<div id="sidebar" style="flex-direction: column; display: flex; display: none; cursor:url(assets/mouse-cursor.png), auto;">
 				<div class="sidebar-room">1</div>
 				<div class="sidebar-room">2</div>
 			</div>
@@ -127,40 +124,6 @@
 				<div id="confirm-text" style="margin-bottom: 20px; font-size: 15pt;">Are you sure you want to restart the game?</div>
 				<button id="ok-button" class="button">ok</button>
 				<button id="cancel-button" class="button">cancel</button>
-				<script type="text/javascript">
-					document.getElementById("cancel-button").addEventListener("mousedown", e => {
-						e.stopPropagation();
-					});
-					document.getElementById("cancel-button").addEventListener("mouseup", e => {
-						e.stopPropagation();
-					});
-					document.getElementById("cancel-button").addEventListener("click", e => {
-						document.getElementById("confirm-dialog").style.display = "none";
-						document.getElementById("game-over").style.display = "none";
-						const sidebar = document.getElementById("sidebar");
-						sidebar.style.display = "flex";						
-					});
-					document.getElementById("ok-button").addEventListener("mousedown", e => {
-						e.stopPropagation();
-					});
-					document.getElementById("ok-button").addEventListener("mouseup", e => {
-						e.stopPropagation();
-					});
-					document.getElementById("ok-button").addEventListener("click", e => {
-						document.getElementById("confirm-dialog").style.display = "none";
-						document.getElementById("game-over").style.display = "none";
-						const sidebar = document.getElementById("sidebar");
-						sidebar.style.display = "flex";
-						engine.setGame(new Menu());
-						engine.resetGame();
-					});
-					function confirmRestart() {
-						document.getElementById("confirm-dialog").style.display = "";
-						document.getElementById("game-over").style.display = "block";
-						const sidebar = document.getElementById("sidebar");
-						sidebar.style.display = "none";
-					}
-				</script>
 			</div>
 
 			<div id="over-container" style="z-index: 300;position: absolute; top: 50px; left: 150px">
@@ -218,6 +181,8 @@
 		<script type="text/javascript" src="lib/map/generator/base/generator.js"></script>
 		<script type="text/javascript" src="lib/sprite/aux/base/auxiliary.js"></script>
 		<script type="text/javascript" src="lib/sprite/aux/base/refresher-auxiliary.js"></script>
+		<script type="text/javascript" src="games/demo/base/flat-land.js"></script>
+		<script type="text/javascript" src="games/demo/base/game-ring.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/base/game-core.js"></script>
 		<script type="text/javascript" src="games/turtle/base/world-of-turtle.js"></script>
 		<script type="text/javascript" src="lib/map/generator/generator-from-config.js"></script>
@@ -243,8 +208,6 @@
 		<script type="text/javascript" src="lib/sprite/collision/collision-merger.js"></script>
 		<script type="text/javascript" src="lib/ui/base/ui-component.js"></script>
 		<script type="text/javascript" src="games/common/start-screen.js"></script>
-		<script type="text/javascript" src="games/demo/flat-land.js"></script>
-		<script type="text/javascript" src="games/demo/game-ring.js"></script>
 		<script type="text/javascript" src="games/demo/peer-demo.js"></script>
 		<script type="text/javascript" src="games/demo/smurf.js"></script>
 		<script type="text/javascript" src="games/the-impossible-room/animal-room.js"></script>
@@ -305,6 +268,7 @@
 		<script type="text/javascript" src="lib/ui/player-overlay.js"></script>
 		<script type="text/javascript" src="lib/ui/scene-tab.js"></script>
 		<script type="text/javascript" src="lib/ui/side-bar.js"></script>
+		<script type="text/javascript" src="lib/ui/sidebar.js"></script>
 		<script type="text/javascript" src="lib/ui/tip-box.js"></script>
 		<script type="text/javascript" src="lib/utils/array-utils.js"></script>
 		<script type="text/javascript" src="lib/utils/constants.js"></script>

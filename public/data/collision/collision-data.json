@@ -4433,5 +4433,117 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "1efcb82a29e463f879e56dd834fd9651": [
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.000Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.000Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.000Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.000Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.006Z",
+      "top": 0.255,
+      "left": 0.505,
+      "bottom": 0.73,
+      "right": 0.725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.010Z",
+      "top": 0.25,
+      "left": 0.505,
+      "bottom": 0.73,
+      "right": 0.725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.015Z",
+      "top": 0.205,
+      "left": 0.5425,
+      "bottom": 0.68,
+      "right": 0.725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.020Z",
+      "top": 0.2,
+      "left": 0.5425,
+      "bottom": 0.68,
+      "right": 0.725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.025Z",
+      "top": 0.475,
+      "left": 0.9125,
+      "bottom": 0.995,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.030Z",
+      "top": 0.4,
+      "left": 0.5325,
+      "bottom": 0.71,
+      "right": 0.6925,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/gandalf.png",
+      "updated": "2022-01-27T06:22:27.034Z",
+      "top": 0.34,
+      "left": 0.505,
+      "bottom": 0.715,
+      "right": 0.705,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

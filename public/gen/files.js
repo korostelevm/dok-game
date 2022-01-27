@@ -176,7 +176,16 @@ const globalFiles=[
     "games": [
       ".DS_Store",
       {"common": ["start-screen.js"]},
-      {"demo": ["flat-land.js", "game-ring.js", "peer-demo.js", "smurf.js"]},
+      {
+        "demo": [
+          ".DS_Store",
+          {"base": ["flat-land.js", "game-ring.js"]},
+          "flat-land.json",
+          "game-ring.json",
+          "peer-demo.js",
+          "smurf.js"
+        ]
+      },
       {
         "samples": [
           "sample-platformer.json",
@@ -343,6 +352,7 @@ const globalFiles=[
           "player-overlay.js",
           "scene-tab.js",
           "side-bar.js",
+          "sidebar.js",
           "tip-box.js"
         ]
       },

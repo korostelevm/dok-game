@@ -48,6 +48,13 @@ class Sprite extends Body {
 			});
 		}
 
+		if (data.list) {
+			if(!game[data.list]) {
+				game[data.list] = [];
+			}
+			game[data.list].push(this);
+		}
+
 		this.aux = [];
 		for (let name in data.aux) {
 			const classObj = nameToClass(name);

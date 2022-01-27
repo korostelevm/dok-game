@@ -1,6 +1,6 @@
 class Smurf extends GameBase {
 	async init(engine, gameName) {
-		super.init(engine, gameName);
+		await super.init(engine, gameName);
 
 		const { gl, config } = engine;
 		this.atlas = {
