@@ -106,22 +106,13 @@ class Engine {
 		/* Focus Fixer */
 		this.focusFixer = new FocusFixer(canvas);	
 
-		if (!gl.getExtension('OES_element_index_uint')) {
-			throw new Error("OES_element_index_uint not available.");
-		}
-		const ext = gl.getExtension('ANGLE_instanced_arrays');
-		if (!ext) {
-			throw new Error('need ANGLE_instanced_arrays.');
-		}
-		this.ext = ext;
-
 		/* Config shader */
 		this.configShader(gl, config);
 
 		/* Initialize Shader program */
 		const { vertexShader, fragmentShader, attributes } = globalData;
 		this.shaders = [
-			new Shader(0, gl, ext, vertexShader, fragmentShader, attributes, maxInstancesCount),
+			new Shader(0, this.gl, this.ext, vertexShader, fragmentShader, attributes, maxInstancesCount),
 		];
 
 		/* Texture management */
@@ -439,6 +430,15 @@ class Engine {
 	}
 
 	configShader(gl, {webgl: {cullFace, depth}}) {
+		if (!gl.getExtension('OES_element_index_uint')) {
+			throw new Error("OES_element_index_uint not available.");
+		}
+		const ext = gl.getExtension('ANGLE_instanced_arrays');
+		if (!ext) {
+			throw new Error('need ANGLE_instanced_arrays.');
+		}
+		this.ext = ext;
+
 		switch(cullFace) {
 			case "front":
 				gl.enable(gl.CULL_FACE);
@@ -528,10 +528,9 @@ class Engine {
 			if (this.gamePaused()) {
 				return;
 			}
-			for (let i = 0; i < game.physics.length; i++) {
-				game.physics[i].refresh(time, dt);
+			for (let physic of game.physics) {
+				physic.refresh(time, dt);
 			}
-
 			game.refresh(time, dt);
 		}
 		this.handleOnRefreshes(time, dt, actualTime);
@@ -579,9 +578,10 @@ class Engine {
 	}
 
 	render(time, dt) {
+		const gl = this.gl;
 		this.updateTime(time);
-		this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
-		this.ext.drawArraysInstancedANGLE(this.gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		this.ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
 	}
 
 	updateTime(time) {

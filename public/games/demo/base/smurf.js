@@ -4,7 +4,6 @@ class Smurf extends GameBase {
 
 		const { gl, config, viewportWidth, viewportHeight } = engine;
 
-		this.mazoos = [];
 		for (let i = 0; i < 2000; i++) {
 			const x = viewportWidth / 2 + (Math.random() - .5) * viewportWidth * 10;
 			const z = - Math.random() * 2000;
@@ -15,6 +14,8 @@ class Smurf extends GameBase {
 				x, y, z,
 				motion: [100, 0, 0],
 				spriteType: "sprite",
+				animationTime: Math.random() * 1000000,
+				list: "mazoos",
 			}, {
 				goal: [
 					Math.random() * viewportWidth,
@@ -22,8 +23,6 @@ class Smurf extends GameBase {
 					-Math.random() * 2000,
 				],
 			});
-			smurf.changeAnimationTime(Math.random() * 1000000);
-			this.mazoos.push(smurf);
 		}
 
 		for (let i = 0; i < 1000; i++) {

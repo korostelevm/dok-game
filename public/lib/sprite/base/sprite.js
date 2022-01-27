@@ -37,7 +37,7 @@ class Sprite extends Body {
 
 		this.updated = {
 			... this.updated,
-			animation: time,
+			animation: data.animationTime ?? time,
 		};
 		this.engine.updater.add(this);
 
