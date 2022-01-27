@@ -69,7 +69,7 @@ class SpriteCollection {
 				this.sprites[i].changeActive(false);				
 			}
 		}
-		if (this.sprites.length !== activeCount) {
+		if (activeCount && this.sprites.length !== activeCount) {
 			console.log("Sprite reduction:", this.sprites.length, "=>", activeCount);
 		}
 		this.sprites.length = activeCount;
