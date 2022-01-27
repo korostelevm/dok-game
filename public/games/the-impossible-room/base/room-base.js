@@ -1157,6 +1157,7 @@ class RoomBase extends GameBase {
 		this.setControlVisibility(false);
 		this.setDialogVisibility(false);
 		this.dragDrop.clear();
+		this.core.sidebar.updateSidebar(null);
 		return super.onExit(engine);
 	}
 
