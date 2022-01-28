@@ -40,6 +40,16 @@
 					"hudForSelection": "overlayHud"
 				}
 			}
+		},
+
+		"hex": {
+			"table": [11, 11],
+			"anim": "hex",
+			"size": [100, 100],
+			"x": "{col * 100 - 50}",
+			"y": 400,
+			"z": "{(row - 5) * 100 - 400}",
+			"rotation": [-90, 0, 0]
 		}
 	},
 

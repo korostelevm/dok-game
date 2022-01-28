@@ -162,20 +162,6 @@ class WorldOfTurtle extends GameBase {
 			});
 		}
 
-		for (let row = 0; row < 11; row++) {
-			for (let col = 0; col < 11; col++) {
-				const x = row * 100 - 50;
-				const y = 400;
-				const z = (col - 5) * 100 - 400;
-				this.spriteFactory.create({
-					anim: "hex",
-					size: [100, 100],
-					x, y, z,
-					rotation: [-90, 0, 0],					
-				});
-			}
-		}
-
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});
