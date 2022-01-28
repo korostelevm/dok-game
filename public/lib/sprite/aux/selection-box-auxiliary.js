@@ -64,6 +64,9 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 				this.holdAxis[2] ? this.selection.z : this.selection.z - this.holdOffset[2]);
 			this.selection.follow(null);
 			this.holding = false;
+			if (this.selection.onRelease) {
+				this.selection.onRelease(this.selection);
+			}
 		}
 	}
 

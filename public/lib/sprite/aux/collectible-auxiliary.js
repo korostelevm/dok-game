@@ -12,12 +12,15 @@ class CollectibleAuxiliary extends Auxiliary {
 		const sound = this.config.sound || "pickup";
 		const audio = sprite.game.audio[sound] || null;
 		sprite.onChange = {
+			...sprite.onChange,
 			pickedUp: (item, value, isInit) => {
 				if (value) {
 					if (!isInit && audio) {
 						audio.play();
 					}
 					item.changeActive(false);
+				} else {
+					item.changeActive(true);
 				}
 			}
 		};

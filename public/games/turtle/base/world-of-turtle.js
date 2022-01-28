@@ -130,6 +130,9 @@ class WorldOfTurtle extends GameBase {
 					self.changePosition(self.x, yLand, self.z, time);
 					self.engine.refresher.delete(self);
 				},
+				onRelease: (self) => {
+					self.airborne = 1;
+				},
 			});
 		}
 

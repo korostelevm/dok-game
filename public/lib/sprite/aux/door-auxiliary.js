@@ -10,6 +10,7 @@ class DoorAuxiliary extends Auxiliary {
 		sprite.noblock = 1;
 		sprite.onOpen = (self, opener) => this.onOpen(self, opener);
 		sprite.onChange = {
+			...sprite.onChange,
 			opened: (self, opened) => {
 				self.door.changeAnimation(opened ? this.config.animOnOpen : this.config.animOnClose);
 			},

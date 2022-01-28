@@ -27,8 +27,16 @@ class Body {
 		this.activationListeners.add(listener);
 	}
 
+	removeActivationListener(listener) {
+		this.activationListeners.delete(listener);		
+	}
+
 	addMotionChangeListener(listener) {
 		this.motionChangeListeners.add(listener);
+	}
+
+	removeMotionChangeListener(listener) {
+		this.motionChangeListeners.delete(listener);		
 	}
 
 	changePosition(x, y, z, t, skipRecalculate) {
