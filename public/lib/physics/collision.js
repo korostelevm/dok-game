@@ -31,7 +31,6 @@ class Collision extends PhysicsBase {
 				collisionBox: sprite.collisionBox,
 				colliders: new Set(),
 				collisions: new Map(),
-				overlappers: new Set(),
 				overlapping: new Map(),
 				countCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
 				onCollide: sprite.onCollide,
@@ -162,11 +161,8 @@ class Collision extends PhysicsBase {
 		if (collisionData.onCollide) {
 			collisionData.onCollide(collisionData.sprite, secondCollisionData.sprite, xPush, yPush, zPush);
 		}
-		if (!collisionData.overlapping.has(secondCollisionData)) {
-			if (collisionData.onEnter) {
-				collisionData.onEnter(collisionData.sprite, secondCollisionData.sprite);
-			}
-			collisionData.overlappers.add(secondCollisionData);
+		if (collisionData.onEnter && !collisionData.overlapping.has(secondCollisionData)) {
+			collisionData.onEnter(collisionData.sprite, secondCollisionData.sprite);
 		}
 		collisionData.overlapping.set(secondCollisionData, time);
 	}
@@ -193,10 +189,9 @@ class Collision extends PhysicsBase {
 
 	leaveCollisions(collisionData, time) {
 		const overlapping = collisionData.overlapping;
-		for (let overlapperData of collisionData.overlappers) {
-			if (overlapping.get(overlapperData) !== time) {
+		for (let [overlapperData, overlappingTime] of collisionData.overlapping) {
+			if (overlappingTime !== time) {
 				overlapping.delete(overlapperData);
-				collisionData.overlappers.delete(overlapperData);
 				if (collisionData.onLeave) {
 					collisionData.onLeave(collisionData.sprite, overlapperData.sprite);
 				}
