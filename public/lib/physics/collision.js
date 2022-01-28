@@ -19,9 +19,9 @@ class Collision extends PhysicsBase {
 			this.vertical = [],
 			this.deep = [],
 		];
-		this.markers = [];
+		this.markers = new Set();
 		this.openColliders = new Set();
-		this.countedColliders = [];
+		this.countedColliders = new Set();
 
 		this.collisionDataList = [];
 		for (let colIndex = 0; colIndex < filteredSprites.length; colIndex++) {
@@ -51,7 +51,8 @@ class Collision extends PhysicsBase {
 			if (this.countType[DEEP]) {
 				this.deep.push(topLeftClose, bottomRightFar);
 			}
-			this.markers.push(topLeftClose, bottomRightFar);
+			this.markers.add(topLeftClose);
+			this.markers.add(bottomRightFar);
 			this.collisionDataList[colIndex] = collisionData;
 		}
 	}
@@ -65,7 +66,7 @@ class Collision extends PhysicsBase {
 		const colliders = collisionData.colliders;
 		if (!collisions[colIndex]) {
 			if (!colliders.length) {
-				this.countedColliders.push(collisionData);
+				this.countedColliders.add(collisionData);
 			}
 			colliders.push(colIndex);
 		}
@@ -179,7 +180,7 @@ class Collision extends PhysicsBase {
 		for (let collisionData of this.countedColliders) {
 			this.leaveCollisions(collisionData, time);
 		}
-		this.countedColliders.length = 0;
+		this.countedColliders.clear();
 	}
 
 	applyCollisions(collisionData, time) {
