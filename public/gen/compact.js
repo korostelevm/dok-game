@@ -1636,19 +1636,29 @@ module.exports = require("regenerator-runtime");
 
 },{}],21:[function(require,module,exports){
 const { FileUtils } = require("dok-file-utils");
-const math = require('mathjs');
+const {create, all} = require('mathjs');
+const format = require("string-template");
+
 
 class ConfigMerger {
 	constructor(fileUtils, constants) {
 		this.fileUtils = fileUtils || new FileUtils();
 		this.constants = constants || {};
+		this.ignoredTags = {
+			template: true,
+			templates: true,
+			repeat: true,
+			table: true,
+		};
+		this.math = create(all);
+	}
+
+	mathImport(config) {
+		this.math.import(config);
 	}
 
 	async process(data, gamePath, gameSettings) {
-		if (!gameSettings) {
-			throw new Error("gamePath and gameSettings are required.");
-		}
-		return this.translate(await this.applyTemplates(data, gamePath || ""), gameSettings);
+		return this.translate(await this.applyTemplates(data, gamePath || ""), gameSettings||{});
 	}
 
 	merge(data, newData) {
@@ -1692,11 +1702,11 @@ class ConfigMerger {
 		return translatedData;
 	}
 
-	async translate(data, gameSettings, index) {
+	async translate(data, gameSettings, index, coordinates) {
 		if (!data) {
 			return data;
 		} else if (Array.isArray(data)) {
-			return Promise.all(data.map(d => this.translate(d, gameSettings, index)));
+			return Promise.all(data.map(d => this.translate(d, gameSettings, index, coordinates)));
 		} else if (typeof(data) === "object") {
 			if (data.IGNORE) {
 				return null;
@@ -1704,13 +1714,29 @@ class ConfigMerger {
 			if (data.repeat && (typeof index === "undefined")) {
 				return Promise.all(
 					new Array(data.repeat).fill(null)
-					.map((_, index) => this.translate(data, gameSettings, index)));
+						.map((_,index) => index)
+						.map(index => this.translate(data, gameSettings, index, coordinates)));
+			}
+			if (data.table && (typeof coordinates === "undefined")) {
+				const rows = data.table[0] || 1;
+				const cols = data.table[1] || 1;
+				const dims = data.table[2] || 1;
+				const dimensions = [];
+				for (let row = 0; row < rows; row++) {
+					for (let col = 0; col < cols; col++) {
+						for (let dim = 0; dim < dims; dim++) {
+							dimensions.push([col, row, dim]);
+						}
+					}
+				}
+				return Promise.all(
+					dimensions.map(coordinates => this.translate(data, gameSettings, index, coordinates)));
 			}
 			const translatedData = {};
 
 			for (let a in data) {
-				if (a !== "templates" && a !== "template" && a !== "repeat") {
-					translatedData[a] = await this.translate(data[a], gameSettings, index);
+				if (!this.ignoredTags[a]) {
+					translatedData[a] = await this.translate(data[a], gameSettings, index, coordinates);
 				}
 			}
 			return translatedData;
@@ -1718,16 +1744,36 @@ class ConfigMerger {
 
 		if (typeof(data)==="string") {
 			const group = data.match(/^{([^}]+)}$/);
+			const viewportSize = gameSettings.viewportSize || [0, 0];
 			if (group) {
-				const viewportSize = gameSettings.viewportSize || [0, 0];
-				const value = math.evaluate(group[1], {
+				const value = this.math.evaluate(group[1], {
 					... this.constants,
 					viewportWidth: viewportSize[0],
 					viewportHeight: viewportSize[1],
 					index: index ?? 0,
 					random: Math.random(),
+					row: coordinates ? coordinates[0] : 0,
+					col: coordinates ? coordinates[1] : 0,
+					dim: coordinates ? coordinates[2] : 0,
 				});
 				return value;
+			} else {
+				const groups = data.match(/{([^}]+)}/g);
+				if (groups) {
+					const values = groups.map(group => this.math.evaluate(group.match(/^{([^}]+)}$/)[1], {
+						... this.constants,
+						viewportWidth: viewportSize[0],
+						viewportHeight: viewportSize[1],
+						index: index ?? 0,
+						random: Math.random(),
+						row: coordinates ? coordinates[0] : 0,
+						col: coordinates ? coordinates[1] : 0,
+						dim: coordinates ? coordinates[2] : 0,
+					}));
+					return format(data.split(/{[^}]+}/g).map((text, index) => {
+						return `${text}{${index}}`;
+					}).join(""), values.concat(""));
+				}
 			}
 		}
 		return data;
@@ -1739,7 +1785,7 @@ module.exports = {
 };
 
 globalThis.ConfigMerger = ConfigMerger;
-},{"dok-file-utils":30,"mathjs":880}],22:[function(require,module,exports){
+},{"dok-file-utils":30,"mathjs":880,"string-template":967}],22:[function(require,module,exports){
 const { ConfigMerger } = require("./config-merger");
 
 module.exports = {
@@ -9292,7 +9338,7 @@ function throwNoMatrix() {
 function throwNoFraction(x) {
   throw new Error("Cannot convert value ".concat(x, " into a Fraction, no class 'Fraction' provided."));
 }
-},{"../../utils/factory.js":944,"../../utils/is.js":946,"../../utils/map.js":949,"../../utils/number.js":951,"@babel/runtime/helpers/interopRequireDefault":9,"typed-function":968}],40:[function(require,module,exports){
+},{"../../utils/factory.js":944,"../../utils/is.js":946,"../../utils/map.js":949,"../../utils/number.js":951,"@babel/runtime/helpers/interopRequireDefault":9,"typed-function":969}],40:[function(require,module,exports){
 "use strict";
 
 var _typeof = require("@babel/runtime/helpers/typeof");
@@ -84597,7 +84643,7 @@ function mixin(obj) {
   obj.emit = emitter.emit.bind(emitter);
   return obj;
 }
-},{"@babel/runtime/helpers/interopRequireDefault":9,"tiny-emitter":967}],944:[function(require,module,exports){
+},{"@babel/runtime/helpers/interopRequireDefault":9,"tiny-emitter":968}],944:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -89194,6 +89240,44 @@ if ((typeof module) == 'object' && module.exports) {
 );
 
 },{"crypto":19}],967:[function(require,module,exports){
+var nargs = /\{([0-9a-zA-Z_]+)\}/g
+
+module.exports = template
+
+function template(string) {
+    var args
+
+    if (arguments.length === 2 && typeof arguments[1] === "object") {
+        args = arguments[1]
+    } else {
+        args = new Array(arguments.length - 1)
+        for (var i = 1; i < arguments.length; ++i) {
+            args[i - 1] = arguments[i]
+        }
+    }
+
+    if (!args || !args.hasOwnProperty) {
+        args = {}
+    }
+
+    return string.replace(nargs, function replaceArg(match, i, index) {
+        var result
+
+        if (string[index - 1] === "{" &&
+            string[index + match.length] === "}") {
+            return i
+        } else {
+            result = args.hasOwnProperty(i) ? args[i] : null
+            if (result === null || result === undefined) {
+                return ""
+            }
+
+            return result
+        }
+    })
+}
+
+},{}],968:[function(require,module,exports){
 function E () {
   // Keep this empty so it's easier to inherit from
   // (via https://github.com/lipsmack from https://github.com/scottcorgan/tiny-emitter/issues/3)
@@ -89262,7 +89346,7 @@ E.prototype = {
 module.exports = E;
 module.exports.TinyEmitter = E;
 
-},{}],968:[function(require,module,exports){
+},{}],969:[function(require,module,exports){
 /**
  * typed-function
  *
