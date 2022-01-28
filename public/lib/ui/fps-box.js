@@ -27,6 +27,10 @@ class FpsBox extends UiComponent {
 		}
 		this.perfTimers[this.perfIndex] = actualTime;
 		this.perfIndex = (this.perfIndex + 1) % this.perfTimers.length;
+		if (Math.random() > .1) {
+			return;
+		}
+
 		const timeDiff = this.perfTimers[(this.perfIndex + this.perfTimers.length - 1) % this.perfTimers.length] - this.perfTimers[this.perfIndex];
 		const timeCalc = Math.round(1000 / timeDiff * this.perfTimers.length);
 		if (this.fps !== timeCalc) {

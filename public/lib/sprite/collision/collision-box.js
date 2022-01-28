@@ -7,12 +7,20 @@ class CollisionBox {
 		this.right = 0;
 		this.close = 0;
 		this.far = 0;
+		this.width = 0;
+		this.height = 0;
+		this.depth = 0;
 		this.isDirty = true;
 		this.frame = -1;
 		this.collisionFrame = collisionFrame || null;
 		this.time = 0;
 		this.lastPosition = [null,null,null];
 		this.showCollisionBox = showCollisionBox;
+		if (this.collisionFrame) {
+			this.width = this.collisionFrame.right - this.collisionFrame.left;
+			this.height = this.collisionFrame.bottom - this.collisionFrame.top;
+			this.depth = this.collisionFrame.far - this.collisionFrame.close;
+		}
 	}
 
 	set showCollisionBox(value) {
@@ -48,18 +56,6 @@ class CollisionBox {
 		return (this.close + this.far) / 2;
 	}
 
-	get width() {
-		return this.right - this.left;
-	}
-
-	get height() {
-		return this.bottom - this.top;
-	}
-
-	get depth() {
-		return this.far - this.close;
-	}
-
 	containsPoint(x, y, z) {
 		const px = x || 0, py = y || 0, pz = z || 0;
 		return this.left <= px && px <= this.right
@@ -88,7 +84,7 @@ class CollisionBox {
 		if (!animRect) {
 			return null;
 		}
-		this.calculateCollisonBoxFromAnimation(animRect);
+		this.calculateCollisonBoxFromAnimation(animRect, time);
 		return this;
 	}
 
@@ -118,7 +114,7 @@ class CollisionBox {
 		this.dirty = false;
 	}
 
-	calculateCollisonBoxFromAnimation(animRect) {
+	calculateCollisonBoxFromAnimation(animRect, time) {
 		const sprite = this.sprite;
 		const flipX = sprite.direction < 0;
 		const flipY = sprite.ydirection < 0;
@@ -132,16 +128,20 @@ class CollisionBox {
 		const collisionPadding = sprite.anim.collisionPadding ?? 0;
 		const width = sprite.size[0];
 		const height = sprite.size[1];
-		const spritePosition = sprite.getRealPosition(this.time);
+		const spritePosition = sprite.getRealPosition(time);
 		const left = spritePosition[0] - sprite.anim.hotspot[0] * width;
 		const top = spritePosition[1] - sprite.anim.hotspot[1] * height;
 		const close = spritePosition[2];
+
 		this.left = left + rLeft * width - collisionPadding;
 		this.right = left + rRight * width + collisionPadding;
 		this.top = top + rTop * height - collisionPadding;
 		this.bottom = top + rBottom * height + collisionPadding;
 		this.close = close + rClose;
 		this.far = close + rFar;
+		this.width = this.right - this.left;
+		this.height = this.bottom - this.top;
+		this.depth = this.far - this.close;
 		this.dirty = false;
 	}	
 }

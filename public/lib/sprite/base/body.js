@@ -19,8 +19,8 @@ class Body {
 		this.followers = new Set();
 		this.activationListeners = new Set();
 		this.motionChangeListeners = new Set();
-		this.canRecalculatePosition = false;
-		this.canRecalculateMotion = false;
+		this.hasMotion = false;
+		this.hasAcceleration = false;
 	}
 
 	addActivationListener(listener) {
@@ -40,6 +40,7 @@ class Body {
 			this.x = x;
 			this.y = y;
 			this.z = z;
+			this.getRealPosition(time, true);
 			this.updateFlag |= Constants.UPDATE_FLAG.SPRITE;
 			for (let follower of this.followers) {
 				follower.adjustFollowerPosition(time);	
@@ -70,7 +71,7 @@ class Body {
 			for (let follower of this.followers) {
 				follower.adjustFollowerPosition(time);	
 			}
-		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
+		this.hasMotion = this.motion[0]||this.motion[1]||this.motion[2];
 	}
 
 	changeAcceleration(ax, ay, az, t) {
@@ -89,11 +90,11 @@ class Body {
 	onAccelerationChanged(time) {
 		this.updated.motion = time;
 		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
-			for (let follower of this.followers) {
-				follower.adjustFollowerPosition(time);	
-			}
-		this.canRecalculateMotion = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
-		this.canRecalculatePosition = this.canRecalculateMotion||this.motion[0]||this.motion[1]||this.motion[2];
+		for (let follower of this.followers) {
+			follower.adjustFollowerPosition(time);	
+		}
+		this.hasAcceleration = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
+		this.hasMotion = this.hasAcceleration||this.motion[0]||this.motion[1]||this.motion[2];
 	}
 
 	changeActive(value) {
@@ -108,16 +109,19 @@ class Body {
 		return false;
 	}
 
-	getRealPosition(t) {
+	getRealPosition(t, force) {
 		const time = t || this.engine.lastTime;
 		if (this.updated.positionCache === time) {
 			return this.positionCache;
 		}
+		if (!this.hasMotion && !force) {
+			return this.positionCache;
+		}
 		const dt = (time - this.updated.motion) / 1000;
-		const dt2 = dt * dt;
-		this.positionCache[0] = this.x + this.motion[0] * dt + .5 * dt2 * this.acceleration[0];
-		this.positionCache[1] = this.y + this.motion[1] * dt + .5 * dt2 * this.acceleration[1];
-		this.positionCache[2] = this.z + this.motion[2] * dt + .5 * dt2 * this.acceleration[2];
+		const dt2half = dt * dt / 2;
+		this.positionCache[0] = this.x + this.motion[0] * dt + dt2half * this.acceleration[0];
+		this.positionCache[1] = this.y + this.motion[1] * dt + dt2half * this.acceleration[1];
+		this.positionCache[2] = this.z + this.motion[2] * dt + dt2half * this.acceleration[2];
 		this.updated.positionCache = time;
 		return this.positionCache;
 	}
@@ -138,7 +142,7 @@ class Body {
 	recalculatePosition(t) {
 		const time = t || this.engine.lastTime;
 		if (this.updated.motion !== time) {
-			if (this.canRecalculatePosition) {
+			if (this.hasMotion) {
 				const realPosition = this.getRealPosition(time);
 				const x = realPosition[0];
 				const y = realPosition[1];
@@ -148,7 +152,7 @@ class Body {
 				this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
 			}
 
-			if (this.canRecalculateMotion) {
+			if (this.hasAcceleration) {
 				const realMotion = this.getRealMotion(time);
 				const vx = realMotion[0];
 				const vy = realMotion[1];
