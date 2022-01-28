@@ -31,10 +31,10 @@ class Collision extends PhysicsBase {
 				id: sprite.id,
 				collisionBox: sprite.collisionBox,
 				colIndex,
-				colliders: [],
-				collisions: new Array(filteredSprites.length).fill(null).map(() => 0),
+				colliders: new Set(),
+				collisions: new Map(),
 				overlappers: new Set(),
-				overlapping: new Array(filteredSprites.length).fill(null).map(() => 0),
+				overlapping: new Map(),
 				countCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
 				onCollide: sprite.onCollide,
 				onLeave: sprite.onLeave,
@@ -64,13 +64,14 @@ class Collision extends PhysicsBase {
 		const colIndex = secondCollisionData.colIndex;
 		const collisions = collisionData.collisions;
 		const colliders = collisionData.colliders;
-		if (!collisions[colIndex]) {
-			if (!colliders.length) {
+		const collisionBits = collisions.get(secondCollisionData) ?? 0;
+		if (!collisionBits) {
+			if (!colliders.size) {
 				this.countedColliders.add(collisionData);
 			}
-			colliders.push(colIndex);
+			colliders.add(secondCollisionData);
 		}
-		collisions[colIndex] |= bits; 
+		collisions.set(secondCollisionData, collisionBits | bits); 
 	}
 
 	calculateCollisionMarkers(time) {
@@ -164,13 +165,13 @@ class Collision extends PhysicsBase {
 		if (collisionData.onCollide) {
 			collisionData.onCollide(collisionData.sprite, secondCollisionData.sprite, xPush, yPush, zPush);
 		}
-		if (!collisionData.overlapping[secondCollisionData.colIndex]) {
+		if (!collisionData.overlapping.get(secondCollisionData)) {
 			if (collisionData.onEnter) {
 				collisionData.onEnter(collisionData.sprite, secondCollisionData.sprite);
 			}
-			collisionData.overlappers.add(secondCollisionData.colIndex);
+			collisionData.overlappers.add(secondCollisionData);
 		}
-		collisionData.overlapping[secondCollisionData.colIndex] = time;
+		collisionData.overlapping.set(secondCollisionData, time);
 	}
 
 	applyCollisionsOnAllSprites(time) {
@@ -184,24 +185,23 @@ class Collision extends PhysicsBase {
 	}
 
 	applyCollisions(collisionData, time) {
-		for (let index of collisionData.colliders) {
-			const secondCollisionData = this.collisionDataList[index];
-			if (collisionData.collisions[secondCollisionData.colIndex] === this.BOTH) {
+		for (let secondCollisionData of collisionData.colliders) {
+			if (collisionData.collisions.get(secondCollisionData) === this.BOTH) {
 				this.accountForCollision(collisionData, secondCollisionData, time);
 			}
-			collisionData.collisions[secondCollisionData.colIndex] = 0;
+			collisionData.collisions.set(secondCollisionData, 0);
 		}
-		collisionData.colliders.length = 0;
+		collisionData.colliders.clear();
 	}
 
 	leaveCollisions(collisionData, time) {
 		const overlapping = collisionData.overlapping;
-		for (let overlapperIndex of collisionData.overlappers) {
-			if (overlapping[overlapperIndex] !== time) {
-				overlapping[overlapperIndex] = 0;
-				collisionData.overlappers.delete(overlapperIndex);
+		for (let overlapperData of collisionData.overlappers) {
+			if (overlapping.get(overlapperData) !== time) {
+				overlapping.set(overlapperData, 0);
+				collisionData.overlappers.delete(overlapperData);
 				if (collisionData.onLeave) {
-					collisionData.onLeave(collisionData.sprite, this.collisionDataList[overlapperIndex].sprite);
+					collisionData.onLeave(collisionData.sprite, overlapperData.sprite);
 				}
 			}
 		}
