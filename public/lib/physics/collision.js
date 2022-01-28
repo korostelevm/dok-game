@@ -8,72 +8,54 @@ class Collision extends PhysicsBase {
 		this.D = 1 << DEEP;
 
 		this.BOTH = (horizontal ? this.H : 0) | (vertical ? this.V : 0) | (deep ? this.D : 0);
-		this.countType = [horizontal, vertical, deep];
+		this.openColliders = new Set();
+		this.countedColliders = new Set();
+		this.collisionDataList = new Set();
+		this.markers = [];
+		this.sortCallbacks = [
+			this.compareHorizontal,
+			this.compareVertical,
+			this.compareDepth,
+		];
 	}
 
 	async init(sprites, game) {
 		this.game = game;
 		const filteredSprites = sprites.filter(({collide}) => collide);
-		this.axis = [
-			this.horizontal = [],
-			this.vertical = [],
-			this.deep = [],
-		];
-		this.markers = new Set();
-		this.openColliders = new Set();
-		this.countedColliders = new Set();
 
-		this.collisionDataList = new Set();
-		for (let colIndex = 0; colIndex < filteredSprites.length; colIndex++) {
-			const sprite = filteredSprites[colIndex];
+		for (let sprite of filteredSprites) {
 			const collisionData = {
 				sprite,
 				collisionBox: sprite.collisionBox,
-				colliders: new Set(),
 				collisions: new Map(),
 				overlapping: new Map(),
-				countCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
+				shouldCountCollision: !!(sprite.onCollide || sprite.onLeave || sprite.onEnter),
 				onCollide: sprite.onCollide,
 				onLeave: sprite.onLeave,
 				onEnter: sprite.onEnter,
 			};
-			const topLeftClose = { collisionData, topLeftClose: true, bottomRightFar: false, x: 0, y: 0, z: 0 };
-			const bottomRightFar = { collisionData, topLeftClose: false, bottomRightFar: true, x: 0, y: 0, z: 0 };
-			if (this.countType[HORIZONTAL]) {
-				this.horizontal.push(topLeftClose, bottomRightFar);
-			}
-			if (this.countType[VERTICAL]) {
-				this.vertical.push(topLeftClose, bottomRightFar);
-			}
-			if (this.countType[DEEP]) {
-				this.deep.push(topLeftClose, bottomRightFar);
-			}
-			this.markers.add(topLeftClose);
-			this.markers.add(bottomRightFar);
+			const topLeftClose = { collisionData, isTopLeftClose: true, x: 0, y: 0, z: 0 };
+			const bottomRightFar = { collisionData, isTopLeftClose: false, x: 0, y: 0, z: 0 };
+			collisionData.topLeftClose = topLeftClose;
+			collisionData.bottomRightFar = bottomRightFar;
 			this.collisionDataList.add(collisionData);
 		}
 	}
 
 	countCollision(collisionData, secondCollisionData, bits) {
-		if (!collisionData.countCollision) {
+		if (!collisionData.shouldCountCollision) {
 			return;
 		}
+		this.countedColliders.add(collisionData);
 		const collisions = collisionData.collisions;
-		const colliders = collisionData.colliders;
 		const collisionBits = collisions.get(secondCollisionData) ?? 0;
-		if (!collisionBits) {
-			if (!colliders.size) {
-				this.countedColliders.add(collisionData);
-			}
-			colliders.add(secondCollisionData);
-		}
 		collisions.set(secondCollisionData, collisionBits | bits); 
 	}
 
 	calculateCollisionMarkers(time) {
 		this.refreshCollisionBoxes(time);
-		this.updateMarkers();
-		this.sortMarkers();
+		this.updateMarkers(this.collisionDataList, this.markers);
+		return this.markers;
 	}
 
 	refreshCollisionBoxes(time) {
@@ -82,40 +64,46 @@ class Collision extends PhysicsBase {
 		}
 	}
 
-	updateMarkers() {
-		for (let marker of this.markers) {
-			marker.x = marker.topLeftClose ? marker.collisionData.collisionBox.left : marker.collisionData.collisionBox.right;			
-			marker.y = marker.topLeftClose ? marker.collisionData.collisionBox.top : marker.collisionData.collisionBox.bottom;
-			marker.z = marker.topLeftClose ? marker.collisionData.collisionBox.close : marker.collisionData.collisionBox.far;
-		}
-	}
-
-	sortMarkers() {
-		this.horizontal.sort(this.compareHorizontal);
-		this.vertical.sort(this.compareVertical);
-		this.deep.sort(this.compareDepth);
-	}
-
-	refresh(time, dt) {
-		this.calculateCollisionMarkers(time);
-
-		for (let m = 0; m < this.axis.length; m++) {
-			this.countCollisionFromMarkers(this.axis[m], m);
-		}
-		this.applyCollisionsOnAllSprites(time);
-	}
-
-	countCollisionFromMarkers(markers, type) {
-		const bits = 1 << type;
-		for (let marker of markers) {
-			const collisionData = marker.collisionData;
+	updateMarkers(collisionDataList, markers) {
+		markers.length = 0;
+		for (let collisionData of collisionDataList) {
 			if (!collisionData.sprite.active) {
 				continue;
 			}
 
-			this.countNewCollisionsWithOpenColliders(collisionData, bits);
+			const topLeftClose = collisionData.topLeftClose;
+			topLeftClose.x = collisionData.collisionBox.left;
+			topLeftClose.y = collisionData.collisionBox.top;
+			topLeftClose.z = collisionData.collisionBox.close;
+			markers.push(topLeftClose);
 
-			if (marker.topLeftClose) {
+			const bottomRightFar = collisionData.bottomRightFar;
+			bottomRightFar.x = collisionData.collisionBox.right;
+			bottomRightFar.y = collisionData.collisionBox.bottom;
+			bottomRightFar.z = collisionData.collisionBox.far;
+			markers.push(bottomRightFar);
+		}
+		return markers;
+	}
+
+	refresh(time, dt) {
+		const markers = this.calculateCollisionMarkers(time);
+
+		for (let m = 0; m < this.sortCallbacks.length; m++) {
+			const bits = 1 << m;
+			if (this.BOTH & bits) {
+				markers.sort(this.sortCallbacks[m]);
+				this.countCollisionFromMarkers(markers, bits);
+			}
+		}
+		this.applyCollisionsOnAllSprites(time);
+	}
+
+	countCollisionFromMarkers(markers, bits) {
+		for (let marker of markers) {
+			const collisionData = marker.collisionData;
+			this.countNewCollisionsWithOpenColliders(collisionData, bits);
+			if (marker.isTopLeftClose) {
 				//	Open the new colliders
 				this.addOpenCollider(collisionData);
 			} else {
@@ -139,7 +127,7 @@ class Collision extends PhysicsBase {
 				this.countCollision(openCollider, collisionData, bits);
 			}
 		}
-		if (collisionData.countCollision) {
+		if (collisionData.shouldCountCollision) {
 			for (let openCollider of this.openColliders) {
 				if (openCollider !== collisionData) {
 					this.countCollision(collisionData, openCollider, bits);
@@ -178,13 +166,12 @@ class Collision extends PhysicsBase {
 	}
 
 	applyCollisions(collisionData, time) {
-		for (let secondCollisionData of collisionData.colliders) {
-			if (collisionData.collisions.get(secondCollisionData) === this.BOTH) {
+		for (let [secondCollisionData, collisionBits] of collisionData.collisions) {
+			if (collisionBits === this.BOTH) {
 				this.accountForCollision(collisionData, secondCollisionData, time);
 			}
 			collisionData.collisions.delete(secondCollisionData);
 		}
-		collisionData.colliders.clear();
 	}
 
 	leaveCollisions(collisionData, time) {

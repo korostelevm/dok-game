@@ -73,9 +73,8 @@ class PlatformHeroAuxiliary extends Auxiliary {
 	onCollide(self, sprite, xPush, yPush) {
 		if (sprite.ladder && !self.climbing && self.dy > 0) {
 			self.climbing = self.engine.lastTime;
-			console.log("HERE");
-			self.dy = 0;
 			self.dx = 0;
+			self.dy = 0;
 			self.changePosition(sprite.getCenterX(), self.y, self.z);
 			this.onMotion(self, self.game.control.dx, self.game.control.dy);
 			return;
