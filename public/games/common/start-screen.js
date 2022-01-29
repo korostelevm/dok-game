@@ -9,8 +9,6 @@ class StartScreen extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
-		const { config } = engine;
-
 		const [ start_screen, loading ] = await Promise.all([
 			"assets/start-screen.png",
 			"assets/loading.png",

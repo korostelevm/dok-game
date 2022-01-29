@@ -4,7 +4,7 @@ class GameRing extends GameBase {
 		const config = engine.config;
 		const viewportWidth = engine.viewportWidth;
 		const viewportHeight = engine.viewportHeight;
-		for (let mazoo of this.mazoos) {
+		for (const mazoo of this.mazoos) {
 			const goalX = mazoo.goal[0];
 			const goalY = mazoo.goal[1];
 			const dx = (goalX - mazoo.x);
