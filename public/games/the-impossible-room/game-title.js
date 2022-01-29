@@ -2,6 +2,7 @@ class GameTitle extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
+		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
 		this.core.sidebar.enableSidebar(false);
 
 		const { config } = engine;

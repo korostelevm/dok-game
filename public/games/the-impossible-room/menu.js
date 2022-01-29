@@ -2,6 +2,7 @@ class Menu extends GameBase {
 	async init(engine, gameName) {
 		await super.init(engine, gameName);
 
+		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
 		this.core.sidebar.enableSidebar(false);
 
 		const { config } = engine;
@@ -333,7 +334,7 @@ class Menu extends GameBase {
 		const { buttons } = e;
 		const { canvas } = engine;
 		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
-			const cursor = "url(assets/mouse-cursor.png), auto";
+			const cursor = getComputedStyle(document.documentElement).getPropertyValue('--mouse-cursor');
 			if (this.cursor !== cursor) {
 				this.cursor = cursor;
 				overlay.style.cursor = cursor;

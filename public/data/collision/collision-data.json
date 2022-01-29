@@ -4545,5 +4545,77 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "88e0a3bea9888cbd7c51c1d2138d046f": [
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.857Z",
+      "top": 0.675,
+      "left": 0.03,
+      "bottom": 1,
+      "right": 0.9375,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.860Z",
+      "top": 0.675,
+      "left": 0.03,
+      "bottom": 1,
+      "right": 0.9375,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.862Z",
+      "top": 0.675,
+      "left": 0.03,
+      "bottom": 1,
+      "right": 0.9375,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.870Z",
+      "top": 0.045,
+      "left": 0.8975,
+      "bottom": 0.225,
+      "right": 0.9775,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.877Z",
+      "top": 0.645,
+      "left": 0.1375,
+      "bottom": 0.89,
+      "right": 0.3225,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.884Z",
+      "top": 0.235,
+      "left": 0.1575,
+      "bottom": 0.535,
+      "right": 0.3575,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/time-room.png",
+      "updated": "2022-01-28T23:24:41.892Z",
+      "top": 0.74,
+      "left": 0.01,
+      "bottom": 0.84,
+      "right": 0.0275,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

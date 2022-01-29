@@ -492,7 +492,7 @@ class TimeRoom extends RoomBase {
 		sideClock.style.position = "absolute";
 		sideClock.style.transform = "perspective(400px) rotateY(-70deg) translateY(-80px)";
 		sideClock.style.top = "175px";
-		sideClock.style.left = "813px";
+		sideClock.style.left = "773px";
 		sideClock.style.fontSize = "25pt";
 		sideClock.style.fontWeight = 800;
 		const nobr = sideClock.appendChild(document.createElement("nobr"));
@@ -503,7 +503,7 @@ class TimeRoom extends RoomBase {
 		doorClock.style.display = "none";
 		doorClock.style.textAlign = "center";
 		doorClock.style.position = "absolute";
-		doorClock.style.left = "787px";
+		doorClock.style.left = "747px";
 		doorClock.style.top = "240px";
 		doorClock.style.fontSize = "15pt";
 		doorClock.innerHTML = `The door<br>closes at<br>exactly<br><span id="clock-2">03:00:00</span>`;
