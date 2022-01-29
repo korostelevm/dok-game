@@ -230,7 +230,7 @@ class Selection extends GameBase {
 			}
 		}
 
-		const cursor = !this.selectedItem && hovering ? this.getMouseCursor() : "";
+		const cursor = !this.selectedItem && hovering ? this.getPointerCursor() : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
 			overlay.style.cursor = cursor;

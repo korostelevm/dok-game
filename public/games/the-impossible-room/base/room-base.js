@@ -1517,7 +1517,7 @@ class RoomBase extends GameBase {
 		}
 		this.showSubject(this.monkor.target || hovering);
 
-		const cursor = !this.selectedItem && hovering ? (hovering.cursor || this.getMouseCursor()) : "";
+		const cursor = !this.selectedItem && hovering ? (hovering.cursor || this.getPointerCursor()) : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
 			this.engine.cursorManager.changeCursor(cursor);

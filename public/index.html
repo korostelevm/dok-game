@@ -83,7 +83,7 @@
 		<div id="game-tab" style="margin-left: 80px;"></div>
 		<img class="incept" id="player-overlay" style="z-index: 200; display: none; touch-action:none; pointer-events: none; position: absolute; top: 50px; left: 100px; width: 800px; height: 400px; outline: 3px solid black" src="assets/monkor-overlay.png"></img>
 		<img class="incept inceptback" id="back-button" style="z-index: 201; display: none; position: absolute; top: 350px; left: 800px; width: 100px; height: 100px;
-			cursor:url(assets/pointer-cursor.png), auto;" src="assets/back-button.png"></img>
+			cursor: var(--pointer-cursor)" src="assets/back-button.png"></img>
 		<script type="text/javascript">
 			function doResize() {
 				if (document.getElementById("canvas")) {
@@ -100,7 +100,7 @@
 		</script>
 
 		<div style="position: absolute; left: 10px; top: 60px; z-index: 100; font-size: 8pt;">
-			<div id="sidebar" style="flex-direction: column; display: flex; display: none; cursor:--mouse-cursor;">
+			<div id="sidebar" style="flex-direction: column; display: flex; display: none; cursor:var(--mouse-cursor);">
 				<div class="sidebar-room">1</div>
 				<div class="sidebar-room">2</div>
 			</div>
@@ -148,13 +148,13 @@
 					<div>: Use mouse to move <span id="player-name">Monkor</span>.</div>
 				</div>
 				<div>
-					<a id="mute-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="speaker">🚫🎵</span>: Press M to <span id="mute">unmute music</span></a>
+					<a id="mute-toggle" style="cursor: var(--pointer-cursor)"><span id="speaker">🚫🎵</span>: Press M to <span id="mute">unmute music</span></a>
 				</div>
 				<div>
-					<a id="sfx-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="sfx-speaker">🔊</span>: Press S to <span id="sfx-mute">mute SFX</span></a>
+					<a id="sfx-toggle" style="cursor: var(--pointer-cursor)"><span id="sfx-speaker">🔊</span>: Press S to <span id="sfx-mute">mute SFX</span></a>
 				</div>
 				<div>
-					<a id="voice-mute-toggle" style="cursor:url(assets/pointer-cursor.png), auto;"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span>
+					<a id="voice-mute-toggle" style="cursor: var(--pointer-cursor)"><span id="voice-speaker">😮</span>: Press V to <span id="voice-mute">mute voice</span>
 					</a>
 					<span id="voice-selector">
 						/ <label for="voice-drop">Change voice:</label>

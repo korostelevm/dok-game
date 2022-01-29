@@ -257,7 +257,7 @@ class Menu extends GameBase {
 			opacity: 0,
 		}, {
 			disabled: true,
-			cursor: "url(assets/pointer-cursor.png), auto",
+			cursor: "var(--pointer-cursor)",
 			onClick: check => {
 				check.setProperty("checked", !check.properties.checked);
 			},
@@ -285,7 +285,7 @@ class Menu extends GameBase {
 			opacity: 0,
 		}, {
 			disabled: true,
-			cursor: "url(assets/pointer-cursor.png), auto",
+			cursor: "var(--pointer-cursor)",
 			onClick: check => {
 				check.setProperty("checked", !check.properties.checked);
 			},
@@ -368,7 +368,7 @@ class Menu extends GameBase {
 		this.start.changeOpacity(hovering===this.start?1:0, this.engine.lastTime);
 		this.options.changeOpacity(hovering===this.options?1:0, this.engine.lastTime);
 
-		const cursor = !this.selectedItem && hovering ? ((hovering.opacity <= 0 ? null : hovering.cursor) || this.getMouseCursor()) : "";
+		const cursor = !this.selectedItem && hovering ? ((hovering.opacity <= 0 ? null : hovering.cursor) || this.getPointerCursor()) : "";
 		if (this.cursor !== cursor) {
 			this.cursor = cursor;
 			overlay.style.cursor = cursor;
