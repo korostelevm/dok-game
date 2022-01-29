@@ -1,7 +1,7 @@
 class TextureManager {
-	constructor(gl, uniforms, collisionBoxCalculator) {
+	constructor(gl, uniforms, textureEdgeCalculator) {
 		this.gl = gl;
-		this.collisionBoxCalculator = collisionBoxCalculator;
+		this.textureEdgeCalculator = textureEdgeCalculator;
 		this.glTextures = [];
 		this.textureSize = 4096;
 		this.textureAtlas = [];
@@ -30,7 +30,7 @@ class TextureManager {
 	}
 
 	createAtlas(index, imageLoader) {
-		const atlas = new TextureAtlas(this, index, imageLoader, this.collisionBoxCalculator);
+		const atlas = new TextureAtlas(this, index, imageLoader, this.textureEdgeCalculator);
 		this.textureAtlas.push(atlas);
 		return atlas;
 	}

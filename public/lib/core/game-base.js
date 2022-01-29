@@ -30,7 +30,9 @@ class GameBase {
 		const gameModel = await this.getGameModel(engine);
 		ChronoUtils.tick();
 		if (this.gameModel) {
-			this.atlas = {...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {})};
+			this.atlas = {
+				...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {}),
+			};
 			ChronoUtils.tick();
 			this.cameras = this.gameModel.cameras || {};
 			for (let id in this.cameras) {

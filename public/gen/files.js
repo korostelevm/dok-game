@@ -167,7 +167,7 @@ const globalFiles=[
     "data": [
       ".DS_Store",
       "can-write.json",
-      {"collision": ["collision-data.json"]}
+      {"texture": ["texture-edge-data.json"]}
     ]
   },
   "favicon.ico",
@@ -336,8 +336,8 @@ const globalFiles=[
       },
       {
         "texture": [
-          "collision-box-calculator.js",
           "texture-atlas.js",
+          "texture-edge-calculator.js",
           "texture-manager.js"
         ]
       },

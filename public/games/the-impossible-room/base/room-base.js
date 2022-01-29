@@ -51,6 +51,7 @@ class RoomBase extends GameBase {
 
 		//	Monkor
 		this.atlas = {
+			...this.atlas,
 			monkor_still: await engine.addTexture(
 				{
 					...spritesheet,

@@ -1,23 +1,23 @@
-const COLLISION_BOX_CALCULATOR_DATA_PATH = "collision/collision-data.json";
+const TEXTURE_EDGE_CALCULATOR_DATA_PATH = "texture/texture-edge-data.json";
 
-class CollisionBoxCalculator {
+class TextureEdgeCalculator {
 	constructor(directData) {
 		this.directData = directData;
-		this.collisionData = {};
+		this.textureEdgeData = {};
 	}
 
 	async init() {
 		try {
-			this.collisionData = await this.directData.getData(COLLISION_BOX_CALCULATOR_DATA_PATH) || {};
+			this.textureEdgeData = await this.directData.getData(TEXTURE_EDGE_CALCULATOR_DATA_PATH) || {};
 		} catch (e) {
-			console.error("Failed to load collision data", e);
+			console.error("Failed to load texure edge data", e);
 		}
 		const allMd5 = new Set();
 		Object.values(assetMd5).forEach(md5 => allMd5.add(md5));
-		for (let md5 in this.collisionData) {
+		for (let md5 in this.textureEdgeData) {
 			if (!allMd5.has(md5)) {
-				delete this.collisionData[md5];
-				this.directData.didChange(COLLISION_BOX_CALCULATOR_DATA_PATH);
+				delete this.textureEdgeData[md5];
+				this.directData.didChange(TEXTURE_EDGE_CALCULATOR_DATA_PATH);
 			}
 		}
 	}
@@ -26,8 +26,8 @@ class CollisionBoxCalculator {
 		const cols = textureAtlas.cols;
 		const rows = textureAtlas.rows;
 		const tag = assetMd5[collision_url.split("/").pop()];
-		if (this.collisionData[tag]) {
-			return this.collisionData[tag];
+		if (this.textureEdgeData[tag]) {
+			return this.textureEdgeData[tag];
 		}
 		console.log("Calculating collision box on: " + collision_url + "(" + tag + ")");
 		const canvas = textureAtlas.canvas;
@@ -66,8 +66,8 @@ class CollisionBoxCalculator {
 			}
 		}
 
-		this.collisionData[tag] = collisionBoxes;
-		this.directData.didChange(COLLISION_BOX_CALCULATOR_DATA_PATH);
+		this.textureEdgeData[tag] = collisionBoxes;
+		this.directData.didChange(TEXTURE_EDGE_CALCULATOR_DATA_PATH);
 		return collisionBoxes;
 	}	
 }

@@ -1,9 +1,9 @@
 const MAX_FRAME_COUNT = Number.MAX_SAFE_INTEGER;
 
 class TextureAtlas {
-	constructor(textureManager, index, imageLoader, collisionBoxCalculator) {
+	constructor(textureManager, index, imageLoader, textureEdgeCalculator) {
 		this.textureManager = textureManager;
-		this.collisionBoxCalculator = collisionBoxCalculator;
+		this.textureEdgeCalculator = textureEdgeCalculator;
 		this.index = index || 0;
 		this.maxTextureIndex = 0;
 		this.x = 0;
@@ -96,7 +96,7 @@ class TextureAtlas {
 		}
 
 		if (collision_url) {
-			this.collisionBoxes = await this.collisionBoxCalculator.calculateCollisionBoxes(collision_url, this, this.imageLoader);
+			this.collisionBoxes = await this.textureEdgeCalculator.calculateCollisionBoxes(collision_url, this, this.imageLoader);
 		} else {
 			this.collisionBoxes = null;
 		}

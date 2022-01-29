@@ -18,7 +18,7 @@ class Engine {
 			isDebug: this.debug ? 1 : 0,
 		});
 		this.directData = new DirectData({fileUtils});
-		this.collisionBoxCalculator = new CollisionBoxCalculator(this.directData);
+		this.textureEdgeCalculator = new TextureEdgeCalculator(this.directData);
 
 
 		this.imageLoader = new ImageLoader({
@@ -92,7 +92,7 @@ class Engine {
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
 		this.gl = gl;
-		await this.collisionBoxCalculator.init();
+		await this.textureEdgeCalculator.init();
 
 		this.tipBox = new TipBox(this);
 
@@ -113,7 +113,7 @@ class Engine {
 		/* Texture management */
 		this.shaders[0].link();
 		this.shaders[0].use();
-		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.collisionBoxCalculator);
+		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.textureEdgeCalculator);
 
 		/* Buffer renderer */
 		this.bufferRenderer = new BufferRenderer(gl, config);
