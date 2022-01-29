@@ -80,8 +80,8 @@ class GameBase {
 		this.atlas.empty = await engine.addTexture({
 			spriteWidth: 0, spriteHeight: 0,
 		});
-		this.mouseCursorUrl = getComputedStyle(document.documentElement).getPropertyValue('--mouse-cursor');
-		this.arrowCursor = getComputedStyle(document.documentElement).getPropertyValue('--arrow-cursor');
+		this.mouseCursorUrl = `var(${getComputedStyle(document.documentElement).getPropertyValue('--mouse-cursor')})`;
+		this.arrowCursor = `var(${getComputedStyle(document.documentElement).getPropertyValue('--arrow-cursor')})`;
 
 		console.log("Total spriteSize: ", engine.spriteCollection.size());
 	}
