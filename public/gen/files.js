@@ -360,6 +360,13 @@ const globalFiles=[
         "utils": [
           "array-utils.js",
           "chrono-utils-self-load.js",
+          {
+            "collision": [
+              "collision-box-holder.js",
+              "collision-data.js",
+              "marker.js"
+            ]
+          },
           "constants.js",
           "random-utils.js",
           "string.js",
