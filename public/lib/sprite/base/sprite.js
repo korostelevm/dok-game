@@ -25,10 +25,6 @@ class Sprite extends Body {
 		this.ydirection = data.ydirection || 1;
 		this.anim = typeof(data.anim) === "string" ? TextureAtlas.getAnimFromAtlas(game.atlas, data.anim) : data.anim;
 
-		if (!this.anim) {
-			console.error("Anim doesn't exist.");
-		}
-
 		this.collisionBox = new CollisionBox(this, data.collisionFrame, data.showCollisionBox);
 		this.properties = properties || {};
 		this.onChange = {
@@ -85,6 +81,9 @@ class Sprite extends Body {
 
 	getAnimationTime() {
 		const anim = this.anim;
+		if (!anim) {
+			return 0;
+		}
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		return this.updated.animation - frameOffset * anim.frameDuration;
 	}

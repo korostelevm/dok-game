@@ -16,6 +16,7 @@ Constants.VERTICAL_MERGE = 2;
 Constants.FULL_MERGE = Constants.HORIZONTAL_MERGE | Constants.VERTICAL_MERGE;
 Constants.EMPTY = {};
 Constants.EMPTY_POSITION = [0, 0, 0];
+Constants.EMPTY_HOTSPOT = [0, 0];
 
 Constants.SPRITE_TYPES = {
 	none: 0,

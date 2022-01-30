@@ -9,7 +9,7 @@
       "type": "PlatformJump",
       "id": "jump",
       "config": {
-        "strength": 3
+        "strength": 1
       }
     },
     {
@@ -19,13 +19,13 @@
     {
       "type": "PlatformGravity",
       "config": {
-        "gravity": 0.5
+        "gravity": 0.3
       }
     },
     {
       "type": "Movement",
       "config": {
-        "speed": 0.5
+        "speed": 1
       }
     },
     {
@@ -258,7 +258,7 @@
         4
       ],
       "frameRate": 8,
-      "loopCount": 1
+      "loop": 1
     },
     "debugBounce": {
       "url": "assets/debug-bounce.png",

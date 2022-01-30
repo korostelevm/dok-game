@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["NullGenerator"] = NullGenerator;		// lib/map/generator/null-generator.js
   NAME_TO_CLASS["PhysicsBase"] = PhysicsBase;		// lib/physics/base/physics-base.js
   NAME_TO_CLASS["TranslateVoice"] = TranslateVoice;		// lib/sound/lang/translate-voice.js
+  NAME_TO_CLASS["BlinkAuxiliary"] = BlinkAuxiliary;		// lib/sprite/aux/blink-auxiliary.js
   NAME_TO_CLASS["BouncerAuxiliary"] = BouncerAuxiliary;		// lib/sprite/aux/bouncer-auxiliary.js
   NAME_TO_CLASS["CollectibleAuxiliary"] = CollectibleAuxiliary;		// lib/sprite/aux/collectible-auxiliary.js
   NAME_TO_CLASS["DoorAuxiliary"] = DoorAuxiliary;		// lib/sprite/aux/door-auxiliary.js

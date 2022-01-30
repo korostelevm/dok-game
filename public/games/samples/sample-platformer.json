@@ -150,7 +150,10 @@
         },
         "name": "npc",
         "anim": "npc.still",
-        "size": [40, 40]
+        "size": [40, 40],
+        "properties": {
+          "noblock": 1
+        }
       },
       "D": {
         "aux": {
@@ -358,7 +361,7 @@
         4
       ],
       "frameRate": 8,
-      "loopCount": 1
+      "loop": 1
     },
     "debugBounce": {
       "url": "assets/debug-bounce.png",
@@ -412,7 +415,7 @@
         2
       ],
       "frameRate": 20,
-      "loopCount": 1
+      "loop": 1
     },
     "hero": {
       "still": {

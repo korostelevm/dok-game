@@ -527,9 +527,10 @@ class Engine {
 		for (let sprite of updater) {
 			const spriteIndex = sprite.spriteIndex;
 			if (sprite.updateFlag & Constants.RENDER_FLAG.SPRITE_ATTRIBUTE) {
-				const {x, y, z, rotation, size:[width,height], anim:{hotspot}} = sprite;
-				const hotX = hotspot[0] || 0;
-				const hotY = hotspot[1] || 0;
+				const {x, y, z, rotation, size:[width,height], anim} = sprite;
+				const hotspot = anim?.hotspot || Constants.EMPTY_HOTSPOT;
+				const hotX = hotspot[0];
+				const hotY = hotspot[1];
 				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation);
 			}
 			if (sprite.updateFlag & Constants.RENDER_FLAG.TEXTURE) {

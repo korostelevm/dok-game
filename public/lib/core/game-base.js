@@ -6,7 +6,10 @@ class GameBase {
 		this.audio = {};
 		this.atlas = {};
 		this.cameras = {};
+		this.state = null;
+		this.states = [];
 		this.ready = 0;
+		this.music = null;
 	}
 
 	async init(engine, gameName) {
@@ -78,6 +81,14 @@ class GameBase {
 			if (this.gameModel.settings?.forceRefreshOnMouse) {
 				this.engine.mouseHandlerManager.setForceRefreshOnMouse(true);
 			}
+
+			this.states = this.gameModel.states || [];
+			this.state = null;
+			for (let state in this.states) {
+				if (this.states[state].start) {
+					this.state = state;
+				}
+			}
 		}
 		this.atlas.empty = await engine.addTexture({
 			spriteWidth: 0, spriteHeight: 0,
@@ -131,17 +142,10 @@ class GameBase {
 		await this.engine.cursorManager.changeCursor(null, true);
 		if (this.camera) {
 			this.applyCamera(this.camera, 0);
-		} else if (this.getInitialShift()) {
-			const { x, y, z, rotation, light, zoom } = this.getInitialShift() || {};
-			const [rotX, rotY, rotZ] = rotation || [];
-			this.engine.shift.goal.x = x || 0;
-			this.engine.shift.goal.y = y || 0;
-			this.engine.shift.goal.z = z || 0;
-			this.engine.shift.goal.rotation[0] = rotX || 0;
-			this.engine.shift.goal.rotation[1] = rotY || 0;
-			this.engine.shift.goal.rotation[2] = rotZ || 0;
-			this.engine.shift.goal.light = light ?? 1;
-			this.engine.shift.goal.zoom = zoom ?? 1;
+		}
+
+		if (this.state) {
+			this.applyState(this.state);
 		}
 	}
 
@@ -231,10 +235,6 @@ class GameBase {
 		return Constants.defaultWindowSize(viewportWidth, viewportHeight);
 	}
 
-	getInitialShift() {
-		return null;
-	}
-
 	async onExit(engine) {
 	}
 
@@ -243,5 +243,26 @@ class GameBase {
 	}
 
 	selectDialog(index) {
+	}
+
+	applyState(state) {
+		const { music, loopMusic } = this.states[state] || {};
+		if (music) {
+			this.changeMusic(music, loopMusic);
+		}
+	}
+
+	changeMusic(music, loop) {
+		if (music !== this.music) {
+			if (this.music) {
+				this.music.stop();
+			}
+			this.music = music;
+			if (loop) {
+				this.audio[music].loop();
+			} else {
+				this.audio[music].play();
+			}
+		}
 	}
 }

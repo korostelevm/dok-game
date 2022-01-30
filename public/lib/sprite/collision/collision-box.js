@@ -25,7 +25,7 @@ class CollisionBox {
 
 	set showCollisionBox(value) {
 		if (value && !this.display) {
-			this.display = new CollisionBoxDisplay(this);
+			this.display = new CollisionBoxDisplay(this, value);
 		}
 		this.changeActive(value);
 	}

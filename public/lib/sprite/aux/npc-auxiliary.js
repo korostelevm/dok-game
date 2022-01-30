@@ -3,7 +3,6 @@ class NpcAuxiliary extends Auxiliary {
 		super(config, sprite);
 		sprite.collide = 1;
 		sprite.npc = 1;
-		sprite.noblock = 1;
 		sprite.onChat = this.onChat;
 	}
 

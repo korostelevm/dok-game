@@ -42,6 +42,9 @@ const globalFiles=[
       "dino-stupid.png",
       "door-collision.png",
       "door.png",
+      "duel-bg.png",
+      "duel-left.png",
+      "duel-right.png",
       "entrance.png",
       "gandalf.png",
       "gradient.png",
@@ -132,6 +135,8 @@ const globalFiles=[
       "door.mp3",
       "drink.mp3",
       "dud.mp3",
+      "duel-intro.mp3",
+      "duel.mp3",
       "eat.mp3",
       "hit-land.mp3",
       "hit.mp3",
@@ -193,6 +198,7 @@ const globalFiles=[
           "space-shooter.json"
         ]
       },
+      {"space-opera": ["duel.json"]},
       {
         "the-impossible-room": [
           ".DS_Store",
@@ -306,6 +312,7 @@ const globalFiles=[
             "aux": [
               ".DS_Store",
               {"base": ["auxiliary.js", "refresher-auxiliary.js"]},
+              "blink-auxiliary.js",
               "bouncer-auxiliary.js",
               "collectible-auxiliary.js",
               "door-auxiliary.js",

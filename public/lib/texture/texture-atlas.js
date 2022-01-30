@@ -114,60 +114,12 @@ class TextureAtlas {
 		return this.collisionBoxes ? this.collisionBoxes[frame] : null;
 	}
 
-	static getTop(context, x, y, width, height) {
-		for (let top = 0; top < height; top ++) {
-			const pixels = context.getImageData(x, y + top, width, 1).data;
-			if (TextureAtlas.hasOpaquePixel(pixels)) {
-				return top;
-			}
-		}
-		return -1;
-	}
-
-	static getBottom(context, x, y, width, height) {
-		for (let bottom = height-1; bottom >=0; bottom --) {
-			const pixels = context.getImageData(x, y + bottom, width, 1).data;
-			if (TextureAtlas.hasOpaquePixel(pixels)) {
-				return bottom;
-			}
-		}
-		return -1;
-	}
-
-	static getLeft(context, x, y, width, height) {
-		for (let left = 0; left < width; left ++) {
-			const pixels = context.getImageData(x + left, y, 1, height).data;
-			if (TextureAtlas.hasOpaquePixel(pixels)) {
-				return left;
-			}
-		}
-		return -1;		
-	}
-
-	static getRight(context, x, y, width, height) {
-		for (let right = width-1; right >=0; right--) {
-			const pixels = context.getImageData(x + right, y, 1, height).data;
-			if (TextureAtlas.hasOpaquePixel(pixels)) {
-				return right;
-			}
-		}
-		return -1;
-	}
-
-	static hasOpaquePixel(pixels) {
-		for (let i = 0; i < pixels.length; i+= 4) {
-			if (pixels[i + 3]) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = image ? image.naturalWidth : 0;
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
-		const { cols, rows, spriteWidth, spriteHeight, frameRate, maxFrameCount, loopCount, range, firstFrame, direction, vdirection } = animationData;
-		this.frameRate = frameRate || 1;
+		const { cols, rows, spriteWidth, spriteHeight, frameRate, maxFrameCount, loop, range, firstFrame, direction, vdirection, reverse } = animationData;
+		this.frameRate = Math.abs(frameRate) || 1;
+		this.frameRateMultiplier = reverse ? -1 : 1;
 		this.frameDuration = 1000 / this.frameRate;
 		this.cols = cols || (spriteWidth ? Math.ceil(this.spriteSheetWidth / spriteWidth) : 1);
 		this.rows = rows || (spriteHeight ? Math.ceil(this.spriteSheetHeight / spriteHeight) : 1);
@@ -175,7 +127,7 @@ class TextureAtlas {
 		this.spriteHeight = spriteHeight || this.spriteSheetHeight / this.rows;
 		this.startFrame = (range ? range[0] : 0) || 0;
 		this.endFrame = (range ? range[1] : 0) || this.startFrame;
-		this.maxFrameCount = maxFrameCount || (loopCount ? loopCount * (this.endFrame - this.startFrame + 1) : MAX_FRAME_COUNT);
+		this.maxFrameCount = maxFrameCount || (loop ? loop * (this.endFrame - this.startFrame + 1) : MAX_FRAME_COUNT);
 		this.animated = this.startFrame !== this.endFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 		this.direction = direction || 1;
@@ -223,7 +175,7 @@ class TextureAtlas {
 		const floatVec4 = this.floatVec4;
 		floatVec4[0] = this.startFrame;
 		floatVec4[1] = this.endFrame;
-		floatVec4[2] = this.frameRate;
+		floatVec4[2] = this.frameRate * this.frameRateMultiplier;
 		floatVec4[3] = this.maxFrameCount;
 		return floatVec4;
 	}

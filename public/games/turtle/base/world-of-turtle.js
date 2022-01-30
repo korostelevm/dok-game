@@ -134,6 +134,21 @@ class WorldOfTurtle extends GameBase {
 					self.airborne = 1;
 				},
 			});
+
+
+			const socialBox = this.spriteFactory.create({
+				x, y: 400, z,
+				spriteType: "sprite",
+				collisionFrame: {
+					left: -60, right: 60,
+					top: -60, bottom: 0,
+					close: -70, far: 50,
+				},
+				showCollisionBox: this.engine.debug ? .2 : 0,
+			}, {
+				collide: 1,	noblock: 1,			
+			});
+			socialBox.follow(this.turtle);
 		}
 
 		const {viewportWidth, viewportHeight} = engine;
@@ -155,7 +170,8 @@ class WorldOfTurtle extends GameBase {
 				showCollisionBox: this.engine.debug,
 				shadow: 1,
 				aux: {
-					"HighlightAuxiliary": {}
+					"HighlightAuxiliary": {},
+					"NpcAuxiliary": {},
 				},
 			}, {
 				collide: 1,				

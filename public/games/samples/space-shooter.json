@@ -6,6 +6,12 @@
     	"right": 1500
     }
   },
+  "physics": [
+    {
+      "type": "Control8",
+      "id": "control"
+    }
+  ],  
   "cameras": {
       "normal": {
         "default": true
@@ -17,7 +23,7 @@
       "size": [35, 41],
       "x": 450,
       "y": 300,
-      "motion": [-20, 0, 0]
+      "motion": [0, 0, 0]
     },
     "pengs": {
       "repeat": 10,
