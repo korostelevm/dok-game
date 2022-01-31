@@ -46,6 +46,9 @@ class Engine {
 		this.shift = new Shift();
 
 		this.core = {};
+
+		this.gameChangeListener = new Set();
+		this.coreChangeListener = new Set();
 	}
 
 	addUiComponent(component) {
@@ -218,12 +221,14 @@ class Engine {
 		await this.resetScene();
 		this.restoreUIComponents();
 
-		const newGameName = game.gameName;
-		if (this.game?.gameName && this.game.gameName !== newGameName) {
+		const oldCoreName = this.game?.coreName;
+		const newCoreName = game.coreName;
+		if (oldCoreName && oldCoreName !== newCoreName) {
 			//	exit core
-			const oldCore = await this.getCore(this.game.gameName);
+			const oldCore = await this.getCore(oldCoreName);
 			await oldCore.onExit(this);
 		}
+
 		this.game = game;
 		if (this.ready) {
 			await this.initGame(this.game);
@@ -331,20 +336,20 @@ class Engine {
 		this.mouseHandlerManager.clear();
 	}
 
-	resetGame(gameName) {
-		const core = this.core[gameName];
+	resetGame(coreName) {
+		const core = this.core[coreName];
 		if (core) {
 			core.reset();
 		}
 	}
 
-	async getCore(gameName) {
-		if (!this.core[gameName]) {
-			const coreClass = nameToClass(`${gameName}Core`, true) || GameCore;
-			this.core[gameName] = new coreClass(this);
-			await this.core[gameName].init();
+	async getCore(coreName) {
+		if (!this.core[coreName]) {
+			const coreClass = nameToClass(`${coreName}Core`, true) || GameCore;
+			this.core[coreName] = new coreClass(this);
+			await this.core[coreName].init();
 		}
-		return this.core[gameName];
+		return this.core[coreName];
 	}
 
 	async addTexture(imageConfig) {

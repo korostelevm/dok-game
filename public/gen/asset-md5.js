@@ -42,7 +42,8 @@ const assetMd5 = {
   "door.png": "e28647cc86efc0b83e42187098fb408d",
   "duel-bg.png": "f88e3d2b02bb4432c47ca40127171fc0",
   "duel-left.png": "967db1feb62d93ebb912e88a7b919f39",
-  "duel-right.png": "15892e94a4e0552ffaa156c0c0b20e13",
+  "duel-right.png": "9661986455cf543b7d3c933944ffd723",
+  "duel-title.png": "b0a9011e17c53407cb69582e2c63eb01",
   "entrance.png": "7c64ce2012c015831c6f0ed34afe2704",
   "gandalf.png": "1efcb82a29e463f879e56dd834fd9651",
   "gradient.png": "ad58f54a5ddc17ff57f0a650160ab4c0",
@@ -120,6 +121,7 @@ const assetMd5 = {
   "twin-shake.png": "d8806eaf8646fd1689b5e44e638aa85b",
   "twin-shit.png": "ec21ee44b4c1c8a035c8ab7ccd3af1f1",
   "twin.png": "a7671550963c109c26c813153f21ec7c",
+  "ui-icon.png": "f85cca264adbbe7a28087f4eab9e4a07",
   "water-faucet-collision.png": "aaa0a9fb57860fae50ae0767b8110b91",
   "windows-10-logo.jpeg": "711b4b4d56e22cdf6911059b55d63b29"
 }

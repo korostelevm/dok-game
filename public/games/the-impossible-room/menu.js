@@ -1,6 +1,6 @@
 class Menu extends GameBase {
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, coreName) {
+		await super.init(engine, coreName);
 
 		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
 		this.core.sidebar.enableSidebar(false);

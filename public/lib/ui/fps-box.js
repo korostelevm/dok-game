@@ -5,8 +5,9 @@ class FpsBox extends UiComponent {
 		this.perfTimers = new Array(20).map(() => 0);
 
 		this.engine = engine;
-		this.input = document.createElement("input");
+		this.input = document.createElement("div");
 		this.input.id = "fps-box";
+		this.input.style.fontSize = "10pt";
 		this.input.style.border = 0;
 		this.input.style.boxOutline = 0;
 		this.input.style.left = "4px";
@@ -14,10 +15,12 @@ class FpsBox extends UiComponent {
 		this.input.style.width = "20px";
 		this.input.style.position = "absolute";
 		this.input.style.zIndex = 10;
+		this.input.style.color = "black";
+		this.input.style.backgroundColor = "white";
 		this.fps = 0;
 	}
 
-	init() {
+	async init() {
 		document.body.appendChild(this.input);
 	}
 
@@ -35,7 +38,7 @@ class FpsBox extends UiComponent {
 		const timeCalc = Math.round(1000 / timeDiff * this.perfTimers.length);
 		if (this.fps !== timeCalc) {
 			this.fps = timeCalc;
-			this.input.value = this.fps;
+			this.input.textContent = this.fps;
 		}
 	}
 }

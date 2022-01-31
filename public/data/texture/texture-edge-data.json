@@ -4617,5 +4617,27 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "f85cca264adbbe7a28087f4eab9e4a07": [
+    {
+      "collision_url": "assets/ui-icon.png",
+      "updated": "2022-01-31T08:28:47.221Z",
+      "top": 0.14,
+      "left": 0.06,
+      "bottom": 0.82,
+      "right": 0.62,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/ui-icon.png",
+      "updated": "2022-01-31T08:28:47.221Z",
+      "top": 0.14,
+      "left": 0.06,
+      "bottom": 0.82,
+      "right": 0.92,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

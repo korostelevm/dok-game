@@ -1,6 +1,6 @@
 class Restaurant extends RoomBase {
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, coreName) {
+		await super.init(engine, coreName);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;

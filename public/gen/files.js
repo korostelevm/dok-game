@@ -46,6 +46,7 @@ const globalFiles=[
       "duel-bg.png",
       "duel-left.png",
       "duel-right.png",
+      "duel-title.png",
       "entrance.png",
       "gandalf.png",
       "gradient.png",
@@ -123,6 +124,7 @@ const globalFiles=[
       "twin-shake.png",
       "twin-shit.png",
       "twin.png",
+      "ui-icon.png",
       "water-faucet-collision.png",
       "windows-10-logo.jpeg"
     ]
@@ -199,7 +201,7 @@ const globalFiles=[
           "space-shooter.json"
         ]
       },
-      {"space-opera": ["duel.json"]},
+      {"space-opera": [{"base": ["duel.js"]}, "duel.json"]},
       {
         "the-impossible-room": [
           ".DS_Store",
@@ -312,7 +314,13 @@ const globalFiles=[
           {
             "aux": [
               ".DS_Store",
-              {"base": ["auxiliary.js", "refresher-auxiliary.js"]},
+              {
+                "base": [
+                  "auxiliary.js",
+                  "refresher-auxiliary.js",
+                  "toggle-click-auxiliary.js"
+                ]
+              },
               "blink-auxiliary.js",
               "bouncer-auxiliary.js",
               "collectible-auxiliary.js",
@@ -321,6 +329,7 @@ const globalFiles=[
               "landing-auxiliary.js",
               "low-ceiling-auxiliary.js",
               "mouse-pointer-auxiliary.js",
+              "mute-auxiliary.js",
               "npc-auxiliary.js",
               "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js",
@@ -357,6 +366,7 @@ const globalFiles=[
           "drag-drop.js",
           "focus-fixer.js",
           "fps-box.js",
+          "game-state-selector.js",
           "keyboard-handler.js",
           "mouse-handler-manager.js",
           "player-overlay.js",

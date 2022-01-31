@@ -1,6 +1,6 @@
 class Selection extends GameBase {
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, coreName) {
+		await super.init(engine, coreName);
 
 		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
 		this.core.sidebar.enableSidebar(false);
@@ -133,6 +133,7 @@ class Selection extends GameBase {
 	}
 
 	onChange(key, value) {
+		super.onChange(key, value);
 		if (key==="check") {
 			const { engine } = this;
 			const he = value === "he";

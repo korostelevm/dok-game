@@ -1,6 +1,6 @@
 class RoomBase extends GameBase {
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, coreName) {
+		await super.init(engine, coreName);
 
 		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
 		this.core.sidebar.enableSidebar(false);
@@ -1284,7 +1284,7 @@ class RoomBase extends GameBase {
 	}
 
 	resetGame() {
-		this.engine.resetGame(this.gameName);
+		this.engine.resetGame(this.coreName);
 	}
 
 	updateFile(time) {
@@ -1360,7 +1360,7 @@ class RoomBase extends GameBase {
 			document.getElementById("game-over").style.display = "none";
 			document.getElementById("game-over-message").style.display = "none";
 			this.resetMouse();
-			this.resetGame(this.gameName);
+			this.resetGame(this.coreName);
 			this.engine.setGame(new GameTitle());
 		});
 	}

@@ -63,6 +63,12 @@ class CollisionBox {
 			&& this.close <= pz && pz <= this.far;
 	}
 
+	containsPoint2d(x, y) {
+		const px = x || 0, py = y || 0;
+		return this.left <= px && px <= this.right
+			&& this.top <= py && py <= this.bottom;
+	}
+
 	getCollisionBox(t, forceRecalculate) {
 		const time = t || this.sprite.engine.lastTime
 		if (this.time === time && !this.dirty && !forceRecalculate) {

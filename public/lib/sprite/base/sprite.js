@@ -51,11 +51,11 @@ class Sprite extends Body {
 			game[data.list].push(this);
 		}
 
-		this.aux = [];
+		this.aux = new Map();
 		for (let name in data.aux) {
 			const classObj = nameToClass(name);
 			const auxiliary = new classObj(data.aux[name], this);
-			this.aux.push(auxiliary);
+			this.aux.set(name, auxiliary);
 		}
 	}
 
@@ -91,8 +91,7 @@ class Sprite extends Body {
 	getAnimationFrame(t) {
 		const time = t || this.engine.lastTime;
 		const anim = this.anim;
-		const updated = this.updated;
-		const animationElapsed = time - updated.animation;
+		const animationElapsed = time - this.updated.animation;
 		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
@@ -261,6 +260,10 @@ class Sprite extends Body {
 		}		
 	}
 
+	getAuxiliary(name) {
+		return this.aux.get(name);
+	}
+
 	getCenterX(time) {
 		return this.getCollisionBox(time).centerX;
 	}
@@ -271,5 +274,13 @@ class Sprite extends Body {
 
 	getCollisionBox(time) {
 		return this.collisionBox.getCollisionBox(time);
+	}
+
+	getLoopCount(time) {
+		const animationElapsed = time - this.updated.animation;
+		const anim = this.anim;
+		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
+		const animationDuration = anim.frameDuration * frameCount;
+		return Math.floor(animationElapsed / animationDuration);
 	}
 }

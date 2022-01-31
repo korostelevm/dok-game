@@ -6,8 +6,8 @@ class StartScreen extends GameBase {
 		this.configOverride = configOverride;
 	}
 
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, gameCoreName) {
+		await super.init(engine, gameCoreName);
 
 		const [ start_screen, loading ] = await Promise.all([
 			"assets/start-screen.png",

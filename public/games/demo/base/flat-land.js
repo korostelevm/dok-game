@@ -1,6 +1,6 @@
 class FlatLand extends GameBase {
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, gameCoreName) {
+		await super.init(engine, gameCoreName);
 
 		const { gl, config, viewportWidth, viewportHeight } = engine;
 

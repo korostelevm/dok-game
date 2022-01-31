@@ -1,7 +1,8 @@
 {
+  "className": "Duel",
   "settings": {
     "viewportSize": [600, 385],
-    "windowSize": [800, 500],
+    "windowSize": [800, 600],
     "clamp": {
     	"left": -1500,
     	"right": 1500
@@ -46,10 +47,32 @@
     }
   },
   "world": {
+    "mute": {
+      "anim": "unmute",
+      "size": [ 25, 25 ],
+      "x": "{viewportWidth - 30}",
+      "y": 5,
+      "z": 10,
+      "aux": {
+        "MuteAuxiliary": {
+          "toggleAnim": "mute"
+        }
+      }
+    },
     "intro": {
       "anim": "intro",
       "size": [ 600, 385 ],
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 5,
+      "aux": {
+        "StateAuxiliary": {
+          "gameState": "intro"
+        }        
+      }
+    },
+    "title": {
+      "anim": "title",
+      "size": [ 200, 100 ],
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight * 3 / 4}", "z": 6,
       "aux": {
         "StateAuxiliary": {
           "gameState": "intro"
@@ -80,7 +103,7 @@
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 3,
       "aux": {
         "BlinkAuxiliary": {
-          "chance": 0.01,
+          "chance": 0.001,
           "blinkAnim": "right-tease"
         }
       }      
@@ -117,6 +140,11 @@
       "hotspot": "{hotspot_center}",
       "range":[1]
     },
+    "title": {
+      "url": "assets/duel-title.png",
+      "spriteWidth": 200, "spriteHeight": 149,
+      "hotspot": "{hotspot_center}"
+    },
     "background-sign-off": {
       "url": "assets/duel-bg.png",
       "spriteWidth": 706, "spriteHeight": 451,
@@ -147,7 +175,7 @@
       "url": "assets/duel-right.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
-      "range":[1, 3],
+      "range":[1, 2],
       "loop": 1,
       "frameRate": 10
     },
@@ -157,7 +185,7 @@
       "hotspot": "{hotspot_center}",
       "range":[1, 8],
       "loop": 1,
-      "frameRate": 12
+      "frameRate": 10
     },
     "left-draw-backwards": {
       "url": "assets/duel-left.png",
@@ -190,7 +218,7 @@
       "hotspot": "{hotspot_center}",
       "range":[1, 9],
       "loop": 1,
-      "frameRate": 14
+      "frameRate": 20
     },
     "left-shot-with-gun": {
       "url": "assets/duel-left.png",
@@ -223,6 +251,18 @@
       "range":[15, 18],
       "loop": 1,
       "frameRate": 8
+    },
+    "mute": {
+      "url": "assets/ui-icon.png",
+      "collision_url": "assets/ui-icon.png",
+      "spriteWidth": 50, "spriteHeight": 50,
+      "range": [0]
+    },
+    "unmute": {
+      "url": "assets/ui-icon.png",
+      "collision_url": "assets/ui-icon.png",
+      "spriteWidth": 50, "spriteHeight": 50,
+      "range": [1]
     }
   }
 }

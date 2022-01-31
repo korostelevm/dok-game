@@ -1,6 +1,6 @@
 class Lobby extends RoomBase {
-	async init(engine, gameName) {
-		await super.init(engine, gameName);
+	async init(engine, coreName) {
+		await super.init(engine, coreName);
 
 		const { gl, config } = engine;
 		const { gender } = this.data;
@@ -401,6 +401,7 @@ class Lobby extends RoomBase {
 	}
 
 	onChange(key, value) {
+		super.onChange(key, value);
 		if (key==="calledHost") {
 			this.doorForwardOpened.changeOpacity(value?1:0, engine.lastTime);										
 			this.doorForwardClosed.changeOpacity(value?0:1, engine.lastTime);
