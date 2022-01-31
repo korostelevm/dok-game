@@ -384,6 +384,7 @@ class Menu extends GameBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		const audio = this.mainTheme;
 		this.setAudio(audio, false, .5);
 		engine.keyboardHandler.clearListeners();		

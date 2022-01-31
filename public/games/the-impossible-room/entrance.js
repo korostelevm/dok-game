@@ -333,6 +333,7 @@ class Entrance extends RoomBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		document.getElementById("im").style.display = "none";
 		this.setProperty("title", document.getElementById("im").innerText);
 		if (this.title) {

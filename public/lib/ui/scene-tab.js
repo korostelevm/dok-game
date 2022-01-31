@@ -1,7 +1,10 @@
-class SceneTab {
-	constructor(engine, globalFiles, gameTab) {
+class SceneTab extends UiComponent {
+	constructor(engine, globalFiles) {
+		super(engine);
 		this.engine = engine;
 		this.globalFiles = globalFiles;
+		const gameTab = document.getElementById("container").appendChild(document.createElement("div"));
+		gameTab.id = "game-tab";
 		this.gameTab = gameTab;
 	}
 

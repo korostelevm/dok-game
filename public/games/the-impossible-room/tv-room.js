@@ -175,6 +175,7 @@ class TvRoom extends RoomBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		this.video.pause();
 		document.body.removeChild(this.video);
 		return super.onExit(engine);

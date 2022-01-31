@@ -343,7 +343,9 @@ body {
 	display: flex; flex-direction: row;
 	position: absolute;
 	z-index: 150;
+	margin-left: 80px;
 }
+
 .scene-button {
 	border-radius: 8pt;
 	cursor: var(--pointer-cursor);

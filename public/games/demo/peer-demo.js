@@ -40,6 +40,7 @@ class PeerDemo extends GameBase {
 	}
 
 	async onExit(engine) {
+        await super.onExit(engine);
 		if (this.conn) {
 			this.conn.close();
 		}

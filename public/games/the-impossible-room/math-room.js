@@ -362,6 +362,7 @@ class MathRoom extends RoomBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		const mathGroup = document.getElementById("math-group");
 		mathGroup.parentElement.removeChild(mathGroup);
 		return super.onExit(engine);

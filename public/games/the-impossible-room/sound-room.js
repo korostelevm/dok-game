@@ -530,6 +530,7 @@ class SoundRoom extends RoomBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		const audio = await engine.music.getAudio("music/blinkpong-loop.mp3");
 		this.setAudio(audio, false, .5, true);
 		return super.onExit(engine);

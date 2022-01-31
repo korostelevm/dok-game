@@ -164,6 +164,7 @@ class Selection extends GameBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		const previousGender = this.data.gender;
 		let character = "monkor";
 		switch(this.properties.check) {

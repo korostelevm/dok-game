@@ -236,6 +236,7 @@ class GameBase {
 	}
 
 	async onExit(engine) {
+		this.changeMusic(null);
 	}
 
 	refresh(time, dt) {
@@ -255,13 +256,15 @@ class GameBase {
 	changeMusic(music, loop) {
 		if (music !== this.music) {
 			if (this.music) {
-				this.music.stop();
+				this.audio[this.music].stop();
 			}
 			this.music = music;
-			if (loop) {
-				this.audio[music].loop();
-			} else {
-				this.audio[music].play();
+			if (this.music) {
+				if (loop) {
+					this.audio[this.music].loop();
+				} else {
+					this.audio[this.music].play();
+				}
 			}
 		}
 	}

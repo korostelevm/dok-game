@@ -18,6 +18,9 @@ class Sound {
 			audio.addEventListener("ended", () => {
 				audio.currentTime = 0;
 				this.audios.push(audio);
+				if (this.playingAudio === audio) {
+					this.playingAudio = null;
+				}
 			});
 		}
 	}
@@ -26,22 +29,22 @@ class Sound {
 		if (Sound.mute) {
 			return;
 		}
-		if (!this.looper) {
+		if (!this.playingAudio) {
 			const audio = this.audios.pop();
 			audio.loop = true;
-			this.looper = audio;
+			this.playingAudio = audio;
 		}
-		this.looper.volume = volume ?? this.volume;
-		this.looper.play();
+		this.playingAudio.volume = volume ?? this.volume;
+		this.playingAudio.play();
 	}
 
 	stop() {
-		if (this.looper) {
-			this.looper.pause();
-			this.looper.loop = false;
-			this.looper.currentTime = 0;
-			this.audios.push(this.looper);
-			this.looper = null;
+		if (this.playingAudio) {
+			this.playingAudio.pause();
+			this.playingAudio.loop = false;
+			this.playingAudio.currentTime = 0;
+			this.audios.push(this.playingAudio);
+			this.playingAudio = null;
 		}
 	}
 
@@ -53,6 +56,7 @@ class Sound {
 		if (audio) {
 			audio.volume = volume ?? this.volume;
 			audio.play();
+			this.playingAudio = audio;
 		}
 		this.prepare();
 	}

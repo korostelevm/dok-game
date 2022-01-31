@@ -527,6 +527,7 @@ class TimeRoom extends RoomBase {
 	}	
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		document.getElementById("im").style.display = "none";
 		document.getElementById("container").removeChild(this.timeRoomLabels);
 		if (this.redButton) {

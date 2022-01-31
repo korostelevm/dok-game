@@ -408,6 +408,7 @@ class Mall extends RoomBase {
 	}
 
 	async onExit(engine) {
+		await super.onExit(engine);
 		if (document.getElementById("thank-you")) {
 			document.getElementById("container").removeChild(document.getElementById("thank-you"));
 		}

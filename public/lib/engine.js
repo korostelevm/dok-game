@@ -125,9 +125,7 @@ class Engine {
 
 		/* Setup game tab. */
 		if (this.debug) {
-			const gameTab = document.getElementById("game-tab");
-			this.sceneTab = new SceneTab(this, globalFiles, gameTab);
-			await this.sceneTab.init();
+			this.sceneTab = new SceneTab(this, globalFiles);
 		}
 		ChronoUtils.tick();
 
@@ -149,7 +147,7 @@ class Engine {
 
 		this.textureManager.generateAllMipMaps();
 
-		this.uiComponents.forEach(component => component.init());
+		await Promise.all(this.uiComponents.map(component => component.init()));
 
 		this.ready = true;
 		Engine.turnOn(this);
