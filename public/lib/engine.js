@@ -218,6 +218,12 @@ class Engine {
 		await this.resetScene();
 		this.restoreUIComponents();
 
+		const newGameName = game.gameName;
+		if (this.game?.gameName && this.game.gameName !== newGameName) {
+			//	exit core
+			const oldCore = await this.getCore(this.game.gameName);
+			await oldCore.onExit(this);
+		}
 		this.game = game;
 		if (this.ready) {
 			await this.initGame(this.game);
@@ -525,15 +531,16 @@ class Engine {
 		for (let sprite of updater) {
 			const spriteIndex = sprite.spriteIndex;
 			if (sprite.updateFlag & Constants.RENDER_FLAG.SPRITE_ATTRIBUTE) {
-				const {x, y, z, rotation, size:[width,height], anim} = sprite;
+				const {x, y, z, rotation, size:[width,height], anim, active, opacity} = sprite;
 				const hotspot = anim?.hotspot || Constants.EMPTY_HOTSPOT;
 				const hotX = hotspot[0];
 				const hotY = hotspot[1];
-				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, width, height, hotX, hotY, rotation);
+				const visible = active && opacity > 0; 
+				this.spriteRenderer.setAttributeSprite(spriteIndex, x, y, z, visible ? width : 0, visible ? height : 0, hotX, hotY, rotation);
 			}
 			if (sprite.updateFlag & Constants.RENDER_FLAG.TEXTURE) {
-				const {anim, direction, active, opacity, light, spriteType } = sprite;
-				this.spriteRenderer.setTextureIndex(spriteIndex, anim, active ? opacity : 0, light, spriteType);
+				const {anim, direction, opacity, light, spriteType } = sprite;
+				this.spriteRenderer.setTextureIndex(spriteIndex, anim, opacity, light, spriteType);
 			}
 			if (sprite.updateFlag & Constants.RENDER_FLAG.ANIMATION_INFO) {
 				const {anim, direction, vdirection, } = sprite;

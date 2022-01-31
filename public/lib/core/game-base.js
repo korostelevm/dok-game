@@ -8,8 +8,11 @@ class GameBase {
 		this.cameras = {};
 		this.state = null;
 		this.states = [];
+		this.stateListeners = new Set();
 		this.ready = 0;
 		this.music = null;
+		this.bodyStyle = null;
+		this.bodyStyleBack = {};
 	}
 
 	async init(engine, gameName) {
@@ -80,6 +83,12 @@ class GameBase {
 
 			if (this.gameModel.settings?.forceRefreshOnMouse) {
 				this.engine.mouseHandlerManager.setForceRefreshOnMouse(true);
+			}
+
+			this.bodyStyle = this.gameModel.settings?.bodyStyle;
+			for (let prop in this.bodyStyle) {
+				this.bodyStyleBack[prop] = document.body.style[prop];
+				document.body.style[prop] = this.bodyStyle[prop];
 			}
 
 			this.states = this.gameModel.states || [];
@@ -237,20 +246,33 @@ class GameBase {
 
 	async onExit(engine) {
 		this.changeMusic(null);
+
+		for (let prop in this.bodyStyleBack) {
+			document.body.style[prop] = this.bodyStyleBack[prop];
+		}
 	}
 
 	refresh(time, dt) {
 		this.applyCamera(this.camera, time);
 	}
 
-	selectDialog(index) {
+	changeState(state) {
+		if (this.state !== state) {
+			this.state = state;
+			this.applyState(this.state);
+		}
 	}
 
 	applyState(state) {
 		const { music, loopMusic } = this.states[state] || {};
-		if (music) {
-			this.changeMusic(music, loopMusic);
+		this.changeMusic(music ?? null, loopMusic);
+		for (let listener of this.stateListeners) {
+			listener.onState(listener, state);
 		}
+	}
+
+	addStateListener(state) {
+		this.stateListeners.add(state);
 	}
 
 	changeMusic(music, loop) {

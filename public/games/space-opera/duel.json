@@ -1,9 +1,13 @@
 {
   "settings": {
-    "viewportSize": [900, 600],
+    "viewportSize": [600, 385],
+    "windowSize": [800, 500],
     "clamp": {
     	"left": -1500,
     	"right": 1500
+    },
+    "bodyStyle": {
+      "backgroundImage": "linear-gradient(rgba(30,30,30), rgba(0,0,0))"
     }
   },
   "states": {
@@ -12,10 +16,12 @@
       "music": "intro"
     },
     "dialog": {
-
+      "music": "duel",
+      "loopMusic": true
     },
     "waiting": {
-
+      "music": "duel",
+      "loopMusic": true
     },
     "draw": {
 
@@ -43,13 +49,17 @@
     "intro": {
       "anim": "intro",
       "size": [ 600, 385 ],
-      "x": 450, "y": 300, "z": 10,
-      "opacity": 1
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 5,
+      "aux": {
+        "StateAuxiliary": {
+          "gameState": "intro"
+        }        
+      }
     },
     "background": {
       "anim": "background",
       "size": [ 600, 385 ],
-      "x": 450, "y": 300, "z": 1,
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 1,
       "aux": {
         "BlinkAuxiliary": {
           "chance": 0.7,
@@ -57,15 +67,28 @@
         }
       }
     },
-    "right": {
-      "anim": "right-head-shot",
+    "cloud": {
+      "repeat": 3,
+      "anim": "cloud",
       "size": [ 600, 385 ],
-      "x": 450, "y": 300, "z": 2
+      "x": "{viewportWidth / 2 + index * 600}", "y": "{viewportHeight / 2}", "z": 2,
+      "motion": [-2, 0, 0]
+    },
+    "right": {
+      "anim": "right-cowboy",
+      "size": [ 600, 385 ],
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 3,
+      "aux": {
+        "BlinkAuxiliary": {
+          "chance": 0.01,
+          "blinkAnim": "right-tease"
+        }
+      }      
     },
     "left": {
-      "anim": "left-draw-backwards",
+      "anim": "left-cowboy",
       "size": [ 600, 385 ],
-      "x": 450, "y": 300, "z": 3
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 4
     }
   },
   "audio": {
@@ -77,6 +100,11 @@
     }
   },
   "atlas": {
+    "cloud": {
+      "url": "assets/cloud.png",
+      "spriteWidth": 706, "spriteHeight": 451,
+      "hotspot": "{hotspot_center}"
+    },
     "intro": {
       "url": "assets/duel-bg.png",
       "spriteWidth": 706, "spriteHeight": 451,

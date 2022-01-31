@@ -27,7 +27,7 @@ class CollisionBoxDisplay {
 			size: [1, 1],
 			x, y, z,
 			rotation,
-			opacity: opacity || 1,
+			opacity: opacity === true ? 1 : opacity || 1,
 		});
 	}
 

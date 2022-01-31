@@ -9,6 +9,9 @@ class GameCore {
 	async init() {
 	}
 
+	async onExit(engine) {
+	}
+
 	setGame(game) {
 		this.game = game;
 	}

@@ -27,6 +27,7 @@ const globalFiles=[
       "cheoni.png",
       "chocolate.png",
       "cigarette.png",
+      "cloud.png",
       "clue-lobby.png",
       "computer-desk.png",
       "cosmo-collision.png",
@@ -155,13 +156,13 @@ const globalFiles=[
       ".DS_Store",
       {
         "fonts": [
-          "Lato-Bold.ttf",
-          "Lato-Regular.ttf",
           "alphabetized-cassette-tapes.ttf",
           "american-captain.otf",
           "cartoon-script.ttf",
           "demode.ttf",
           "grotto.ttf",
+          "lato-Bold.ttf",
+          "lato-Regular.ttf",
           "math-font.ttf"
         ]
       },
@@ -324,7 +325,8 @@ const globalFiles=[
               "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js",
               "platform-hero-auxiliary.js",
-              "selection-box-auxiliary.js"
+              "selection-box-auxiliary.js",
+              "state-auxiliary.js"
             ]
           },
           {"base": [".DS_Store", "body.js", "sprite.js"]},

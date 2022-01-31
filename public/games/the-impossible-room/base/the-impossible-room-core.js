@@ -7,7 +7,13 @@ class TheImpossibleRoomCore extends GameCore {
 	}
 
 	async init() {
+		await super.init();
 		await this.voiceManager.init();
+	}
+
+	async onExit(engine) {
+		await super.onExit(engine);
+		this.sidebar.setVisible(false);
 	}
 
 	onPostScore(score) {

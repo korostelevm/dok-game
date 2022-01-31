@@ -14,11 +14,11 @@
 }
 @font-face {
     font-family: lato;
-    src: url(fonts/Lato-Regular.ttf);
+    src: url(fonts/lato-Regular.ttf);
 }
 @font-face {
     font-family: lato;
-    src: url(fonts/Lato-Bold.ttf);
+    src: url(fonts/lato-Bold.ttf);
     font-weight: bold;
 }
 @font-face {
@@ -43,19 +43,10 @@ body {
     margin: 0;
     width:  1080px;
     height:  600px;
-    /*height: 100%;*/
-	background-image:
+		background-image:
 	  linear-gradient(27deg, rgba(100,55,50,.3), rgba(55,50,100,0) 70.71%),
 	  linear-gradient(117deg, rgba(100,55,55,.3), rgba(55,55,100) 70.71%),
 	  linear-gradient(236deg, rgba(155,55,50,.3), rgba(55,50,155,0) 70.71%);
-  	background-image:
-	  -moz-linear-gradient(27deg, rgba(100,55,50,.3), rgba(55,50,100,0) 70.71%),
-	  -moz-linear-gradient(117deg, rgba(100,55,55,.3), rgba(55,55,100) 70.71%),
-	  -moz-linear-gradient(236deg, rgba(155,55,50,.3), rgba(55,50,155,0) 70.71%);
-	background-image:
-	  -ms-linear-gradient(27deg, rgba(55,50,100,.3), rgba(55,100,50,0) 70.71%),
-	  -ms-linear-gradient(117deg, rgba(55,55,100,.3), rgba(55,55,100) 70.71%),
-	  -ms-linear-gradient(236deg, rgba(55,50,155,.3), rgba(55,50,155,0) 70.71%);
 
 
     color: #99aabb;

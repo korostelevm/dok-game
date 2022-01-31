@@ -232,7 +232,11 @@ class Sidebar {
 				}
 			}
 		});
-		this.sidebarDiv.style.display = !doHideSidebar && foundSelected ? "flex" : "none";
+		this.setVisible(!doHideSidebar && foundSelected);
+	}
+
+	setVisible(visible) {
+		this.sidebarDiv.style.display = visible ? "flex" : "none";			
 	}
 
 	countUnlocked() {
