@@ -1,5 +1,5 @@
 class MovingPlatformGenerator extends Generator {
-	generate(spriteFactory, col, row, option) {
+	generate(spriteMapper, col, row, option) {
 		if (!this.movingPlatform) {
 			this.movingPlatform = spriteMapper.spriteFactory.create({
 				name: `mover_${col}_${row}`,
