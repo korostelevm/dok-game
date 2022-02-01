@@ -25,7 +25,7 @@
     "archiver": "^5.2.0",
     "colors": "^1.4.0",
     "config-template-merger": "^1.0.11",
-    "direct-data": "^1.0.6",
+    "direct-data": "^1.0.8",
     "dok-file-utils": "^1.0.7",
     "collision-engine": "^1.0.3",
     "express": "^4.17.1",
