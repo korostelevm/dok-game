@@ -1,5 +1,5 @@
 {
-  "templates": ["/templates/platformer-physics", "/templates/overlay-hud", "/templates/platformer-camera"],
+  "templates": ["../../templates/platformer-physics", "../../templates/overlay-hud", "../../templates/platformer-camera"],
   "settings": {
     "windowSize": [900, 500]
   },

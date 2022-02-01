@@ -1,6 +1,6 @@
 {
 	"className": "WorldOfTurtle",
-	"templates": ["/templates/overworld-physics", "/templates/overworld-camera", "/templates/overlay-hud"],
+	"templates": ["../../templates/overworld-physics", "../../templates/overworld-camera", "../../templates/overlay-hud"],
 	"settings": {
 		"windowSize": [1000, 700],
 		"pixelScale": 0,
