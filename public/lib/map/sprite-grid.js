@@ -1,7 +1,6 @@
 class SpriteGrid {
 	constructor(game, spriteMapper) {
 		this.game = game;
-		this.spriteFactory = game.spriteFactory;
 		this.spriteMapper = spriteMapper;
 	}
 

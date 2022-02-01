@@ -12,7 +12,7 @@ class Menu extends GameBase {
 			...this.audio,
 		};
 
-		this.mainTheme = await engine.music.getAudio("music/weirdsong.mp3");
+		this.mainTheme = await engine.music.getAudio("audio/weirdsong.mp3");
 
 		this.atlas = {
 			...this.atlas,

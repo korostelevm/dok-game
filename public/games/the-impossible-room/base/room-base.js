@@ -1171,7 +1171,7 @@ class RoomBase extends GameBase {
 	}
 
 	getMusic() {
-		return "music/weirdsong.mp3";
+		return "audio/weirdsong.mp3";
 	}
 
 	shouldResetAudio() {

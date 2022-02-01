@@ -524,20 +524,20 @@ class SoundRoom extends RoomBase {
 	async postInit() {
 		await super.postInit();
 
-		const audio = await this.engine.music.getAudio("music/weirdsong.mp3");
+		const audio = await this.engine.music.getAudio("audio/weirdsong.mp3");
 		audio.currentTime = 0;
 		this.setAudio(audio, false, .5, true);
 	}
 
 	async onExit(engine) {
 		await super.onExit(engine);
-		const audio = await engine.music.getAudio("music/blinkpong-loop.mp3");
+		const audio = await engine.music.getAudio("audio/blinkpong-loop.mp3");
 		this.setAudio(audio, false, .5, true);
 		return super.onExit(engine);
 	}
 
 	getMusic() {
-		return "music/blinkpong-loop.mp3";
+		return "audio/blinkpong-loop.mp3";
 	}
 
 	getWalkArea() {
