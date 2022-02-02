@@ -158,6 +158,7 @@ const globalFiles=[
       ".DS_Store",
       {
         "fonts": [
+          ".DS_Store",
           "alphabetized-cassette-tapes.ttf",
           "american-captain.otf",
           "cartoon-script.ttf",

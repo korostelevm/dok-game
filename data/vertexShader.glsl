@@ -1,3 +1,5 @@
+#version 300 es
+
 precision mediump float;
 
 const int START_FRAME_INDEX = 0;
@@ -19,16 +21,16 @@ const float IS_SPRITE = 2.;
 const mat4 IDENTITY = mat4(1.0);
 
 
-attribute vec2 vertexPosition;			
+in vec2 vertexPosition;			
 //attribute vec3 normal;
-attribute mat4 matrix;				//	4x4
-attribute vec3 motion;
-attribute vec3 acceleration;
-attribute vec4 textureIndex;		//	[ubyte] TEXTURE_INDEX / LIGHT / OPACITY / SPRITE_TYPE
-attribute mat4 textureCoordinates;	//	4x4
-attribute vec4 animationInfo;		//	START,END,FRAMERATE,MAX_FRAME_COUNT
-attribute vec4 spriteSheet;			//	[ushort] col,(row),hotspot_x,hotspot_y
-attribute vec4 updateTime;			//	motion_update, animation_update
+in mat4 matrix;				//	4x4
+in vec3 motion;
+in vec3 acceleration;
+in vec4 textureIndex;		//	[ubyte] TEXTURE_INDEX / LIGHT / OPACITY / SPRITE_TYPE
+in mat4 textureCoordinates;	//	4x4
+in vec4 animationInfo;		//	START,END,FRAMERATE,MAX_FRAME_COUNT
+in vec4 spriteSheet;			//	[ushort] col,(row),hotspot_x,hotspot_y
+in vec4 updateTime;			//	motion_update, animation_update
 
 uniform float isPerspective;
 uniform float timeInfo;
@@ -40,11 +42,11 @@ uniform mat3 clamp;
 uniform mat4 spriteMatrix;
 uniform float globalLight;
 
-varying vec2 v_textureCoord;
-varying float v_index;
-varying float v_opacity;
-varying float v_light;
-varying float v_saturation;
+out vec2 v_textureCoord;
+out float v_index;
+out float v_opacity;
+out float v_light;
+out float v_saturation;
 
 
 vec4 getCornerValue(mat4 textureCoordinates, vec2 position);

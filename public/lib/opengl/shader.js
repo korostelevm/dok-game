@@ -109,7 +109,7 @@ class Shader {
 	initAttributes(program, attributes, vertexShaderCode, maxInstanceCount) {
 		this.clearBuffers();
 
-		const variables = this.getShaderVariables(vertexShaderCode).filter(({attributeType}) => attributeType === "attribute");
+		const variables = this.getShaderVariables(vertexShaderCode).filter(({attributeType}) => attributeType === "attribute" || attributeType === "in");
 		variables.forEach(({name, dataType}) => {
 			if (!attributes[name]) {
 				console.warn(`Attribute ${name} has no configuration. Update config/webgl/attributes.json`);
@@ -226,8 +226,8 @@ class Shader {
 	getShaderVariables(...shaders) {
 		const variables = [];
 		shaders.forEach(shader => {
-			const groups = shader.match(/\n(attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/g)
-				.map(line => line.match(/\n(attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/));
+			const groups = shader.match(/\n(in|attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/g)
+				.map(line => line.match(/\n(in|attribute|uniform) ([\w]+) ([\w]+)(\[.+\])?;/));
 			variables.push(... groups.map(([line, attributeType, dataType, name]) => {
 				return { line, attributeType, dataType, name };
 			}));
