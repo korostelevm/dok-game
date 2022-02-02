@@ -166,7 +166,7 @@ class Shader {
 			  bytesPerInstance,            	// stride (0 = compute from size and type above)
 			  offset,            			// offset in buffer
 			);
-			ext.vertexAttribDivisorANGLE(location + i, attributeConfig.instances || 0);			
+			gl.vertexAttribDivisor(location + i, attributeConfig.instances || 0);			
 		}
 		const bufferSize = (attributeConfig.instances ? maxInstanceCount : NUM_VERTICES) * bytesPerInstance;
 		gl.bufferData(gl.ARRAY_BUFFER, bufferSize, gl[attributeConfig.usage]);

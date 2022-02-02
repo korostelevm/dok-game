@@ -93,7 +93,7 @@ class Engine {
 		}
 		ChronoUtils.tick();
 		this.canvas = canvas;
-		const gl = canvas.getContext("webgl", config.webgl) || canvas.getContext("experimental-webgl", config.webgl);
+		const gl = canvas.getContext("webgl2", config.webgl);
 		this.gl = gl;
 		await this.textureEdgeCalculator.init();
 
@@ -426,15 +426,6 @@ class Engine {
 	}
 
 	configShader(gl, {webgl: {cullFace, depth}}) {
-		if (!gl.getExtension('OES_element_index_uint')) {
-			throw new Error("OES_element_index_uint not available.");
-		}
-		const ext = gl.getExtension('ANGLE_instanced_arrays');
-		if (!ext) {
-			throw new Error('need ANGLE_instanced_arrays.');
-		}
-		this.ext = ext;
-
 		switch(cullFace) {
 			case "front":
 				gl.enable(gl.CULL_FACE);
@@ -567,7 +558,7 @@ class Engine {
 		const gl = this.gl;
 		this.updateTime(time);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		this.ext.drawArraysInstancedANGLE(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
+		gl.drawArraysInstanced(gl.TRIANGLES, 0, this.numVerticesPerInstance, this.spriteCollection.size());		
 	}
 
 	updateTime(time) {

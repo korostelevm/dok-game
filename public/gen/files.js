@@ -1,8 +1,6 @@
 const globalFiles=[
-  ".DS_Store",
   {
     "assets": [
-      ".DS_Store",
       "1570015905422-scanlines.png",
       "Scanline_320x240x4.png",
       "about-2.png",
@@ -131,7 +129,6 @@ const globalFiles=[
   },
   {
     "audio": [
-      ".DS_Store",
       "animal-cry.mp3",
       "beep.mp3",
       "blinkpong-loop.mp3",
@@ -157,38 +154,29 @@ const globalFiles=[
   },
   {
     "css": [
-      ".DS_Store",
       {
         "fonts": [
+          "Lato-Bold.ttf",
+          "Lato-Regular.ttf",
           "alphabetized-cassette-tapes.ttf",
           "american-captain.otf",
           "cartoon-script.ttf",
           "demode.ttf",
           "grotto.ttf",
-          "lato-Bold.ttf",
-          "lato-Regular.ttf",
           "math-font.ttf"
         ]
       },
       "style.css"
     ]
   },
-  {
-    "data": [
-      ".DS_Store",
-      "can-write.json",
-      {"texture": ["texture-edge-data.json"]}
-    ]
-  },
+  {"data": ["can-write.json", {"texture": ["texture-edge-data.json"]}]},
   "favicon.ico",
   "game-starter.js",
   {
     "games": [
-      ".DS_Store",
       {"common": ["start-screen.js"]},
       {
         "demo": [
-          ".DS_Store",
           {"base": ["flat-land.js", "game-ring.js", "smurf.js"]},
           "flat-land.json",
           "game-ring.json",
@@ -206,7 +194,6 @@ const globalFiles=[
       {"space-opera": [{"base": ["duel.js"]}, "duel.json"]},
       {
         "the-impossible-room": [
-          ".DS_Store",
           "animal-room.js",
           {"base": ["room-base.js", "the-impossible-room-core.js"]},
           "batman-room.js",
@@ -236,7 +223,6 @@ const globalFiles=[
       },
       {
         "turtle": [
-          ".DS_Store",
           {"base": ["world-of-turtle.js"]},
           {"templates": ["turtle-sprite-sheet.json"]},
           "world-of-turtle.json"
@@ -256,25 +242,21 @@ const globalFiles=[
   "index.html",
   {
     "lib": [
-      ".DS_Store",
-      {"core": [".DS_Store", "game-base.js", "game-core.js", "shift.js"]},
+      {"core": ["game-base.js", "game-core.js", "shift.js"]},
       "engine.js",
       {
         "external": [
-          ".DS_Store",
           "dok-lib.js",
-          {"math": [".DS_Store", "gl-matrix-min.js", "gl-matrix.js"]},
+          {"math": ["gl-matrix-min.js", "gl-matrix.js"]},
           {"newgrounds": ["newgroundsio.min.js", "newgroundsio.min.js.map"]},
           {"peerjs": ["peerjs.min.js", "peerjs.min.js.map"]}
         ]
       },
       {
         "map": [
-          ".DS_Store",
           {
             "generator": [
-              ".DS_Store",
-              {"base": [".DS_Store", "generator.js"]},
+              {"base": ["generator.js"]},
               "generator-from-config.js",
               "moving-platform-generator.js",
               "null-generator.js"
@@ -284,11 +266,10 @@ const globalFiles=[
           "sprite-mapper.js"
         ]
       },
-      {"newgrounds": [".DS_Store", "ng.js", "sound.mp3"]},
+      {"newgrounds": ["ng.js", "sound.mp3"]},
       {"opengl": ["buffer-renderer.js", "shader.js", "utils.js"]},
       {
         "physics": [
-          ".DS_Store",
           {"base": ["physics-base.js"]},
           "collision.js",
           "control-8.js",
@@ -302,7 +283,6 @@ const globalFiles=[
       {"renderer": ["sprite-renderer.js"]},
       {
         "sound": [
-          ".DS_Store",
           {"lang": ["translate-voice.js"]},
           "music.js",
           "sound-manager.js",
@@ -312,10 +292,8 @@ const globalFiles=[
       },
       {
         "sprite": [
-          ".DS_Store",
           {
             "aux": [
-              ".DS_Store",
               {
                 "base": [
                   "auxiliary.js",
@@ -340,7 +318,7 @@ const globalFiles=[
               "state-auxiliary.js"
             ]
           },
-          {"base": [".DS_Store", "body.js", "sprite.js"]},
+          {"base": ["body.js", "sprite.js"]},
           {
             "collision": [
               "collision-box-display.js",
@@ -379,7 +357,6 @@ const globalFiles=[
       },
       {
         "utils": [
-          ".DS_Store",
           "array-utils.js",
           "chrono-utils-self-load.js",
           "constants.js",

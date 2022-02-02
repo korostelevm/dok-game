@@ -1,5 +1,4 @@
 const assetMd5 = {
-  ".DS_Store": "c13a6bd95b567c04752afd62e05d70cf",
   "1570015905422-scanlines.png": "9a76f5e6ec7a9ebf52f48ad1098578c8",
   "Scanline_320x240x4.png": "5f526709bcc039b1851d3a3f76b2e3f1",
   "about-2.png": "aa9de9e639dba617adec2f98911af521",
