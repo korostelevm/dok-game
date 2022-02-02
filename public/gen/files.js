@@ -1,4 +1,5 @@
 const globalFiles=[
+  ".DS_Store",
   {
     "assets": [
       "1570015905422-scanlines.png",
@@ -154,15 +155,16 @@ const globalFiles=[
   },
   {
     "css": [
+      ".DS_Store",
       {
         "fonts": [
-          "Lato-Bold.ttf",
-          "Lato-Regular.ttf",
           "alphabetized-cassette-tapes.ttf",
           "american-captain.otf",
           "cartoon-script.ttf",
           "demode.ttf",
           "grotto.ttf",
+          "lato-bold.ttf",
+          "lato-regular.ttf",
           "math-font.ttf"
         ]
       },
