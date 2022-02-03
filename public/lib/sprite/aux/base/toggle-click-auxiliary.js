@@ -11,6 +11,12 @@ class ToggleClickAuxiliary extends Auxiliary {
 				if (sprite.getCollisionBox().containsPoint2d(x, y)) {
 					this.setState(1 - this.state);
 				}
+			} else if (e.type === "mousemove") {
+				if (sprite.getCollisionBox().containsPoint2d(x, y)) {
+					sprite.engine.cursorManager.changeCursor(sprite.game.pointerCursor);
+				} else {
+					sprite.engine.cursorManager.changeCursor(sprite.game.arrowCursor);					
+				}
 			}
 		};
 	}

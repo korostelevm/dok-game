@@ -95,6 +95,13 @@ class Engine {
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl2", config.webgl);
 		this.gl = gl;
+
+		const info = this.gl.getExtension('WEBGL_debug_renderer_info');
+		const vendor = gl.getParameter(info.UNMASKED_VENDOR_WEBGL);
+		const renderer = gl.getParameter(info.UNMASKED_RENDERER_WEBGL);
+		console.log("WebGL Renderer:", vendor, renderer);
+		this.fakeGPU = renderer === "Google SwiftShader";
+
 		await this.textureEdgeCalculator.init();
 
 		this.tipBox = new TipBox(this);
@@ -110,7 +117,7 @@ class Engine {
 		/* Initialize Shader program */
 		const { vertexShader, fragmentShader, attributes } = globalData;
 		this.shaders = [
-			new Shader(0, this.gl, this.ext, vertexShader, fragmentShader, attributes, maxInstancesCount),
+			new Shader(0, this.gl, vertexShader, fragmentShader, attributes, maxInstancesCount),
 		];
 
 		/* Texture management */
@@ -373,10 +380,7 @@ class Engine {
 		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
 
-		const tempVec3 = vec3.create();
-		const viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.set(tempVec3, 0, 0, 0));
-		gl.uniformMatrix4fv(uniforms.view.location, false, viewMatrix);
-		gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(tempVec3, 0, 0, 0)));
+		const viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.set(vec3.create(), 0, 0, 0));
 
 		this.setClamp(0, 0, 0, 0, 0, 0);
 	}
@@ -448,10 +452,12 @@ class Engine {
 	}
 
 	resize(viewportWidth, viewportHeight, pixelScale) {
-		const { canvas, gl } = this;
 		if (this.viewportWidth !== viewportWidth 
 			|| this.viewportHeight !== viewportHeight
 			|| this.pixelScale !== pixelScale) {
+			const { canvas, gl, shift } = this;
+			const uniforms = this.shaders[0].uniforms;
+
 			canvas.style.width = `${viewportWidth}px`;
 			canvas.style.height = `${viewportHeight}px`;
 			const newPixelScale = pixelScale || (this.isRetinaDisplay() ? .5 : 1);
@@ -463,7 +469,8 @@ class Engine {
 			this.viewportWidth = viewportWidth;
 			this.viewportHeight = viewportHeight;
 			this.pixelScale = pixelScale;
-			this.spriteRenderer.initSize(this.viewportWidth, this.viewportHeight);
+			gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(vec3.create(), -viewportWidth, viewportHeight, 0)));
+			shift.setViewportSize(viewportWidth, viewportHeight);
 		}
 	}
 
@@ -476,7 +483,7 @@ class Engine {
 				if (!engine.gamePaused()) {
 					frame++;
 				}
-				engine.refresh(frame * frameDuration, time, i === length - 1);
+				engine.refresh(time, time, i === length - 1);
 			}
 		  	requestAnimationFrame(loop);
 		};

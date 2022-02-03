@@ -73,9 +73,11 @@ void main() {
 	float motionTime = updateTime[MOTION_UPDATE_INDEX];
 	float dt = (time - motionTime) / 1000.;
 	mat4 mat = matrix;
+
 	mat4 shift = IDENTITY;
 	shift[3] = mat[3];
-	shift[3].xyz = modClampPosition(shift[3].xyz + applyMotion(dt, motion, acceleration), clamp);
+
+	shift[3].xyz = shift[3].xyz + applyMotion(dt, motion, acceleration);
 	mat[3].xyz = vec3(0, 0, 0);
 
 	v_opacity = textureIndex[OPACITY_INDEX] / 128.;
@@ -83,9 +85,12 @@ void main() {
 	float isOrtho = max(isHud, 1. - isPerspective);
 	mat4 projection = ortho * isOrtho + perspective * (1. - isOrtho);
 	mat4 spMatrix = isSprite * spriteMatrix + (1. - isSprite) * IDENTITY;
-	vec4 relativePosition = finalView * shift * spMatrix * mat * vertexPosition4;
 
-	float lightDistance = .7 + -300.0 / relativePosition.z;
+	mat4 finalViewShift = finalView * shift;
+	finalViewShift[3].xyz = modClampPosition(finalViewShift[3].xyz, clamp);
+	vec4 relativePosition = finalViewShift * spMatrix * mat * vertexPosition4;
+
+	float lightDistance = 1. + -100.0 / length(relativePosition);
 	v_light = 1.00 * globalLight * textureIndex[LIGHT_INDEX] / 128. * lightDistance;
 
 	vec4 position = projection * relativePosition;

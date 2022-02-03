@@ -1,5 +1,6 @@
 class Shift {
 	constructor() {
+		const [defaultViewportWidth, defaultViewportHeight] = Constants.defaultViewportSize();
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
@@ -10,9 +11,16 @@ class Shift {
 			x:0, y:0, z:0,
 			zoom:1, opacity: 1, rotation:[0,0,0],
 		};
+		this.viewportSize = [defaultViewportWidth, defaultViewportHeight];
 		this.dirty = true;
 		this.tempVec3 = vec3.create();
 		this.viewMatrix = mat4.create();
+	}
+
+	setViewportSize(width, height) {
+		this.viewportSize[0] = width;
+		this.viewportSize[1] = height;
+		this.dirty = true;
 	}
 
 	turnLightOff() {
@@ -41,6 +49,8 @@ class Shift {
 		this.goal.rotation[0] = 0;
 		this.goal.rotation[1] = 0;
 		this.goal.rotation[2] = 0;
+		this.viewportSize[0] = 800;
+		this.viewportSize[1] = 400;
 		this.dirty = true;
 	}
 
@@ -99,7 +109,7 @@ class Shift {
 				mat4.rotateX(this.viewMatrix, this.viewMatrix, this.rotation[0] * Constants.DEG_TO_RAD);
 				mat4.rotateY(this.viewMatrix, this.viewMatrix, this.rotation[1] * Constants.DEG_TO_RAD);
 				mat4.rotateZ(this.viewMatrix, this.viewMatrix, this.rotation[2] * Constants.DEG_TO_RAD);
-				mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, this.x * coef2 + shakeX, -this.y * coef2 + shakeY, -this.z * coef2));
+				mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, this.x * coef2 + shakeX - this.viewportSize[0], -this.y * coef2 + shakeY + this.viewportSize[1], -this.z * coef2));
 				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 				gl.uniform1f(uniforms.globalLight.location, this.light);
 

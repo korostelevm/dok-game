@@ -1,10 +1,9 @@
 const {mat2, mat3, mat4, vec2, vec3, vec4, quat} = glMatrix;
 
 class Shader {
-	constructor(id, gl, ext, vertexShader, fragmentShader, attributes, maxInstanceCount) {
+	constructor(id, gl, vertexShader, fragmentShader, attributes, maxInstanceCount) {
 		this.id = id;
 		this.gl = gl;
-		this.ext = ext;
 		this.attributes = {};
 		this.uniforms = {};
 		this.vertexShaderCode = vertexShader;

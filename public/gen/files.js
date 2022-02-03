@@ -245,6 +245,7 @@ const globalFiles=[
   "index.html",
   {
     "lib": [
+      ".DS_Store",
       {"core": ["game-base.js", "game-core.js", "shift.js"]},
       "engine.js",
       {
@@ -270,7 +271,7 @@ const globalFiles=[
         ]
       },
       {"newgrounds": ["ng.js", "sound.mp3"]},
-      {"opengl": ["buffer-renderer.js", "shader.js", "utils.js"]},
+      {"opengl": [".DS_Store", "buffer-renderer.js", "shader.js", "utils.js"]},
       {
         "physics": [
           {"base": ["physics-base.js"]},

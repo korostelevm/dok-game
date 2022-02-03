@@ -4639,5 +4639,27 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "111eb669e77b24ef6fe4dfc38150b91b": [
+    {
+      "collision_url": "assets/nuna-shake.png",
+      "updated": "2022-02-03T06:18:01.845Z",
+      "top": 0.056640625,
+      "left": 0.263671875,
+      "bottom": 0.966796875,
+      "right": 0.818359375,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/nuna-shake.png",
+      "updated": "2022-02-03T06:18:01.848Z",
+      "top": 0.056640625,
+      "left": 0.263671875,
+      "bottom": 0.966796875,
+      "right": 0.78125,
+      "close": 0,
+      "far": 1
+    }
   ]
 }
