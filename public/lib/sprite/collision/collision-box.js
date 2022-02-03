@@ -123,7 +123,7 @@ class CollisionBox {
 	calculateCollisonBoxFromAnimation(animRect, time) {
 		const sprite = this.sprite;
 		const flipX = sprite.direction < 0;
-		const flipY = sprite.ydirection < 0;
+		const flipY = sprite.vdirection < 0;
 		const rLeft = flipX ? 1 - animRect.right : animRect.left;
 		const rRight = flipX ? 1 - animRect.left : animRect.right;
 		const rTop = flipY ? 1 - animRect.bottom : animRect.top;

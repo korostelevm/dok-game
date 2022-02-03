@@ -4661,5 +4661,281 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "e57d444b02ce11d2b9b9bb5f8bd5f522": [
+    {
+      "collision_url": "assets/restaurant.png",
+      "updated": "2022-02-03T09:58:51.970Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 0.495,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/restaurant.png",
+      "updated": "2022-02-03T09:58:51.972Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 0.495,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/restaurant.png",
+      "updated": "2022-02-03T09:58:51.973Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 0.495,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/restaurant.png",
+      "updated": "2022-02-03T09:58:51.979Z",
+      "top": 0.55,
+      "left": 0.3175,
+      "bottom": 0.905,
+      "right": 0.645,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/restaurant.png",
+      "updated": "2022-02-03T09:58:51.984Z",
+      "top": 0.61,
+      "left": 0.3175,
+      "bottom": 0.915,
+      "right": 0.645,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/restaurant.png",
+      "updated": "2022-02-03T09:58:51.989Z",
+      "top": 0.685,
+      "left": 0.29,
+      "bottom": 0.91,
+      "right": 0.66,
+      "close": 0,
+      "far": 1
+    }
+  ],
+  "45901c99d895a4fad0d8fb9186d97ec1": [
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.003Z",
+      "top": 0.171875,
+      "left": 0.21875,
+      "bottom": 0.8515625,
+      "right": 0.7421875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.004Z",
+      "top": 0.1640625,
+      "left": 0.265625,
+      "bottom": 0.8515625,
+      "right": 0.6875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.005Z",
+      "top": 0.171875,
+      "left": 0.265625,
+      "bottom": 0.8828125,
+      "right": 0.625,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.006Z",
+      "top": 0.1640625,
+      "left": 0.265625,
+      "bottom": 0.8515625,
+      "right": 0.6875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.007Z",
+      "top": 0.1484375,
+      "left": 0.265625,
+      "bottom": 0.8515625,
+      "right": 0.6875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.007Z",
+      "top": 0.1484375,
+      "left": 0.1875,
+      "bottom": 0.8515625,
+      "right": 0.6875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.008Z",
+      "top": 0.1640625,
+      "left": 0.1875,
+      "bottom": 0.8515625,
+      "right": 0.6875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.010Z",
+      "top": 0.171875,
+      "left": 0.1875,
+      "bottom": 0.8515625,
+      "right": 0.7421875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.011Z",
+      "top": 0.1640625,
+      "left": 0.1875,
+      "bottom": 0.8515625,
+      "right": 0.6875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.012Z",
+      "top": 0.171875,
+      "left": 0.1875,
+      "bottom": 0.8828125,
+      "right": 0.625,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.013Z",
+      "top": 0.1484375,
+      "left": 0.21875,
+      "bottom": 0.8515625,
+      "right": 0.75,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.014Z",
+      "top": 0.1484375,
+      "left": 0.21875,
+      "bottom": 0.8515625,
+      "right": 0.75,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/chef.png",
+      "updated": "2022-02-03T09:58:52.014Z",
+      "top": 0.5,
+      "left": 0.21875,
+      "bottom": 0.8671875,
+      "right": 0.921875,
+      "close": 0,
+      "far": 1
+    }
+  ],
+  "4bd66254cb1d5f372491ccb1f4dcc392": [
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.086Z",
+      "top": 0.01809954751131222,
+      "left": 0.064,
+      "bottom": 0.9638009049773756,
+      "right": 0.952,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.086Z",
+      "top": 0.13574660633484162,
+      "left": 0.008,
+      "bottom": 0.9683257918552036,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.087Z",
+      "top": 0.21266968325791855,
+      "left": 0.008,
+      "bottom": 0.9683257918552036,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.087Z",
+      "top": 0.2850678733031674,
+      "left": 0.008,
+      "bottom": 0.9683257918552036,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.088Z",
+      "top": 0.3438914027149321,
+      "left": 0.008,
+      "bottom": 0.9683257918552036,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.090Z",
+      "top": 0.42081447963800905,
+      "left": 0.008,
+      "bottom": 0.9683257918552036,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.090Z",
+      "top": 0.5384615384615384,
+      "left": 0.008,
+      "bottom": 0.9728506787330317,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/burger.png",
+      "updated": "2022-02-03T09:58:52.092Z",
+      "top": 0.6877828054298643,
+      "left": 0.008,
+      "bottom": 0.9909502262443439,
+      "right": 0.968,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

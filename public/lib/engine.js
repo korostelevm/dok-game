@@ -96,10 +96,8 @@ class Engine {
 		const gl = canvas.getContext("webgl2", config.webgl);
 		this.gl = gl;
 
-		const info = this.gl.getExtension('WEBGL_debug_renderer_info');
-		const vendor = gl.getParameter(info.UNMASKED_VENDOR_WEBGL);
-		const renderer = gl.getParameter(info.UNMASKED_RENDERER_WEBGL);
-		console.log("WebGL Renderer:", vendor, renderer);
+		const renderer = gl.getParameter(gl.RENDERER);
+		console.log("WebGL Renderer:", renderer);
 		this.fakeGPU = renderer === "Google SwiftShader";
 
 		await this.textureEdgeCalculator.init();
@@ -125,9 +123,9 @@ class Engine {
 		this.shaders[0].use();
 		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.textureEdgeCalculator);
 
-		/* Buffer renderer */
-		this.bufferRenderer = new BufferRenderer(gl, config);
-		this.spriteRenderer = new SpriteRenderer(this.bufferRenderer, this.shaders[0]);
+		/* Renderer */
+		this.spriteRenderer = new SpriteRenderer(this.gl, this.shaders[0].attributes);
+		this.spriteRenderer.init();
 
 		/* Load sprite */
 		this.spriteCollection = new SpriteCollection(this, this.refresher);
@@ -376,13 +374,7 @@ class Engine {
 	}
 
 	initialize(gl, shader) {
-		const uniforms = shader.uniforms;
-		this.bufferRenderer.setAttribute(shader.attributes.vertexPosition, 0, Utils.FULL_VERTICES);		
 		gl.clearColor(.0, .0, .1, 1);
-
-		const viewMatrix = mat4.fromRotationTranslation(mat4.create(), quat.fromEuler(quat.create(), -90, 0, 0), vec3.set(vec3.create(), 0, 0, 0));
-
-		this.setClamp(0, 0, 0, 0, 0, 0);
 	}
 
 	setProjectionMatrices(viewAngle, pixelScale) {
@@ -499,7 +491,7 @@ class Engine {
 	}
 
 	gamePaused() {
-		return this.game.paused || !this.focusFixer.focused;
+		return this.game.paused;// || !this.focusFixer.focused;
 	}
 
 	refresh(time, actualTime, render, skipUpdateView) {
@@ -543,7 +535,7 @@ class Engine {
 			}
 			if (sprite.updateFlag & Constants.RENDER_FLAG.TEXTURE) {
 				const {anim, direction, opacity, light, spriteType } = sprite;
-				this.spriteRenderer.setTextureIndex(spriteIndex, anim, opacity, light, spriteType);
+				this.spriteRenderer.setTextureIndex(spriteIndex, anim?.index, opacity, light, spriteType);
 			}
 			if (sprite.updateFlag & Constants.RENDER_FLAG.ANIMATION_INFO) {
 				const {anim, direction, vdirection, } = sprite;

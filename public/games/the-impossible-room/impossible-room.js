@@ -509,7 +509,7 @@ class ImpossibleRoom extends RoomBase {
 					this[`${wrongDoor}_monster_front`].changeOpacity(0, this.engine.lastTime);
 					this[`${wrongDoor}_door`].changeAnimation(this.atlas.impossible_room_door, this.engine.lastTime);
 					this.audio.eat.play();
-					if (!this.engine.inception) {
+					if (!this.core.playerOverlay.inception) {
 						setTimeout(() => this.gameOver(), 5000);
 					}
 				}, 2000);

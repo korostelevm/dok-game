@@ -49,6 +49,7 @@ class LockedRoom extends RoomBase {
 					cols: 10, rows: 6,
 					range: [26,27],
 					frameRate: 10,
+					hotspot: [.25, 1],
 				}),
 			butler_smell_left: await engine.addTexture({
 					url: "assets/butler.png",
@@ -63,6 +64,7 @@ class LockedRoom extends RoomBase {
 					cols: 10, rows: 6,
 					range: [30,31],
 					frameRate: 10,
+					hotspot: [.25, 1],
 				}),
 			butler_smell_right_arm: await engine.addTexture({
 					url: "assets/butler.png",
@@ -70,6 +72,7 @@ class LockedRoom extends RoomBase {
 					cols: 10, rows: 6,
 					range: [32,33],
 					frameRate: 10,
+					hotspot: [.25, 1],
 				}),
 			butler_smell_left_arm: await engine.addTexture({
 					url: "assets/butler.png",
@@ -77,12 +80,14 @@ class LockedRoom extends RoomBase {
 					cols: 10, rows: 6,
 					range: [34,35],
 					frameRate: 10,
+					hotspot: [.25, 1],
 				}),
 			butler_foul: await engine.addTexture({
 					url: "assets/butler.png",
 					collision_url: "assets/butler.png",
 					cols: 10, rows: 6,
 					range: [36],
+					hotspot: [.25, 1],
 				}),
 		};
 

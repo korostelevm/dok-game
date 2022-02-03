@@ -26,12 +26,9 @@ class GameBase {
 		this.sceneData = this.data[this.sceneTag] || (this.data[this.sceneTag] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
-		if (!this.data.gender) {
-			this.data.gender = (this.engine.inception ? null : localStorage.getItem("playerGender")) || "M";
-		}
 		this.data.sceneTag = this.sceneTag;
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;
-		this.swapData = engine?.swapData?.TheImpossibleRoom;
+		this.swapData = this.core.swapData;
 
 		ChronoUtils.tick();
 		const gameModel = await this.getGameModel(engine);

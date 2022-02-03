@@ -1,6 +1,9 @@
 class RoomBase extends GameBase {
 	async init(engine, coreName) {
 		await super.init(engine, coreName);
+		if (!this.data.gender) {
+			this.data.gender = (this.core.playerOverlay.inception ? null : localStorage.getItem("playerGender")) || "M";
+		}
 
 		this.core.sidebar.updateSidebar(this.sceneTag, localStorage.getItem("joker"));
 		this.core.sidebar.enableSidebar(false);
@@ -190,18 +193,21 @@ class RoomBase extends GameBase {
 					url: "assets/piano.png",
 					cols:1,rows:2,
 					range:[0],
+					hotspot: [.5, 1],
 				}),
 			piano_splash: await engine.addTexture(
 				{
 					url: "assets/piano.png",
 					cols:1,rows:2,
 					range:[1],
+					hotspot: [.5, 1],
 				}),
 			mouse: await engine.addTexture(
 				{
 					url: "assets/mouse.png",
 					cols:3,rows:3,
 					range:[0],
+					hotspot: [.5, .5],
 				}),
 			mouse_run: await engine.addTexture(
 				{
@@ -223,6 +229,7 @@ class RoomBase extends GameBase {
 					collision_url: "assets/mouse.png",
 					cols:3,rows:3,
 					range:[6],
+					hotspot: [.5, 1],
 				}),
 			monkor_shake_left: await engine.addTexture({
 					url: genderToShakeUrl[gender],
@@ -231,6 +238,7 @@ class RoomBase extends GameBase {
 					direction: -1,
 					range: [0,1],
 					frameRate: 5,
+					hotspot: [.5, 1],
 				}),
 			monkor_shake_right: await engine.addTexture({
 					url: genderToShakeUrl[gender],
@@ -238,6 +246,7 @@ class RoomBase extends GameBase {
 					cols: 1, rows: 2,
 					range: [0,1],
 					frameRate: 5,
+					hotspot: [.5, 1],
 				}),
 			monkor_knock_left: await engine.addTexture({
 					url: genderToShakeUrl[gender],
@@ -246,6 +255,7 @@ class RoomBase extends GameBase {
 					direction: -1,
 					range: [0],
 					frameRate: 5,
+					hotspot: [.5, 1],
 				}),
 			monkor_knock_right: await engine.addTexture({
 					url: genderToShakeUrl[gender],
@@ -253,6 +263,7 @@ class RoomBase extends GameBase {
 					cols: 1, rows: 2,
 					range: [0],
 					frameRate: 5,
+					hotspot: [.5, 1],
 				}),
 			backwall: await engine.addTexture(
 				{
@@ -842,7 +853,7 @@ class RoomBase extends GameBase {
 			this.addToInventory("note");
 		}
 
-		const playerName = (this.engine.inception ? null : localStorage.getItem("playerName"));
+		const playerName = (this.core.playerOverlay.inception ? null : localStorage.getItem("playerName"));
 		document.getElementById("player-name").textContent =
 			!playerName || playerName.toUpperCase().startsWith("MONKOR") ? "Monkor" : playerName;
 
@@ -994,7 +1005,6 @@ class RoomBase extends GameBase {
 		this.mouse = this.spriteFactory.create({
 			name: "mouse",
 			size: [24, 24],
-			hotspot: [12, 12],
 			anim: this.atlas.mouse,
 			opacity: 0,
 		}, {
@@ -1004,7 +1014,6 @@ class RoomBase extends GameBase {
 		this.file = this.spriteFactory.create({
 			name: "file",
 			size: [40, 40],
-			hotspot: [20, 40],
 			anim: this.atlas.file,
 			opacity: 0,
 		}, {
@@ -1028,6 +1037,7 @@ class RoomBase extends GameBase {
 					file.changeOpacity(file.properties.dropped && !pickedUp ? 1 : 0, this.engine.lastTime);
 				},
 				dropped: (file, dropped) => {
+					console.log(dropped, file.properties.pickedUp, this.engine.lastTime);
 					file.changeOpacity(dropped && !file.properties.pickedUp ? 1 : 0, this.engine.lastTime);
 					if (dropped) {
 						this.removeFromInventory("file");
@@ -1040,7 +1050,6 @@ class RoomBase extends GameBase {
 			name: "piano",
 			opacity: 0,
 			size: [300, 200],
-			hotspot: [150, 200],
 			anim: this.atlas.piano,
 		});
 
@@ -1129,7 +1138,9 @@ class RoomBase extends GameBase {
 	putBackJoker() {
 		if (this.inventory.indexOf("joker") >= 0) {
 			this.removeFromInventory("joker");
-			this.batman.setProperty("liftJoker", true);
+			if (this.batman) {
+				this.batman.setProperty("liftJoker", true);
+			}
 		}
 	}
 
@@ -1273,7 +1284,7 @@ class RoomBase extends GameBase {
 			this.file.setProperty("name", e.dataTransfer.files[0].name.split(".")[0]);
 			this.file.setProperty("dropped", lastTime);
 			this.file.setProperty("pickedUp", null);
-//			console.log(e.dataTransfer.files[0].name);
+			// console.log(e.dataTransfer.files[0].name);
 		}
 	}
 
@@ -1345,7 +1356,7 @@ class RoomBase extends GameBase {
 
 	gameOver() {
 		this.paused = true;
-		if (this.engine.inception) {
+		if (this.core.playerOverlay.inception) {
 			return;
 		}
 

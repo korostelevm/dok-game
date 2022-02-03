@@ -43,6 +43,7 @@ class ComputerRoom extends RoomBase {
 				cols:5,
 				rows:5,
 				range:[0],
+				hotspot: [.5, 1],
 			}),
 			other_nuna: await engine.addTexture({
 				url: "assets/nuna.png",
@@ -50,6 +51,7 @@ class ComputerRoom extends RoomBase {
 				cols:5,
 				rows:5,
 				range:[0],
+				hotspot: [.5, 1],
 			}),
 			other_twin: await engine.addTexture({
 				url: "assets/twin.png",
@@ -57,6 +59,7 @@ class ComputerRoom extends RoomBase {
 				cols:6,
 				rows:6,
 				range:[0],
+				hotspot: [.5, 1],
 			}),
 		};
 
@@ -103,8 +106,8 @@ class ComputerRoom extends RoomBase {
 
 
 		let computerAnim = this.atlas.computer_desk;
-		if (this.engine.inception) {
-			switch (this.engine.swapData["TheImpossibleRoom"].gender) {
+		if (this.core.playerOverlay.inception) {
+			switch (this.core.swapData.gender) {
 				case "":
 					computerAnim = this.atlas.computer_desk;
 					break;
@@ -118,7 +121,7 @@ class ComputerRoom extends RoomBase {
 					computerAnim = this.atlas.computer_desk_twin;
 					break;
 				default:
-					throw new Error("Invalid gender: " + this.engine.swapData["TheImpossibleRoom"].gender);
+					throw new Error("Invalid gender: " + this.core.swapData.gender);
 					break;
 			}
 		}
@@ -131,9 +134,9 @@ class ComputerRoom extends RoomBase {
 			x: 300, y: 170,
 		}, {
 			actions: [
-				{ name: "look", condition: () => this.engine.inception,
+				{ name: "look", condition: () => this.core.playerOverlay.inception,
 					message: () => {
-						const { gender } = this.engine.swapData["TheImpossibleRoom"];
+						const { gender } = this.core.swapData;
 						const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
 						const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
 						const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";
@@ -142,11 +145,11 @@ class ComputerRoom extends RoomBase {
 					},
 					lookup: 1000,
 				},
-				{ name: "look", condition: () => !this.engine.inception,
+				{ name: "look", condition: () => !this.core.playerOverlay.inception,
 					message: "It's a computer desk in the middle of the room. I wonder what it's for.",
 					lookup: 1000,
 				},
-				{ name: "sit", condition: () => !this.engine.inception,
+				{ name: "sit", condition: () => !this.core.playerOverlay.inception,
 					action: computer_desk => {
 						this.achieve("The Computer");
 
@@ -156,10 +159,10 @@ class ComputerRoom extends RoomBase {
 						}, GameTitle);
 					},
 				},
-				{ name: "talk", condition: () => this.engine.inception,
+				{ name: "talk", condition: () => this.core.playerOverlay.inception,
 					lookup: 1000,
 					action: computer_desk => {
-						const { gender } = this.engine.swapData["TheImpossibleRoom"];
+						const { gender } = this.core.swapData;
 						const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
 						const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
 						const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";
@@ -233,11 +236,11 @@ class ComputerRoom extends RoomBase {
 
 
 	addMonkor() {
-		if (!this.engine.inception
-			&& this?.engine?.swapData?.TheImpossibleRoom?.sceneTag === this.constructor.name
-			&& this?.engine?.swapData?.TheImpossibleRoom?.ComputerRoom?.monkor) {
-			const { x, y } = this.engine.swapData.TheImpossibleRoom.ComputerRoom.monkor;
-			const { gender, name } = this.engine.swapData["TheImpossibleRoom"];
+		if (!this.core.playerOverlay.inception
+			&& this?.core?.swapData?.sceneTag === this.constructor.name
+			&& this?.core?.swapData?.ComputerRoom?.monkor) {
+			const { x, y } = this.core.swapData.ComputerRoom.monkor;
+			const { gender, name } = this.core.swapData;
 			this.otherMonkor = this.spriteFactory.create({
 				name,
 				x, y,
@@ -247,7 +250,7 @@ class ComputerRoom extends RoomBase {
 				actions: [
 					{ name: "talk",
 						action: computer_desk => {
-							const { gender } = this.engine.swapData["TheImpossibleRoom"];
+							const { gender } = this.core.swapData;
 							const sir = gender === "M" ? "sir" : gender === "W" ? "madam" : "guys";
 							const He_doesnt = gender === "M" ? "He doesn't" : gender === "W" ? "She doesn't" : "They don't";
 							const He_is = gender === "M" ? "He is" : gender === "W" ? "She is" : "They are";

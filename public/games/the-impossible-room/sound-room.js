@@ -494,7 +494,6 @@ class SoundRoom extends RoomBase {
 			name: "monkey",
 			anim: this.atlas.monkey,
 			size: [400, 200],
-			hotspot: [200, 164],
 			x: 400, y: 373,
 		}, {
 			actions: [
@@ -508,7 +507,6 @@ class SoundRoom extends RoomBase {
 			name: "monkey",
 			anim: this.atlas.monkey,
 			size: [400, 200],
-			hotspot: [200, 164],
 			x: 400, y: 373,
 			direction: -1,
 		}, {

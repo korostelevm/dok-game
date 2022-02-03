@@ -4,9 +4,9 @@ const MOTION_INDEX = 1;
 const MUL = 2;
 
 class SpriteRenderer {
-	constructor(bufferRenderer, shader) {
-		this.attributes = shader.attributes;
-		this.bufferRenderer = bufferRenderer;
+	constructor(gl, attributes) {
+		this.bufferRenderer = new BufferRenderer(gl);
+		this.attributes = attributes;
 		this.tempMatrix = new Float32Array(16);
 		this.tempQuat = quat.create();
 		this.tempTranslation = vec3.create();
@@ -15,6 +15,10 @@ class SpriteRenderer {
 		this.tempAcceleration = vec3.create();
 		this.updateTimes = new Float32Array([0, 0, 0, 0]);
 		this.alter = -400;
+	}
+
+	init() {
+		this.bufferRenderer.setAttribute(this.attributes.vertexPosition, 0, Utils.FULL_VERTICES);
 	}
 
 	makeMatrix(x, y, z, width, height, hotX, hotY, rotation) {
@@ -43,11 +47,8 @@ class SpriteRenderer {
 		this.bufferRenderer.setAttribute(this.attributes.acceleration, index, this.tempAcceleration);
 	}
 
-	setTextureIndex(index, anim, opacity, light, spriteType) {
-		const attributes = this.attributes;
-		if (anim) {
-			this.bufferRenderer.setAttributeByte4(attributes.textureIndex, index, anim.index, light * 128, opacity * 128, spriteType);
-		}		
+	setTextureIndex(index, animIndex, opacity, light, spriteType) {
+		this.bufferRenderer.setAttributeByte4(this.attributes.textureIndex, index, animIndex, light * 128, opacity * 128, spriteType);
 	}
 
 	setAnimationInfo(index, anim, direction, vdirection) {

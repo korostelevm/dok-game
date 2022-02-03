@@ -74,6 +74,7 @@ class Restroom extends RoomBase {
 				{
 					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
+					hotspot: [.5,.5],
 				}),
 			monkor_shit_push: await engine.addTexture(
 				{
@@ -81,12 +82,14 @@ class Restroom extends RoomBase {
 					cols: 3, rows: 3,
 					frameRate: 2,
 					range: [0, 1],
+					hotspot: [.5,.5],
 				}),
 			monkor_shit_pick_paper: await engine.addTexture(
 				{
 					url: genderToShitUrl[gender],
 					cols: 3, rows: 3,
 					range: [2],
+					hotspot: [.5,.5],
 				}),
 			monkor_shit_wipe: await engine.addTexture(
 				{
@@ -94,6 +97,7 @@ class Restroom extends RoomBase {
 					cols: 3, rows: 3,
 					frameRate: 8,
 					range: [3, 4],
+					hotspot: [.5,.5],
 				}),
 			monkor_shit_talk: await engine.addTexture(
 				{
@@ -101,6 +105,7 @@ class Restroom extends RoomBase {
 					cols: 3, rows: 3,
 					frameRate: 8,
 					range: [5, 8],
+					hotspot: [.5,.5],
 				}),
 			monkor_shit_talk_pause: await engine.addTexture(
 				{
@@ -108,6 +113,7 @@ class Restroom extends RoomBase {
 					cols: 3, rows: 3,
 					frameRate: 8,
 					range: [5],
+					hotspot: [.5,.5],
 				}),
 			no_smoking: await engine.addTexture(
 				{
@@ -300,7 +306,6 @@ class Restroom extends RoomBase {
 			anim: this.atlas.monkor_shit,
 			x: 325, y: 190,
 			size: [256, 256],
-			hotspot: [128,128],
 			opacity: 0,
 		}, {
 			onChange: {

@@ -1,8 +1,7 @@
 class BufferRenderer {
-	constructor(gl, config) {
+	constructor(gl) {
 		this.gl = gl;
 		this.lastBoundBuffer = null;
-		this.config = config;
 		this.tempVertices = new Float32Array(Utils.makeVertexArray(
 		    [ 0, 0 ],
 		    [ 0, 0 ],

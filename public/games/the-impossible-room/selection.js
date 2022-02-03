@@ -118,7 +118,7 @@ class Selection extends GameBase {
 		input.style.borderStyle = "hidden";
 		input.setAttribute("spellcheck", false);
 		input.style.color = "#3634d6";
-		input.value = this.data.name || (this.engine.inception ? null : localStorage.getItem("playerName")) || "Monkor Bakaru";
+		input.value = this.data.name || (this.core.playerOverlay.inception ? null : localStorage.getItem("playerName")) || "Monkor Bakaru";
 		input.size = 55;
 		input.style.background = "none";
 		input.style.fontFamily = "handwriting";
@@ -192,7 +192,7 @@ class Selection extends GameBase {
 		this.data.name = this.playerNameInput.value;
 		this.overContainer.innerText = "";
 
-		if (!this.engine.inception) {
+		if (!this.core.playerOverlay.inception) {
 			this.core.playerOverlay.changeCharacter(character);
 			localStorage.setItem("playerName", this.data.name);
 			localStorage.setItem("playerGender", this.data.gender);

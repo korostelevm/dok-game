@@ -3,7 +3,7 @@ class TheImpossibleRoomCore extends GameCore {
 		super(engine);
 		this.sidebar = new Sidebar(engine, document.getElementById("sidebar"), document);
 		this.voiceManager = new VoiceManager();
-		this.playerOverlay = new PlayerOverlay(engine);
+		this.playerOverlay = new PlayerOverlay(engine, this);
 	}
 
 	async init() {

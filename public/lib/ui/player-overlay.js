@@ -1,6 +1,7 @@
 class PlayerOverlay {
-	constructor(engine) {
+	constructor(engine, core) {
 		this.engine = engine;
+		this.core = core;
 		this.init();
 	}
 
@@ -20,17 +21,17 @@ class PlayerOverlay {
 
 	setInception(inception, extraData, nextScene) {
 		this.inception = inception;
-		const temp = this.engine.swapData || {};
-		this.engine.swapData = this.engine.data;
-		this.engine.data = temp;
+		const temp = this.core.swapData || {};
+		this.core.swapData = this.core.data;
+		this.core.data = temp;
 		if (extraData) {
 			for (let i in extraData) {
-				this.engine.data[i] = extraData[i];
+				this.core.data[i] = extraData[i];
 			}
 		}
 
-		const TempScene = nextScene || this.engine.SwapScene || StartScreen;
-		this.engine.SwapScene = this.engine.game.constructor;
+		const TempScene = nextScene || this.core.SwapScene || StartScreen;
+		this.core.SwapScene = this.engine.game.constructor;
 		this.engine.setGame(new TempScene(), true).then(game => {
 			game.onInception(inception);
 		});

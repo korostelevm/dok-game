@@ -22,7 +22,7 @@ class Sprite extends Body {
 		this.spriteType = Constants.SPRITE_TYPES[data.spriteType] || data.spriteType;
 
 		this.direction = data.direction || 1;
-		this.ydirection = data.ydirection || 1;
+		this.vdirection = data.vdirection || 1;
 		this.anim = typeof(data.anim) === "string" ? TextureAtlas.getAnimFromAtlas(game.atlas, data.anim) : data.anim;
 
 		this.collisionBox = new CollisionBox(this, data.collisionFrame, data.showCollisionBox);
@@ -158,14 +158,14 @@ class Sprite extends Body {
 		return false;
 	}
 
-	changeYDirection(direction) {
-		if (this.ydirection !== direction) {
-			this.ydirection = direction;
+	changeVDirection(direction) {
+		if (this.vdirection !== direction) {
+			this.vdirection = direction;
 			this.updateFlag |= Constants.UPDATE_FLAG.DIRECTION;
 			this.collisionBox.dirty = true;
 			this.needUpdate();
 			if (this.shadow) {
-				this.shadow.changeYDirection(direction);
+				this.shadow.changeVDirection(direction);
 			}
 			return true;
 		}
