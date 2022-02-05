@@ -13,16 +13,16 @@
 class KeyboardHandler {
 	constructor(document) {
 		const listeners = {};
-		const keys = {};
+		const keys = new Set();
 		document.addEventListener("keydown", e => {
-			if (!keys[e.key]) {
-				keys[e.key] = true;
+			if (!keys.has(e.key)) {
+				keys.add(e.key);
 				const listener = listeners[e.key] || listeners[null];
 				this.executeAll(listener?.down, e);
 			}
 		});
 		document.addEventListener("keyup", e => {
-			this.keys[e.key] = false;
+			keys.delete(e.key);
 			const listener = listeners[e.key] || listeners[null];
 			this.executeAll(listener?.up, e);
 		});

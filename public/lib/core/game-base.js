@@ -28,14 +28,11 @@ class GameBase {
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;
 		this.swapData = this.core.swapData;
 
-		ChronoUtils.tick();
 		const gameModel = await this.getGameModel(engine);
-		ChronoUtils.tick();
 		if (this.gameModel) {
 			this.atlas = {
 				...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {}),
 			};
-			ChronoUtils.tick();
 			this.cameras = this.gameModel.cameras || {};
 			for (let id in this.cameras) {
 				if (this.cameras[id].default || !this.camera) {
@@ -180,7 +177,7 @@ class GameBase {
 		}
 
 		if (this.state) {
-			this.applyState(this.state);
+			this.performAction(this.states[this.state]);
 		}
 	}
 
@@ -284,25 +281,52 @@ class GameBase {
 
 	changeState(state) {
 		if (this.state !== state) {
+			const oldState = this.state;
 			this.state = state;
-			this.applyState(this.state);
+			this.performAction(this.states[this.state]);
+			for (let listener of this.stateListeners) {
+				listener.onState(state, oldState);
+			}
 		}
 	}
 
-	applyState(state) {
-		const { music, loopMusic } = this.states[state] || {};
-		this.changeMusic(music ?? null, loopMusic);
-		for (let listener of this.stateListeners) {
-			listener.onState(state);
+	performAction(action) {
+		const { animation, actions, state, music, loopMusic, onKeyDown } = action || {};
+
+		if (typeof(music) !== "undefined") {
+			this.changeMusic(music, loopMusic);
+		}
+
+		if (onKeyDown) {
+			this.handleStateOnKeyDown(onKeyDown.key, onKeyDown, this.state);
+		}
+
+		if (actions) {
+			actions.forEach(action => this.performAction(action));
+		}
+		if (animation) {
+			const sprite = this[animation.sprite];
+			sprite.changeAnimation(animation.anim);
+		}
+		if (state) {
+			this.changeState(state);
 		}
 	}
 
-	addStateListener(listener) {
-		this.stateListeners.add(listener);
-	}
-
-	removeStateListener(listener) {
-		this.stateListeners.delete(listener);
+	handleStateOnKeyDown(key, action, state) {
+		const listener = () => {
+			this.performAction(action);
+		};
+		const stateListener = {
+			onState: (newState, oldState) => {
+				if (oldState === state) {
+					this.engine.keyboardHandler.removeListener(listener);		
+					this.stateListeners.delete(stateListener);
+				}
+			}
+		};
+		this.engine.keyboardHandler.addKeyDownListener(key, listener);
+		this.stateListeners.add(stateListener);
 	}
 
 	addPropertyListener(listener, property) {

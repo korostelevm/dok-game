@@ -14,18 +14,61 @@
   "states": {
     "intro": {
       "start": true,
-      "music": "intro"
+      "music": "intro",
+      "onKeyDown": {
+        "key": " ",
+        "state": "dialog"
+      }
     },
     "dialog": {
       "music": "duel",
-      "loopMusic": true
-    },
-    "waiting": {
-      "music": "duel",
-      "loopMusic": true
+      "loopMusic": true,
+      "actions": [
+          {
+            "animation": {
+              "sprite": "left",
+              "anim": "left-cowboy"
+            }
+          },
+          {
+            "animation": {
+              "sprite": "right",
+              "anim": "right-cowboy"
+            }
+          }        
+      ],
+      "onKeyDown": {
+        "key": " ",
+        "animation": {
+          "sprite": "left",
+          "anim": "left-tease"
+        }
+      }
     },
     "draw": {
-      "music": null
+      "music": null,
+      "actions": [
+          {
+            "animation": {
+              "sprite": "left",
+              "anim": "left-draw"
+            }
+          },
+          {
+            "animation": {
+              "sprite": "right",
+              "anim": "right-draw-shoot"
+            }
+          }        
+      ],
+      "onKeyDown": {
+        "key": " ",
+        "actions": [
+          {
+            "state": "intro"
+          }
+        ]
+      }
     },
     "quickdraw": {
 
@@ -86,11 +129,7 @@
       "aux": {
         "BlinkAuxiliary": {
           "chance": 0.7,
-          "blinkAnim": "background-sign-off",
-          "active": {
-            "if-state": "dialog",
-            "value": true
-          }
+          "blinkAnim": "background-sign-off"
         }
       }
     },
@@ -107,8 +146,13 @@
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 3,
       "aux": {
         "BlinkAuxiliary": {
-          "chance": 0.001,
-          "blinkAnim": "right-tease"
+          "chance": 0.002,
+          "blinkAnim": "right-tease",
+          "active": {
+            "if-state": "dialog",
+            "value": true,
+            "else": false
+          }
         },
         "OnFrameAuxiliary": {
           "onFrame": {
@@ -141,22 +185,7 @@
               {
                 "if-key-down": " ",
                 "if-not-state": "draw",
-                "actions": [
-                  {
-                    "gameState": "draw"
-                  },
-                  {
-                    "animation": {
-                      "anim": "left-draw"
-                    }
-                  },
-                  {
-                    "animation": {
-                      "sprite": "right",
-                      "anim": "right-draw-shoot"
-                    }
-                  }
-                ]
+                "gameState": "draw"
               }
             ]
           }

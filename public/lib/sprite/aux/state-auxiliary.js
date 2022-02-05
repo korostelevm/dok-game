@@ -2,7 +2,7 @@ class StateAuxiliary extends Auxiliary {
 	constructor(config, sprite) {
 		super(config, sprite);
 		this.gameState = config.gameState;
-		this.sprite.game.addStateListener(this);
+		this.sprite.game.stateListeners.add(this);
 	}
 
 	onState(state) {

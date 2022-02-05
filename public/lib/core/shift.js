@@ -1,6 +1,5 @@
 class Shift {
 	constructor() {
-		const [defaultViewportWidth, defaultViewportHeight] = Constants.defaultViewportSize();
 		this.x = 0;
 		this.y = 0;
 		this.z = 0;
@@ -11,7 +10,7 @@ class Shift {
 			x:0, y:0, z:0,
 			zoom:1, opacity: 1, rotation:[0,0,0],
 		};
-		this.viewportSize = [defaultViewportWidth, defaultViewportHeight];
+		this.viewportSize = Constants.defaultViewportSize();
 		this.dirty = true;
 		this.tempVec3 = vec3.create();
 		this.viewMatrix = mat4.create();
@@ -23,13 +22,13 @@ class Shift {
 		this.dirty = true;
 	}
 
-	turnLightOff() {
-		this.goal.light = 0;
-		this.light = 0;		
+	turnLight(value) {
+		this.goal.light = value;
+		this.light = value;
 	}
 
-	turnLightOn() {
-		this.goal.light = 1;
+	fadeLight(value) {
+		this.goal.light = value;
 	}
 
 	clear() {
@@ -49,8 +48,9 @@ class Shift {
 		this.goal.rotation[0] = 0;
 		this.goal.rotation[1] = 0;
 		this.goal.rotation[2] = 0;
-		this.viewportSize[0] = 800;
-		this.viewportSize[1] = 400;
+		const [defaultViewportWidth, defaultViewportHeight] = Constants.defaultViewportSize();
+		this.viewportSize[0] = defaultViewportWidth;
+		this.viewportSize[1] = defaultViewportHeight;
 		this.dirty = true;
 	}
 

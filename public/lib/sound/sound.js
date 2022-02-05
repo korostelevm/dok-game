@@ -31,11 +31,11 @@ class Sound {
 		}
 		if (!this.playingAudio) {
 			const audio = this.audios.pop();
-			audio.loop = true;
 			this.playingAudio = audio;
 		}
 		this.playingAudio.volume = volume ?? this.volume;
 		this.playingAudio.play();
+		this.playingAudio.loop = true;
 	}
 
 	stop() {

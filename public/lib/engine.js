@@ -1,7 +1,5 @@
-ChronoUtils.tick();
 class Engine {
 	constructor(config, forceDebug) {
-		ChronoUtils.tick();
 		/* Prototypes */
 		this.setupPrototypes();
 		/* Setup stylesheet emoji cursors. */
@@ -80,7 +78,6 @@ class Engine {
 	async init(config) {
 		this.config = config;
 
-		ChronoUtils.tick();
 		console.log("Config", config);
 		const maxInstancesCount = config.maxInstancesCount || 1000;
 		await this.loadDomContent(document);
@@ -91,7 +88,6 @@ class Engine {
 		if (!canvas) {
 			console.error("You need a canvas with id 'canvas'.");
 		}
-		ChronoUtils.tick();
 		this.canvas = canvas;
 		const gl = canvas.getContext("webgl2", config.webgl);
 		this.gl = gl;
@@ -135,7 +131,6 @@ class Engine {
 		if (this.debug) {
 			this.sceneTab = new SceneTab(this, globalFiles);
 		}
-		ChronoUtils.tick();
 
 		/* Setup game selector */
 		if (this.debug) {
@@ -149,14 +144,11 @@ class Engine {
 		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
 		engine.canvas.style.opacity = 1;
-		this.initialize(gl, this.shaders[0]);
-
-		ChronoUtils.tick();
+		this.initialize(gl);
 
 		this.lastTime = 0;
 		this.time = 0;
 		await this.initGame(this.game);
-		ChronoUtils.tick();
 
 		this.textureManager.generateAllMipMaps();
 
@@ -224,7 +216,7 @@ class Engine {
 	}
 
 	async setGame(game, skipCursor) {
-		this.shift.turnLightOff();
+		this.shift.turnLight(0);
 		if (!skipCursor) {
 			await this.cursorManager.changeCursor("wait");
 		}
@@ -285,21 +277,18 @@ class Engine {
 		await this.adjustRefresh(game);
 
 		await game.init(this, this.classToGame[game.sceneTag]);
-		this.shift.turnLightOn();
+		this.shift.fadeLight(1);
 		await game.postInit();
 
 		const sprites = this.spriteCollection.sprites;
 		for (let i = 0; i < game.physics.length; i++) {
 			await game.physics[i].init(sprites, game);
 		}
-		ChronoUtils.tick();
 
 		if (this.sceneTab) {
 			this.sceneTab.setScene(game);
 		}
 
-		ChronoUtils.tick();
-		ChronoUtils.log();
 		if (this.game.handleMouse) {
 			this.mouseHandlerManager.add(this.game);
 		}
@@ -381,7 +370,7 @@ class Engine {
 		};		
 	}
 
-	initialize(gl, shader) {
+	initialize(gl) {
 		gl.clearColor(.0, .0, .1, 1);
 	}
 

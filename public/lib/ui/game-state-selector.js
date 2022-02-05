@@ -23,7 +23,7 @@ class GameStateSelector extends UiComponent {
 
 	onGameChange(game) {
 		if (this.game) {
-			this.game.removeStateListener(this);
+			this.game.stateListeners.delete(this);
 		}
 		this.game = game;
 		this.selector.textContent = "";
@@ -37,7 +37,7 @@ class GameStateSelector extends UiComponent {
 		this.div.style.display = Object.keys(game.states).length ? "" : "none";
 		this.selector.value = game.state;
 
-		game.addStateListener(this);
+		game.stateListeners.add(this);
 	}
 
 	onState(state) {

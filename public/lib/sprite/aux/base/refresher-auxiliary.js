@@ -1,6 +1,7 @@
 class RefresherAuxiliary extends Auxiliary {
 	constructor(config, sprite) {
 		super(config, sprite);
+		this.conditionHandler = new ConditionHandler(this);
 		this.onActivationListener = (sprite, active) => {
 			this.setActive(active);
 		};
@@ -8,11 +9,13 @@ class RefresherAuxiliary extends Auxiliary {
 	}
 
 	checkForConditions(config) {
-		if (config.active) {
-			if (typeof(active) === "object") {
-
+		if (typeof(config.active) !== "undefined") {
+			if (typeof(config.active) === "object") {
+				this.conditionHandler.handleCondition(config.active, value => {
+					this.setActive(value);
+				});
 			} else {
-				
+				this.setActive(config.active);
 			}
 		}
 	}

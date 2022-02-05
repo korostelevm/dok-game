@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["GameBase"] = GameBase;		// lib/core/game-base.js
   NAME_TO_CLASS["GameCore"] = GameCore;		// lib/core/game-core.js
   NAME_TO_CLASS["Shift"] = Shift;		// lib/core/shift.js
+  NAME_TO_CLASS["ConditionHandler"] = ConditionHandler;		// lib/sprite/aux/base/condition/condition-handler.js
   NAME_TO_CLASS["Generator"] = Generator;		// lib/map/generator/base/generator.js
   NAME_TO_CLASS["ActionManager"] = ActionManager;		// lib/sprite/aux/base/action-manager.js
   NAME_TO_CLASS["Auxiliary"] = Auxiliary;		// lib/sprite/aux/base/auxiliary.js

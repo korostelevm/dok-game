@@ -308,6 +308,7 @@ const globalFiles=[
                   ".DS_Store",
                   "action-manager.js",
                   "auxiliary.js",
+                  {"condition": ["condition-handler.js"]},
                   "refresher-auxiliary.js",
                   "toggle-click-auxiliary.js"
                 ]
@@ -370,7 +371,6 @@ const globalFiles=[
       {
         "utils": [
           "array-utils.js",
-          "chrono-utils-self-load.js",
           "constants.js",
           "random-utils.js",
           "string.js",

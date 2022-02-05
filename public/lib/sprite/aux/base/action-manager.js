@@ -50,13 +50,13 @@ class ActionManager {
 
 	checkCondition(action) {
 		if (action["if-key-down"]) {
-			if (!this.sprite.engine.keyboardHandler.keys[action["if-key-down"]]) {
+			if (!this.sprite.engine.keyboardHandler.keys.has(action["if-key-down"])) {
 				return false;
 			}
 		}
 
 		if (action["if-key-up"]) {
-			if (this.sprite.engine.keyboardHandler.keys[action["if-key-up"]]) {
+			if (this.sprite.engine.keyboardHandler.keys.has(action["if-key-up"])) {
 				return false;
 			}
 		}

@@ -100,7 +100,7 @@ app.use(serve(`${__dirname}/public`));
 
 async function regenerateIndex() {
 	const data = await listFiles(`${__dirname}/public`, "");
-	const paths = generatePaths(data).filter(path => path.indexOf("self-load") < 0).map(path => path.indexOf("/") === 0 ? path.substr(1) : path);
+	const paths = generatePaths(data).map(path => path.indexOf("/") === 0 ? path.substr(1) : path);
 	paths.sort(compareDependencies);
 	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
