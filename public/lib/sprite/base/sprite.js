@@ -51,6 +51,8 @@ class Sprite extends Body {
 			game[data.list].push(this);
 		}
 
+		this.actionManager = new ActionManager(this);
+
 		this.aux = new Map();
 		for (let name in data.aux) {
 			const classObj = nameToClass(name);
@@ -89,13 +91,13 @@ class Sprite extends Body {
 	}
 
 	getAnimationFrame(t) {
-		const time = t || this.engine.lastTime;
+		const time = t || this.engine.time;
 		const anim = this.anim;
 		const animationElapsed = time - this.updated.animation;
 		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
-		const currentFrame = anim.startFrame + (frameOffset + framesElapsed) % frameCount;
+		const currentFrame = anim.startFrame + Math.min(anim.maxFrameCount, frameOffset + framesElapsed) % frameCount;
 		return currentFrame;
 	}
 
@@ -181,7 +183,7 @@ class Sprite extends Body {
 			this.anim = typeof(anim) === "string" ? TextureAtlas.getAnimFromAtlas(this.game.atlas, anim) : anim;
 			this.updateFlag |= Constants.UPDATE_FLAG.ANIMATION;
 			this.collisionBox.dirty = true;
-			this.changeAnimationTime(this.engine.lastTime);
+			this.changeAnimationTime(this.engine.time);
 			this.needUpdate();
 			if (this.shadow) {
 				this.shadow.changeAnimation(anim);

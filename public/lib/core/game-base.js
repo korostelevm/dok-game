@@ -11,7 +11,6 @@ class GameBase {
 		this.stateListeners = new Set();
 		this.propertyListeners = new Set();
 		this.ready = 0;
-		this.music = null;
 		this.bodyStyle = null;
 		this.bodyStyleBack = {};
 	}
@@ -19,7 +18,6 @@ class GameBase {
 	async init(engine, coreName) {
 		this.engine = engine;
 		this.imageLoader = engine.imageLoader;
-		this.coreName = coreName;
 		this.core = await engine.getCore(coreName);
 		this.core.setGame(this);
 		this.data = this.core.data;
@@ -132,36 +130,47 @@ class GameBase {
 
 	setProperty(key, value) {
 		if (this.properties[key] !== value) {
+			const oldValue = this.properties[key];
 			this.properties[key] = value;
-			this.onChange(key, value);
+			this.onChange(key, value, oldValue);
 		}
 	}
 
-	onChange(key, value) {
+	onChange(key, value, oldValue) {
 		for (let listener of this.propertyListeners) {
-			listener.onGameProperty(this, key, value);
+			listener.onGameProperty(this, key, value, oldValue);
 		}
 		switch(key) {
 			case "loop":
 			case "mute":
-				if (this.audio[this.music]) {
-					if (!this.properties.mute) {
-						if (this.properties.loop) {
-							this.audio[this.music].loop();	
-						} else {
-							this.audio[this.music].play();
-						}
-					} else {
-						this.audio[this.music].stop();
-					}
-				}
+				this.onMusicChange(this.properties.music, this.properties.mute, this.properties.loop);
 				break;
+			case "music":
+				if (oldValue) {
+					this.audio[oldValue].stop();
+				}
+				this.onMusicChange(this.properties.music, this.properties.mute, this.properties.loop);
+				break;
+		}
+	}
+
+	onMusicChange(music, mute, loop) {
+		if (this.audio[music]) {
+			if (!mute) {
+				if (loop) {
+					this.audio[music].loop();	
+				} else {
+					this.audio[music].play();
+				}
+			} else {
+				this.audio[music].stop();
+			}
 		}
 	}
 
 	async postInit() {
 		for (let key in this.properties) {
-			this.onChange(key, this.properties[key], true);
+			this.onChange(key, this.properties[key]);
 		}
 		this.spriteFactory.postCreate();
 		this.engine.setPerspective(await this.isPerspective());
@@ -284,7 +293,7 @@ class GameBase {
 		const { music, loopMusic } = this.states[state] || {};
 		this.changeMusic(music ?? null, loopMusic);
 		for (let listener of this.stateListeners) {
-			listener.onState(listener, state);
+			listener.onState(state);
 		}
 	}
 
@@ -292,20 +301,22 @@ class GameBase {
 		this.stateListeners.add(listener);
 	}
 
-	addPropertyListener(listener) {
-		this.propertyListeners.add(listener);
+	removeStateListener(listener) {
+		this.stateListeners.delete(listener);
+	}
+
+	addPropertyListener(listener, property) {
+		this.propertyListeners.add(!property ? listener : {
+			onChange: (key, value) => {
+				if (key === property) {
+					listener[`onChange${key.charAt(1).toUpperCase()}${key.substr(1)}`](value);
+				}
+			},
+		});
 	}
 
 	changeMusic(music, loop) {
-		if (music !== this.music) {
-			if (this.music) {
-				this.setProperty("mute", true);
-			}
-			this.music = music;
-			if (this.music) {
-				this.setProperty("loop", loop);
-				this.setProperty("mute", false);
-			}
-		}
+		this.setProperty("music", music);
+		this.setProperty("loop", loop);
 	}
 }

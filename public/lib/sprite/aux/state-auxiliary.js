@@ -5,7 +5,7 @@ class StateAuxiliary extends Auxiliary {
 		this.sprite.game.addStateListener(this);
 	}
 
-	onState(self, state) {
-		self.sprite.changeActive(state === self.gameState);
+	onState(state) {
+		this.sprite.changeActive(state === this.gameState);
 	}
 }

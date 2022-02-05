@@ -169,7 +169,7 @@ class Sidebar {
 			const sidebar = document.getElementById("sidebar");
 			sidebar.style.display = "flex";
 			engine.setGame(new Menu());
-			engine.resetGame(this.engine.game.coreName);
+			engine.resetGame(this.engine.game.core.name);
 		});
 	}
 

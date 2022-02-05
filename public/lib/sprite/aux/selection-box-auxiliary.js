@@ -20,7 +20,7 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 				this.changeSelection(null);
 			}
 		};
-		this.sprite.handleMouse = (self, e, x, y) => this.handleMouse(self, e, x, y);
+		this.sprite.addMouseListener(this);
 	}
 
 	changeSelection(sprite) {
@@ -70,12 +70,15 @@ class SelectionBoxAuxiliary extends MousePointerAuxiliary {
 		}
 	}
 
-	handleMouse(self, e, x, y) {
-		const inGame = e.type !== "mouseleave" && x >= 0 && x < self.engine.viewportWidth && y >= 0 && y < self.engine.viewportHeight;
-		const onHud = e.type !== "mouseleave" && self.game.overlayHud.visible && inGame && y >= self.engine.viewportHeight - 150;
-		self.engine.cursorManager.changeCursor(e.type !== "mouseleave" && inGame && !onHud ? "none" : self.game.arrowCursor);
-		self.changeOpacity(inGame && !onHud ? 1 : 0);
-		if (!self.opacity) {
+	handleMouse(e, x, y) {
+		const sprite = this.sprite;
+		const engine = sprite.engine;
+		const game = sprite.game;
+		const inGame = e.type !== "mouseleave" && x >= 0 && x < engine.viewportWidth && y >= 0 && y < engine.viewportHeight;
+		const onHud = e.type !== "mouseleave" && game.overlayHud.visible && inGame && y >= engine.viewportHeight - 150;
+		engine.cursorManager.changeCursor(e.type !== "mouseleave" && inGame && !onHud ? "none" : game.arrowCursor);
+		sprite.changeOpacity(inGame && !onHud ? 1 : 0);
+		if (!sprite.opacity) {
 			this.changeSelection(null);					
 		} else if (e.type === "mousedown") {
 			this.hold();

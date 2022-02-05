@@ -77,7 +77,7 @@ class MouseHandlerManager {
 		this.mouseX = (e.pageX - this.rect.x) / this.rect.width * this.canvas.offsetWidth,
 		this.mouseY = (e.pageY - this.rect.y) / this.rect.height * this.canvas.offsetHeight;
 		for (let mouseHandler of this.handlerSet) {
-			mouseHandler.handleMouse(mouseHandler, e, this.mouseX, this.mouseY);
+			mouseHandler.handleMouse(e, this.mouseX, this.mouseY);
 		}
 		if (this.forceRefreshOnMouse) {
 			engine.forceRefresh();

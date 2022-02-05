@@ -25,7 +25,7 @@
       "loopMusic": true
     },
     "draw": {
-
+      "music": null
     },
     "quickdraw": {
 
@@ -86,7 +86,11 @@
       "aux": {
         "BlinkAuxiliary": {
           "chance": 0.7,
-          "blinkAnim": "background-sign-off"
+          "blinkAnim": "background-sign-off",
+          "active": {
+            "if-state": "dialog",
+            "value": true
+          }
         }
       }
     },
@@ -105,13 +109,59 @@
         "BlinkAuxiliary": {
           "chance": 0.001,
           "blinkAnim": "right-tease"
+        },
+        "OnFrameAuxiliary": {
+          "onFrame": {
+            "9": {
+              "audio": "lazer",
+              "animation": {
+                "sprite": "left",
+                "anim": "left-shot-with-gun"
+              }
+            }
+          }
         }
-      }      
+      }
     },
     "left": {
       "anim": "left-cowboy",
       "size": [ 600, 385 ],
-      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 4
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 4,
+      "aux": {
+        "OnFrameAuxiliary": {
+          "onFrame": {
+            "3": [
+              {
+                "if-key-up": " ",
+                "if-not-state": "draw",
+                "animation": {
+                  "anim": "left-cowboy"
+                }                    
+              },
+              {
+                "if-key-down": " ",
+                "if-not-state": "draw",
+                "actions": [
+                  {
+                    "gameState": "draw"
+                  },
+                  {
+                    "animation": {
+                      "anim": "left-draw"
+                    }
+                  },
+                  {
+                    "animation": {
+                      "sprite": "right",
+                      "anim": "right-draw-shoot"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
     }
   },
   "audio": {
@@ -120,6 +170,9 @@
     },
     "duel": {
       "src": "audio/duel.mp3"
+    },
+    "lazer": {
+      "src": "audio/lazer.mp3"
     }
   },
   "atlas": {
@@ -177,13 +230,13 @@
       "hotspot": "{hotspot_center}",
       "range":[1, 2],
       "loop": 1,
-      "frameRate": 10
+      "frameRate": 8
     },
     "left-draw": {
       "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
-      "range":[1, 8],
+      "range":[3, 8],
       "loop": 1,
       "frameRate": 10
     },
@@ -226,7 +279,7 @@
       "hotspot": "{hotspot_center}",
       "range":[10, 13],
       "loop": 1,
-      "frameRate": 8
+      "frameRate": 12
     },
     "right-body-shot": {
       "url": "assets/duel-right.png",

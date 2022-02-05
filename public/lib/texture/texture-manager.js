@@ -1,5 +1,5 @@
 class TextureManager {
-	constructor(gl, uniforms, textureEdgeCalculator) {
+	constructor(gl, textureLocation, textureEdgeCalculator) {
 		this.gl = gl;
 		this.textureEdgeCalculator = textureEdgeCalculator;
 		this.glTextures = [];
@@ -10,8 +10,13 @@ class TextureManager {
 		this.nextTextureIndex = 0;
 		this.canvas = document.createElement("canvas");
 
+		this.glTextures = this.initTextureLocation(gl, textureLocation);
+	}
+
+	initTextureLocation(gl, textureLocation) {
 		const maxTextureUnits = gl.getParameter(gl.MAX_TEXTURE_IMAGE_UNITS);
-		this.glTextures = new Array(maxTextureUnits).fill(null).map((a, index) => {
+		const arrayOfTextureIndex = new Array(maxTextureUnits).fill(null).map((a, index) => index);	//	0, 1, 2, 3... 16
+		const glTextures = arrayOfTextureIndex.map(index => {
 			const glTexture = gl.createTexture();
 			const width = 1, height = 1;
 			gl.activeTexture(gl[`TEXTURE${index}`]);
@@ -22,11 +27,8 @@ class TextureManager {
 			return { glTexture, width, height };
 		});
 
-		if (!uniforms.uTextures) {
-			console.error(`Missing uTextures uniforms`);
-			return;
-		}
-		gl.uniform1iv(uniforms.uTextures.location, new Array(maxTextureUnits).fill(null).map((a, index) => index));
+		gl.uniform1iv(textureLocation, arrayOfTextureIndex);
+		return glTextures;
 	}
 
 	createAtlas(index, imageLoader) {

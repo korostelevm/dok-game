@@ -1295,7 +1295,7 @@ class RoomBase extends GameBase {
 	}
 
 	resetGame() {
-		this.engine.resetGame(this.coreName);
+		this.engine.resetGame(this.core.name);
 	}
 
 	updateFile(time) {
@@ -1371,7 +1371,7 @@ class RoomBase extends GameBase {
 			document.getElementById("game-over").style.display = "none";
 			document.getElementById("game-over-message").style.display = "none";
 			this.resetMouse();
-			this.resetGame(this.coreName);
+			this.resetGame(this.core.name);
 			this.engine.setGame(new GameTitle());
 		});
 	}
@@ -1390,7 +1390,7 @@ class RoomBase extends GameBase {
 		return true;
 	}
 
-	handleMouse(self, e, x, y) {
+	handleMouse(e, x, y) {
 		if (e.target.id === "im" || e.target.id === "title") {
 			if (this.onMouseTitle) {
 				this.onMouseTitle(e);	

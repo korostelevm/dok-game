@@ -57,7 +57,7 @@ class Smurf extends GameBase {
 		];
 	}
 
-	handleMouse(self, e, x, y) {
+	handleMouse(e, x, y) {
 		const zdiff = (y - 400) * 3 - 100;
 		const xdiff = 400 + (x-400) * (1 - zdiff / 500);
 		if (e.type === "mousemove") {

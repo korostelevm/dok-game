@@ -9,6 +9,9 @@ class MuteAuxiliary extends ToggleClickAuxiliary {
 		if (key === "mute") {
 			this.setState(value?1:0, true);
 		}
+		if (key === "music") {
+			this.sprite.changeActive(value);
+		}
 	}
 
 	onToggle(state) {

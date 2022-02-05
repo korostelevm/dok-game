@@ -121,7 +121,7 @@ class Engine {
 		/* Texture management */
 		this.shaders[0].link();
 		this.shaders[0].use();
-		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms, this.textureEdgeCalculator);
+		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms.uTextures.location, this.textureEdgeCalculator);
 
 		/* Renderer */
 		this.spriteRenderer = new SpriteRenderer(this.gl, this.shaders[0].attributes);
@@ -136,6 +136,11 @@ class Engine {
 			this.sceneTab = new SceneTab(this, globalFiles);
 		}
 		ChronoUtils.tick();
+
+		/* Setup game selector */
+		if (this.debug) {
+			this.selector = new GameStateSelector(this);
+		}
 
 		await this.setupGameName(globalFiles);
 
@@ -226,8 +231,8 @@ class Engine {
 		await this.resetScene();
 		this.restoreUIComponents();
 
-		const oldCoreName = this.game?.coreName;
-		const newCoreName = game.coreName;
+		const oldCoreName = this.game?.core?.name;
+		const newCoreName = game.core?.name;
 		if (oldCoreName && oldCoreName !== newCoreName) {
 			//	exit core
 			const oldCore = await this.getCore(oldCoreName);
@@ -237,6 +242,9 @@ class Engine {
 		this.game = game;
 		if (this.ready) {
 			await this.initGame(this.game);
+		}
+		for (let listener of this.gameChangeListener) {
+			listener.onGameChange(game);
 		}
 		return game;
 	}
@@ -351,7 +359,7 @@ class Engine {
 	async getCore(coreName) {
 		if (!this.core[coreName]) {
 			const coreClass = nameToClass(`${coreName}Core`, true) || GameCore;
-			this.core[coreName] = new coreClass(this);
+			this.core[coreName] = new coreClass(this, coreName);
 			await this.core[coreName].init();
 		}
 		return this.core[coreName];

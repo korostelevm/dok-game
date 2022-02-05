@@ -326,7 +326,7 @@ class Menu extends GameBase {
 		audio.volume = volume;
 	}
 
-	handleMouse(self, e, x, y) {
+	handleMouse(e, x, y) {
 		if (!this.ready) {
 			return;
 		}

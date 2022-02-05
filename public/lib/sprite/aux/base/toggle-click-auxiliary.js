@@ -6,19 +6,22 @@ class ToggleClickAuxiliary extends Auxiliary {
 			sprite.anim,
 			config.toggleAnim,
 		];
-		sprite.handleMouse = (sprite, e, x, y) => {
-			if (e.type === "mousedown") {
-				if (sprite.getCollisionBox().containsPoint2d(x, y)) {
-					this.setState(1 - this.state);
-				}
-			} else if (e.type === "mousemove") {
-				if (sprite.getCollisionBox().containsPoint2d(x, y)) {
-					sprite.engine.cursorManager.changeCursor(sprite.game.pointerCursor);
-				} else {
-					sprite.engine.cursorManager.changeCursor(sprite.game.arrowCursor);					
-				}
+		sprite.addMouseListener(this);
+	}
+
+	handleMouse(e, x, y) {
+		const sprite = this.sprite;
+		if (e.type === "mousedown") {
+			if (sprite.getCollisionBox().containsPoint2d(x, y)) {
+				this.setState(1 - this.state);
 			}
-		};
+		} else if (e.type === "mousemove") {
+			if (sprite.getCollisionBox().containsPoint2d(x, y)) {
+				sprite.engine.cursorManager.changeCursor(sprite.game.pointerCursor);
+			} else {
+				sprite.engine.cursorManager.changeCursor(sprite.game.arrowCursor);					
+			}
+		}
 	}
 
 	setState(state, skipToggle) {

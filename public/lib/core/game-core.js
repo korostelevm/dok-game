@@ -1,5 +1,6 @@
 class GameCore {
-	constructor(engine) {
+	constructor(engine, name) {
+		this.name = name;
 		this.engine = engine;
 		this.data = {};
 		this.swapData = {};

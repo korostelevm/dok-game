@@ -27,16 +27,8 @@ class Body {
 		this.activationListeners.add(listener);
 	}
 
-	removeActivationListener(listener) {
-		this.activationListeners.delete(listener);		
-	}
-
 	addMotionChangeListener(listener) {
 		this.motionChangeListeners.add(listener);
-	}
-
-	removeMotionChangeListener(listener) {
-		this.motionChangeListeners.delete(listener);		
 	}
 
 	changePosition(x, y, z, t, skipRecalculate) {
@@ -218,5 +210,21 @@ class Body {
 			followAxis[1] ? target.acceleration[1] : this.acceleration[1],
 			followAxis[2] ? target.acceleration[2] : this.acceleration[2],
 			time);
+	}
+
+	addMouseListener(listener) {
+		this.setupMouseListener();
+		this.mouseListeners.add(listener);
+	}
+
+	setupMouseListener() {
+		if (!this.handleMouse) {
+			this.mouseListeners = new Set();
+			this.handleMouse = (e, x, y)  => {
+				for (let listener of this.mouseListeners) {
+					listener.handleMouse(e, x, y);
+				}
+			}
+		}
 	}
 }

@@ -65,14 +65,14 @@ class Shift {
 			|| this.rotation[1] !== this.goal.rotation[1]
 			|| this.rotation[2] !== this.goal.rotation[2]
 			|| this.dirty) {
-			const dx = (this.goal.x - this.x);
-			const dy = (this.goal.y - this.y);
-			const dz = (this.goal.z - this.z);
-			const drx = (this.goal.rotation[0] - this.rotation[0]);
-			const dry = (this.goal.rotation[1] - this.rotation[1]);
-			const drz = (this.goal.rotation[2] - this.rotation[2]);
-			const dzoom = (this.goal.zoom - this.zoom);
-			const dlight = (this.goal.light - this.light);
+			const dx = this.goal.x - this.x;
+			const dy = this.goal.y - this.y;
+			const dz = this.goal.z - this.z;
+			const drx = this.goal.rotation[0] - this.rotation[0];
+			const dry = this.goal.rotation[1] - this.rotation[1];
+			const drz = this.goal.rotation[2] - this.rotation[2];
+			const dzoom = this.goal.zoom - this.zoom;
+			const dlight = this.goal.light - this.light;
 			const dist = Math.sqrt(dx*dx + dy*dy + dz*dz + drx*drx + dry*dry + drz*drz + dzoom*dzoom + dlight*dlight);
 			const speed = dist / 20;
 			const mul = dist < .1 ? 1 : Math.min(speed, dist) / dist;
@@ -109,7 +109,11 @@ class Shift {
 				mat4.rotateX(this.viewMatrix, this.viewMatrix, this.rotation[0] * Constants.DEG_TO_RAD);
 				mat4.rotateY(this.viewMatrix, this.viewMatrix, this.rotation[1] * Constants.DEG_TO_RAD);
 				mat4.rotateZ(this.viewMatrix, this.viewMatrix, this.rotation[2] * Constants.DEG_TO_RAD);
-				mat4.translate(this.viewMatrix, this.viewMatrix, vec3.set(this.tempVec3, this.x * coef2 + shakeX - this.viewportSize[0], -this.y * coef2 + shakeY + this.viewportSize[1], -this.z * coef2));
+				mat4.translate(this.viewMatrix, this.viewMatrix,
+					vec3.set(this.tempVec3,
+						this.x * coef2 + shakeX - this.viewportSize[0],
+						-this.y * coef2 + shakeY + this.viewportSize[1],
+						-this.z * coef2));
 				gl.uniformMatrix4fv(uniforms.view.location, false, this.viewMatrix);
 				gl.uniform1f(uniforms.globalLight.location, this.light);
 

@@ -4,7 +4,19 @@ class RefresherAuxiliary extends Auxiliary {
 		this.onActivationListener = (sprite, active) => {
 			this.setActive(active);
 		};
+		this.checkForConditions(this.config);
 	}
+
+	checkForConditions(config) {
+		if (config.active) {
+			if (typeof(active) === "object") {
+
+			} else {
+				
+			}
+		}
+	}
+
 
 	setActive(active) {
 		if (!active) {

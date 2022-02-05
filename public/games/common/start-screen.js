@@ -48,7 +48,7 @@ class StartScreen extends GameBase {
 	async postInit() {
 	}
 
-	handleMouse(self, e) {
+	handleMouse(e) {
 		if (e.type === "click") {
 			const { classObj, gameConfig } = this;
 			if (classObj) {

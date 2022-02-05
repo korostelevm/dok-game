@@ -130,6 +130,7 @@ const globalFiles=[
   },
   {
     "audio": [
+      ".DS_Store",
       "animal-cry.mp3",
       "beep.mp3",
       "blinkpong-loop.mp3",
@@ -145,6 +146,7 @@ const globalFiles=[
       "im-batman.mp3",
       "jingle.mp3",
       "joker.mp3",
+      "lazer.mp3",
       "om.mp3",
       "piano.mp3",
       "pickup.mp3",
@@ -177,6 +179,7 @@ const globalFiles=[
   "game-starter.js",
   {
     "games": [
+      ".DS_Store",
       {"common": ["start-screen.js"]},
       {
         "demo": [
@@ -296,10 +299,14 @@ const globalFiles=[
       },
       {
         "sprite": [
+          ".DS_Store",
           {
             "aux": [
+              ".DS_Store",
               {
                 "base": [
+                  ".DS_Store",
+                  "action-manager.js",
                   "auxiliary.js",
                   "refresher-auxiliary.js",
                   "toggle-click-auxiliary.js"
@@ -315,6 +322,7 @@ const globalFiles=[
               "mouse-pointer-auxiliary.js",
               "mute-auxiliary.js",
               "npc-auxiliary.js",
+              "on-frame-auxiliary.js",
               "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js",
               "platform-hero-auxiliary.js",

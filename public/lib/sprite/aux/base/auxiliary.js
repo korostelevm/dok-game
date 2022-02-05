@@ -8,5 +8,6 @@ class Auxiliary {
 	}	
 
 	gridInit(sprite, col, row, grid) {
+
 	}
 }
