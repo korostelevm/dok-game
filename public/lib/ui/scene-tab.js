@@ -33,14 +33,14 @@ class SceneTab extends UiComponent {
 									const className = StringUtil.kebabToClass(scene);
 									gameList[name].push({
 										name: className,
-										classObj: nameToClass(className),
+										classObj: nameToClass(className) || GameBase,
 									});
 								} else if (extension === "json") {
 									const configFile = `games/${name}/${sceneFile}`;
 									const gameConfig = await engine.fileUtils.load(configFile);
 									gameList[name].push({
 										name: scene,
-										classObj: nameToClass(gameConfig.className || "GameBase"),
+										classObj: nameToClass(gameConfig.className, true) || GameBase,
 										configFile,
 									});
 								}

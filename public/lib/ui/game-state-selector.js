@@ -27,7 +27,6 @@ class GameStateSelector extends UiComponent {
 		}
 		this.game = game;
 		this.selector.textContent = "";
-		console.log(game.states);
 		for (let state of Object.keys(game.states)) {
 			const option = document.createElement("option");
 			option.text = state;

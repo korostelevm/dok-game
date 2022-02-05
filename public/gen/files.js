@@ -197,7 +197,7 @@ const globalFiles=[
           "space-shooter.json"
         ]
       },
-      {"space-opera": [{"base": ["duel.js"]}, "duel.json"]},
+      {"space-opera": ["duel.json"]},
       {
         "the-impossible-room": [
           "animal-room.js",

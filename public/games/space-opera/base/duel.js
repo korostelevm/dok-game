@@ -1,2 +1,0 @@
-class Duel extends GameBase {
-}

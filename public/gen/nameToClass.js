@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["FlatLand"] = FlatLand;		// games/demo/base/flat-land.js
   NAME_TO_CLASS["GameRing"] = GameRing;		// games/demo/base/game-ring.js
   NAME_TO_CLASS["Smurf"] = Smurf;		// games/demo/base/smurf.js
-  NAME_TO_CLASS["Duel"] = Duel;		// games/space-opera/base/duel.js
   NAME_TO_CLASS["RoomBase"] = RoomBase;		// games/the-impossible-room/base/room-base.js
   NAME_TO_CLASS["TheImpossibleRoomCore"] = TheImpossibleRoomCore;		// games/the-impossible-room/base/the-impossible-room-core.js
   NAME_TO_CLASS["WorldOfTurtle"] = WorldOfTurtle;		// games/turtle/base/world-of-turtle.js
