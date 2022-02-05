@@ -6,7 +6,8 @@
 		"pixelScale": 0,
 		"viewportSize": [900, 600],
 		"perspective": true,
-		"forceRefreshOnMouse": true
+		"forceRefreshOnMouse": true,
+		"backgroundColor": "#000011"
 	},
 	"world": {
 		"backwall": {

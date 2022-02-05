@@ -2503,28 +2503,6 @@
       "far": 1
     }
   ],
-  "38473edaa9ba51f06dd4a4e7b18af873": [
-    {
-      "collision_url": "assets/clue-lobby.png",
-      "updated": "2022-01-16T04:08:34.813Z",
-      "top": 0.185,
-      "left": 0.175,
-      "bottom": 0.62,
-      "right": 0.5025,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/clue-lobby.png",
-      "updated": "2022-01-16T04:08:34.813Z",
-      "top": 0,
-      "left": 0,
-      "bottom": 1,
-      "right": 1,
-      "close": 0,
-      "far": 1
-    }
-  ],
   "9beb746874b6aec039d91ccf9e2345da": [
     {
       "collision_url": "assets/hand.png",
@@ -4289,129 +4267,6 @@
       "far": 1
     }
   ],
-  "4f662c4f91ea8b17b51657dac2fc2393": [
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.896Z",
-      "top": 0,
-      "left": 0,
-      "bottom": 1,
-      "right": 1,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.905Z",
-      "top": 0.025,
-      "left": 0.115,
-      "bottom": 0.62,
-      "right": 0.2725,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.910Z",
-      "top": 0.025,
-      "left": 0.115,
-      "bottom": 0.655,
-      "right": 0.2725,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.920Z",
-      "top": 0.025,
-      "left": 0.065,
-      "bottom": 0.645,
-      "right": 0.2725,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.926Z",
-      "top": 0.025,
-      "left": 0.115,
-      "bottom": 0.62,
-      "right": 0.2725,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.934Z",
-      "top": 0.025,
-      "left": 0.115,
-      "bottom": 0.62,
-      "right": 0.2725,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.942Z",
-      "top": 0.165,
-      "left": 0.1025,
-      "bottom": 0.625,
-      "right": 0.2825,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.947Z",
-      "top": 0.07,
-      "left": 0.07,
-      "bottom": 0.62,
-      "right": 0.3125,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.968Z",
-      "top": 0.065,
-      "left": 0.0225,
-      "bottom": 0.63,
-      "right": 0.3575,
-      "close": 0,
-      "far": 1
-    },
-    null,
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.984Z",
-      "top": 0.225,
-      "left": 0.06,
-      "bottom": 0.485,
-      "right": 0.325,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:01.989Z",
-      "top": 0.065,
-      "left": 0.0225,
-      "bottom": 0.615,
-      "right": 0.3575,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/impossible-room.png",
-      "updated": "2022-01-19T03:27:02.009Z",
-      "top": 0.015,
-      "left": 0.395,
-      "bottom": 0.14,
-      "right": 0.56,
-      "close": 0,
-      "far": 1
-    }
-  ],
   "5b46bb788f559d8869f00c65bbe0da7c": [
     {
       "collision_url": "assets/next-button.png",
@@ -4618,28 +4473,6 @@
       "far": 1
     }
   ],
-  "f85cca264adbbe7a28087f4eab9e4a07": [
-    {
-      "collision_url": "assets/ui-icon.png",
-      "updated": "2022-01-31T08:28:47.221Z",
-      "top": 0.14,
-      "left": 0.06,
-      "bottom": 0.82,
-      "right": 0.62,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/ui-icon.png",
-      "updated": "2022-01-31T08:28:47.221Z",
-      "top": 0.14,
-      "left": 0.06,
-      "bottom": 0.82,
-      "right": 0.92,
-      "close": 0,
-      "far": 1
-    }
-  ],
   "111eb669e77b24ef6fe4dfc38150b91b": [
     {
       "collision_url": "assets/nuna-shake.png",
@@ -4658,68 +4491,6 @@
       "left": 0.263671875,
       "bottom": 0.966796875,
       "right": 0.78125,
-      "close": 0,
-      "far": 1
-    }
-  ],
-  "e57d444b02ce11d2b9b9bb5f8bd5f522": [
-    {
-      "collision_url": "assets/restaurant.png",
-      "updated": "2022-02-03T09:58:51.970Z",
-      "top": 0,
-      "left": 0,
-      "bottom": 0.495,
-      "right": 1,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/restaurant.png",
-      "updated": "2022-02-03T09:58:51.972Z",
-      "top": 0,
-      "left": 0,
-      "bottom": 0.495,
-      "right": 1,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/restaurant.png",
-      "updated": "2022-02-03T09:58:51.973Z",
-      "top": 0,
-      "left": 0,
-      "bottom": 0.495,
-      "right": 1,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/restaurant.png",
-      "updated": "2022-02-03T09:58:51.979Z",
-      "top": 0.55,
-      "left": 0.3175,
-      "bottom": 0.905,
-      "right": 0.645,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/restaurant.png",
-      "updated": "2022-02-03T09:58:51.984Z",
-      "top": 0.61,
-      "left": 0.3175,
-      "bottom": 0.915,
-      "right": 0.645,
-      "close": 0,
-      "far": 1
-    },
-    {
-      "collision_url": "assets/restaurant.png",
-      "updated": "2022-02-03T09:58:51.989Z",
-      "top": 0.685,
-      "left": 0.29,
-      "bottom": 0.91,
-      "right": 0.66,
       "close": 0,
       "far": 1
     }
@@ -4934,6 +4705,28 @@
       "left": 0.008,
       "bottom": 0.9909502262443439,
       "right": 0.968,
+      "close": 0,
+      "far": 1
+    }
+  ],
+  "b43e9612601be03768168bc1e51ce075": [
+    {
+      "collision_url": "assets/ui-icon.png",
+      "updated": "2022-02-05T10:45:00.008Z",
+      "top": 0.14,
+      "left": 0.06,
+      "bottom": 0.82,
+      "right": 0.62,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/ui-icon.png",
+      "updated": "2022-02-05T10:45:00.008Z",
+      "top": 0.14,
+      "left": 0.06,
+      "bottom": 0.82,
+      "right": 0.92,
       "close": 0,
       "far": 1
     }

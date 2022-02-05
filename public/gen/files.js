@@ -371,6 +371,7 @@ const globalFiles=[
       {
         "utils": [
           "array-utils.js",
+          "color-utils.js",
           "constants.js",
           "random-utils.js",
           "string.js",

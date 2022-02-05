@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["Sidebar"] = Sidebar;		// lib/ui/sidebar.js
   NAME_TO_CLASS["TipBox"] = TipBox;		// lib/ui/tip-box.js
   NAME_TO_CLASS["ArrayUtils"] = ArrayUtils;		// lib/utils/array-utils.js
+  NAME_TO_CLASS["ColorUtils"] = ColorUtils;		// lib/utils/color-utils.js
   NAME_TO_CLASS["Constants"] = Constants;		// lib/utils/constants.js
   NAME_TO_CLASS["RandomUtils"] = RandomUtils;		// lib/utils/random-utils.js
   NAME_TO_CLASS["String"] = String;		// lib/utils/string.js

@@ -144,7 +144,6 @@ class Engine {
 		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
 		engine.canvas.style.opacity = 1;
-		this.initialize(gl);
 
 		this.lastTime = 0;
 		this.time = 0;
@@ -370,8 +369,9 @@ class Engine {
 		};		
 	}
 
-	initialize(gl) {
-		gl.clearColor(.0, .0, .1, 1);
+	changeCanvasColor(color) {
+		const [ r, g, b ] = ColorUtils.hexToRgb(color);
+		this.gl.clearColor(r / 255, g / 255, b / 255, 1);
 	}
 
 	setProjectionMatrices(viewAngle, pixelScale) {

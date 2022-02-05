@@ -78,6 +78,8 @@ class GameBase {
 				this.engine.mouseHandlerManager.setForceRefreshOnMouse(true);
 			}
 
+			this.engine.changeCanvasColor(this.gameModel.settings?.backgroundColor || "#000000")
+
 			this.bodyStyle = this.gameModel.settings?.bodyStyle;
 			for (let prop in this.bodyStyle) {
 				this.bodyStyleBack[prop] = document.body.style[prop];
