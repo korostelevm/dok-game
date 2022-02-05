@@ -10,7 +10,8 @@
     "prestart": "npm run install-if-needed",
     "start": "node index.js",
     "browserify": "browserify browserify/main.js -s dok-lib -o public/gen/compact.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "make-icon": "mk-icns icon.png ."
   },
   "author": "Vincent Le Quang <vincentlequang@gmail.com> (https://jacklehamster.github.io/)",
   "repository": {
@@ -39,6 +40,7 @@
     "uglify-js": "^3.14.5"
   },
   "devDependencies": {
-    "browserify": "^17.0.0"
+    "browserify": "^17.0.0",
+    "make-icns": "^1.1.4"
   }
 }

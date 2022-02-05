@@ -10,84 +10,44 @@ const NwBuilder = require('nw-builder');
 const bodyParser = require('body-parser');
 const stringify = require("json-stringify-pretty-compact");
 const { ServerHandler } = require("direct-data/src/server-handler.js");
+const UglifyJS = require("uglify-js");
 
 const PORT = 3000;
  
 const app = express();
  
-app.get('/', (req, res, next) => {
+app.get('/', async (req, res, next) => {
 	res.writeHead(200, {'Content-Type': 'text/html'});
 
 	const queryObject = url.parse(req.url,true).query;
 	const isRelease = "release" in queryObject;
+	const uglify = "uglify" in queryObject;
+	const compact = "compact" in queryObject;
 
-	Promise.all([
-		regenerateIndex().then(() => fs.promises.readFile(`${__dirname}/public/index.html`)),
-		generateData(),
-		listFiles(`${__dirname}/public`, "")
-			.then(data => {
-				return fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${stringify(data,null,'\t')};`)
-					.then(() => data);
-			})
-			.then(data => {
-				const map = {};
-				data.forEach(({assets}) => {
-					if (assets) {
-						assets.forEach(asset => {
-							const path = `${__dirname}/public/assets/${asset}`;
-							const hash = md5File.sync(path);
-							map[asset] = hash;
-						});
-					}
-				});
+	const html = await regenerateIndex(isRelease || compact, uglify).then(() => fs.promises.readFile(`${__dirname}/public/index.html`));
+	res.write(html);
+	res.end();
 
-				return fs.promises.readFile(`${__dirname}/build/asset-md5.json`)
-					.then(data => {
-						const preData = JSON.parse(data);
-						const assetsToUpdate = [];
-						for (let asset in preData) {
-							if (preData[asset] !== map[asset]) {
-								assetsToUpdate.push(asset);
-							}
-						}
-						assetsToUpdate.forEach(asset => {
-							console.log(`${asset} needs to update its data.`);
-						});
-					})
-					.catch(console.warn)
-					.then(() => {
-						return Promise.all([
-							fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, stringify(map,null,'\t')),
-							fs.promises.writeFile(`${__dirname}/public/gen/asset-md5.js`, `const assetMd5 = ${stringify(map,null,'\t')}`),
-						]);
-					});
-			}),
-	]).then(([html]) => {
-		res.write(html);
-		res.end();
-	}).then(() => zipPublic("public", "game.zip"))
-	.then(() => {
+	if (isRelease) {
+		await zipPublic("public", "game.zip");
+
 		const nw = new NwBuilder({
 		    files: './public/**/**', // use the glob format
-		    platforms: isRelease ? ['win', 'osx64', 'linux'] : [ 'osx64' ],
+		    platforms: ['win', 'osx64', 'linux'],
 		    flavor: "normal",
-//			    macIcns: "",
+		    macIcns: "icon.icns",
 		});
 
 		nw.on('log',  console.log);
 
-		nw.build().then(function () {
-		   console.log('all done!');
-		   zipPublic("build/dok-game/linux32", "build/dok-game/linux32.zip")
-		   zipPublic("build/dok-game/linux64", "build/dok-game/linux64.zip")
-		   zipPublic("build/dok-game/osx64", "build/dok-game/mac-os.zip")
-		   zipPublic("build/dok-game/win32", "build/dok-game/win32.zip")
-		   zipPublic("build/dok-game/win64", "build/dok-game/win64.zip")
-		}).catch(function (error) {
-		    console.error(error);
-		});
-//			echo `sudo codesign --force --deep --verbose --sign "Vincent Le Quang" Eva.app`;
-	});
+		await nw.build();
+		zipPublic("build/dok-game/linux32", "build/dok-game/linux32.zip");
+		zipPublic("build/dok-game/linux64", "build/dok-game/linux64.zip");
+		zipPublic("build/dok-game/osx64", "build/dok-game/mac-os.zip");
+		zipPublic("build/dok-game/win32", "build/dok-game/win32.zip");
+		zipPublic("build/dok-game/win64", "build/dok-game/win64.zip");
+		console.log('all done!');
+	}
 });
 
 app.get('/ping', (req, res) => {
@@ -98,13 +58,77 @@ new ServerHandler(app);
 
 app.use(serve(`${__dirname}/public`));
 
-async function regenerateIndex() {
+async function generateAssetMd5() {
+	return listFiles(`${__dirname}/public`, "")
+		.then(data => {
+			return fs.promises.writeFile(`${__dirname}/public/gen/files.js`, `const globalFiles=${stringify(data,null,'\t')};`)
+				.then(() => data);
+		})
+		.then(data => {
+			const map = {};
+			data.forEach(({assets}) => {
+				if (assets) {
+					assets.forEach(asset => {
+						const path = `${__dirname}/public/assets/${asset}`;
+						const hash = md5File.sync(path);
+						map[asset] = hash;
+					});
+				}
+			});
+
+			return fs.promises.readFile(`${__dirname}/build/asset-md5.json`)
+				.then(data => {
+					const preData = JSON.parse(data);
+					const assetsToUpdate = [];
+					for (let asset in preData) {
+						if (preData[asset] !== map[asset]) {
+							assetsToUpdate.push(asset);
+						}
+					}
+					assetsToUpdate.forEach(asset => {
+						console.log(`${asset} needs to update its data.`);
+					});
+				})
+				.catch(console.warn)
+				.then(() => {
+					return Promise.all([
+						fs.promises.writeFile(`${__dirname}/build/asset-md5.json`, stringify(map,null,'\t')),
+						fs.promises.writeFile(`${__dirname}/public/gen/asset-md5.js`, `const assetMd5 = ${stringify(map,null,'\t')}`),
+					]);
+				});
+		});
+}
+
+async function regenerateIndex(compactJs, uglify) {
+	await generateData();
+	await generateAssetMd5();
 	const data = await listFiles(`${__dirname}/public`, "");
-	const paths = generatePaths(data).map(path => path.indexOf("/") === 0 ? path.substr(1) : path);
+	const paths = generatePaths(data).filter(path => path !== "out.js").map(path => path.indexOf("/") === 0 ? path.substr(1) : path);
 	paths.sort(compareDependencies);
+
+	if (uglify) {
+		const code = {};
+		for (let path of paths) {
+			code[path] = fs.readFileSync(`${__dirname}/public/${path}`, "utf8");
+		}
+		const options = {
+			sourceMap: {
+				filename: "out.js",
+				url: "out.js.map"
+			},
+		};
+		const result = UglifyJS.minify(code, options);
+		fs.writeFileSync(`${__dirname}/public/out.js`, result.code);
+		fs.writeFileSync(`${__dirname}/public/out.js.map`, result.map);	
+	}
+
 	const indexHtml = fs.readFileSync(`${__dirname}/public/index.html`, "utf8");
 	const indexSplit = indexHtml.split("<!-- JAVASCRIPT -->");
-	indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
+	if (compactJs) {
+		indexSplit[1] = "\n\t\t" + `<script type="text/javascript" src="out.js"></script>`
+	} else {
+		indexSplit[1] = "\n\t\t" + paths.map(path => `<script type="text/javascript" src="${path}"></script>`).join("\n\t\t") + "\n\t\t";
+	}
 	fs.writeFileSync(`${__dirname}/public/index.html`, indexSplit.join("<!-- JAVASCRIPT -->"));
 
 	//	Generate class mapping for classes in games folder
@@ -152,7 +176,7 @@ function generateData() {
 			}));
 		})
 		.then(dataChunks => Object.fromEntries(dataChunks))
-		.then(data => fs.promises.writeFile(`${__dirname}/public/gen/data.js`, `const globalData=${stringify(data,null,'\t')};`));
+		.then(data => fs.promises.writeFile(`${__dirname}/public/gen/data.js`, `const globalData = ${stringify(data,null,'\t')};`));
 }
 
 function listFiles(root, path) {

@@ -1,4 +1,4 @@
-const globalData={
+const globalData = {
   "attributes": {
     "vertexPosition": {"location": 0, "type": "FLOAT", "usage": "STATIC_DRAW"},
     "matrix": {"type": "FLOAT", "usage": "DYNAMIC_DRAW", "instances": 1},

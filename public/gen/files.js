@@ -379,6 +379,8 @@ const globalFiles=[
       }
     ]
   },
+  "out.js",
+  "out.js.map",
   "package.json",
   {
     "templates": [
