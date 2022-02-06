@@ -390,6 +390,7 @@ const globalFiles=[
               ".DS_Store",
               {"base": ["refresher.js"]},
               "delay.js",
+              "interval.js",
               "on-frame-refresher.js"
             ]
           },

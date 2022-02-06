@@ -18,7 +18,7 @@ class Delay extends Refresher {
 		if (this.getEllapsed(time) >= this.duration) {
 			this.setActive(false);
 			if (this.endCallback) {
-				this.endCallback.apply(this);				
+				this.endCallback();				
 			}
 		}
 	}

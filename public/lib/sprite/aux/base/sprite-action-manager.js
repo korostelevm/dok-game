@@ -27,16 +27,12 @@ class SpriteActionManager {
 			this.playAnimation(action.animation);
 		}
 
-		if (action.sequence) {
-			this.playSequence(action.sequence);
-		}
-
 		if (action.gameProperty) {
 			this.performGamePropertyChange(action.gameProperty);
 		}
 
-		if (action.gameState) {
-			this.performGameStateChange(action.gameState);
+		if (action.state) {
+			this.performGameStateChange(action.state);
 		}
 	}
 
@@ -89,9 +85,5 @@ class SpriteActionManager {
 	playAnimation(animation) {
 		const sprite = animation.sprite ? this.sprite.game[animation.sprite] : this.sprite;
 		sprite.changeAnimation(animation.anim);
-	}
-
-	playSequence(sequence) {
-
 	}
 }

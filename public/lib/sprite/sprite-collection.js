@@ -60,13 +60,13 @@ class SpriteCollection {
 
 	filterOut(condition) {
 		let activeCount = 0;
-		for (let i = 0; i < this.sprites.length; i++) {
-			if (!condition(this.sprites[i])) {
-				this.sprites[activeCount] = this.sprites[i];
+		for (let sprite of this.sprites) {
+			if (!condition(sprite)) {
+				this.sprites[activeCount] = sprite;
 				this.sprites[activeCount].spriteIndex = activeCount;
 				activeCount++;
 			} else {
-				this.sprites[i].changeActive(false);				
+				sprite.clear();
 			}
 		}
 		if (activeCount && this.sprites.length !== activeCount) {

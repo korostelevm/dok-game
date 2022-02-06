@@ -607,11 +607,18 @@ class Engine {
 		return this.tipBox.id;
 	}
 
-	delayAction(delay, action, attacher) {
-		const delayHandler = new Delay(this, delay, action);
+	delayAction(delay, callback, attacher) {
+		const delayHandler = new Delay(this, delay, callback);
 		if (attacher) {
 			attacher.attachRefresher(delayHandler);
 		}
+	}
+
+	repeatAction(interval, callback, attacher) {
+		const intervalHandler = new Interval(this, interval, callback);
+		if (attacher) {
+			attacher.attachRefresher(intervalHandler);
+		}		
 	}
 
 	static start(classObj, gameConfig, skipStartScreen, debug, configOverride) {

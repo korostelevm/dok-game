@@ -9,14 +9,20 @@ class ActionManager {
 		this.performAction(newStateObj.config);
 	}
 
-	performAction(action, ignoreDelay) {
+	performAction(action, commitAction) {
 		if (!action) {
 			retturn;
 		}
-		const { animation, actions, state, properties, onKeyDown, delay, light, fadeVolume } = action;
+		const { animation, actions, state, properties, onKeyDown,
+			delay, interval, light, fadeVolume, log } = action;
 
-		if (delay && !ignoreDelay) {
+		if (delay && !commitAction) {
 			this.performDelayedAction(action, delay);
+			return;
+		}
+
+		if (interval && !commitAction) {
+			this.performIntervalAction(action, interval);
 			return;
 		}
 
@@ -42,8 +48,13 @@ class ActionManager {
 		if (animation) {
 			this.animationActionManager.performAnimation(animation);
 		}
+
 		if (state) {
 			this.game.changeState(state);
+		}
+
+		if (log) {
+			console.log(log);
 		}
 
 		if (typeof(light) !== "undefined") {
@@ -57,6 +68,10 @@ class ActionManager {
 
 	performDelayedAction(action, delay) {
 		this.game.engine.delayAction(delay, () => this.performAction(action, true), this.state);
+	}
+
+	performIntervalAction(action, interval) {
+		this.game.engine.repeatAction(interval, () => this.performAction(action, true), this.state);		
 	}
 
 	handleStateOnKeyDown(key, action, state) {

@@ -30,4 +30,9 @@ class Active {
 			}
 		});
 	}
+
+	clear() {
+		this.changeActive(false);
+		this.activationListeners.clear();
+	}
 }

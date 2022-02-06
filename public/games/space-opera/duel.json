@@ -14,6 +14,7 @@
   "states": {
     "intro": {
       "start": true,
+      "light": 1,
       "properties": {
         "music": "intro",
         "loop": true,
@@ -52,7 +53,7 @@
               "sprite": "right",
               "anim": "right-cowboy"
             }
-          }        
+          }
       ],
       "onKeyDown": {
         "key": " ",
@@ -67,58 +68,46 @@
         "music": null
       },
       "actions": [
-          {
-            "animation": {
-              "sprite": "left",
-              "anim": "left-draw"
-            }
-          },
-          {
-            "delay": 200,
-            "animation": {
-              "sprite": "right",
-              "anim": "right-draw-shoot",
-              "then": [
-                {
-                  "animation": {
-                    "sprite": "left",
-                    "anim": "left-shot-with-gun"
-                  }
-                },
-                {
-                  "delay": 150,
-                  "animation": {
-                    "sprite": "right",
-                    "anim": "right-pointing-gun"
-                  }
-                },
-                {
-                  "delay": 1500,
-                  "animation": {
-                    "sprite": "right",
-                    "anim": "right-retract-gun"
-                  }
-                },
-                {
-                  "delay": 2000,
-                  "properties": {
-                    "music": "the-end",
-                    "loop": true
-                  },
-                  "fadeVolume": 1
-                }
-              ]
-            }
-          }        
-      ],
-      "onKeyDown": {
-        "key": " ",
-        "actions": [
-          {
-            "state": "intro"
+        {
+          "animation": {
+            "sprite": "left",
+            "anim": "left-draw"
           }
-        ]
-      }
+        },
+        {
+          "delay": 200,
+          "animation": {
+            "sprite": "right",
+            "anim": "right-draw-shoot",
+            "then": [
+              {
+                "animation": {
+                  "sprite": "left",
+                  "anim": "left-shot-with-gun"
+                }
+              },
+              {
+                "delay": 150,
+                "animation": {
+                  "sprite": "right",
+                  "anim": "right-pointing-gun"
+                }
+              },
+              {
+                "delay": 1500,
+                "animation": {
+                  "sprite": "right",
+                  "anim": "right-retract-gun"
+                }
+              },
+              {
+                "delay": 2000,
+                "state": "lose"
+              }
+            ]
+          }
+        }
+      ]
     },
     "quickdraw": {
 
@@ -127,16 +116,24 @@
 
     },
     "lose": {
-
-    },
-    "gameOver": {
-
-    },
-    "score": {
-
-    },
-    "end": {
-
+      "properties": {
+        "music": "the-end",
+        "loop": true
+      },
+      "fadeVolume": 0.5,
+      "onKeyDown": {
+        "key": " ",
+        "actions": [
+          {
+            "light": 0,
+            "fadeVolume": 0
+          },
+          {
+            "delay": 2500,
+            "state": "intro"
+          }          
+        ]
+      }
     }
   },
   "world": {
@@ -158,7 +155,7 @@
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 5,
       "aux": {
         "StateAuxiliary": {
-          "gameState": "intro"
+          "state": "intro"
         }        
       }
     },
@@ -168,7 +165,7 @@
       "x": "{viewportWidth / 2}", "y": "{viewportHeight * 3 / 4}", "z": 6,
       "aux": {
         "StateAuxiliary": {
-          "gameState": "intro"
+          "state": "intro"
         }        
       }
     },
@@ -197,12 +194,12 @@
       "aux": {
         "BlinkAuxiliary": {
           "chance": 0.005,
-          "blinkAnim": "right-tease",
           "active": {
             "if-state": "dialog",
             "value": true,
             "else": false
-          }
+          },
+          "blinkAnim": "right-tease"
         },
         "OnFrameEndAuxiliary": {
           "right-draw-shoot": {
@@ -228,7 +225,7 @@
             {
               "if-key-down": " ",
               "if-not-state": "draw",
-              "gameState": "draw"
+              "state": "draw"
             }
           ]          
         }
@@ -357,6 +354,14 @@
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
       "range":[8, 1],
+      "loop": 1,
+      "frameRate": 12
+    },
+    "right-draw-slow-shoot": {
+      "url": "assets/duel-right.png",
+      "spriteWidth": 706, "spriteHeight": 451,
+      "hotspot": "{hotspot_center}",
+      "range":[1, 9],
       "loop": 1,
       "frameRate": 12
     },

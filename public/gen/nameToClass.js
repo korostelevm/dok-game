@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   NAME_TO_CLASS["CollisionMerger"] = CollisionMerger;		// lib/sprite/collision/collision-merger.js
   NAME_TO_CLASS["UiComponent"] = UiComponent;		// lib/ui/base/ui-component.js
   NAME_TO_CLASS["Delay"] = Delay;		// lib/utils/refresher/delay.js
+  NAME_TO_CLASS["Interval"] = Interval;		// lib/utils/refresher/interval.js
   NAME_TO_CLASS["OnFrameRefresher"] = OnFrameRefresher;		// lib/utils/refresher/on-frame-refresher.js
   NAME_TO_CLASS["StartScreen"] = StartScreen;		// games/common/start-screen.js
   NAME_TO_CLASS["PeerDemo"] = PeerDemo;		// games/demo/peer-demo.js

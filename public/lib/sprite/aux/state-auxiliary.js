@@ -1,11 +1,13 @@
 class StateAuxiliary extends Auxiliary {
 	constructor(config, sprite) {
 		super(config, sprite);
-		this.gameState = config.gameState;
+		const states = Array.isArray(config.state) ? config.state : [config.state];
+		this.gameStates = new Set();
+		states.forEach(s => this.gameStates.add(s));
 		this.sprite.game.stateListeners.add(this);
 	}
 
 	onState(state) {
-		this.sprite.changeActive(state === this.gameState);
+		this.sprite.changeActive(this.gameStates.has(state));
 	}
 }

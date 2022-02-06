@@ -290,4 +290,10 @@ class Sprite extends Body {
 		const animationDuration = anim.frameDuration * frameCount;
 		return Math.floor(animationElapsed / animationDuration);
 	}
+
+	clear() {
+		super.clear();
+		this.animationListeners.clear();
+		this.aux.clear();
+	}
 }

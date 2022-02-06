@@ -16,6 +16,7 @@ class Body extends Active {
 			motionCache: 0,
 		};
 		this.followers = new Set();
+		this.mouseListeners = null;
 		this.hasMotion = false;
 		this.hasAcceleration = false;
 		this.updateFlag = 0xFFFFFFFF;
@@ -211,6 +212,15 @@ class Body extends Active {
 					listener.handleMouse(e, x, y);
 				}
 			}
+		}
+	}
+
+	clear() {
+		super.clear();
+		this.followers.clear();
+		if (this.mouseListeners) {
+			this.mouseListeners.clear();
+			this.mouseListeners = null;
 		}
 	}
 }
