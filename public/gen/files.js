@@ -333,7 +333,7 @@ const globalFiles=[
               "mouse-pointer-auxiliary.js",
               "mute-auxiliary.js",
               "npc-auxiliary.js",
-              "on-frame-auxiliary.js",
+              "on-frame-end-auxiliary.js",
               "platform-block-auxiliary.js",
               "platform-gridcell-position-auxiliary.js",
               "platform-hero-auxiliary.js",

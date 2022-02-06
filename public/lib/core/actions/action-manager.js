@@ -10,7 +10,10 @@ class ActionManager {
 	}
 
 	performAction(action, ignoreDelay) {
-		const { animation, actions, state, properties, onKeyDown, delay, light, fadeVolume } = action || {};
+		if (!action) {
+			retturn;
+		}
+		const { animation, actions, state, properties, onKeyDown, delay, light, fadeVolume } = action;
 
 		if (delay && !ignoreDelay) {
 			this.performDelayedAction(action, delay);

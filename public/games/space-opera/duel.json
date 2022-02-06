@@ -204,11 +204,9 @@
             "else": false
           }
         },
-        "OnFrameAuxiliary": {
-          "onFrame": {
-            "9": {
-              "audio": "lazer"
-            }
+        "OnFrameEndAuxiliary": {
+          "right-draw-shoot": {
+            "audio": "lazer"
           }
         }
       }
@@ -218,23 +216,21 @@
       "size": [ 600, 385 ],
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 4,
       "aux": {
-        "OnFrameAuxiliary": {
-          "onFrame": {
-            "3": [
-              {
-                "if-key-up": " ",
-                "if-not-state": "draw",
-                "animation": {
-                  "anim": "left-cowboy"
-                }                    
-              },
-              {
-                "if-key-down": " ",
-                "if-not-state": "draw",
-                "gameState": "draw"
-              }
-            ]
-          }
+        "OnFrameEndAuxiliary": {
+          "left-tease": [
+            {
+              "if-key-up": " ",
+              "if-not-state": "draw",
+              "animation": {
+                "anim": "left-cowboy"
+              }                    
+            },
+            {
+              "if-key-down": " ",
+              "if-not-state": "draw",
+              "gameState": "draw"
+            }
+          ]          
         }
       }
     }
