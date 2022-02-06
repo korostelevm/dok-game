@@ -6,9 +6,9 @@ class BlinkAuxiliary extends RefresherAuxiliary {
 		this.chance = config.chance || .5;
 	}
 
-	onRefresh(self, time, dt) {
-		if (self.sprite.getLoopCount(time) >= 1) {
-			self.sprite.changeAnimation(Math.random() < this.chance ? this.blinkAnim : this.anim);
+	onRefresh(time) {
+		if (this.sprite.getLoopCount(time) >= 1) {
+			this.sprite.changeAnimation(Math.random() < this.chance ? this.blinkAnim : this.anim);
 		}
 	}
 }

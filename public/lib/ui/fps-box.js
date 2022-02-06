@@ -24,7 +24,7 @@ class FpsBox extends UiComponent {
 		document.body.appendChild(this.input);
 	}
 
-	onRefresh(self, time, dt, actualTime) {
+	onRefresh(time, dt, actualTime) {
 		if (!actualTime) {
 			return;
 		}

@@ -11,9 +11,9 @@ class Shift {
 			zoom:1, opacity: 1, rotation:[0,0,0],
 		};
 		this.viewportSize = Constants.defaultViewportSize();
-		this.dirty = true;
 		this.tempVec3 = vec3.create();
 		this.viewMatrix = mat4.create();
+		this.dirty = true;
 	}
 
 	setViewportSize(width, height) {

@@ -8,7 +8,7 @@ class Collision extends PhysicsBase {
 		const onSpriteActivation = (sprite, active) => this.onSpriteActivation(sprite, active);
 		sprites.filter(({collide}) => collide).forEach(sprite => {
 			if (this.addCollision(sprite)) {
-				sprite.addActivationListener(onSpriteActivation);
+				sprite.activationListeners.add(onSpriteActivation);
 			}
 		});
 	}

@@ -104,7 +104,7 @@ class Smurf extends GameBase {
 				opacity: .5,
 				spriteType: "sprite",
 			}, {
-				onRefresh: mushroom => {
+				onRefresh: () => {
 					if (!mushroom.built) {
 						const constructionTime = 10000;
 						const age = mushroom.engine.lastTime - mushroom.created;

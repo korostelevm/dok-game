@@ -14,15 +14,32 @@
   "states": {
     "intro": {
       "start": true,
-      "music": "intro",
+      "properties": {
+        "music": "intro",
+        "loop": true,
+        "canMute": true
+      },
       "onKeyDown": {
         "key": " ",
-        "state": "dialog"
+        "actions": [
+          {
+            "light": 0,
+            "fadeVolume": 0
+          },
+          {
+            "delay": 2500,
+            "state": "dialog"
+          }          
+        ]
       }
     },
     "dialog": {
-      "music": "duel",
-      "loopMusic": true,
+      "light": 1,
+      "properties": {
+        "music": "duel",
+        "loop": true,
+        "canMute": false
+      },
       "actions": [
           {
             "animation": {
@@ -46,7 +63,9 @@
       }
     },
     "draw": {
-      "music": null,
+      "properties": {
+        "music": null
+      },
       "actions": [
           {
             "animation": {
@@ -55,9 +74,40 @@
             }
           },
           {
+            "delay": 200,
             "animation": {
               "sprite": "right",
-              "anim": "right-draw-shoot"
+              "anim": "right-draw-shoot",
+              "then": [
+                {
+                  "animation": {
+                    "sprite": "left",
+                    "anim": "left-shot-with-gun"
+                  }
+                },
+                {
+                  "delay": 150,
+                  "animation": {
+                    "sprite": "right",
+                    "anim": "right-pointing-gun"
+                  }
+                },
+                {
+                  "delay": 1500,
+                  "animation": {
+                    "sprite": "right",
+                    "anim": "right-retract-gun"
+                  }
+                },
+                {
+                  "delay": 2000,
+                  "properties": {
+                    "music": "the-end",
+                    "loop": true
+                  },
+                  "fadeVolume": 1
+                }
+              ]
             }
           }        
       ],
@@ -146,7 +196,7 @@
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 3,
       "aux": {
         "BlinkAuxiliary": {
-          "chance": 0.002,
+          "chance": 0.005,
           "blinkAnim": "right-tease",
           "active": {
             "if-state": "dialog",
@@ -157,11 +207,7 @@
         "OnFrameAuxiliary": {
           "onFrame": {
             "9": {
-              "audio": "lazer",
-              "animation": {
-                "sprite": "left",
-                "anim": "left-shot-with-gun"
-              }
+              "audio": "lazer"
             }
           }
         }
@@ -202,6 +248,9 @@
     },
     "lazer": {
       "src": "audio/lazer.mp3"
+    },
+    "the-end": {
+      "src": "audio/the-end.mp3"
     }
   },
   "atlas": {
@@ -273,10 +322,9 @@
       "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
-      "range":[1, 8],
+      "range":[8, 1],
       "loop": 1,
-      "frameRate": 12,
-      "reverse": true
+      "frameRate": 12
     },
     "right-draw": {
       "url": "assets/duel-right.png",
@@ -300,7 +348,21 @@
       "hotspot": "{hotspot_center}",
       "range":[1, 9],
       "loop": 1,
-      "frameRate": 20
+      "frameRate": 24
+    },
+    "right-pointing-gun": {
+      "url": "assets/duel-right.png",
+      "spriteWidth": 706, "spriteHeight": 451,
+      "hotspot": "{hotspot_center}",
+      "range":[8]
+    },
+    "right-retract-gun": {
+      "url": "assets/duel-right.png",
+      "spriteWidth": 706, "spriteHeight": 451,
+      "hotspot": "{hotspot_center}",
+      "range":[8, 1],
+      "loop": 1,
+      "frameRate": 12
     },
     "left-shot-with-gun": {
       "url": "assets/duel-left.png",

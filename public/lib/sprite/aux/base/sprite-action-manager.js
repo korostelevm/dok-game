@@ -1,4 +1,4 @@
-class ActionManager {
+class SpriteActionManager {
 	constructor(sprite) {
 		this.sprite = sprite;
 	}
@@ -89,7 +89,6 @@ class ActionManager {
 	playAnimation(animation) {
 		const sprite = animation.sprite ? this.sprite.game[animation.sprite] : this.sprite;
 		sprite.changeAnimation(animation.anim);
-		console.log(animation.anim);
 	}
 
 	playSequence(sequence) {

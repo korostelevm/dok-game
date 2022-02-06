@@ -35,7 +35,8 @@ class Hud extends Sprite {
 		}
 	}
 
-	onRefresh(self, time) {
+	onRefresh(time) {
+		const self = this;
 		const viewportHeight = this.engine.viewportHeight;
 		const hideY = viewportHeight;
 		const showY = viewportHeight - (self.size[1] - 1);

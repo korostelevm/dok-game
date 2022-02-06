@@ -152,6 +152,7 @@ const globalFiles=[
       "pickup.mp3",
       "player-hurt.mp3",
       "scream.mp3",
+      "the-end.mp3",
       "weirdsong.mp3"
     ]
   },
@@ -249,7 +250,16 @@ const globalFiles=[
   {
     "lib": [
       ".DS_Store",
-      {"core": ["game-base.js", "game-core.js", "shift.js"]},
+      {
+        "core": [
+          {"actions": ["action-manager.js", "animation-action-manager.js"]},
+          {"base": ["active.js"]},
+          "game-base.js",
+          "game-core.js",
+          "shift.js",
+          "state.js"
+        ]
+      },
       "engine.js",
       {
         "external": [
@@ -306,10 +316,10 @@ const globalFiles=[
               {
                 "base": [
                   ".DS_Store",
-                  "action-manager.js",
                   "auxiliary.js",
                   {"condition": ["condition-handler.js"]},
                   "refresher-auxiliary.js",
+                  "sprite-action-manager.js",
                   "toggle-click-auxiliary.js"
                 ]
               },
@@ -331,7 +341,7 @@ const globalFiles=[
               "state-auxiliary.js"
             ]
           },
-          {"base": ["body.js", "sprite.js"]},
+          {"base": [".DS_Store", "body.js", "sprite.js"]},
           {
             "collision": [
               "collision-box-display.js",
@@ -370,10 +380,19 @@ const globalFiles=[
       },
       {
         "utils": [
+          ".DS_Store",
           "array-utils.js",
           "color-utils.js",
           "constants.js",
           "random-utils.js",
+          {
+            "refresher": [
+              ".DS_Store",
+              {"base": ["refresher.js"]},
+              "delay.js",
+              "on-frame-refresher.js"
+            ]
+          },
           "string.js",
           "value-refresher.js"
         ]

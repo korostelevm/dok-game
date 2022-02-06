@@ -7,7 +7,8 @@ class MousePointerAuxiliary extends RefresherAuxiliary {
 		this.sprite.needsMouse = true;
 	}
 
-	onRefresh(self, time, dt) {
+	onRefresh(time) {
+		const self = this;
 		const engine = self.sprite.engine;
 		const mouseHandlerManager = engine.mouseHandlerManager;
 		const shift = engine.shift;

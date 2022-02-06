@@ -117,7 +117,8 @@ class TextureAtlas {
 	onUpdateImage(image, animationData) {
 		this.spriteSheetWidth = image ? image.naturalWidth : 0;
 		this.spriteSheetHeight = image ? image.naturalHeight : 0;
-		const { cols, rows, spriteWidth, spriteHeight, frameRate, maxFrameCount, loop, range, firstFrame, direction, vdirection, reverse } = animationData;
+		const { cols, rows, spriteWidth, spriteHeight, frameRate, maxFrameCount, loop, range, firstFrame, direction, vdirection } = animationData;
+		const reverse = range && range[1] < range[0];
 		this.frameRate = Math.abs(frameRate) || 1;
 		this.frameRateMultiplier = reverse ? -1 : 1;
 		this.frameDuration = 1000 / this.frameRate;
@@ -125,9 +126,9 @@ class TextureAtlas {
 		this.rows = rows || (spriteHeight ? Math.ceil(this.spriteSheetHeight / spriteHeight) : 1);
 		this.spriteWidth = spriteWidth || this.spriteSheetWidth / this.cols;
 		this.spriteHeight = spriteHeight || this.spriteSheetHeight / this.rows;
-		this.startFrame = (range ? range[0] : 0) || 0;
-		this.endFrame = (range ? range[1] : 0) || this.startFrame;
-		this.maxFrameCount = maxFrameCount || (loop ? loop * (this.endFrame - this.startFrame + 1) : MAX_FRAME_COUNT);
+		this.startFrame = (range ? (reverse ? range[1] : range[0]) : 0) || 0;
+		this.endFrame = (range ? (reverse ? range[0] : range[1]) : 0) || this.startFrame;
+		this.maxFrameCount = maxFrameCount || (loop ? loop * (this.endFrame - this.startFrame) : MAX_FRAME_COUNT);
 		this.animated = this.startFrame !== this.endFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 		this.direction = direction || 1;

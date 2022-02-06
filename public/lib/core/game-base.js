@@ -6,8 +6,6 @@ class GameBase {
 		this.audio = {};
 		this.atlas = {};
 		this.cameras = {};
-		this.state = null;
-		this.states = [];
 		this.stateListeners = new Set();
 		this.propertyListeners = new Set();
 		this.ready = 0;
@@ -78,7 +76,7 @@ class GameBase {
 				this.engine.mouseHandlerManager.setForceRefreshOnMouse(true);
 			}
 
-			this.engine.changeCanvasColor(this.gameModel.settings?.backgroundColor || "#000000")
+			this.engine.changeBackgroundColor(this.gameModel.settings?.backgroundColor || "#000000")
 
 			this.bodyStyle = this.gameModel.settings?.bodyStyle;
 			for (let prop in this.bodyStyle) {
@@ -86,11 +84,15 @@ class GameBase {
 				document.body.style[prop] = this.bodyStyle[prop];
 			}
 
-			this.states = this.gameModel.states || [];
 			this.state = null;
-			for (let state in this.states) {
-				if (this.states[state].start) {
-					this.state = state;
+			this.states = {};
+			if (this.gameModel.states) {
+				for (let state in this.gameModel.states) {
+					const config = this.gameModel.states[state];
+					this.states[state] = new State(state, config, this);
+					if (config.start) {
+						this.state = state;
+					}
 				}
 			}
 		}
@@ -148,6 +150,9 @@ class GameBase {
 				if (oldValue) {
 					this.audio[oldValue].stop();
 				}
+				if (!value) {
+					this.setProperty("loop", false);
+				}
 				this.onMusicChange(this.properties.music, this.properties.mute, this.properties.loop);
 				break;
 		}
@@ -179,7 +184,7 @@ class GameBase {
 		}
 
 		if (this.state) {
-			this.performAction(this.states[this.state]);
+			this.states[this.state].applyStateChange();
 		}
 	}
 
@@ -270,7 +275,8 @@ class GameBase {
 	}
 
 	async onExit(engine) {
-		this.changeMusic(null);
+		this.setProperty("music", null);
+		this.setProperty("loop", false);
 
 		for (let prop in this.bodyStyleBack) {
 			document.body.style[prop] = this.bodyStyleBack[prop];
@@ -284,51 +290,18 @@ class GameBase {
 	changeState(state) {
 		if (this.state !== state) {
 			const oldState = this.state;
+			const oldStateObj = this.states[oldState];
+			if (oldStateObj) {
+				oldStateObj.changeActive(false);
+			}
 			this.state = state;
-			this.performAction(this.states[this.state]);
+			const newStateObj = this.states[this.state];
+			newStateObj.changeActive(true);
+			newStateObj.applyStateChange();
 			for (let listener of this.stateListeners) {
-				listener.onState(state, oldState);
+				listener.onState(this.state, oldState);
 			}
 		}
-	}
-
-	performAction(action) {
-		const { animation, actions, state, music, loopMusic, onKeyDown } = action || {};
-
-		if (typeof(music) !== "undefined") {
-			this.changeMusic(music, loopMusic);
-		}
-
-		if (onKeyDown) {
-			this.handleStateOnKeyDown(onKeyDown.key, onKeyDown, this.state);
-		}
-
-		if (actions) {
-			actions.forEach(action => this.performAction(action));
-		}
-		if (animation) {
-			const sprite = this[animation.sprite];
-			sprite.changeAnimation(animation.anim);
-		}
-		if (state) {
-			this.changeState(state);
-		}
-	}
-
-	handleStateOnKeyDown(key, action, state) {
-		const listener = () => {
-			this.performAction(action);
-		};
-		const stateListener = {
-			onState: (newState, oldState) => {
-				if (oldState === state) {
-					this.engine.keyboardHandler.removeListener(listener);		
-					this.stateListeners.delete(stateListener);
-				}
-			}
-		};
-		this.engine.keyboardHandler.addKeyDownListener(key, listener);
-		this.stateListeners.add(stateListener);
 	}
 
 	addPropertyListener(listener, property) {
@@ -341,8 +314,10 @@ class GameBase {
 		});
 	}
 
-	changeMusic(music, loop) {
-		this.setProperty("music", music);
-		this.setProperty("loop", loop);
+	fadeVolume(volume) {
+		const audio = this.audio[this.properties.music];
+		if (audio) {
+			audio.fadeVolume(volume, 2000, this.engine);
+		}
 	}
 }

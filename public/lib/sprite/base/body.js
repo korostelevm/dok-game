@@ -1,5 +1,6 @@
-class Body {
+class Body extends Active {
 	constructor(data, time, engine) {
+		super();
 		this.engine = engine;
 		this.data = data;
 		this.x = data.x || 0;
@@ -14,21 +15,18 @@ class Body {
 			positionCache: 0,
 			motionCache: 0,
 		};
-		this.active = true;
-		this.updateFlag = 0xFFFFFFFF;
 		this.followers = new Set();
-		this.activationListeners = new Set();
-		this.motionChangeListeners = new Set();
 		this.hasMotion = false;
 		this.hasAcceleration = false;
+		this.updateFlag = 0xFFFFFFFF;
 	}
 
-	addActivationListener(listener) {
-		this.activationListeners.add(listener);
-	}
-
-	addMotionChangeListener(listener) {
-		this.motionChangeListeners.add(listener);
+	changeActive(value) {
+		if (super.changeActive(value)) {
+			this.updateFlag |= Constants.UPDATE_FLAG.ACTIVE;
+			return true;
+		}
+		return false;
 	}
 
 	changePosition(x, y, z, t, skipRecalculate) {
@@ -95,18 +93,6 @@ class Body {
 		}
 		this.hasAcceleration = this.acceleration[0]||this.acceleration[1]||this.acceleration[2];
 		this.hasMotion = this.hasAcceleration||this.motion[0]||this.motion[1]||this.motion[2];
-	}
-
-	changeActive(value) {
-		if (this.active !== value) {
-			this.active = value;
-			this.updateFlag |= Constants.UPDATE_FLAG.ACTIVE;
-			for (let listener of this.activationListeners) {
-				listener(this, value);
-			}
-			return true;
-		}
-		return false;
 	}
 
 	getRealPosition(t, force) {

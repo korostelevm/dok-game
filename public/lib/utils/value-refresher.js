@@ -1,20 +1,23 @@
-class ValueRefresher {
-	constructor(engine, {start, end, duration, callback}) {
-		this.engine = engine;
-		this.start = start;
-		this.end = end;
-		this.duration = duration;
+class ValueRefresher extends Delay {
+	constructor(engine, {start, end, duration, callback, endCallback}) {
+		super(engine, duration, endCallback ? () => {
+			endCallback(this.currentValues);
+		} : null);
+		this.startValues = typeof(start) === "undefined" ? [] : Array.isArray(start) ? [...start] : [start];
+		this.endValues = typeof(end) === "undefined" ? [] : Array.isArray(end) ? [...end] : [end];
 		this.callback = callback;
-		this.startTime = this.engine.lastTime;
-		engine.refresher.add(this);
+		this.currentValues = new Array(this.startValues.length);
 	}
 
-	onRefresh(self, time) {
-		const progress = Math.min(1, (time - this.startTime) / this.duration);
-		const antiprogress = 1 - progress;
-		this.callback(this.start * antiprogress + this.end * progress);
-		if (progress >= 1) {
-			this.engine.refresher.delete(this);
+	onRefresh(time) {
+		if (this.callback) {
+			const progress = this.getProgress(time);
+			const antiprogress = 1 - progress;
+			for (let i = 0; i < this.currentValues.length; i++) {
+				this.currentValues[i] = this.startValues[i] * antiprogress + this.endValues[i] * progress;
+			}
+			this.callback.apply(this, this.currentValues);
 		}
+		super.onRefresh(time);
 	}
 }

@@ -47,6 +47,9 @@ class Engine {
 
 		this.gameChangeListener = new Set();
 		this.coreChangeListener = new Set();
+
+		this.isPerspective = null;
+		this.backgroundColor = [0, 0, 0];
 	}
 
 	addUiComponent(component) {
@@ -335,6 +338,8 @@ class Engine {
 		this.shift.clear();
 		this.removeKeyboardListeners();
 		this.mouseHandlerManager.clear();
+		this.viewportWidth = null;
+		this.viewportHeight = null;
 	}
 
 	resetGame(coreName) {
@@ -367,11 +372,6 @@ class Engine {
 				this.splice(this.indexOf(str), 1);
 			}
 		};		
-	}
-
-	changeCanvasColor(color) {
-		const [ r, g, b ] = ColorUtils.hexToRgb(color);
-		this.gl.clearColor(r / 255, g / 255, b / 255, 1);
 	}
 
 	setProjectionMatrices(viewAngle, pixelScale) {
@@ -407,6 +407,22 @@ class Engine {
 				},
 			});
 		}
+	}
+
+	changeBackgroundColor(color) {
+		const finalColors = ColorUtils.hexToRgb(color);
+
+		new ValueRefresher(this, {
+			start: this.backgroundColor,
+			end: finalColors,
+			duration: 300,
+			callback: (r, g, b) => {
+				this.gl.clearColor(r / 255, g / 255, b / 255, 1);
+			},
+		});
+		this.backgroundColor[0] = finalColors[0];
+		this.backgroundColor[1] = finalColors[1];
+		this.backgroundColor[2] = finalColors[2];
 	}
 
 	setClamp(minX, maxX, minY, maxY, minZ, maxZ) {
@@ -482,7 +498,7 @@ class Engine {
 	handleOnRefreshes(time, dt, actualTime) {
 		for (let item of this.refresher) {
 			if (item.onRefresh) {
-				item.onRefresh(item, time, dt, actualTime);
+				item.onRefresh(time, dt, actualTime);
 			}
 		}
 	}
@@ -589,6 +605,13 @@ class Engine {
 
 	getMessage() {
 		return this.tipBox.id;
+	}
+
+	delayAction(delay, action, attacher) {
+		const delayHandler = new Delay(this, delay, action);
+		if (attacher) {
+			attacher.attachRefresher(delayHandler);
+		}
 	}
 
 	static start(classObj, gameConfig, skipStartScreen, debug, configOverride) {

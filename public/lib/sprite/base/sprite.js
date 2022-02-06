@@ -51,7 +51,9 @@ class Sprite extends Body {
 			game[data.list].push(this);
 		}
 
-		this.actionManager = new ActionManager(this);
+		this.actionManager = new SpriteActionManager(this);
+
+		this.animationListeners = new Set();
 
 		this.aux = new Map();
 		for (let name in data.aux) {
@@ -187,6 +189,9 @@ class Sprite extends Body {
 			this.needUpdate();
 			if (this.shadow) {
 				this.shadow.changeAnimation(anim);
+			}
+			for (let listener of this.animationListeners) {
+				listener.onAnimation(anim);
 			}
 			return true;
 		}

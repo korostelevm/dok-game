@@ -48,7 +48,7 @@ class Sound {
 		}
 	}
 
-	play(volume, callback) {
+	play(volume) {
 		if (Sound.mute) {
 			return;
 		}
@@ -59,5 +59,18 @@ class Sound {
 			this.playingAudio = audio;
 		}
 		this.prepare();
+	}
+
+	fadeVolume(volume, duration, engine) {
+		if (this.playingAudio) {
+			const audio = this.playingAudio;
+			const oldVolume = audio.volume; 
+			new ValueRefresher(engine, {
+				start: oldVolume,
+				end: volume,
+				duration: duration,
+				callback: value => audio.volume = value,
+			});
+		}
 	}
 }

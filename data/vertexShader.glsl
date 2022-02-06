@@ -129,10 +129,6 @@ float modPlus(float a, float b) {
 	return mod(a + .4, b);
 }
 
-float modPlusFixNegative(float a, float b) {
-	return modPlus(modPlus(a, b) + b, b);
-}
-
 vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, float time) {
 	float animCols = spriteSheet[0];
 	if (animCols == 0.) {
@@ -143,11 +139,18 @@ vec2 getTextureShift(vec4 spriteSheet, vec4 animInfo, mat4 textureCoordinates, f
 	float frameCount = max(0., frameRange[1] - frameRange[0]) + 1.;
 
 	float framePerSeconds = abs(animInfo[FRAME_RATE_INDEX]);
-	float direction = sign(animInfo[FRAME_RATE_INDEX]);
 	float globalFrame = floor(min(
 		(time - animTime) * framePerSeconds / 1000.,
-		animInfo[MAX_FRAME_COUNT_INDEX] - 1.));
-	float frame = frameRange[0] + modPlusFixNegative(globalFrame * direction, frameCount);
+		animInfo[MAX_FRAME_COUNT_INDEX]));
+
+	float frameOffset = modPlus(globalFrame, frameCount);
+	float frame;
+	if (animInfo[FRAME_RATE_INDEX] > 0.) {
+		frame = frameRange[0] + frameOffset;
+	} else {
+		frame = frameRange[1] - frameOffset;
+	}
+
 	float row = floor(frame / animCols);
 	float col = floor(frame - row * animCols);
 

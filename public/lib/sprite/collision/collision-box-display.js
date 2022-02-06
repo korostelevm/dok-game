@@ -16,7 +16,7 @@ class CollisionBoxDisplay {
 		this.engine.refresher.add(this);
 	}
 
-	onRefresh(self, time) {
+	onRefresh(time) {
 		this.repositionSprites(time);
 	}
 

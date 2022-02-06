@@ -4,7 +4,8 @@ class OnFrameAuxiliary extends RefresherAuxiliary {
 		this.lastFrame = null;
 	}
 
-	onRefresh(self, time, dt) {
+	onRefresh(time) {
+		const self = this;
 		const sprite = self.sprite;
 		const frame = sprite.getAnimationFrame(time);
 		if (self.lastFrame !== frame) {

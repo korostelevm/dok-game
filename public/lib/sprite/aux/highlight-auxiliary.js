@@ -19,7 +19,7 @@ class HighlightAuxiliary extends RefresherAuxiliary {
 		this.sprite.changeLight(highlight ? 1 + Math.random() : 1);
 	}
 
-	onRefresh(self, time, dt) {
-		self.updateHighlight(true);
+	onRefresh(time) {
+		this.updateHighlight(true);
 	}
 }

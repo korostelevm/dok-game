@@ -355,12 +355,6 @@ class TimeRoom extends RoomBase {
 			size: [800, 400],
 		});
 
-		// this.title = document.getElementById("title");
-		// this.title.style.display = "";
-		// this.title.style.opacity = .5;
-		// document.getElementById("im").style.display = "";
-		// document.getElementById("im").textContent = "";
-
 		this.sceneData.monkor = this.sceneData.monkor || { x: 120, y: 350 };
 	}
 

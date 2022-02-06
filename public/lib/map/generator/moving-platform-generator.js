@@ -37,7 +37,8 @@ class MovingPlatformGenerator extends Generator {
 				onPlatform: (self, lander) => {
 					self.lander = lander;
 				},
-				onRefresh: platform => {
+				onRefresh: () => {
+					const platform = this.movingPlatform;
 					const previousSpot = platform.path[(platform.index + platform.path.length - 1) % platform.path.length];
 					const nextSpot = platform.path[platform.index];
 					const dx = nextSpot.x - platform.x;

@@ -29,8 +29,8 @@ class MouseHandlerManager {
 		}
 		if (!this.handlerSet.has(mouseHandler)) {
 			this.handlerSet.add(mouseHandler);
-			if (mouseHandler.addActivationListener) {
-				mouseHandler.addActivationListener(this.onActivationListener);
+			if (mouseHandler.activationListeners) {
+				mouseHandler.activationListeners.add(this.onActivationListener);
 			}
 		}
 	}

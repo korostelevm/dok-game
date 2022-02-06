@@ -81,7 +81,8 @@ class WorldOfTurtle extends GameBase {
 						self.updateControl(self, this.control.dx, this.control.dy);
 					}
 				},
-				onRefresh: (self, time, dt) => {
+				onRefresh: (time) => {
+					const self = this.turtle;
 					const position = self.getRealPosition(time);
 					position[1] = Math.min(400, position[1]);
 					const shadowOpacity = .5 * Math.max(0, 1 - (400 - position[1]) / 150);
