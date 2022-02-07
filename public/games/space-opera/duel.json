@@ -12,16 +12,24 @@
     }
   },
   "states": {
-    "intro": {
+    "start": {
       "start": true,
+      "state": "intro",
+      "properties": {
+        "deadlyEnabled": false
+      }
+    },
+    "intro": {
       "light": 1,
       "properties": {
         "music": "intro",
         "loop": true,
         "canMute": true
       },
-      "onKeyDown": {
-        "key": " ",
+      "on": {
+        "keydown": " ",
+        "mousedown": true,
+        "nohover": true,
         "actions": [
           {
             "light": 0,
@@ -51,78 +59,233 @@
           {
             "animation": {
               "sprite": "right",
-              "anim": "right-cowboy"
+              "anim": "right-cowboys.{{difficult}}.right-cowboy"
             }
+          },
+          {
+            "if-not-property": "difficult",
+            "delay": 5000,
+            "interval": 1000,
+            "chance": 10,
+            "state": "right-shooting"
+          },
+          {
+            "if-property": "difficult",
+            "delay": 5000,
+            "interval": 1000,
+            "chance": 10,
+            "state": "right-quick-shooting"
           }
       ],
-      "onKeyDown": {
-        "key": " ",
+      "on": {
+        "keydown": " ",
+        "mousedown": true,
         "animation": {
           "sprite": "left",
           "anim": "left-tease"
         }
       }
     },
-    "draw": {
-      "properties": {
-        "music": null
+    "right-shooting": [
+      {
+        "delay": 800,
+        "properties": {
+          "music": null
+        }
       },
-      "actions": [
-        {
-          "animation": {
-            "sprite": "left",
-            "anim": "left-draw"
+      {
+        "animation": {
+          "sprite": "right",
+          "anim": "right-cowboys.{{difficult}}.right-draw-slow-shoot",
+          "then": {
+            "state": "left-shot"
           }
         },
-        {
-          "delay": 200,
-          "animation": {
-            "sprite": "right",
-            "anim": "right-draw-shoot",
-            "then": [
-              {
-                "animation": {
-                  "sprite": "left",
-                  "anim": "left-shot-with-gun"
-                }
-              },
-              {
-                "delay": 150,
-                "animation": {
-                  "sprite": "right",
-                  "anim": "right-pointing-gun"
-                }
-              },
-              {
-                "delay": 1500,
-                "animation": {
-                  "sprite": "right",
-                  "anim": "right-retract-gun"
-                }
-              },
-              {
-                "delay": 2000,
-                "state": "lose"
+        "actions": [
+          {
+            "on": {
+              "keyup": " ",
+              "mouseup": true,
+              "animation": {
+                "sprite": "left",
+                "anim": "left-cowboy"
               }
-            ]
+            }
+          },
+          {
+            "on": {
+              "keydown": " ",
+              "mousedown": true,
+              "animation": {
+                "sprite": "left",
+                "anim": "left-draw-shoot",
+                "then": {
+                  "state": "right-shot"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "right-quick-shooting": [
+      {
+        "properties": {
+          "loop": false
+        }
+      },
+      {
+        "delay": 300,
+        "properties": {
+          "music": null
+        }
+      },
+      {
+        "actions": [
+          {
+            "if-property": {
+              "property": "difficult",
+              "value": 1
+            },
+            "animation": {
+              "sprite": "right",
+              "anim": "right-cowboys.{{difficult}}.right-draw-fast-shoot",
+              "then": {
+                "state": "left-shot"
+              }
+            }
+          },
+          {
+            "if-property": {
+              "property": "difficult",
+              "value": 2
+            },
+            "animation": {
+              "sprite": "right",
+              "anim": "right-cowboys.{{difficult}}.right-draw-deadly-shoot",
+              "then": {
+                "state": "left-shot"
+              }
+            }
+          },
+          {
+            "on": {
+              "keyup": " ",
+              "mouseup": true,
+              "animation": {
+                "sprite": "left",
+                "anim": "left-cowboy"
+              }
+            }
+          },
+          {
+            "on": {
+              "keydown": " ",
+              "mousedown": true,
+              "animation": {
+                "sprite": "left",
+                "anim": "left-draw-shoot",
+                "then": {
+                  "state": "right-shot"
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "draw": [
+      {
+        "delay": 300,
+        "properties": {
+          "music": null
+        }
+      },
+      {
+        "animation": {
+          "sprite": "left",
+          "anim": "left-draw"
+        }
+      },
+      {
+        "delay": 200,
+        "animation": {
+          "sprite": "right",
+          "anim": "right-cowboys.{{difficult}}.right-draw-shoot",
+          "then": {
+            "state": "left-shot"
           }
         }
-      ]
-    },
-    "quickdraw": {
-
-    },
-    "win": {
-
-    },
+      }
+    ],
+    "right-shot": [
+      {
+        "delay": 800,
+        "properties": {
+          "music": "good-bad-ugliz",
+          "loop": false
+        }
+      },
+      {
+        "animation": {
+          "sprite": "right",
+          "anim": "right-cowboys.{{difficult}}.right-body-shot"
+        }
+      },
+      {
+        "delay": 150,
+        "animation": {
+          "sprite": "left",
+          "anim": "left-pointing-gun"
+        }
+      },
+      {
+        "delay": 5500,
+        "animation": {
+          "sprite": "left",
+          "anim": "left-retract-gun"
+        }
+      },
+      {
+        "delay": 6000,
+        "state": "win"
+      }      
+    ],
+    "left-shot": [
+      {
+        "animation": {
+          "sprite": "left",
+          "anim": "left-shot-with-gun"
+        }
+      },
+      {
+        "delay": 150,
+        "animation": {
+          "sprite": "right",
+          "anim": "right-cowboys.{{difficult}}.right-pointing-gun"
+        }
+      },
+      {
+        "delay": 1500,
+        "animation": {
+          "sprite": "right",
+          "anim": "right-cowboys.{{difficult}}.right-retract-gun"
+        }
+      },
+      {
+        "delay": 2000,
+        "state": "lose"
+      }
+    ],
     "lose": {
       "properties": {
         "music": "the-end",
         "loop": true
       },
       "fadeVolume": 0.5,
-      "onKeyDown": {
-        "key": " ",
+      "on": {
+        "keydown": " ",
+        "mousedown": true,
         "actions": [
           {
             "light": 0,
@@ -134,9 +297,109 @@
           }          
         ]
       }
-    }
+    },
+    "win": [
+      {
+        "if-property": {
+          "property": "difficult",
+          "value": 1
+        },
+        "properties": {
+          "deadlyEnabled": true
+        }
+      },
+      {
+        "if-property": {
+          "property": "difficult",
+          "value": 0
+        },
+        "medal": "Bad"
+      },
+      {
+        "if-property": {
+          "property": "difficult",
+          "value": 1
+        },
+        "medal": "Ugly"
+      },
+      {
+        "if-property": {
+          "property": "difficult",
+          "value": 2
+        },
+        "medal": "Deadly"
+      },
+      {
+        "on": {
+          "keydown": " ",
+          "mousedown": true,
+          "actions": [
+            {
+              "light": 0,
+              "fadeVolume": 0
+            },
+            {
+              "if-not-property": {
+                "property": "difficult",
+                "value": 2
+              },
+              "delay": 2500,
+              "state": "next-level"
+            },
+            {
+              "if-property": {
+                "property": "difficult",
+                "value": 2
+              },
+              "delay": 2500,
+              "state": "end-credits"
+            }          
+          ]
+        }
+      }
+    ],
+    "next-level": {
+      "state": "intro",
+      "properties": {
+        "difficult": "{{min(difficult + 1, 2)}}"
+      }
+    },
+    "end-credits": [
+      {
+        "light": 1
+      },
+      {
+        "delay": 37000,
+        "actions": [
+          {
+            "light": 0
+          },
+          {
+            "delay": 2500,
+            "state": "intro"
+          }          
+        ]
+      }
+    ]
   },
   "world": {
+    "difficulty": {
+      "anim": "normal",
+      "size": [ 50, 25 ],
+      "x": 5,
+      "y": 5,
+      "z": 10,
+      "aux": {
+        "ToggleClickAuxiliary": {
+          "toggleAnim": ["hard", "deadly"],
+          "stateEnabled": [true, true, "{{deadlyEnabled}}"],
+          "property": "difficult"
+        },
+        "StateAuxiliary": {
+          "state": "intro"
+        }        
+      }
+    },
     "mute": {
       "anim": "unmute",
       "size": [ 25, 25 ],
@@ -169,13 +432,34 @@
         }        
       }
     },
+    "duel-girl": {
+      "anim": "duel-girl",
+      "size": [ 600, 385 ],
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 5,
+      "aux": {
+        "StateAuxiliary": {
+          "state": "end-credits"
+        }        
+      }
+    },
+    "end-credits": {
+      "anim": "end-credits",
+      "size": [ 600, 385 ],
+      "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2 + viewportHeight}", "z": 5,
+      "motion": [0, -20, 0],
+      "aux": {
+        "StateAuxiliary": {
+          "state": "end-credits"
+        }        
+      }
+    },
     "background": {
       "anim": "background",
       "size": [ 600, 385 ],
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 1,
       "aux": {
         "BlinkAuxiliary": {
-          "chance": 0.7,
+          "chance": 70,
           "blinkAnim": "background-sign-off"
         }
       }
@@ -188,21 +472,22 @@
       "motion": [-2, 0, 0]
     },
     "right": {
-      "anim": "right-cowboy",
+      "anim": "right-cowboys.0.right-cowboy",
       "size": [ 600, 385 ],
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 3,
       "aux": {
         "BlinkAuxiliary": {
-          "chance": 0.005,
+          "chance": 0.5,
           "active": {
             "if-state": "dialog",
             "value": true,
             "else": false
           },
-          "blinkAnim": "right-tease"
+          "anim": "right-cowboys.{{difficult}}.right-cowboy",
+          "blinkAnim": "right-cowboys.{{difficult}}.right-tease"
         },
         "OnFrameEndAuxiliary": {
-          "right-draw-shoot": {
+          "right-cowboys\\.\\d\\.right-draw(-\\w+)?-shoot": {
             "audio": "lazer"
           }
         }
@@ -214,9 +499,13 @@
       "x": "{viewportWidth / 2}", "y": "{viewportHeight / 2}", "z": 4,
       "aux": {
         "OnFrameEndAuxiliary": {
+          "left-draw-shoot": {
+            "audio": "lazer"
+          },
           "left-tease": [
             {
               "if-key-up": " ",
+              "if-mouse-up": true,
               "if-not-state": "draw",
               "animation": {
                 "anim": "left-cowboy"
@@ -224,6 +513,11 @@
             },
             {
               "if-key-down": " ",
+              "if-not-state": "draw",
+              "state": "draw"
+            },
+            {
+              "if-mouse-down": " ",
               "if-not-state": "draw",
               "state": "draw"
             }
@@ -244,6 +538,9 @@
     },
     "the-end": {
       "src": "audio/the-end.mp3"
+    },
+    "good-bad-ugliz": {
+      "src": "audio/good-bad-ugliz.mp3"
     }
   },
   "atlas": {
@@ -279,27 +576,14 @@
       "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
-      "range":[0]
-    },
-    "right-cowboy": {
-      "url": "assets/duel-right.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[0]
+      "range":[0, 1],
+      "frameRate": 1.2
     },
     "left-tease": {
       "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
-      "range":[1, 3],
-      "loop": 1,
-      "frameRate": 10
-    },
-    "right-tease": {
-      "url": "assets/duel-right.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[1, 2],
+      "range":[2, 3],
       "loop": 1,
       "frameRate": 8
     },
@@ -319,49 +603,25 @@
       "loop": 1,
       "frameRate": 12
     },
-    "right-draw": {
-      "url": "assets/duel-right.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[1, 8],
-      "loop": 1,
-      "frameRate": 12
-    },
     "left-draw-shoot": {
       "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
       "range":[1, 9],
       "loop": 1,
-      "frameRate": 14
-    },
-    "right-draw-shoot": {
-      "url": "assets/duel-right.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[1, 9],
-      "loop": 1,
       "frameRate": 24
     },
-    "right-pointing-gun": {
-      "url": "assets/duel-right.png",
+    "left-pointing-gun": {
+      "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
       "range":[8]
     },
-    "right-retract-gun": {
-      "url": "assets/duel-right.png",
+    "left-retract-gun": {
+      "url": "assets/duel-left.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
       "range":[8, 1],
-      "loop": 1,
-      "frameRate": 12
-    },
-    "right-draw-slow-shoot": {
-      "url": "assets/duel-right.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[1, 9],
       "loop": 1,
       "frameRate": 12
     },
@@ -373,24 +633,96 @@
       "loop": 1,
       "frameRate": 12
     },
-    "right-body-shot": {
-      "url": "assets/duel-right.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[10, 14],
-      "loop": 1,
-      "frameRate": 8
+    "right-cowboys": {
+        "repeat": 3,
+        "right-cowboy": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[0, 1],
+          "frameRate": 1
+        },
+        "right-tease": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[1, 2],
+          "loop": 1,
+          "frameRate": 8
+        },
+        "right-draw": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[1, 8],
+          "loop": 1,
+          "frameRate": 12
+        },    
+        "right-draw-shoot": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[1, 9],
+          "loop": 1,
+          "frameRate": 24
+        },
+        "right-pointing-gun": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[8]
+        },
+        "right-retract-gun": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[8, 1],
+          "loop": 1,
+          "frameRate": 12
+        },
+        "right-draw-slow-shoot": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[1, 9],
+          "loop": 1,
+          "frameRate": 7
+        },
+        "right-draw-fast-shoot": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[1, 9],
+          "loop": 1,
+          "frameRate": 8.5
+        },
+        "right-draw-deadly-shoot": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[1, 9],
+          "loop": 1,
+          "frameRate": 10
+        },
+        "right-body-shot": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[10, 14],
+          "loop": 1,
+          "frameRate": 8
+        },
+        "right-head-shot": {
+          "url": "assets/duel-right-{index}.png",
+          "spriteWidth": 706, "spriteHeight": 451,
+          "hotspot": "{hotspot_center}",
+          "range":[15, 18],
+          "loop": 1,
+          "frameRate": 8
+        }
     },
     "left-shot-without-gun": {
       "url": "assets/duel-left.png",
-      "spriteWidth": 706, "spriteHeight": 451,
-      "hotspot": "{hotspot_center}",
-      "range":[15, 18],
-      "loop": 1,
-      "frameRate": 8
-    },
-    "right-head-shot": {
-      "url": "assets/duel-right.png",
       "spriteWidth": 706, "spriteHeight": 451,
       "hotspot": "{hotspot_center}",
       "range":[15, 18],
@@ -408,6 +740,36 @@
       "collision_url": "assets/ui-icon.png",
       "spriteWidth": 50, "spriteHeight": 50,
       "range": [1]
+    },
+    "normal": {
+      "url": "assets/normal-hard.png",
+      "collision_url": "assets/normal-hard.png",
+      "spriteWidth": 32, "spriteHeight": 16,
+      "range": [0]
+    },
+    "hard": {
+      "url": "assets/normal-hard.png",
+      "collision_url": "assets/normal-hard.png",
+      "spriteWidth": 32, "spriteHeight": 16,
+      "range": [1]
+    },
+    "deadly": {
+      "url": "assets/normal-hard.png",
+      "collision_url": "assets/normal-hard.png",
+      "spriteWidth": 32, "spriteHeight": 16,
+      "range": [2]
+    },
+    "duel-girl": {
+      "url": "assets/duel-girl.png",
+      "spriteWidth": 706, "spriteHeight": 451,
+      "hotspot": "{hotspot_center}",
+      "range":[0]
+    },
+    "end-credits": {
+      "url": "assets/duel-girl.png",
+      "spriteWidth": 706, "spriteHeight": 451,
+      "hotspot": "{hotspot_center}",
+      "range":[1]
     }
   }
 }

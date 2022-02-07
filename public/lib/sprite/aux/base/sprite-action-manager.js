@@ -69,6 +69,18 @@ class SpriteActionManager {
 			}
 		}
 
+		if (action["if-mouse-up"]) {
+			if (this.sprite.engine.mouseHandlerManager.buttons) {
+				return false;
+			}
+		}
+
+		if (action["if-mouse-down"]) {
+			if (!this.sprite.engine.mouseHandlerManager.buttons) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 

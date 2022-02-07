@@ -10,10 +10,10 @@
 		"cullFace": "none"
 	},
 	"newgrounds": {
-		"game": "The Impossible Room",
-		"url": "https://www.newgrounds.com/portal/view/823348",
-		"key": "53522:zs4SBILE",
-		"secret": "jq6s6DaxBvK3Thlr+cZ+bw=="
+		"game": "Duel",
+		"url": "https://www.newgrounds.com/portal/view/1829991",
+		"key": "54001:nA8a5SpY",
+		"secret": "BXFgTKBQSWI/mVLxYLCuxA=="
 	},
 	"maxInstancesCount": 10000
 }

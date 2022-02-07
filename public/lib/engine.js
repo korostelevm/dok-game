@@ -488,7 +488,7 @@ class Engine {
 				if (!engine.gamePaused()) {
 					frame++;
 				}
-				engine.refresh(time, time, i === length - 1);
+				engine.refresh(frame * frameDuration, time, i === length - 1);
 			}
 		  	requestAnimationFrame(loop);
 		};

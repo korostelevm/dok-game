@@ -17,6 +17,8 @@ class MouseHandlerManager {
 		};
 		this.mouseX = 0;
 		this.mouseY = 0;
+		this.buttons = 0;
+		this.hovered = new Set();
 	}
 
 	recalculateSize() {
@@ -36,10 +38,10 @@ class MouseHandlerManager {
 	}
 
 	remove(mouseHandler) {
+		this.handlerSet.delete(mouseHandler);
 		if (!this.handlerSet.size) {
 			this.removeMouseListeners();
 		}
-		this.handlerSet.delete(mouseHandler);
 	}
 
 	clear() {
@@ -76,8 +78,17 @@ class MouseHandlerManager {
 		}
 		this.mouseX = (e.pageX - this.rect.x) / this.rect.width * this.canvas.offsetWidth,
 		this.mouseY = (e.pageY - this.rect.y) / this.rect.height * this.canvas.offsetHeight;
+		this.buttons = e.buttons;
+
+		this.hovered.clear();
 		for (let mouseHandler of this.handlerSet) {
-			mouseHandler.handleMouse(e, this.mouseX, this.mouseY);
+			if (mouseHandler.getCollisionBox && mouseHandler.getCollisionBox().containsPoint2d(this.mouseX, this.mouseY)) {
+				this.hovered.add(mouseHandler);
+			}
+		}
+
+		for (let mouseHandler of this.handlerSet) {
+			mouseHandler.handleMouse(e, this.mouseX, this.mouseY, this.hovered);
 		}
 		if (this.forceRefreshOnMouse) {
 			engine.forceRefresh();

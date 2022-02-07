@@ -190,7 +190,11 @@ class TextureAtlas {
 			array.push({id: path.join("."), ...object});
 			return array;
 		}
-		if (typeof(object) === "object") {
+		if (Array.isArray(object)) {
+			object.forEach((o, index) => {
+				TextureAtlas.flattenAtlases(o, path.concat(index), array);
+			});
+		} else if (typeof(object) === "object") {
 			Object.keys(object).forEach(id => {
 				TextureAtlas.flattenAtlases(object[id], path.concat(id), array);
 			});
@@ -215,6 +219,7 @@ class TextureAtlas {
 				id = idSplit[i];
 			}
 			root[id] = textureAtlas;
+			atlas[textureAtlas.id] = textureAtlas;
 		});
 		return atlas;
 	}
@@ -229,8 +234,7 @@ class TextureAtlas {
 			root = root[idSplit[i]];
 		}
 		if (!root) {
-			console.log(atlas, anim);
-			console.warn("Anim doesn't exist: ", anim);
+			console.warn("Anim doesn't exist: ", anim, " in ", atlas);
 		}
 		return root;
 	}

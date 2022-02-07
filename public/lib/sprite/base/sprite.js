@@ -200,6 +200,7 @@ class Sprite extends Body {
 
 	changeActive(value) {
 		if (super.changeActive(value)) {
+			this.changeAnimationTime(this.engine.time);
 			this.needUpdate();
 			this.collisionBox.dirty = true;
 			return true;

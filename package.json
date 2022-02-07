@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Dok game engine",
   "engines": {
-    "node": "16.x"
+    "node": "14.x"
   },
   "scripts": {
     "install-if-needed": "if [ package.json -nt node_modules ]; then npm install && npm run browserify && touch node_modules; fi",
@@ -24,11 +24,11 @@
   "homepage": "https://github.com/jacklehamster/dok-game#readme",
   "dependencies": {
     "archiver": "^5.2.0",
+    "collision-engine": "^1.0.5",
     "colors": "^1.4.0",
-    "config-template-merger": "^1.0.11",
+    "config-template-merger": "^1.0.14",
     "direct-data": "^1.0.8",
     "dok-file-utils": "^1.0.7",
-    "collision-engine": "^1.0.5",
     "express": "^4.17.1",
     "express-static": "^1.2.6",
     "get-pixels": "^3.3.3",

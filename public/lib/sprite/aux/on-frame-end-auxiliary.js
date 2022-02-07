@@ -6,7 +6,12 @@ class OnFrameEndAuxiliary extends RefresherAuxiliary {
 		this.lastAnim = null;
 		this.anims = new Map();
 		for (let name in config) {
-			this.anims.set(atlas[name], config[name]);
+			const regex = new RegExp(name);
+			for (let id in atlas) {
+				if (regex.test(id)) {
+					this.anims.set(atlas[id], config[name]);
+				}
+			}
 		}
 	}
 

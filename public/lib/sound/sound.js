@@ -73,4 +73,10 @@ class Sound {
 			});
 		}
 	}
+
+	setLoop(loop) {
+		if (this.playingAudio) {
+			this.playingAudio.loop = loop;
+		}
+	}	
 }

@@ -4730,5 +4730,37 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "f954949a50f1dbd18dc8369297635b40": [
+    {
+      "collision_url": "assets/normal-hard.png",
+      "updated": "2022-02-07T09:28:35.763Z",
+      "top": 0.25,
+      "left": 0.03125,
+      "bottom": 0.75,
+      "right": 0.96875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/normal-hard.png",
+      "updated": "2022-02-07T09:28:35.763Z",
+      "top": 0.1875,
+      "left": 0.15625,
+      "bottom": 0.8125,
+      "right": 0.875,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/normal-hard.png",
+      "updated": "2022-02-07T09:28:35.763Z",
+      "top": 0.125,
+      "left": 0.09375,
+      "bottom": 0.9375,
+      "right": 0.9375,
+      "close": 0,
+      "far": 1
+    }
   ]
 }

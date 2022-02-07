@@ -25,6 +25,7 @@ class Body extends Active {
 	changeActive(value) {
 		if (super.changeActive(value)) {
 			this.updateFlag |= Constants.UPDATE_FLAG.ACTIVE;
+			this.onMotionChanged(this.engine.time);
 			return true;
 		}
 		return false;
@@ -67,9 +68,9 @@ class Body extends Active {
 	onMotionChanged(time) {
 		this.updated.motion = time;
 		this.updateFlag |= Constants.UPDATE_FLAG.MOTION;
-			for (let follower of this.followers) {
-				follower.adjustFollowerPosition(time);	
-			}
+		for (let follower of this.followers) {
+			follower.adjustFollowerPosition(time);	
+		}
 		this.hasMotion = this.motion[0]||this.motion[1]||this.motion[2];
 	}
 

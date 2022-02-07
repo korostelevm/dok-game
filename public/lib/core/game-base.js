@@ -21,14 +21,21 @@ class GameBase {
 		this.data = this.core.data;
 		this.sceneData = this.data[this.sceneTag] || (this.data[this.sceneTag] = {});
 		this.properties = this.sceneData.properties = this.sceneData.properties || (this.sceneData.properties = {});
+		this.evaluator = new Evaluator(this.properties);		
 		this.spriteFactory = new SpriteFactory(this.data, engine.spriteCollection, this);
 		this.data.sceneTag = this.sceneTag;
 		this.sceneData.seenTime = (this.sceneData.seenTime || 0) + 1;
 		this.swapData = this.core.swapData;
+		this.atlas.empty = await engine.addTexture({
+			spriteWidth: 0, spriteHeight: 0,
+		});
+		this.pointerCursor = 'var(--pointer-cursor)';
+		this.arrowCursor = 'var(--mouse-cursor)';
 
 		const gameModel = await this.getGameModel(engine);
 		if (this.gameModel) {
 			this.atlas = {
+				...this.atlas,
 				...(await TextureAtlas.makeAtlases(engine, this.gameModel.atlas) || {}),
 			};
 			this.cameras = this.gameModel.cameras || {};
@@ -96,13 +103,12 @@ class GameBase {
 				}
 			}
 		}
-		this.atlas.empty = await engine.addTexture({
-			spriteWidth: 0, spriteHeight: 0,
-		});
-		this.pointerCursor = 'var(--pointer-cursor)';
-		this.arrowCursor = 'var(--mouse-cursor)';
 
 		console.log("Total spriteSize: ", engine.spriteCollection.size());
+	}
+
+	evaluate(data) {
+		return this.evaluator.evaluate(data);
 	}
 
 	addToWorld(item, id) {
@@ -143,6 +149,10 @@ class GameBase {
 		}
 		switch(key) {
 			case "loop":
+				if (this.audio[this.properties.music]) {
+					this.audio[this.properties.music].setLoop(value);
+				}
+				break;
 			case "mute":
 				this.onMusicChange(this.properties.music, this.properties.mute, this.properties.loop);
 				break;
@@ -281,6 +291,9 @@ class GameBase {
 		for (let prop in this.bodyStyleBack) {
 			document.body.style[prop] = this.bodyStyleBack[prop];
 		}
+
+		this.stateListeners.clear();
+		this.propertyListeners.clear();
 	}
 
 	refresh(time, dt) {
