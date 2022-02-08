@@ -18,7 +18,7 @@
     "height": 600,
     "fullscreen": false,
     "kiosk": false,
-    "resizable": false,
+    "resizable": true,
     "always_on_top": false,
     "show_in_taskbar": true,
     "frame": true,
