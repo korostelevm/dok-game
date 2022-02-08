@@ -39,8 +39,8 @@ canvas {
 
 body {
     margin: 0;
-    width:  1080px;
-    height:  600px;
+    width:  100vw;
+    height:  100vh;
 		background-image:
 	  linear-gradient(27deg, rgba(100,55,50,.3), rgba(55,50,100,0) 70.71%),
 	  linear-gradient(117deg, rgba(100,55,55,.3), rgba(55,55,100) 70.71%),
@@ -81,14 +81,13 @@ body {
 	position: absolute;
 
 	z-index: -1;
-	top: 153px;
-	width: 512px;
-	height: 512px;
+	width: 100%;
+	height: auto;
 	background-color: #000000;
 	opacity: 0;
-		transition-property: opacity, background-color, width, height, left, top;
-		transition-duration: .2s;
-	}
+	transition-property: opacity, background-color, width, height, left, top;
+	transition-duration: .2s;
+}
 
 	#im {
   	outline: 0px solid transparent;  				

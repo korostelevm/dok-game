@@ -1,5 +1,6 @@
 class MouseHandlerManager {
-	constructor(document, canvas) {
+	constructor(document, canvas, engine) {
+		this.engine = engine;
 		this.canvas = canvas;
 		this.document = document;
 		this.handlerSet = new Set();
@@ -76,8 +77,8 @@ class MouseHandlerManager {
 		if (!this.rect) {
 			this.recalculateSize();
 		}
-		this.mouseX = (e.pageX - this.rect.x) / this.rect.width * this.canvas.offsetWidth,
-		this.mouseY = (e.pageY - this.rect.y) / this.rect.height * this.canvas.offsetHeight;
+		this.mouseX = (e.pageX - this.rect.x) / this.rect.width * this.engine.viewportWidth,
+		this.mouseY = (e.pageY - this.rect.y) / this.rect.height * this.engine.viewportHeight;
 		this.buttons = e.buttons;
 
 		this.hovered.clear();

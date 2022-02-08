@@ -50,6 +50,16 @@ class Engine {
 
 		this.isPerspective = null;
 		this.backgroundColor = [0, 0, 0];
+
+		window.addEventListener("resize", () => this.repositionCanvas());
+	}
+
+	async repositionCanvas() {
+		const {windowSize: [windowWidth, windowHeight], viewportSize: [viewportWidth, viewportHeight], margin} = await this.game.getSettings(this);
+		this.canvas.style.maxWidth = `${viewportWidth}px`;
+		this.canvas.style.maxHeight = `${viewportHeight}px`;
+		this.canvas.style.left = margin?.left ? `${margin?.left}px` : `${(Math.max(0, window.innerWidth - this.viewportWidth)) / 2}px`;
+		this.canvas.style.top = margin?.top ? `${margin?.top}px` : `${(Math.max(0, window.innerHeight - this.viewportHeight)) / 2}px`;
 	}
 
 	addUiComponent(component) {
@@ -86,7 +96,7 @@ class Engine {
 		await this.loadDomContent(document);
 		console.log("Starting engine...");
 		const canvas = document.getElementById("canvas");
-		this.mouseHandlerManager = new MouseHandlerManager(document, canvas);
+		this.mouseHandlerManager = new MouseHandlerManager(document, canvas, engine);
 
 		if (!canvas) {
 			console.error("You need a canvas with id 'canvas'.");
@@ -143,8 +153,6 @@ class Engine {
 		await this.setupGameName(globalFiles);
 
 		/* Setup constants */
-		// this.numInstances = 30;	//	Note: This shouldn't be constants. This is the number of instances.
-		// console.log("numInstances", 30);
 		this.numVerticesPerInstance = 6;
 		engine.canvas.style.opacity = 1;
 
@@ -243,14 +251,6 @@ class Engine {
 		return game;
 	}
 
-	async adjustWindowSize(game) {
-		const {windowSize: [windowWidth, windowHeight], viewportSize: [viewportWidth, viewportHeight], margin} = await game.getSettings(this);
-		document.body.style.width = `${windowWidth}px`;
-		document.body.style.height = `${windowHeight}px`;
-		this.canvas.style.left = margin?.left ? `${margin?.left}px` : `${(windowWidth - viewportWidth) / 2}px`;
-		this.canvas.style.top = margin?.top ? `${margin?.top}px` : `${(windowHeight - viewportHeight) / 2}px`;
-	}
-
 	async adjustViewportSize(game) {
 		const {viewportSize: [viewportWidth, viewportHeight], pixelScale } = await game.getSettings(this);
 		this.resize(viewportWidth, viewportHeight, pixelScale||0);
@@ -275,7 +275,6 @@ class Engine {
 		localStorage.setItem(game.sceneTag + "-unlocked", new Date().getTime());
 
 		await this.adjustViewportSize(game);
-		await this.adjustWindowSize(game);
 		await this.adjustRefresh(game);
 
 		await game.init(this, this.classToGame[game.sceneTag]);
@@ -463,8 +462,6 @@ class Engine {
 			const { canvas, gl, shift } = this;
 			const uniforms = this.shaders[0].uniforms;
 
-			canvas.style.width = `${viewportWidth}px`;
-			canvas.style.height = `${viewportHeight}px`;
 			const newPixelScale = pixelScale || (this.isRetinaDisplay() ? .5 : 1);
 			const pixelScaleMultiplier = 1 / newPixelScale;
 			canvas.width = viewportWidth * pixelScaleMultiplier;
@@ -476,6 +473,7 @@ class Engine {
 			this.pixelScale = pixelScale;
 			gl.uniformMatrix4fv(uniforms.hudView.location, false, mat4.fromTranslation(mat4.create(), vec3.set(vec3.create(), -viewportWidth, viewportHeight, 0)));
 			shift.setViewportSize(viewportWidth, viewportHeight);
+			this.repositionCanvas();
 		}
 	}
 

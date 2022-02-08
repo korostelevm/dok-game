@@ -324,14 +324,11 @@ class DesertFar extends RoomBase {
 					name: "look", message: `${Iam} here.`,
 				},
 			],
-			onMouseDown: (you_are_here, e) => {
+			onMouseDown: (you_are_here, e, x, y) => {
 				you_are_here.changeAnimation(this.atlas.you_are_here_lifted, this.engine.lastTime);
 
 				const { canvas } = this.engine;
-				const { pageX, pageY, buttons } = e;
 				const rect = canvas.getBoundingClientRect();
-				const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
-					  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 
 				you_are_here.lastLift = {
 					x,
@@ -341,14 +338,11 @@ class DesertFar extends RoomBase {
 		});
 	}
 
-	onMouseMove(e) {
+	onMouseMove(e, x, y) {
 		const { you_are_here } = this;
 		if (you_are_here.anim === this.atlas.you_are_here_lifted) {
 			const { canvas } = this.engine;
-			const { pageX, pageY, buttons } = e;
 			const rect = canvas.getBoundingClientRect();
-			const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
-				  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
 
 			const dx = x - you_are_here.lastLift.x;
 			const dy = y - you_are_here.lastLift.y;

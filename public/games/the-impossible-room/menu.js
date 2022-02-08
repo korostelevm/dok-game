@@ -333,7 +333,7 @@ class Menu extends GameBase {
 		const { engine } = this;
 		const { buttons } = e;
 		const { canvas } = engine;
-		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
+		if (x < 0 || y < 0 || x > engine.viewportWidth || y > engine.viewportHeight) {
 			const cursor = getComputedStyle(document.documentElement).getPropertyValue('--mouse-cursor');
 			if (this.cursor !== cursor) {
 				this.cursor = cursor;

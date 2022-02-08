@@ -1261,8 +1261,8 @@ class RoomBase extends GameBase {
 		const { lastTime, canvas } = this.engine;
 		const { pageX, pageY, buttons } = e;
 		const rect = canvas.getBoundingClientRect();
-		const x = (pageX - rect.x) / rect.width * canvas.offsetWidth,
-			  y = (pageY - rect.y) / rect.height * canvas.offsetHeight;
+		const x = (pageX - rect.x) / rect.width * this.engine.viewportWidth,
+			  y = (pageY - rect.y) / rect.height * this.engine.viewportHeight;
 		if (item === "mouse") {
 			const divMouse = document.getElementById("mouse");
 			if (x < 0 || x > 800 || y < 0 || y > 400) {
@@ -1438,7 +1438,7 @@ class RoomBase extends GameBase {
 		const { engine } = this;
 		const { canvas, lastTime } = engine;
 		const { buttons } = e;
-		if (x < 0 || y < 0 || x > canvas.offsetWidth || y > canvas.offsetHeight) {
+		if (x < 0 || y < 0 || x > engine.viewportWidth || y > engine.viewportHeight) {
 			return;
 		}
 
@@ -1499,10 +1499,10 @@ class RoomBase extends GameBase {
 				this.monkor.pendingAction = null;
 			}
 			if (hovering && hovering.onMouseDown) {
-				hovering.onMouseDown(hovering, e);
+				hovering.onMouseDown(hovering, e, x, y);
 			}
 			if (this.onMouseDown) {
-				this.onMouseDown(e);
+				this.onMouseDown(e, x, y);
 			}
 		} else if (e.type === "mouseup") {
 			let newTarget = null;
@@ -1522,10 +1522,10 @@ class RoomBase extends GameBase {
 			}
 		} else if (e.type === "mousemove") {
 			if (hovering && hovering.onMouseMove) {
-				hovering.onMouseMove(hovering, e);
+				hovering.onMouseMove(hovering, e, x, y);
 			}
 			if (this.onMouseMove) {
-				this.onMouseMove(e);
+				this.onMouseMove(e, x, y);
 			}
 		}
 		this.showSubject(this.monkor.target || hovering);

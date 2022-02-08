@@ -4762,5 +4762,128 @@
       "close": 0,
       "far": 1
     }
+  ],
+  "c8d1e18e7f5143433caee4f8c044e6b4": [
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.600Z",
+      "top": 0,
+      "left": 0,
+      "bottom": 1,
+      "right": 1,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.603Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.62,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.606Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.655,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.608Z",
+      "top": 0.025,
+      "left": 0.065,
+      "bottom": 0.645,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.610Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.62,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.612Z",
+      "top": 0.025,
+      "left": 0.115,
+      "bottom": 0.62,
+      "right": 0.2725,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.614Z",
+      "top": 0.165,
+      "left": 0.1025,
+      "bottom": 0.625,
+      "right": 0.2825,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.616Z",
+      "top": 0.07,
+      "left": 0.07,
+      "bottom": 0.62,
+      "right": 0.3125,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.618Z",
+      "top": 0.065,
+      "left": 0.0225,
+      "bottom": 0.63,
+      "right": 0.3575,
+      "close": 0,
+      "far": 1
+    },
+    null,
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.622Z",
+      "top": 0.225,
+      "left": 0.06,
+      "bottom": 0.485,
+      "right": 0.325,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.624Z",
+      "top": 0.065,
+      "left": 0.0225,
+      "bottom": 0.615,
+      "right": 0.3575,
+      "close": 0,
+      "far": 1
+    },
+    {
+      "collision_url": "assets/impossible-room.png",
+      "updated": "2022-02-08T08:23:48.626Z",
+      "top": 0.015,
+      "left": 0.395,
+      "bottom": 0.14,
+      "right": 0.56,
+      "close": 0,
+      "far": 1
+    }
   ]
 }
