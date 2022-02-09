@@ -51,6 +51,38 @@
 			"y": 400,
 			"z": "{(row - 5) * 100 - 400}",
 			"rotation": [-90, 0, 0]
+		},
+
+		"peng": {
+			"repeat": 100,
+			"name": "peng",
+			"anim": "peng",
+			"size": [100, 120],
+			"x": "{viewportWidth * (1 / 2 + (random - .5) * 4)}",
+			"y": 400,
+			"z": "{-random * 2000}",
+			"spriteType": "sprite",
+			"collisionFrame": {
+				"left": -30, "right": 30,
+				"top": -60, "bottom": 0,
+				"close": -40, "far": 20
+			},
+			"showCollisionBox": "{isDebug ? 1 : 0}",
+			"shadow": 1,
+			"aux": {
+				"HighlightAuxiliary": {},
+				"NpcAuxiliary": {}				
+			},
+			"properties": {
+				"collide": 1
+			}
+		},
+
+		"texture": {
+			"size": [400, 480],
+			"anim": "full-texture-0",
+			"x": "{viewportWidth / 2}", "y": 200, "z": -200,
+			"spriteType": "sprite"
 		}
 	},
 

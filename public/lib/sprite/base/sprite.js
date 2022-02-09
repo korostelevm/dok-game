@@ -23,7 +23,7 @@ class Sprite extends Body {
 
 		this.direction = data.direction || 1;
 		this.vdirection = data.vdirection || 1;
-		this.anim = typeof(data.anim) === "string" ? TextureAtlas.getAnimFromAtlas(game.atlas, data.anim) : data.anim;
+		this.anim = typeof(data.anim) === "string" ? this.getPredefinedTexture(data.anim) || TextureAtlas.getAnimFromAtlas(game.atlas, data.anim) : data.anim;
 
 		this.collisionBox = new CollisionBox(this, data.collisionFrame, data.showCollisionBox);
 		this.properties = properties || {};
@@ -63,6 +63,11 @@ class Sprite extends Body {
 		}
 	}
 
+	getPredefinedTexture(anim) {
+		const match = anim.match(/full-texture-([0-9]+)/);
+		return match ? this.engine.textureManager.fullTextures[match[1]] : null;
+	}
+
 	onExit(game) {
 		if (this.remember) {
 			this.setProperty("position", {x: this.x, y: this.y, z: this.z});
@@ -89,14 +94,14 @@ class Sprite extends Body {
 			return 0;
 		}
 		const frameOffset = anim.firstFrame - anim.startFrame;
-		return this.updated.animation - frameOffset * anim.frameDuration;
+		return this.updated.animation - frameOffset * 1000 / anim.frameRate;
 	}
 
 	getAnimationFrame(t) {
 		const time = t || this.engine.time;
 		const anim = this.anim;
-		const animationElapsed = time - this.updated.animation;
-		const framesElapsed = Math.floor(animationElapsed / anim.frameDuration);
+		const animationSecondsElapsed = (time - this.updated.animation) / 1000;
+		const framesElapsed = Math.floor(animationSecondsElapsed * anim.frameRate);
 		const frameOffset = anim.firstFrame - anim.startFrame;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
 		const currentFrame = anim.startFrame + Math.min(anim.maxFrameCount, frameOffset + framesElapsed) % frameCount;
@@ -285,11 +290,10 @@ class Sprite extends Body {
 	}
 
 	getLoopCount(time) {
-		const animationElapsed = time - this.updated.animation;
+		const animationSecondsElapsed = (time - this.updated.animation) / 1000;
 		const anim = this.anim;
 		const frameCount = (anim.endFrame - anim.firstFrame) + 1;
-		const animationDuration = anim.frameDuration * frameCount;
-		return Math.floor(animationElapsed / animationDuration);
+		return Math.floor(animationSecondsElapsed * anim.frameRate);
 	}
 
 	clear() {

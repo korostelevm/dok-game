@@ -152,33 +152,6 @@ class WorldOfTurtle extends GameBase {
 			socialBox.follow(this.turtle);
 		}
 
-		const {viewportWidth, viewportHeight} = engine;
-
-		for (let i = 0; i < 100; i++) {
-			const x = viewportWidth / 2 + (RandomUtils.random(i, 123) - .5) * viewportWidth * 4;
-			const z = - RandomUtils.random(i, 888) * 2000;
-			this[`peng-${i}`] = this.spriteFactory.create({
-				name: `peng-${i}`,
-				anim: "peng",
-				size: [100, 120],
-				x, y: 400, z,
-				spriteType: "sprite",
-				collisionFrame: {
-					left: -30, right: 30,
-					top: -60, bottom: 0,
-					close: -40, far: 20,
-				},
-				showCollisionBox: this.engine.debug,
-				shadow: 1,
-				aux: {
-					"HighlightAuxiliary": {},
-					"NpcAuxiliary": {},
-				},
-			}, {
-				collide: 1,				
-			});
-		}
-
 		this.engine.keyboardHandler.addKeyDownListener('p', () => {
 			this.engine.setPerspective(!this.engine.isPerspective);
 		});

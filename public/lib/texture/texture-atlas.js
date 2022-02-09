@@ -1,18 +1,17 @@
 const MAX_FRAME_COUNT = Number.MAX_SAFE_INTEGER;
 
 class TextureAtlas {
-	constructor(textureManager, index, imageLoader, textureEdgeCalculator) {
+	constructor(textureManager, index, xOffset, yOffset) {
 		this.textureManager = textureManager;
-		this.textureEdgeCalculator = textureEdgeCalculator;
 		this.index = index || 0;
 		this.maxTextureIndex = 0;
-		this.x = 0;
-		this.y = 0;
-		this.imageLoader = imageLoader;
+		this.x = xOffset || 0;
+		this.y = yOffset || 0;
 		this.spriteWidth = 0;
 		this.spriteHeight = 0;
 		this.startIndex = 0;
 		this.endIndex = 0;
+		this.hotspot = [0, 0];
 
 		this.tempMatrix = new Float32Array([
 			0, 0, 0, 0,
@@ -22,38 +21,26 @@ class TextureAtlas {
 		]);
 		this.shortVec4 = new Uint16Array(4);
 		this.floatVec4 = new Float32Array(4);
-		this.canvas = textureManager.canvas;
+		this.canvas = document.createElement("canvas");
 	}
 
-	textureMix(image, texture, texture_alpha, texture_blend) {
-		const canvas = this.canvas;
-		const context = canvas.getContext("2d");
-		if (canvas !== image) {
-			this.getCanvasImage(image, canvas);
-		}
-		context.globalCompositeOperation = texture_blend || "source-atop";
-		context.globalAlpha = texture_alpha || .5;
-
-		const scale = Math.max(1, Math.max((image.naturalWidth || image.width) / texture.naturalWidth, (image.naturalHeight || image.height) / texture.naturalHeight));
-		context.drawImage(texture, 0, 0, texture.naturalWidth, texture.naturalHeight, 0, 0, texture.naturalWidth * scale, texture.naturalHeight * scale);
-
-		context.globalCompositeOperation = "";
-		context.globalAlpha = 1;
-		return canvas;
+	setFullTexture() {
+		this.x = 0;
+		this.y = 0;
+		this.frameRate = 1;
+		this.frameRateMultiplier = 1;
+		this.cols = 1;
+		this.rows = 1;
+		this.spriteWidth = this.textureManager.textureSize - 1;
+		this.spriteHeight = this.textureManager.textureSize - 1;
+		this.startFrame = 0;
+		this.endFrame = 0;
+		this.maxFrameCount = MAX_FRAME_COUNT;
+		this.firstFrame = 0;
+		this.direction = 1;
+		this.vdirection = 1;
+		return this;
 	}
-
-	getCanvasImage(image, canvas) {
-		const sourceWidth = image.naturalWidth || image.width;
-		const sourceHeight = image.naturalHeight || image.height;
-		canvas.width = sourceWidth;
-		canvas.height = sourceHeight;
-
-		const context = canvas.getContext("2d");
-		context.imageSmoothingEnabled = false;
-		context.drawImage(image, 0, 0, sourceWidth, sourceHeight, 0, 0, sourceWidth, sourceHeight);
-		return canvas;
-	}
-
 
 	getSpriteImageForFrame(image, frame) {
 		if (this.cols === 1 && this.rows === 1) {
@@ -72,20 +59,16 @@ class TextureAtlas {
 		return canvas;
 	}
 
-	async setImage(animationData) {
+	setImage(animationData, image, textureImage, collisionImage) {
 		const { id, url, collision_url, collision_padding, texture_url, texture_alpha, texture_blend, hotspot } = animationData;
-		const [image, textureImage] = await Promise.all([url,texture_url].map(u => this.imageLoader.loadImage(u)));
 		this.id = id;
-		this.onUpdateImage(image, animationData || {});
+		this.onUpdateImage(image, animationData);
 
 		const { x, y, spriteWidth, spriteHeight, index } = this;
 
-		const tag = `${url}-${collision_url||""}-${collision_padding||""}-${texture_url||""}-${texture_alpha||""}-${texture_blend||""}-${x},${y}-${spriteWidth},${spriteHeight}-${index}-${this.startFrame}-${this.endFrame}`;
-		//	check tag to avoid duplicate loads
-
 		for (let frame = this.startFrame; frame <= this.endFrame; frame++) {
 			const spriteImage = this.getSpriteImageForFrame(image, frame);
-			const blendedImage = texture_url ? this.textureMix(spriteImage, textureImage, texture_alpha, texture_blend) : spriteImage;
+			const blendedImage = texture_url ? this.textureManager.textureMix(spriteImage, textureImage, texture_alpha, texture_blend) : spriteImage;
 			if (!blendedImage) {
 				continue;
 			}
@@ -96,7 +79,7 @@ class TextureAtlas {
 		}
 
 		if (collision_url) {
-			this.collisionBoxes = await this.textureEdgeCalculator.calculateCollisionBoxes(collision_url, this, this.imageLoader);
+			this.collisionBoxes = this.textureManager.textureEdgeCalculator.calculateCollisionBoxes(collision_url, this.cols, this.rows, collisionImage);
 		} else {
 			this.collisionBoxes = null;
 		}
@@ -115,21 +98,19 @@ class TextureAtlas {
 	}
 
 	onUpdateImage(image, animationData) {
-		this.spriteSheetWidth = image ? image.naturalWidth : 0;
-		this.spriteSheetHeight = image ? image.naturalHeight : 0;
+		const spriteSheetWidth = image?.naturalWidth || 0;
+		const spriteSheetHeight = image?.naturalHeight || 0;
 		const { cols, rows, spriteWidth, spriteHeight, frameRate, maxFrameCount, loop, range, firstFrame, direction, vdirection } = animationData;
 		const reverse = range && range[1] < range[0];
-		this.frameRate = Math.abs(frameRate) || 1;
+		this.frameRate = Math.abs(frameRate || 1);
 		this.frameRateMultiplier = reverse ? -1 : 1;
-		this.frameDuration = 1000 / this.frameRate;
-		this.cols = cols || (spriteWidth ? Math.ceil(this.spriteSheetWidth / spriteWidth) : 1);
-		this.rows = rows || (spriteHeight ? Math.ceil(this.spriteSheetHeight / spriteHeight) : 1);
-		this.spriteWidth = spriteWidth || this.spriteSheetWidth / this.cols;
-		this.spriteHeight = spriteHeight || this.spriteSheetHeight / this.rows;
+		this.cols = cols || (spriteWidth ? Math.ceil(spriteSheetWidth / spriteWidth) : 1);
+		this.rows = rows || (spriteHeight ? Math.ceil(spriteSheetHeight / spriteHeight) : 1);
+		this.spriteWidth = spriteWidth || spriteSheetWidth / this.cols;
+		this.spriteHeight = spriteHeight || spriteSheetHeight / this.rows;
 		this.startFrame = (range ? (reverse ? range[1] : range[0]) : 0) || 0;
 		this.endFrame = (range ? (reverse ? range[0] : range[1]) : 0) || this.startFrame;
 		this.maxFrameCount = maxFrameCount || (loop ? loop * (this.endFrame - this.startFrame) : MAX_FRAME_COUNT);
-		this.animated = this.startFrame !== this.endFrame;
 		this.firstFrame = Math.max(this.startFrame, Math.min(this.endFrame, firstFrame || this.startFrame));
 		this.direction = direction || 1;
 		this.vdirection = vdirection || 1;
@@ -179,10 +160,6 @@ class TextureAtlas {
 		floatVec4[2] = this.frameRate * this.frameRateMultiplier;
 		floatVec4[3] = this.maxFrameCount;
 		return floatVec4;
-	}
-
-	getHotSpot() {
-		return this.hotspot;
 	}
 
 	static flattenAtlases(object, path, array) {

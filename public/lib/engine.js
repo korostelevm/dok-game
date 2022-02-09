@@ -15,8 +15,6 @@ class Engine {
 			full_merge: Constants.FULL_MERGE,
 			isDebug: this.debug ? 1 : 0,
 		});
-		this.directData = new DirectData({fileUtils});
-		this.textureEdgeCalculator = new TextureEdgeCalculator(this.directData);
 
 
 		this.imageLoader = new ImageLoader({
@@ -109,8 +107,6 @@ class Engine {
 		console.log("WebGL Renderer:", renderer);
 		this.fakeGPU = renderer === "Google SwiftShader";
 
-		await this.textureEdgeCalculator.init();
-
 		this.tipBox = new TipBox(this);
 
 		this.overlay = document.getElementById("overlay");
@@ -130,7 +126,9 @@ class Engine {
 		/* Texture management */
 		this.shaders[0].link();
 		this.shaders[0].use();
-		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms.uTextures.location, this.textureEdgeCalculator);
+		this.textureManager = new TextureManager(gl, this.shaders[0].uniforms.uTextures.location, this.imageLoader);
+		await this.textureManager.init();
+
 
 		/* Renderer */
 		this.spriteRenderer = new SpriteRenderer(this.gl, this.shaders[0].attributes);
@@ -159,8 +157,6 @@ class Engine {
 		this.lastTime = 0;
 		this.time = 0;
 		await this.initGame(this.game);
-
-		this.textureManager.generateAllMipMaps();
 
 		await Promise.all(this.uiComponents.map(component => component.init()));
 
@@ -358,8 +354,7 @@ class Engine {
 	}
 
 	async addTexture(imageConfig) {
-		const index = !imageConfig.url ? -1 : (this.urlToTextureIndex[imageConfig.url] ?? (this.urlToTextureIndex[imageConfig.url] = this.textureManager.nextTextureIndex++));
-		return this.textureManager.createAtlas(index, this.imageLoader).setImage(imageConfig);
+		return await this.textureManager.addTexture(imageConfig);
 	}
 
 	setupPrototypes() {

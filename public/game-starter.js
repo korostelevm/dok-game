@@ -6,6 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	// 	    margin: { top: 50 },
 	// 	  },
 	// });
-	// Engine.start(WorldOfTurtle, "games/turtle/world-of-turtle.json", true, true);
-	Engine.start(GameBase, "games/space-opera/duel.json");
+	Engine.start(WorldOfTurtle, "games/turtle/world-of-turtle.json", true, true);
+	// Engine.start(GameBase, "games/space-opera/duel.json");
 });

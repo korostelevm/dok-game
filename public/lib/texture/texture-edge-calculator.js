@@ -1,9 +1,10 @@
 const TEXTURE_EDGE_CALCULATOR_DATA_PATH = "texture/texture-edge-data.json";
 
 class TextureEdgeCalculator {
-	constructor(directData) {
-		this.directData = directData;
+	constructor() {
+		this.directData = new DirectData();
 		this.textureEdgeData = {};
+		this.canvas = document.createElement("canvas");
 	}
 
 	async init() {
@@ -22,17 +23,14 @@ class TextureEdgeCalculator {
 		}
 	}
 
-	async calculateCollisionBoxes(collision_url, textureAtlas, imageLoader) {
-		const cols = textureAtlas.cols;
-		const rows = textureAtlas.rows;
+	calculateCollisionBoxes(collision_url, cols, rows, collisionImage) {
 		const tag = assetMd5[collision_url.split("/").pop()];
 		if (this.textureEdgeData[tag]) {
 			return this.textureEdgeData[tag];
 		}
 		console.log("Calculating collision box on: " + collision_url + "(" + tag + ")");
-		const canvas = textureAtlas.canvas;
+		const canvas = this.canvas;
 		const collisionBoxes = [];
-		const collisionImage = await imageLoader.loadImage(collision_url);
 		canvas.width = collisionImage.naturalWidth;
 		canvas.height = collisionImage.naturalHeight;
 		const context = canvas.getContext("2d");
